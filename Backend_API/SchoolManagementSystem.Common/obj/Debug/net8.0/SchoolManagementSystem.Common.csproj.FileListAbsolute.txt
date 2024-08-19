@@ -1,0 +1,12 @@
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\bin\Debug\net8.0\SchoolManagementSystem.Common.deps.json
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\bin\Debug\net8.0\SchoolManagementSystem.Common.dll
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\bin\Debug\net8.0\SchoolManagementSystem.Common.pdb
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\obj\Debug\net8.0\SchoolManagementSystem.Common.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\obj\Debug\net8.0\SchoolManagementSystem.Common.AssemblyInfoInputs.cache
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\obj\Debug\net8.0\SchoolManagementSystem.Common.AssemblyInfo.cs
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\obj\Debug\net8.0\SchoolManagementSystem.Common.csproj.CoreCompileInputs.cache
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\obj\Debug\net8.0\SchoolManagementSystem.Common.sourcelink.json
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\obj\Debug\net8.0\SchoolManagementSystem.Common.dll
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\obj\Debug\net8.0\refint\SchoolManagementSystem.Common.dll
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\obj\Debug\net8.0\SchoolManagementSystem.Common.pdb
+D:\Projects\Waves Technology\SchoolManagementSystem\Backend_API\SchoolManagementSystem.Common\obj\Debug\net8.0\ref\SchoolManagementSystem.Common.dll

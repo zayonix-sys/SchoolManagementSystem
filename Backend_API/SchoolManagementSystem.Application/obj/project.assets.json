@@ -1,0 +1,97 @@
+{
+  "version": 3,
+  "targets": {
+    "net8.0": {
+      "SchoolManagementSystem.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/SchoolManagementSystem.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SchoolManagementSystem.Domain.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SchoolManagementSystem.Domain/1.0.0": {
+      "type": "project",
+      "path": "../SchoolManagementSystem.Domain/SchoolManagementSystem.Domain.csproj",
+      "msbuildProject": "../SchoolManagementSystem.Domain/SchoolManagementSystem.Domain.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net8.0": [
+      "SchoolManagementSystem.Domain >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\zeesh\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Application\\SchoolManagementSystem.Application.csproj",
+      "projectName": "SchoolManagementSystem.Application",
+      "projectPath": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Application\\SchoolManagementSystem.Application.csproj",
+      "packagesPath": "C:\\Users\\zeesh\\.nuget\\packages\\",
+      "outputPath": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Application\\obj\\",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "C:\\Users\\zeesh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {},
+        "https://pkgs.dev.azure.com/elfoados/_packaging/NuGetFeed/nuget/v3/index.json": {}
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "projectReferences": {
+            "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Domain\\SchoolManagementSystem.Domain.csproj": {
+              "projectPath": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Domain\\SchoolManagementSystem.Domain.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      }
+    },
+    "frameworks": {
+      "net8.0": {
+        "targetAlias": "net8.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

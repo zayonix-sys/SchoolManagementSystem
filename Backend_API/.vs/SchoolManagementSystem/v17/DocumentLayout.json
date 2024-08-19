@@ -1,0 +1,171 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Projects\\Personal\\Admin Templates\\materialize-admin-v12.2.0\\react-version\\typescript-version\\starter-kit\\package.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Projects\\Personal\\Admin Templates\\materialize-admin-v12.2.0\\react-version\\typescript-version\\full-version\\package.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D2C1217-D242-4C89-9291-DA7DA74ABF32}|SchoolManagementSystem.Application\\SchoolManagementSystem.Application.csproj|d:\\projects\\waves technology\\schoolmanagementsystem\\backend_api\\schoolmanagementsystem.application\\services\\studentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D2C1217-D242-4C89-9291-DA7DA74ABF32}|SchoolManagementSystem.Application\\SchoolManagementSystem.Application.csproj|solutionrelative:schoolmanagementsystem.application\\services\\studentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD5AD72F-EC8E-4221-A182-6C46D3AECDD7}|SchoolManagementSystem.Infrastructure\\SchoolManagementSystem.Infrastructure.csproj|d:\\projects\\waves technology\\schoolmanagementsystem\\backend_api\\schoolmanagementsystem.infrastructure\\repositories\\genericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD5AD72F-EC8E-4221-A182-6C46D3AECDD7}|SchoolManagementSystem.Infrastructure\\SchoolManagementSystem.Infrastructure.csproj|solutionrelative:schoolmanagementsystem.infrastructure\\repositories\\genericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3CD8C15E-3E0E-4665-B18E-EACA11EB88D7}|SchoolManagementSystem.Domain\\SchoolManagementSystem.Domain.csproj|d:\\projects\\waves technology\\schoolmanagementsystem\\backend_api\\schoolmanagementsystem.domain\\interfaces\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3CD8C15E-3E0E-4665-B18E-EACA11EB88D7}|SchoolManagementSystem.Domain\\SchoolManagementSystem.Domain.csproj|solutionrelative:schoolmanagementsystem.domain\\interfaces\\igenericrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{39CAC80D-060B-440C-9A10-ACA00000FFDE}|SchoolManagementSystem.API\\SchoolManagementSystem.API.csproj|d:\\projects\\waves technology\\schoolmanagementsystem\\backend_api\\schoolmanagementsystem.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{39CAC80D-060B-440C-9A10-ACA00000FFDE}|SchoolManagementSystem.API\\SchoolManagementSystem.API.csproj|solutionrelative:schoolmanagementsystem.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3CD8C15E-3E0E-4665-B18E-EACA11EB88D7}|SchoolManagementSystem.Domain\\SchoolManagementSystem.Domain.csproj|d:\\projects\\waves technology\\schoolmanagementsystem\\backend_api\\schoolmanagementsystem.domain\\entities\\admission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3CD8C15E-3E0E-4665-B18E-EACA11EB88D7}|SchoolManagementSystem.Domain\\SchoolManagementSystem.Domain.csproj|solutionrelative:schoolmanagementsystem.domain\\entities\\admission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{39CAC80D-060B-440C-9A10-ACA00000FFDE}|SchoolManagementSystem.API\\SchoolManagementSystem.API.csproj|d:\\projects\\waves technology\\schoolmanagementsystem\\backend_api\\schoolmanagementsystem.api\\controllers\\studentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{39CAC80D-060B-440C-9A10-ACA00000FFDE}|SchoolManagementSystem.API\\SchoolManagementSystem.API.csproj|solutionrelative:schoolmanagementsystem.api\\controllers\\studentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D2C1217-D242-4C89-9291-DA7DA74ABF32}|SchoolManagementSystem.Application\\SchoolManagementSystem.Application.csproj|d:\\projects\\waves technology\\schoolmanagementsystem\\backend_api\\schoolmanagementsystem.application\\interfaces\\istudent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7D2C1217-D242-4C89-9291-DA7DA74ABF32}|SchoolManagementSystem.Application\\SchoolManagementSystem.Application.csproj|solutionrelative:schoolmanagementsystem.application\\interfaces\\istudent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "package.json",
+              "DocumentMoniker": "D:\\Projects\\Personal\\Admin Templates\\materialize-admin-v12.2.0\\react-version\\typescript-version\\full-version\\package.json",
+              "RelativeDocumentMoniker": "..\\..\\..\\Personal\\Admin Templates\\materialize-admin-v12.2.0\\react-version\\typescript-version\\full-version\\package.json",
+              "ToolTip": "D:\\Projects\\Personal\\Admin Templates\\materialize-admin-v12.2.0\\react-version\\typescript-version\\full-version\\package.json",
+              "RelativeToolTip": "..\\..\\..\\Personal\\Admin Templates\\materialize-admin-v12.2.0\\react-version\\typescript-version\\full-version\\package.json",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-08-16T07:26:18.01Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "package.json",
+              "DocumentMoniker": "D:\\Projects\\Personal\\Admin Templates\\materialize-admin-v12.2.0\\react-version\\typescript-version\\starter-kit\\package.json",
+              "RelativeDocumentMoniker": "..\\..\\..\\Personal\\Admin Templates\\materialize-admin-v12.2.0\\react-version\\typescript-version\\starter-kit\\package.json",
+              "ToolTip": "D:\\Projects\\Personal\\Admin Templates\\materialize-admin-v12.2.0\\react-version\\typescript-version\\starter-kit\\package.json",
+              "RelativeToolTip": "..\\..\\..\\Personal\\Admin Templates\\materialize-admin-v12.2.0\\react-version\\typescript-version\\starter-kit\\package.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-08-16T07:25:17.663Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IGenericRepository.cs",
+              "DocumentMoniker": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Domain\\Interfaces\\IGenericRepository.cs",
+              "RelativeDocumentMoniker": "SchoolManagementSystem.Domain\\Interfaces\\IGenericRepository.cs",
+              "ToolTip": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Domain\\Interfaces\\IGenericRepository.cs",
+              "RelativeToolTip": "SchoolManagementSystem.Domain\\Interfaces\\IGenericRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-13T10:59:27.809Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.API\\Program.cs",
+              "RelativeDocumentMoniker": "SchoolManagementSystem.API\\Program.cs",
+              "ToolTip": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.API\\Program.cs",
+              "RelativeToolTip": "SchoolManagementSystem.API\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAABaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-13T10:57:39.477Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Admission.cs",
+              "DocumentMoniker": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Domain\\Entities\\Admission.cs",
+              "RelativeDocumentMoniker": "SchoolManagementSystem.Domain\\Entities\\Admission.cs",
+              "ToolTip": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Domain\\Entities\\Admission.cs",
+              "RelativeToolTip": "SchoolManagementSystem.Domain\\Entities\\Admission.cs",
+              "ViewState": "AQIAABYAAAAAAAAAAAA5wCIAAAAlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-13T10:55:40.687Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "GenericRepository.cs",
+              "DocumentMoniker": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Infrastructure\\Repositories\\GenericRepository.cs",
+              "RelativeDocumentMoniker": "SchoolManagementSystem.Infrastructure\\Repositories\\GenericRepository.cs",
+              "ToolTip": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Infrastructure\\Repositories\\GenericRepository.cs",
+              "RelativeToolTip": "SchoolManagementSystem.Infrastructure\\Repositories\\GenericRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACMAAAAfAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-13T10:50:26.577Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "StudentService.cs",
+              "DocumentMoniker": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Application\\Services\\StudentService.cs",
+              "RelativeDocumentMoniker": "SchoolManagementSystem.Application\\Services\\StudentService.cs",
+              "ToolTip": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Application\\Services\\StudentService.cs",
+              "RelativeToolTip": "SchoolManagementSystem.Application\\Services\\StudentService.cs",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAxwCwAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-13T10:50:07.902Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IStudent.cs",
+              "DocumentMoniker": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Application\\Interfaces\\IStudent.cs",
+              "RelativeDocumentMoniker": "SchoolManagementSystem.Application\\Interfaces\\IStudent.cs",
+              "ToolTip": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.Application\\Interfaces\\IStudent.cs",
+              "RelativeToolTip": "SchoolManagementSystem.Application\\Interfaces\\IStudent.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-13T10:49:52.188Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "StudentsController.cs",
+              "DocumentMoniker": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.API\\Controllers\\StudentsController.cs",
+              "RelativeDocumentMoniker": "SchoolManagementSystem.API\\Controllers\\StudentsController.cs",
+              "ToolTip": "D:\\Projects\\Waves Technology\\SchoolManagementSystem\\Backend_API\\SchoolManagementSystem.API\\Controllers\\StudentsController.cs",
+              "RelativeToolTip": "SchoolManagementSystem.API\\Controllers\\StudentsController.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAABUAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-13T10:49:00.072Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
