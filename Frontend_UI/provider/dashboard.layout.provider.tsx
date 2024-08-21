@@ -42,7 +42,7 @@ const DashBoardLayoutProvider = ({ children, trans }: { children: React.ReactNod
 
             )}
           >
-            <div className="semibox-content-wrapper ">
+            <div className="semibox-content-wrapper">
               <LayoutWrapper
                 isMobile={isMobile}
                 setOpen={setOpen}
