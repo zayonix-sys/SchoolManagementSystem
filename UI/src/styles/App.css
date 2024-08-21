@@ -1,0 +1,42 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ********Back To Top Button******* */
+.back-to-top-button {
+	position: fixed !important;
+  color: #27aae1;
+	bottom: 30px;
+	right: 20px;
+	opacity: 0;
+	transition: opacity 0.3s, visibility 0.3s;
+	visibility: hidden;
+  }
+  
+  .back-to-top-button.visible {
+	opacity: 1;
+	visibility: visible;
+  }
+  
+  .back-to-top-button button {
+	padding: 7px 8px;
+	background-color: #18119b;
+	color: #ffffff;
+	border: none;
+	border-radius: 2px;
+	cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  } 
+  .back-to-top-button :hover{
+    transform: translateY(5px)
+  } 
+/* ***********end************ */
