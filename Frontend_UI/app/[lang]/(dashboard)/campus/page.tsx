@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import CampusSheet from "./campus-sheet";
 import ReportsCard from "./reports";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import DepartmentSheet from "./department-sheet";
 const Campus = () => {
   return (
     <div>
@@ -16,10 +17,7 @@ const Campus = () => {
         <div className="flex justify-end space-x-4">
         <CampusSheet />
           
-          <Button>
-            <Icon icon="heroicons:building-office" className="w-6 h-6 mr-2  " />
-            Add Department
-          </Button>
+        <DepartmentSheet />
         </div>
       </div>
       {/* <div className="mt-5 text-2xl font-medium text-default-900">Campus Registration</div> */}
