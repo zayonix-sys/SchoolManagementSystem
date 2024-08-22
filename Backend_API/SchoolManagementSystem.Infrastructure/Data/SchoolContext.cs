@@ -21,6 +21,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Application> Applications { get; set; }
         public DbSet<AdmissionTest> AdmissionTests { get; set; }
         public DbSet<Admission> Admissions { get; set; }
+        public DbSet<Campus> Campuses { get; set; }
+        public DbSet<Department> Departments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -32,6 +32,11 @@ export const menusConfig = {
           href: "/campus",
           icon: Graph,
         },
+        {
+          title: "Classroom Registration",
+          href: "/classroom",
+          icon: Graph,
+        },
       ],
     },
   ],
@@ -45,6 +50,11 @@ export const menusConfig = {
             {
               title: "Campus Registration",
               href: "/campus",
+              icon: Graph,
+            },
+            {
+              title: "Classroom Registration",
+              href: "/classroom",
               icon: Graph,
             },
           ],
@@ -63,6 +73,11 @@ export const menusConfig = {
           {
             title: "Campus Registration",
             href: "/campus",
+            icon: Graph,
+          },
+          {
+            title: "Classroom Registration",
+            href: "/classroom",
             icon: Graph,
           },
         ],
