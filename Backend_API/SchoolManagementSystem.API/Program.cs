@@ -8,6 +8,7 @@ using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Services;
 using SchoolManagementSystem.Domain.Entities;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using SchoolManagementSystem.Application.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,7 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IStudent, StudentService>();
 builder.Services.AddScoped<IDepartments, DepartmentService>();
 builder.Services.AddScoped<ICampuses, CampusService>();
+builder.Services.AddScoped<CampusMapper>();
 
 // Add controllers
 builder.Services.AddControllers();
@@ -39,6 +41,17 @@ builder.Services.AddSwaggerGen(c =>
 
 // builder.Services.AddAutoMapper(typeof(Program)); // Example for AutoMapper
 
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Configure middleware pipeline
@@ -48,6 +61,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Enable CORS
+app.UseCors("AllowAllOrigins");
 
 // Add custom error-handling middleware
 app.UseMiddleware<ErrorHandlerMiddleware>();
