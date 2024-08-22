@@ -1,24 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
+using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/campuses")]
     public class CampusesController : ControllerBase
     {
-        private readonly ICampuses _campusService;
         private readonly ILogger<CampusesController> _logger;
+        private readonly ICampuses _campusService;
+        
 
         public CampusesController(ILogger<CampusesController> logger, ICampuses campus)
         {
             _logger = logger;
             _campusService = campus;
+            
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Campus>>> GetCampuses()
+        public async Task<ActionResult<IEnumerable<CampusDTO>>> GetCampuses()
         {
             _logger.LogInformation("Fetching all Campuses.");
             try
@@ -59,14 +63,14 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<Campus>> AddCampus(Campus campus)
+        public async Task<ActionResult<Campus>> AddCampus([FromBody] CampusDTO dto)
         {
-            _logger.LogInformation("Adding a new Campus with name {CampusName}.", campus.CampusName);
+            _logger.LogInformation("Adding a new Campus with name {CampusName}.", dto.CampusName);
             try
             {
-                await _campusService.AddCampusAsync(campus);
-                _logger.LogInformation("Successfully added campus with ID {campusId}.", campus.CampusId);
-                return CreatedAtAction(nameof(GetCampuses), new { id = campus.CampusId }, campus);
+                await _campusService.AddCampusAsync(dto);
+                _logger.LogInformation("Successfully added campus with ID {campusId}.", dto.CampusId);
+                return CreatedAtAction(nameof(GetCampuses), new { id = dto.CampusId }, dto);
             }
             catch (Exception ex)
             {
@@ -76,7 +80,7 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpPut("[action]")]
-        public async Task<IActionResult> UpdateCampus(int id, Campus campus)
+        public async Task<IActionResult> UpdateCampus(int id, CampusDTO campus)
         {
             if (id != campus.CampusId)
             {
