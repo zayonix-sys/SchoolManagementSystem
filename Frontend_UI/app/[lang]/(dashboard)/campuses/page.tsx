@@ -2,30 +2,32 @@
 import { Breadcrumbs, BreadcrumbItem } from "@/components/ui/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
-import CampusSheet from "./campus-sheet";
+import CampusSheet from "./add-campus";
 import ReportsCard from "./reports";
+import ReportsArea from "./reports-area";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import DepartmentSheet from "./department-sheet";
+import AddDepartment from "./add-department";
 import { CampusData, getCampuses } from "@/services/campusService";
 import { useEffect, useState } from "react";
+import AddCampus from "./add-campus";
 import EditCampus from "./edit-campus";
+
 
 const Campus = () => {
   const [campuses, setCampuses] = useState<CampusData[]>([]);
-  // const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCampuses = async () => {
-      // setLoading(true);
+      setLoading(true);
       try {
-        const data = await getCampuses();
-        setCampuses(data);
-        console.log(campuses);
+        const campuses = await getCampuses();
+        setCampuses(campuses.data as CampusData[]);
       } catch (err) {
-        //setError(err);
+        setError(err as any);
       } finally {
-        //setLoading(false);
+        setLoading(false);
       }
     };
 
@@ -40,8 +42,8 @@ const Campus = () => {
           <BreadcrumbItem className="text-primary">Campus</BreadcrumbItem>
         </Breadcrumbs>
         <div className="flex justify-end space-x-4">
-        <CampusSheet />
-        <DepartmentSheet campuses={campuses} />
+          <AddCampus />
+          <AddDepartment />
         </div>
       </div>
       {/* <div className="mt-5 text-2xl font-medium text-default-900">Campus Registration</div> */}

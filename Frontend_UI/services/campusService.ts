@@ -12,38 +12,55 @@ export interface CampusData {
   email?: string
 }
 
+interface ApiResponse
+{
+  success: boolean
+  data: CampusData | CampusData[]
+  errors:[]
+  message: string
+}
+
 const BASE_URL = "/campuses";
 
-export const addCampus = async (campusData: CampusData): Promise<CampusData> => {
+export const getCampuses = async (): Promise<ApiResponse> => {
   try
   {
-    const response = await api.post<CampusData>(BASE_URL+"/AddCampus", campusData);
-    return response.data;
+    const response = await api.get<ApiResponse>(BASE_URL + "/GetCampuses");
+    return response.data; 
   }
-  catch (error)
+  catch (error: any)
   {
+    console.error("Error fetching campuses:", error);
     throw error;
   }
 };
 
-export const getCampuses = async (): Promise<CampusData[]> => {
-  try {
-    const response = await api.get<CampusData[]>(BASE_URL+"/GetCampuses");
+export const addCampus = async (campusData: CampusData): Promise<ApiResponse> => {
+  try
+  {
+    const response = await api.post<ApiResponse>(BASE_URL+"/AddCampus", campusData);
     return response.data;
-  } catch (error) {
+  }
+  catch (error: any)
+  {
+    console.error("Error adding campus:", error);
     throw error;
   }
 };
 
-export const getCampusById = async (id: number | undefined) => {
-  try {
-    const response = await api.get<CampusData>(`${BASE_URL}/GetCampusById/${id}`);
+export const updateCampus = async (campusData: CampusData): Promise<ApiResponse> => {
+  try
+  {
+    const response = await api.put<ApiResponse>(`${BASE_URL}/UpdateCampus`, campusData);
     return response.data;
-  } catch (error) {
-    console.error("Failed to fetch campus by ID:", error);
+  }
+  catch (error: any)
+  {
+    console.error("Error updating campus:", error);
     throw error;
   }
 };
+
 
 // export const fetchClassById = async (id: number): Promise<ClassroomData> => {
 //   try {

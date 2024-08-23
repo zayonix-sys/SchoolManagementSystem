@@ -43,7 +43,7 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task UpdateDepartmentAsync(int id, Department department)
         {
-            await _departmentRepository.UpdateAsync(id, department);
+            //await _departmentRepository.UpdateAsync(id, department);
         }
     }
 }

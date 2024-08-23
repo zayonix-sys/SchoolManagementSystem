@@ -71,7 +71,7 @@ const ReportsCard = ({ campusId }: { campusId: number | undefined }) => {
                 {item.icon}
               </span>
             </div>
-            <div className="mt-4 text-center">
+            <div className="mt-4 text-center justify-center">
               <div className="text-base font-medium text-default-600">{item.name}</div>
               <div className={`text-3xl font-semibold text-${item.color} mt-1`}>{item.count}</div>
               {item.id === 1 && (
@@ -84,8 +84,8 @@ const ReportsCard = ({ campusId }: { campusId: number | undefined }) => {
               {/* <div className="flex items-center gap-1 mt-2.5">
                 <span className="text-xs xl:text-sm font-medium text-default-600 whitespace-nowrap">Project Progress</span>
                 <span className="text-xs xl:text-sm font-medium text-success">+{item.rate}</span>
-                <TrendingUp className="h-[14px] w-[14px] text-success/90" />
-              </div> */}
+                <TrendingUp className="h-[14px] w-[14px] text-success/90" /> */}
+              </div>
             </div>
           </Card>
         ))

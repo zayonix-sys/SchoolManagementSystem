@@ -61,6 +61,7 @@ export default function DepartmentSheet({campuses}: DepartmentSheetProps) {
     }
   };
 
+export default function AddDepartment() {
   return (
     <Sheet>
       <SheetTrigger asChild>
