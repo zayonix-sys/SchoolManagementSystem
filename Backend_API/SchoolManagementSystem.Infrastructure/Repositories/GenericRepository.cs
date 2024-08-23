@@ -22,7 +22,7 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await _dbSet.ToListAsync() ?? new List<T>();
         }
 
         public async Task<T> GetByIdAsync(int id)
