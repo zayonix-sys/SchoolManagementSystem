@@ -18,13 +18,13 @@ const campusSchema = z.object({
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
   postalCode: z.string().min(5, "Zip Code is required").regex(/^\d{5}$/, "Invalid Zip Code"),
-  phoneNumber: z.string(),
-  email: z.string().email(),
+  phoneNumber: z.string().max(15, "Phone number must be at most 15 characters long"),
+  email: z.string().email({ message: "Invalid email address" }).optional(),
 });
 
 type CampusFormValues = z.infer<typeof campusSchema>;
 
-export default function CampusSheet() {
+export default function AddCampus() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CampusFormValues>({
     resolver: zodResolver(campusSchema),
   });
@@ -32,29 +32,28 @@ export default function CampusSheet() {
   const [stateid, setstateid] = useState(0);
 
   const onSubmit: SubmitHandler<CampusFormValues> = async data => {
-    let response;
-    try
-    {
-      // Send data to backend Api using campusService
-      const response = await addCampus(data);  
-      console.log(response)
-      if (response != null) {
-        // Handle successful response
-        console.log("Success:", response);
-        toast.success( response.campusName + " Campus Added  successfully!");
-        reset();
-      } else {
-        // Handle errors from server
-        console.error("Error:", response);
-      }
+    try {
+        const response = await addCampus(data);
+        console.log("Add");
+        console.log(response);
+        
+        if (response.success) {
+          if (Array.isArray(response.data)) {
+            toast.success(`${response.data[0].campusName} Campus Added successfully!`);
+          } else {
+            toast.success(`${response.data.campusName} Campus Added successfully!`);
+          }
+          reset();
+        } else {
+            console.error("Error:", response);
+            toast.error(`Error: ${response.message || 'Something went wrong'}`);
+        }
+    } catch (error) {
+        console.error("Request Failed:", error);
+        toast.error("Request Failed");
     }
-    catch (error)
-    {
-      toast.error("Request Failed", response);
-    }
-    
-    
-  };
+};
+
 
   const handleError = () => {
     if (Object.keys(errors).length > 0) {

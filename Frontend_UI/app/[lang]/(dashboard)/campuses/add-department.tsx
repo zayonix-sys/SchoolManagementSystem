@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 //we can change the props "side"'s value to 'top', 'left', 'bottom', 'right' so that the sheet will come out from different direction.
 
-export default function DepartmentSheet() {
+export default function AddDepartment() {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -32,7 +32,7 @@ export default function DepartmentSheet() {
             <form>
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2 ">
-          <Input type="text" placeholder="Campus Name" />
+          {/* <Input type="text" placeholder="Campus Name" /> */}
         </div>
         <div className="col-span-2 ">
           <Input type="text" placeholder="Department" />

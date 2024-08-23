@@ -1,7 +1,10 @@
 "use client"
 
 import { Docs } from "@/components/svg";
-import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { Icon } from "@iconify/react";
 import { TrendingUp } from "lucide-react";
 import React, { Fragment } from "react";
 
@@ -59,14 +62,18 @@ const ReportsCard = () => {
                 {item.icon}
               </span>
             </div>
-            <div className="mt-4 text-center">
+            <div className="mt-4 text-center justify-center">
               <div className="text-base font-medium text-default-600">{item.name}</div>
               <div className={`text-3xl font-semibold text-${item.color} mt-1`}>{item.count}</div>
-              {/* <div className="flex items-center gap-1 mt-2.5">
-                <span className="text-xs xl:text-sm font-medium text-default-600 whitespace-nowrap">Project Progress</span>
+              <Button variant="ghost"
+                size="sm"
+                className="hover:bg-transparent text-xs hover:text-default-800 px-1">
+                  View List</Button>
+              <div className="flex items-center gap-1 mt-2.5">
+                {/* <span className="text-xs xl:text-sm font-medium text-default-600 whitespace-nowrap">Project Progress</span>
                 <span className="text-xs xl:text-sm font-medium text-success">+{item.rate}</span>
-                <TrendingUp className="h-[14px] w-[14px] text-success/90" />
-              </div> */}
+                <TrendingUp className="h-[14px] w-[14px] text-success/90" /> */}
+              </div>
             </div>
           </Card>
         ))

@@ -43,10 +43,10 @@ namespace SchoolManagementSystem.Application.Services
             return _mapper.MapToDto(response);
         }
 
-        public async Task UpdateCampusAsync(int id, CampusDTO dto)
+        public async Task UpdateCampusAsync(CampusDTO dto)
         {
             var model = _mapper.MapToEntity(dto);
-            await _campusRepository.UpdateAsync(id, model);
+            await _campusRepository.UpdateAsync(model);
         }
     }
 }
