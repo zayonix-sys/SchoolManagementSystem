@@ -51,26 +51,38 @@ const Campus = () => {
         <CollapsibleTable />
         </CardContent>
       </Card> */}
-      <Accordion type="single" collapsible className="w-full border rounded-md divide-y mt-5">
-        {campuses.map((campus) => (
-          <AccordionItem key={campus.campusId} value={`item-${campus.campusId}`} className="shadow-none rounded-none open">
-            <AccordionTrigger>{campus.campusName}</AccordionTrigger>
-            <AccordionContent>
-              <div className="flex flex-row-reverse">
-              {campus.campusId !== undefined && (
-                <EditCampus campusId={campus.campusId} />
-              )}
+      <Accordion
+  type="single"
+  collapsible
+  className="w-full border rounded-md divide-y mt-5"
+  // defaultValue={`item-${campuses[0]?.campusId}`}
+  defaultValue={`item-1`}
+>
+  {campuses.map((campus, index) => (
+    <AccordionItem
+      key={campus.campusId}
+      value={`item-${campus.campusId}`} // This value should match defaultValue
+      className="shadow-none rounded-none"
+    >
+      <AccordionTrigger>
+        Campus: {index + 1} - {campus.campusName}
+      </AccordionTrigger>
+      <AccordionContent>
+        <div className="flex flex-row-reverse">
+          {campus.campusId !== undefined && (
+            <EditCampus campusId={campus.campusId} />
+          )}
+        </div>
+        <div className="col-span-12 md:col-span-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4">
+            <ReportsCard />
+          </div>
+        </div>
+      </AccordionContent>
+    </AccordionItem>
+  ))}
+</Accordion>
 
-                  </div>
-              <div className="col-span-12 md:col-span-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4">
-                  <ReportsCard />
-                </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
     </div>
   );
 };
