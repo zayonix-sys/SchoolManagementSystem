@@ -17,13 +17,13 @@ namespace SchoolManagementSystem.API.Controllers
             _departmentService = department;
         }
 
-        [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Department>>> GetDepartments()
+        [HttpGet("GetDepartments/{campusId}")]
+        public async Task<ActionResult<IEnumerable<Department>>> GetDepartments(int campusId)
         {
             _logger.LogInformation("Fetching all Departments.");
             try
             {
-                var departments = await _departmentService.GetAllDepartmentsAsync();
+                var departments = await _departmentService.GetAllDepartmentsWithCampusAsync(campusId);
                 _logger.LogInformation("Successfully retrieved {Count} departments.", departments?.Count() ?? 0);
 
                 return Ok(departments);
