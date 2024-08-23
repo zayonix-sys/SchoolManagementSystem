@@ -1,4 +1,5 @@
-﻿using SchoolManagementSystem.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Domain.Entities;
 using SchoolManagementSystem.Domain.Interfaces;
 
@@ -7,7 +8,6 @@ namespace SchoolManagementSystem.Application.Services
     public class DepartmentService : IDepartments
     {
         private readonly IGenericRepository<Department> _departmentRepository;
-
         public DepartmentService(IGenericRepository<Department> genericRepository)
         {
             _departmentRepository = genericRepository;
@@ -27,6 +27,14 @@ namespace SchoolManagementSystem.Application.Services
         {
             return (await _departmentRepository.GetAllAsync()).ToList();
         }
+
+        public async Task<List<Department>> GetAllDepartmentsWithCampusAsync(int campusId)
+        {
+            return (await _departmentRepository.GetAllAsync(
+                include: q => q.Include(d => d.Campus),
+                filter: d => d.CampusId == campusId)).ToList();
+        }
+
 
         public async Task<Department> GetDepartmentByIdAsync(int departmentId)
         {

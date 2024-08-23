@@ -1,11 +1,13 @@
 import { api } from "@/config/axios.config";
+import { CampusData } from "./campusService";
 
 export interface DepartmentData {
-  departmentId?: number
+  departmentId?: number | undefined | null
   campusId?: number
   departmentName: string
   description?: string
-  
+  isActive?: true 
+  campus?: CampusData;
 }
 
 const BASE_URL = "/Departments";
@@ -22,9 +24,9 @@ export const addDepartment = async (departmentData: DepartmentData): Promise<Dep
   }
 };
 
-export const getDepartments = async (): Promise<DepartmentData[]> => {
+export const getDepartments = async (campusId: number): Promise<DepartmentData[]> => {
   try {
-    const response = await api.get<DepartmentData[]>(BASE_URL+"/GetDepartments");
+    const response = await api.get<DepartmentData[]>(BASE_URL+`/GetDepartments/${campusId}`);
     return response.data;
   } catch (error) {
     throw error;

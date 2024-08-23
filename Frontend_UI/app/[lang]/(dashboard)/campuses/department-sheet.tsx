@@ -10,44 +10,27 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { addDepartment } from "@/services/departmentService";
 import { CampusData, getCampuses } from "@/services/campusService";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import DashboardSelect from "@/components/dasboard-select";
 
 // Define Zod schema
 const departmentSchema = z.object({
-  campusId: z.number().min(1, "Campus Name is required"),
+  campusId: z.coerce.number(),
   departmentName: z.string().min(1, "Department Name is required"),
-  description: z.string().min(1)
+  description: z.string().min(1),
+  // isActive: z.boolean() // Add this line
 });
 
 type DepartmentFormValues = z.infer<typeof departmentSchema>;
-
-export default function DepartmentSheet() {
+interface DepartmentSheetProps {
+  campuses: CampusData[];
+}
+export default function DepartmentSheet({campuses}: DepartmentSheetProps) {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<DepartmentFormValues>({
     resolver: zodResolver(departmentSchema),
   });
-  // const [campuses, setCampuses] = useState<CampusData[]>([]);
-  const campuses = [
-    {campusId: 1, caampusName: "Abcde"},
-    {campusId: 2, caampusName: "Xyz"},
-    {campusId: 3, caampusName: "de"},
-  ]
-  // useEffect(() => {
-  //   const fetchCampuses = async () => {
-  //     // setLoading(true);
-  //     try {
-  //       const data = await getCampuses();
-  //       setCampuses(data);
-  //       console.log(campuses);
-  //     } catch (err) {
-  //       //setError(err);
-  //     } finally {
-  //       //setLoading(false);
-  //     }
-  //   };
-
-  //   fetchCampuses();
-  // }, []);
+  
   const onSubmit: SubmitHandler<DepartmentFormValues> = async data => {
+    console.log(data);
     let response;
     try
     {
@@ -81,7 +64,7 @@ export default function DepartmentSheet() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button>
+        <Button aria-hidden="true">
           <span className='text-xl mr-1'>
             <Icon icon="heroicons:building-library-solid" className="w-6 h-6 mr-2" />
           </span>
@@ -98,20 +81,27 @@ export default function DepartmentSheet() {
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
               <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-              <Select {...register("campusId")}>
-                  <SelectTrigger aria-label="Campus">
-                    <SelectValue placeholder="Select Campus" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {campuses.map((campus) => (
-                        <SelectItem key={campus.campusId} value={String(campus.campusId)}>
-                          {campus.campusId} {/* Replace with campus name or whatever display text you prefer */}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+              <select 
+                className="flex-1 w-full rounded py-2 border-blue-100" 
+                id="campus" 
+                {...register("campusId", {valueAsNumber: true})}
+              >
+                {campuses.map(campus => (
+                  <option key={campus.campusId} value={Number(1)}>
+                    {campus.campusName}
+                  </option>
+                ))}
+              </select>
+                  {/* <Select>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Theme" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="light">Light</SelectItem>
+                      <SelectItem value="dark">Dark</SelectItem>
+                      <SelectItem value="system">System</SelectItem>
+                    </SelectContent>
+                </Select> */}
                   {errors.campusId && <p className="text-destructive">{errors.campusId.message}</p>}
                 </div>
                 <div className="col-span-2">

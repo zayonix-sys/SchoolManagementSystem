@@ -1,12 +1,22 @@
 "use client"
-
 import { Docs, ListFill } from "@/components/svg";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { TrendingUp } from "lucide-react";
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import ViewDepartment from "./view-department";
 
-const ReportsCard = () => {
+
+interface ReportsCardProps {
+  campusId: { campusId: number };
+}
+const ReportsCard = ({ campusId }: { campusId: number | undefined }) => {
+
+  
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState(null);
+  console.log(campusId);
+
   interface ReportItem {
     id: number;
     name: string;
@@ -20,7 +30,7 @@ const ReportsCard = () => {
     {
       id: 1,
       name: "No. of Departments",
-      count: "1206",
+      count: "10",
       rate: "8.2",
       icon: <Docs className="w-6 h-6 text-primary" />,
       color: "primary"
@@ -48,6 +58,7 @@ const ReportsCard = () => {
       rate: "8.2",
       icon: <Docs className="w-6 h-6 text-info" />,
       color: "info"
+      
     }
   ]
   return (
@@ -63,9 +74,12 @@ const ReportsCard = () => {
             <div className="mt-4 text-center">
               <div className="text-base font-medium text-default-600">{item.name}</div>
               <div className={`text-3xl font-semibold text-${item.color} mt-1`}>{item.count}</div>
-              <Button variant="ghost"
-                size="sm"
-                className="hover:bg-transparent text-xs hover:text-default-800 px-1">View List</Button>
+              {item.id === 1 && (
+                <ViewDepartment campusId={campusId}/>
+              )}
+              {item.id === 2 && (
+                <ViewDepartment campusId={campusId}/>
+              )}
               
               {/* <div className="flex items-center gap-1 mt-2.5">
                 <span className="text-xs xl:text-sm font-medium text-default-600 whitespace-nowrap">Project Progress</span>

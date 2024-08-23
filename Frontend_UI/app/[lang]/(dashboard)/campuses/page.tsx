@@ -33,7 +33,7 @@ const Campus = () => {
   }, []);
 
   return (
-    <div>
+    <div aria-hidden="true">
       <div> 
         <Breadcrumbs>
           <BreadcrumbItem>Administration</BreadcrumbItem>
@@ -41,7 +41,7 @@ const Campus = () => {
         </Breadcrumbs>
         <div className="flex justify-end space-x-4">
         <CampusSheet />
-        <DepartmentSheet />
+        <DepartmentSheet campuses={campuses} />
         </div>
       </div>
       {/* <div className="mt-5 text-2xl font-medium text-default-900">Campus Registration</div> */}
@@ -75,7 +75,7 @@ const Campus = () => {
         </div>
         <div className="col-span-12 md:col-span-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4">
-            <ReportsCard />
+          <ReportsCard campusId={campus.campusId} />
           </div>
         </div>
       </AccordionContent>

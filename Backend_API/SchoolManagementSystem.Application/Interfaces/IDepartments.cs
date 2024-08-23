@@ -10,6 +10,7 @@ namespace SchoolManagementSystem.Application.Interfaces
     public interface IDepartments
     {
         Task<List<Department>> GetAllDepartmentsAsync();
+        Task<List<Department>> GetAllDepartmentsWithCampusAsync(int id);
         Task<Department> GetDepartmentByIdAsync(int departmentId);
         Task AddDepartmentAsync(Department department);
         Task UpdateDepartmentAsync(int id, Department department);

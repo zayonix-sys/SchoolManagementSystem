@@ -23,7 +23,9 @@ namespace SchoolManagementSystem.Domain.Entities
         [StringLength(255)]
         public string Description { get; set; }
 
+        public bool IsActive { get; set; } = true;
+
         // Navigation property
-        public Campus Campus { get; set; }
+        public Campus? Campus { get; set; }
     }
 }
