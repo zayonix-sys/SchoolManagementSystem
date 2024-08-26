@@ -41,12 +41,6 @@ export default function ViewDepartment({
           <div className="py-6">
             <SelectionOperation campus={campus ?? null} />
           </div>
-          <div className="space-x-4 rtl:space-x-reverse pt-[120px]">
-            <Button variant="outline" size="xs">
-              Cancel
-            </Button>
-            <Button size="xs">Ok</Button>
-          </div>
         </div>
         <SheetFooter>
           <SheetClose asChild>footer content</SheetClose>

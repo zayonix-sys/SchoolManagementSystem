@@ -56,9 +56,9 @@ export default function EditCampus({ campus }: { campus: CampusData }) {
 
         if (response.success) {
           if (Array.isArray(response.data)) {
-            toast.success(`${response.data[0].campusName} Campus Added successfully!`);
+            toast.success(`${response.data[0].campusName} Campus Updated successfully!`);
           } else {
-            toast.success(`${response.data.campusName} Campus Added successfully!`);
+            toast.success(`${response.data.campusName} Campus Updated successfully!`);
           }
           reset();
         } else {
@@ -161,7 +161,7 @@ export default function EditCampus({ campus }: { campus: CampusData }) {
                   {errors.email && <p className="text-destructive">{errors.email.message}</p>}
                 </div>
                 <div className="col-span-2">
-                  <Button type="submit">Update Campus</Button>
+                  <Button type="submit">Update</Button>
                 </div>
               </div>
             </form>
