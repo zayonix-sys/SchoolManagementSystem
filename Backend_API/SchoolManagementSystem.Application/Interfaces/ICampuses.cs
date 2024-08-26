@@ -13,7 +13,7 @@ namespace SchoolManagementSystem.Application.Interfaces
         Task<List<CampusDTO>> GetAllCampusesAsync();
         Task<CampusDTO> GetCampusByIdAsync(int campusId);
         Task AddCampusAsync(CampusDTO campus);
-        Task UpdateCampusAsync(int id, CampusDTO campus);
+        Task UpdateCampusAsync(CampusDTO campus);
         Task DeleteCampusAsync(int campusId);
         
     }

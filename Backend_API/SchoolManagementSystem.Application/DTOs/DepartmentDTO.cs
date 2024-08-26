@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SchoolManagementSystem.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
@@ -6,22 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolManagementSystem.Domain.Entities
+namespace SchoolManagementSystem.Application.DTOs
 {
-    public class Department
+    public class DepartmentDTO
     {
-        [Key]
         public int DepartmentId { get; set; }
 
-        [ForeignKey("Campus")]
         public int CampusId { get; set; }
 
-        [Required]
-        [StringLength(100)]
         public string DepartmentName { get; set; }
 
-        [StringLength(255)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public bool IsActive { get; set; } = true;
 

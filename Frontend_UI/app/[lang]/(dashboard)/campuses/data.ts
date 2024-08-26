@@ -1,15 +1,10 @@
 export interface DataRows {
-  id: number;
-  name?: string;
-  title?: string;
-  email?: string;
-  role?: string;
-  avatar?: string;
-  details: {
-    city?: string;
-    experience?: string;
-    post?: string;
-  };
+  departmentId: number;
+  campusName?: string;
+  departmentName?: string;
+  description?: string;
+  status: boolean;
+  action: string;
 }
 
 

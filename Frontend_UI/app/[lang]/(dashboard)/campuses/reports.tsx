@@ -1,28 +1,38 @@
-"use client"
-
+"use client";
 import { Docs } from "@/components/svg";
 import { Card } from "@/components/ui/card";
-import { TrendingUp } from "lucide-react";
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
+import ViewDepartment from "./view-department";
+import { DepartmentData } from "@/services/departmentService";
+import { CampusData } from "@/services/campusService";
 
-const ReportsCard = () => {
-  interface ReportItem {
-    id: number;
-    name: string;
-    count: string;
-    rate: string;
-    icon: React.ReactNode;
-    color?: 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'destructive' | 'default' | 'dark'
-  }
+interface ReportsCardProps {
+  //campusId: number | undefined;
+  campus: CampusData;
+}
 
+interface ReportItem {
+  id: number;
+  name: string;
+  count: string;
+  rate: string;
+  icon: React.ReactNode;
+  color: string;
+}
+
+//const ReportsCard = ({ campusId }: ReportsCardProps) => {
+const ReportsCard = ({ campus }: ReportsCardProps) => {
+  // const [department, setDepartments] = useState(
+  //   departments as DepartmentData[]
+  // );
   const reports: ReportItem[] = [
     {
       id: 1,
       name: "No. of Departments",
-      count: "1206",
+      count: (campus.departments ? campus.departments.length : 0).toString(),
       rate: "8.2",
       icon: <Docs className="w-6 h-6 text-primary" />,
-      color: "primary"
+      color: "primary",
     },
     {
       id: 2,
@@ -30,7 +40,7 @@ const ReportsCard = () => {
       count: "240",
       rate: "8.2",
       icon: <Docs className="w-6 h-6 text-success" />,
-      color: "success"
+      color: "success",
     },
     {
       id: 3,
@@ -38,7 +48,7 @@ const ReportsCard = () => {
       count: "96",
       rate: "8.2",
       icon: <Docs className="w-6 h-6 text-destructive" />,
-      color: "destructive"
+      color: "destructive",
     },
     {
       id: 4,
@@ -46,31 +56,38 @@ const ReportsCard = () => {
       count: "18",
       rate: "8.2",
       icon: <Docs className="w-6 h-6 text-info" />,
-      color: "info"
-    }
-  ]
+      color: "info",
+    },
+  ];
+
   return (
     <Fragment>
-      {
-        reports.map(item => (
-          <Card key={item.id} className="rounded-lg p-4 xl:p-2 xl:py-6 2xl:p-6  flex flex-col items-center 2xl:min-w-[168px]">
-            <div>
-              <span className={`h-12 w-12 rounded-full flex justify-center items-center bg-${item.color}/10`}>
-                {item.icon}
-              </span>
+      {reports.map((item) => (
+        <Card
+          key={item.id}
+          className="rounded-lg p-4 xl:p-2 xl:py-6 2xl:p-6 flex flex-col items-center 2xl:min-w-[168px]"
+        >
+          <div>
+            <span
+              className={
+                "h-12 w-12 rounded-full flex justify-center items-center bg-${item.color}/10"
+              }
+            >
+              {item.icon}
+            </span>
+          </div>
+          <div className="mt-4 text-center justify-center">
+            <div className="text-base font-medium text-default-600">
+              {item.name}
             </div>
-            <div className="mt-4 text-center">
-              <div className="text-base font-medium text-default-600">{item.name}</div>
-              <div className={`text-3xl font-semibold text-${item.color} mt-1`}>{item.count}</div>
-              {/* <div className="flex items-center gap-1 mt-2.5">
-                <span className="text-xs xl:text-sm font-medium text-default-600 whitespace-nowrap">Project Progress</span>
-                <span className="text-xs xl:text-sm font-medium text-success">+{item.rate}</span>
-                <TrendingUp className="h-[14px] w-[14px] text-success/90" />
-              </div> */}
+            <div className={"text-3xl font-semibold text-${item.color} mt-1"}>
+              {item.count}
             </div>
-          </Card>
-        ))
-      }
+            {item.id === 1 && <ViewDepartment campus={campus} />}
+            {/* {item.id === 2 && <ViewDepartment campusId={campusId} />} */}
+          </div>
+        </Card>
+      ))}
     </Fragment>
   );
 };

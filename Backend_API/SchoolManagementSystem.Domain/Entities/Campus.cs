@@ -36,5 +36,18 @@ namespace SchoolManagementSystem.Domain.Entities
 
         [StringLength(100)]
         public string? Email { get; set; }
+
+        // Navigation properties for related entities
+        public virtual ICollection<Department> Departments { get; set; }
+        //public virtual ICollection<Classroom> Classrooms { get; set; }
+        //public virtual ICollection<Employee> Employees { get; set; }
+
+        public Campus()
+        {
+            Departments = new HashSet<Department>();
+            //Classrooms = new HashSet<Classroom>();
+            //Employees = new HashSet<Employee>();
+        }
     }
+
 }
