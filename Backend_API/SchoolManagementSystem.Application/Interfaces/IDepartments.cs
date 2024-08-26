@@ -16,6 +16,5 @@ namespace SchoolManagementSystem.Application.Interfaces
         Task AddDepartmentAsync(DepartmentDTO department);
         Task UpdateDepartmentAsync(DepartmentDTO department);
         Task DeleteDepartmentAsync(int departmentId);
-        
     }
 }

@@ -81,11 +81,11 @@ export default function EditCampus({ campus }: { campus: CampusData }) {
     <Sheet>
       <SheetTrigger asChild>
         <Button>
-          <span className="text-xl mr-1">
-            <Icon icon="heroicons:pencil-square" className="w-6 h-6 mr-2" />
+          <span className="mr-1">
+            <Icon icon="heroicons:pencil-square" className="h-6 w-6"/>
           </span>
-          Edit Campus
         </Button>
+
       </SheetTrigger>
       <SheetContent className="max-w-[736px]">
         <SheetHeader>

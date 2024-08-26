@@ -68,3 +68,13 @@ export const getDepartmentById = async (id: number | undefined) => {
     throw error;
   }
 };
+
+export const deleteDepartment = async (id: number): Promise<ApiResponse> => {
+  try {
+    const response = await api.delete<ApiResponse>(`${BASE_URL}/DeleteDepartment/${id}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Error deleting department:", error);
+    throw error;
+  }
+};

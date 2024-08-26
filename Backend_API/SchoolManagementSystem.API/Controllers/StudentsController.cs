@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SchoolManagementSystem.Domain.Interfaces;
-using SchoolManagementSystem.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SchoolManagementSystem.Application.Interfaces;
+using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.API.Controllers
 {
@@ -91,7 +87,7 @@ namespace SchoolManagementSystem.API.Controllers
             _logger.LogInformation("Updating student with ID {StudentId}.", id);
             try
             {
-                await _studentService.UpdateStudentAsync(student);
+                await _studentService.UpdateStudentAsync(id, student);
                 _logger.LogInformation("Successfully updated student with ID {StudentId}.", id);
                 return NoContent();
             }
