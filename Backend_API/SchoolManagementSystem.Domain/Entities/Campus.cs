@@ -37,6 +37,8 @@ namespace SchoolManagementSystem.Domain.Entities
         [StringLength(100)]
         public string? Email { get; set; }
 
+        public bool IsActive { get; set; } = true;
+
         // Navigation properties for related entities
         public virtual ICollection<Department> Departments { get; set; }
         //public virtual ICollection<Classroom> Classrooms { get; set; }
