@@ -4,11 +4,19 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Icon } from '@iconify/react';
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import{ addCampus, CampusData, getCampusById } from "../../../../services/campusService"; 
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { CampusData, updateCampus } from "../../../../services/campusService";
 
 // Define Zod schema
 const campusSchema = z.object({
@@ -18,60 +26,50 @@ const campusSchema = z.object({
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
   postalCode: z.string().min(5, "Zip Code is required").regex(/^\d{5}$/, "Invalid Zip Code"),
-  phoneNumber: z.string(),
-  email: z.string().email(),
+  phoneNumber: z.string().max(15, "Phone number must be at most 15 characters long"),
+  email: z.string().email({ message: "Invalid email address" }).optional(),
 });
 
 type CampusFormValues = z.infer<typeof campusSchema>;
 
-export default function EditCampus({ campusId }: { campusId: number | undefined }) {
+export default function EditCampus({ campus }: { campus: CampusData }) {
+  const { campusId, campusName, address, country, city, state, postalCode, phoneNumber, email } = campus;
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CampusFormValues>({
     resolver: zodResolver(campusSchema),
+    defaultValues: {
+      campusName,
+      address,
+      country,
+      city,
+      state,
+      postalCode,
+      phoneNumber,
+      email,
+    }
   });
-  const [campus, setCampus] = useState<CampusData>();
-  
 
-  useEffect(() => {
-    const fetchCampusById = async () => {
-      // setLoading(true);
-      try {
-        const data = await getCampusById(campusId);
-        setCampus(data);
-        console.log(campus);
-      } catch (err) {
-        //setError(err);
-      } finally {
-        //setLoading(false);
-      }
-    };
+  const onSubmit: SubmitHandler<CampusFormValues> = async (data) => {
+    try {
+        const updatedCampus = { ...data, campusId };
+        const response = await updateCampus(updatedCampus);
 
-    fetchCampusById();
-  }, []);
-  
-  const onSubmit: SubmitHandler<CampusFormValues> = async data => {
-    let response;
-    try
-    {
-      // Send data to backend Api using campusService
-      const response = await addCampus(data);  
-      console.log(response)
-      if (response != null) {
-        // Handle successful response
-        console.log("Success:", response);
-        toast.success( response.campusName + " Campus Added  successfully!");
-        reset();
-      } else {
-        // Handle errors from server
-        console.error("Error:", response);
-      }
+        if (response.success) {
+          if (Array.isArray(response.data)) {
+            toast.success(`${response.data[0].campusName} Campus Updated successfully!`);
+          } else {
+            toast.success(`${response.data.campusName} Campus Updated successfully!`);
+          }
+          reset();
+        } else {
+            toast.error("Failed to update the campus");
+        }
+    } catch (error) {
+        console.error("Request failed:", error);
+        toast.error("Request failed");
     }
-    catch (error)
-    {
-      toast.error("Request Failed", response);
-    }
-    
-    
-  };
+};
+
 
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
@@ -83,7 +81,7 @@ export default function EditCampus({ campusId }: { campusId: number | undefined 
     <Sheet>
       <SheetTrigger asChild>
         <Button>
-          <span className='text-xl mr-1'>
+          <span className="text-xl mr-1">
             <Icon icon="heroicons:pencil-square" className="w-6 h-6 mr-2" />
           </span>
           Edit Campus
@@ -163,7 +161,7 @@ export default function EditCampus({ campusId }: { campusId: number | undefined 
                   {errors.email && <p className="text-destructive">{errors.email.message}</p>}
                 </div>
                 <div className="col-span-2">
-                  <Button type="submit">Submit Form</Button>
+                  <Button type="submit">Update</Button>
                 </div>
               </div>
             </form>

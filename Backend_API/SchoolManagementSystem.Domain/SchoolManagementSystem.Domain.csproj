@@ -10,4 +10,8 @@
     <Folder Include="Exceptions\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="EntityFrameworkCore.Data.QueryBuilder" Version="8.0.2" />
+  </ItemGroup>
+
 </Project>
