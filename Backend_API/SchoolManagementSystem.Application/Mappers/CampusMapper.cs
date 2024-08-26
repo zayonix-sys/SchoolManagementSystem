@@ -41,5 +41,32 @@ namespace SchoolManagementSystem.Application.Mappers
                 Email = entity.Email
             };
         }
+
+        public CampusDTO MapToDtoWithSubEntity(Campus entity)
+        {
+            return new CampusDTO
+            {
+                CampusId = entity.CampusId,
+                CampusName = entity.CampusName,
+                Address = entity.Address,
+                Country = entity.Country,
+                State = entity.State,
+                City = entity.City,
+                PostalCode = entity.PostalCode,
+                PhoneNumber = entity.PhoneNumber,
+                Email = entity.Email,
+
+                // Map related entities
+                Departments = entity.Departments.Select(d => new DepartmentDTO
+                {
+                    //CampusId = d.CampusId,
+                    //Campus = d.Campus,
+                    DepartmentId = d.DepartmentId,
+                    DepartmentName = d.DepartmentName,
+                    Description = d.Description,
+                    IsActive = d.IsActive
+                }).ToList(),
+            };
+        }
     }
 }
