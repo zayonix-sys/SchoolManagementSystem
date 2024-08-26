@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Interfaces;
 using SchoolManagementSystem.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Infrastructure.Repositories
 {
