@@ -1,17 +1,25 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using SchoolManagementSystem.API.Middleware;
+using SchoolManagementSystem.Application.Interfaces;
+using SchoolManagementSystem.Application.Mappers;
+using SchoolManagementSystem.Application.Services;
+using SchoolManagementSystem.Domain.Interfaces;
 using SchoolManagementSystem.Infrastructure.Data;
 using SchoolManagementSystem.Infrastructure.Repositories;
-using SchoolManagementSystem.Domain.Interfaces;
-using SchoolManagementSystem.API.Middleware;
-using Microsoft.OpenApi.Models;
-using SchoolManagementSystem.Application.Interfaces;
-using SchoolManagementSystem.Application.Services;
-using SchoolManagementSystem.Domain.Entities;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using SchoolManagementSystem.Application.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3000", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials();
+    });
+});
 // Configure logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole(); // Logs to console
@@ -24,10 +32,15 @@ builder.Services.AddDbContext<SchoolContext>(options =>
 // Register the generic repository
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ICampuses, CampusService>();
+builder.Services.AddScoped<IClass, ClassService>();
+builder.Services.AddScoped<ISection, SectionService>();
+
 builder.Services.AddScoped<CampusMapper>();
 builder.Services.AddScoped<IDepartments, DepartmentService>();
 builder.Services.AddScoped<DepartmentMapper>();
 builder.Services.AddScoped<IStudent, StudentService>();
+builder.Services.AddScoped<ClassMapper>();
+
 
 // Add controllers
 builder.Services.AddControllers();
@@ -68,6 +81,8 @@ app.UseCors("AllowAllOrigins");
 
 // Add custom error-handling middleware
 app.UseMiddleware<ErrorHandlerMiddleware>();
+
+app.UseCors("AllowLocalhost3000");
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
