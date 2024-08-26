@@ -8,7 +8,8 @@ namespace SchoolManagementSystem.Application.Mappers
 {
     public interface IMapper<TDto, TEntity>
     {
-        TEntity MapToEntity(TDto dto);
         TDto MapToDto(TEntity entity);
+        TEntity MapToEntity(TDto dto);
+        
     }
 }

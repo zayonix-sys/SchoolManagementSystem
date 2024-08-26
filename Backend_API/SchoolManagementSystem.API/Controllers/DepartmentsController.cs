@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolManagementSystem.API.Models;
+using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
+using SchoolManagementSystem.Application.Services;
 using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.API.Controllers
@@ -18,7 +21,7 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpGet("GetDepartments/{campusId}")]
-        public async Task<ActionResult<IEnumerable<Department>>> GetDepartments(int campusId)
+        public async Task<ActionResult<ApiResponse<IEnumerable<DepartmentDTO>>>> GetDepartments(int campusId)
         {
             _logger.LogInformation("Fetching all Departments.");
             try
@@ -26,12 +29,12 @@ namespace SchoolManagementSystem.API.Controllers
                 var departments = await _departmentService.GetAllDepartmentsWithCampusAsync(campusId);
                 _logger.LogInformation("Successfully retrieved {Count} departments.", departments?.Count() ?? 0);
 
-                return Ok(departments);
+                return Ok(ApiResponse<IEnumerable<DepartmentDTO>>.SuccessResponse(departments, "Departments retrieved successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while fetching all Departments.");
-                return StatusCode(500, "Internal server error.");
+                _logger.LogError(ex, "An error occurred while fetching all Campuses.");
+                return StatusCode(500, ApiResponse<IEnumerable<DepartmentDTO>>.ErrorResponse("Internal server error."));
             }
         }
 
@@ -59,42 +62,37 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<Department>> AddDepartment(Department department)
+        public async Task<ActionResult<ApiResponse<DepartmentDTO>>> AddDepartment([FromBody] DepartmentDTO dto)
         {
-            _logger.LogInformation("Adding a new Department with name {DepartmentName}.", department.DepartmentName);
+            _logger.LogInformation("Adding a new Department with name {DepartmentName}.", dto.DepartmentName);
             try
             {
-                await _departmentService.AddDepartmentAsync(department);
-                _logger.LogInformation("Successfully added department with ID {departmentId}.", department.DepartmentId);
-                return CreatedAtAction(nameof(GetDepartments), new { id = department.DepartmentId }, department);
+                await _departmentService.AddDepartmentAsync(dto);
+                _logger.LogInformation("Successfully added department with ID {DepartmentId}.", dto.DepartmentId);
+                return Ok(ApiResponse<DepartmentDTO>.SuccessResponse(dto, "Department added successfully"));
+
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while adding a new department.");
-                return StatusCode(500, "Internal server error.");
+                return StatusCode(500, ApiResponse<DepartmentDTO>.ErrorResponse("Internal server error."));
             }
         }
 
         [HttpPut("[action]")]
-        public async Task<IActionResult> UpdateDepartment(int id, Department department)
+        public async Task<IActionResult> UpdateDepartment([FromBody] DepartmentDTO dto)
         {
-            if (id != department.DepartmentId)
-            {
-                _logger.LogWarning("Department ID mismatch: {Id} does not match {departmentId}.", id, department.DepartmentId);
-                return BadRequest("Department ID mismatch.");
-            }
-
-            _logger.LogInformation("Updating Campus with ID {CampusId}.", id);
+            _logger.LogInformation("Updating Department with ID {DepartmentId}.", dto.DepartmentId);
             try
             {
-                await _departmentService.UpdateDepartmentAsync(id, department);
-                _logger.LogInformation("Successfully updated Department with ID {DepartmentId}.", id);
-                return NoContent();
+                await _departmentService.UpdateDepartmentAsync(dto);
+                _logger.LogInformation("Successfully updated department with ID {CampusId}.", dto.DepartmentId);
+                return Ok(ApiResponse<DepartmentDTO>.SuccessResponse(dto, "Department updated successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while updating Department with ID {DepartmentId}.", id);
-                return StatusCode(500, "Internal server error.");
+                _logger.LogError(ex, "An error occurred while updating Department with ID {DepartmentId}.", dto.DepartmentId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
             }
         }
 

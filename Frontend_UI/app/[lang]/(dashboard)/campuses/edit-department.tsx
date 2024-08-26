@@ -16,7 +16,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { addDepartment } from "@/services/departmentService";
+import {
+  addDepartment,
+  DepartmentData,
+  updateDepartment,
+} from "@/services/departmentService";
 import { CampusData, getCampuses } from "@/services/campusService";
 import {
   Select,
@@ -29,16 +33,24 @@ import {
 // Define Zod schema
 const departmentSchema = z.object({
   campusId: z.coerce.number().optional(),
+  campusName: z.string().optional(),
   departmentName: z.string().min(1, "Department Name is required"),
   description: z.string().min(1),
   // isActive: z.boolean() // Add this line
 });
 
 type DepartmentFormValues = z.infer<typeof departmentSchema>;
-interface DepartmentSheetProps {
-  campuses: CampusData[];
-}
-export default function AddDepartment({ campuses }: DepartmentSheetProps) {
+
+export default function EditDepartment({
+  department,
+  campus,
+}: {
+  department: DepartmentData;
+  campus: CampusData;
+}) {
+  console.log(department);
+  const { departmentId, departmentName, description } = department;
+  const { campusId, campusName } = campus;
   const {
     register,
     handleSubmit,
@@ -47,34 +59,40 @@ export default function AddDepartment({ campuses }: DepartmentSheetProps) {
     formState: { errors },
   } = useForm<DepartmentFormValues>({
     resolver: zodResolver(departmentSchema),
+    defaultValues: {
+      campusId,
+      campusName,
+      departmentName,
+      description,
+    },
   });
 
-  const [campusId, setCampusId] = useState(campuses);
+  //const [campusId, setCampusId] = useState(campuses);
 
   const onSubmit: SubmitHandler<DepartmentFormValues> = async (data) => {
     try {
-      const response = await addDepartment(data);
+      const updatedData = { ...data, departmentId };
+      const response = await updateDepartment(updatedData);
+
       if (response.success) {
         if (Array.isArray(response.data)) {
           toast.success(
-            `${response.data[0].departmentName} Department Added successfully!`
+            `${response.data[0].campusName} Campus Added successfully!`
           );
         } else {
           toast.success(
-            `${response.data.departmentName} Department Added successfully!`
+            `${response.data.campusName} Campus Added successfully!`
           );
         }
         reset();
       } else {
-        console.error("Error:", response);
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error("Failed to update the campus");
       }
     } catch (error) {
-      console.error("Request Failed:", error);
-      toast.error("Request Failed");
+      console.error("Request failed:", error);
+      toast.error("Request failed");
     }
   };
-
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
       toast.error("Please correct the errors in the form.");
@@ -84,7 +102,7 @@ export default function AddDepartment({ campuses }: DepartmentSheetProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button aria-hidden="true">
+        {/* <Button aria-hidden="true">
           <span className="text-xl mr-1">
             <Icon
               icon="heroicons:building-library-solid"
@@ -92,6 +110,15 @@ export default function AddDepartment({ campuses }: DepartmentSheetProps) {
             />
           </span>
           Add Department
+        </Button> */}
+        <Button
+          aria-hidden="true"
+          size="icon"
+          variant="outline"
+          color="secondary"
+          className="h-7 w-7"
+        >
+          <Icon icon="heroicons:pencil" className="h-4 w-4" />
         </Button>
       </SheetTrigger>
       <SheetContent className="max-w-[736px]">
@@ -108,6 +135,7 @@ export default function AddDepartment({ campuses }: DepartmentSheetProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <Select
+                    defaultValue={campusId?.toString() ?? ""}
                     onValueChange={(value) =>
                       setValue("campusId", parseInt(value))
                     }
@@ -116,15 +144,13 @@ export default function AddDepartment({ campuses }: DepartmentSheetProps) {
                       <SelectValue placeholder="Select a campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {campuses.map((campus) => (
-                        <SelectItem
-                          className="hover:bg-default-300"
-                          key={campus.campusId}
-                          value={campus.campusId?.toString() ?? ""}
-                        >
-                          {campus.campusName}
-                        </SelectItem>
-                      ))}
+                      <SelectItem
+                        className="hover:bg-default-300"
+                        key={campusId}
+                        value={campusId?.toString() ?? ""}
+                      >
+                        {campusName}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
 

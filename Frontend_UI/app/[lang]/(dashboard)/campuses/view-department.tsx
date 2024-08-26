@@ -11,50 +11,40 @@ import {
 } from "@/components/ui/sheet";
 import SelectionOperation from "./table-selection-operation";
 import { useEffect, useState } from "react";
-import { DepartmentData, getDepartments } from "@/services/departmentService";
+import { DepartmentData } from "@/services/departmentService";
+import { CampusData } from "@/services/campusService";
 
 //we can change the props "side"'s value to 'top', 'left', 'bottom', 'right' so that the sheet will come out from different direction.
 
-export default function ViewDepartment({ campusId }: { campusId: number | undefined }) {
-  const [departments, setDepartments] = useState<DepartmentData[]>([]);
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      // setLoading(true);
-      try {
-        const data = await getDepartments(campusId as number);
-        setDepartments(data);
-        console.log(departments);
-        
-      } catch (err) {
-        //setError(err);
-      } finally {
-        //setLoading(false);
-      }
-    };
-
-    fetchDepartments();
-  }, []);
-  
+export default function ViewDepartment({
+  campus,
+}: {
+  campus: CampusData | null;
+}) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-      <Button variant="ghost"
-                size="sm"
-                className="hover:bg-transparent text-xs hover:text-default-800 px-1">View List</Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="hover:bg-transparent text-xs hover:text-default-800 px-1"
+        >
+          View List
+        </Button>
       </SheetTrigger>
       <SheetContent side="top">
         <SheetHeader>
           <SheetTitle>Department</SheetTitle>
-          <SheetDescription>
-            Make changes to your profile here. Click save when you're done.
-          </SheetDescription>
+          <SheetDescription>Campus - {campus?.campusName}</SheetDescription>
         </SheetHeader>
         <div>
           <div className="py-6">
-            <SelectionOperation departments={departments}/>
+            <SelectionOperation campus={campus ?? null} />
           </div>
           <div className="space-x-4 rtl:space-x-reverse pt-[120px]">
-            <Button variant="outline" size="xs">Cancel</Button>
+            <Button variant="outline" size="xs">
+              Cancel
+            </Button>
             <Button size="xs">Ok</Button>
           </div>
         </div>

@@ -18,5 +18,11 @@ namespace SchoolManagementSystem.Application.DTOs
         public string? PostalCode { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
+
+        // Collections of related entities
+        public ICollection<DepartmentDTO> Departments { get; set; }
+        //public ICollection<ClassroomDTO> Classrooms { get; set; }
+        //public ICollection<EmployeeDTO> Employees { get; set; }
     }
+
 }
