@@ -93,7 +93,7 @@ public class CampusesController : ControllerBase
         }
     }
 
-    [HttpDelete("[action]")]
+    [HttpDelete("DeleteCampus/{id}")]
     public async Task<IActionResult> DeleteCampus(int id)
     {
         _logger.LogInformation("Deleting campus with ID {CampusId}.", id);

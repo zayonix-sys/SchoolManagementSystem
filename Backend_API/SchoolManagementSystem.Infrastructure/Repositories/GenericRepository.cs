@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using SchoolManagementSystem.Domain.Interfaces;
 using SchoolManagementSystem.Infrastructure.Data;
