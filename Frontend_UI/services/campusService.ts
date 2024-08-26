@@ -76,10 +76,12 @@ export const updateCampus = async (
 //   }
 // };
 
-// export const deleteClass = async (id: number): Promise<void> => {
-//   try {
-//     await api.delete(`/classroom/${id}`);
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+export const deleteCampus = async (id: number): Promise<ApiResponse> => {
+  try {
+    const response = await api.delete<ApiResponse>(`${BASE_URL}/DeleteCampus/${id}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Error deleting campus:", error);
+    throw error;
+  }
+};

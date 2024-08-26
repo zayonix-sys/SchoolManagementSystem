@@ -96,20 +96,20 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
-        [HttpDelete("[action]")]
-        public async Task<IActionResult> DeleteDepartment(int id)
+        [HttpDelete("DeleteDepartment/{departmentId}")]
+        public async Task<IActionResult> DeleteDepartment(int departmentId)
         {
-            _logger.LogInformation("Deleting Department with ID {DepartmentId}.", id);
+            _logger.LogInformation("Deleting Department with ID {DepartmentId}.", departmentId);
             try
             {
-                await _departmentService.DeleteDepartmentAsync(id);
-                _logger.LogInformation("Successfully deleted Department with ID {DepartmentId}.", id);
-                return NoContent();
+                await _departmentService.DeleteDepartmentAsync(departmentId);
+                _logger.LogInformation("Successfully deleted Department with ID {DepartmentId}.", departmentId);
+                return Ok(ApiResponse<object>.SuccessResponse(null, "Department deleted successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while deleting Department with ID {DepartmentId}.", id);
-                return StatusCode(500, "Internal server error.");
+                _logger.LogError(ex, "An error occurred while deleting Department with ID {DepartmentId}.", departmentId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
             }
         }
     }

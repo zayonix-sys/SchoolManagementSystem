@@ -26,23 +26,21 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task DeleteCampusAsync(int campusId)
         {
-            await _campusRepository.DeleteAsync(campusId);
+            var campus = await _campusRepository.GetByIdAsync(campusId);
+            if (campus != null)
+            {
+                campus.IsActive = false;
+                await _campusRepository.UpdateAsync(campus);
+            }
         }
 
         public async Task<List<CampusDTO>> GetAllCampusesAsync()
         {
-            //var lst = new List<CampusDTO>();
-            //var response =  (await _campusRepository.GetAllAsync()).ToList();
-            //response.ForEach(x => lst.Add(_mapper.MapToDto(x)));
-
-            //return lst;
-
             var campuses = await _campusRepository.GetAllAsync(
-                include: query => query.Include(c => c.Departments));
-            //.Include(c => c.Classrooms)
-            //.Include(c => c.Employees));
+                include: query => query.Include(c => c.Departments.Where(d=>d.IsActive)));
+            var activeCampuses = campuses.Where(c => c.IsActive).ToList();
 
-            var lst = campuses.Select(_mapper.MapToDtoWithSubEntity).ToList();
+            var lst = activeCampuses.Select(_mapper.MapToDtoWithSubEntity).ToList();
 
 
             return lst;
