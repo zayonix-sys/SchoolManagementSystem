@@ -32,12 +32,21 @@ interface DepartmentProps {
 }
 const SelectionOperation = ({ campus }: DepartmentProps) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = campus?.departments?.slice(indexOfFirstItem, indexOfLastItem) || [];
+
+  const totalPages = campus && campus.departments ? Math.ceil(campus.departments.length / itemsPerPage) : 0;
+
 
   const handleSelectAll = () => {
-    if (selectedRows?.length === users?.length) {
+    if (selectedRows.length === currentItems.length) {
       setSelectedRows([]);
     } else {
-      setSelectedRows(users.map((row) => row.id));
+      setSelectedRows(currentItems.map((row) => row.departmentId!).filter((id) => id !== null && id !== undefined));
     }
   };
 
@@ -50,20 +59,18 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
     }
     setSelectedRows(updatedSelectedRows);
   };
-  const selectEvenRows = () => {
-    const evenRowIds = users
-      .filter((_, index) => index % 2 !== 0)
-      .map((row) => row.id);
-    setSelectedRows(evenRowIds);
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
-  const selectOddRows = () => {
-    const oddRowIds = users
-      .filter((_, index) => index % 2 === 0)
-      .map((row) => row.id);
-    setSelectedRows(oddRowIds);
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
+
+
   return (
+    <>
     <Table className="text-left">
       <TableHeader>
         <TableRow>
@@ -76,9 +83,7 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
       </TableHeader>
 
       <TableBody>
-        {campus &&
-          campus.departments &&
-          campus.departments.map((item: DepartmentData) => (
+        {currentItems.map((item: DepartmentData) => (
             <TableRow
               key={item.departmentId}
               className="hover:bg-default-200"
@@ -101,7 +106,7 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditDepartment department={item} campus={campus} />
+                <EditDepartment department={item} campus={campus} />
                   <Button
                     size="icon"
                     variant="outline"
@@ -116,6 +121,18 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
           ))}
       </TableBody>
     </Table>
+    <div className="flex justify-between items-center mt-4">
+        <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
+          Previous
+        </Button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+          Next
+        </Button>
+      </div>
+  </>
   );
 };
 
