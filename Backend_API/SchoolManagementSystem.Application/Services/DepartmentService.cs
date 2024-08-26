@@ -26,7 +26,12 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task DeleteDepartmentAsync(int departmentId)
         {
-            await _departmentRepository.DeleteAsync(departmentId);
+            var department = await _departmentRepository.GetByIdAsync(departmentId);
+            if (department != null)
+            {
+                department.IsActive = false;
+                await _departmentRepository.UpdateAsync(department);
+            }
         }
 
         public async Task<List<Department>> GetAllDepartmentsAsync()
@@ -39,7 +44,7 @@ namespace SchoolManagementSystem.Application.Services
             var lst = new List<DepartmentDTO>();
             var response = (await _departmentRepository.GetAllAsync(
                 include: q => q.Include(d => d.Campus),
-                filter: d => d.CampusId == campusId)).ToList();
+                filter: d => d.CampusId == campusId && d.IsActive == true)).ToList();
 
             response.ForEach(x => lst.Add(_mapper.MapToDto(x)));
 
@@ -57,5 +62,6 @@ namespace SchoolManagementSystem.Application.Services
             var model = _mapper.MapToEntity(dto);
             await _departmentRepository.UpdateAsync(model);
         }
+
     }
 }

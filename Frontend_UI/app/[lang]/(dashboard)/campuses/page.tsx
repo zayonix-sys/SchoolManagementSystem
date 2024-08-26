@@ -12,7 +12,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import AddDepartment from "./add-department";
-import { CampusData, getCampuses } from "@/services/campusService";
+import { CampusData, deleteCampus, getCampuses } from "@/services/campusService";
 import { useEffect, useState } from "react";
 import AddCampus from "./add-campus";
 import EditCampus from "./edit-campus";
@@ -44,6 +44,23 @@ const Campus = () => {
 
     fetchCampuses();
   }, []);
+
+  const handleDelete = async (id: number) => {
+    const isConfirmed = confirm("Are you sure you want to delete this campus?");
+    
+    if (isConfirmed) {
+      try {
+        await deleteCampus(id);
+        alert("Campus deleted successfully");
+      } catch (error) {
+        console.error("Error deleting campus:", error);
+        alert("Failed to delete campus");
+      }
+    } else {
+      alert("Deletion cancelled");
+    }
+  };
+  
 
   return (
     <div aria-hidden="true">
@@ -85,6 +102,15 @@ const Campus = () => {
                 {campus.campusId !== undefined && (
                   <EditCampus campus={campus} />
                 )}
+                <Button
+                    // size="icon"
+                    // variant="outline"
+                    className="mr-2"
+                    // color="secondary"
+                    onClick={() => handleDelete(campus.campusId!)}
+                  >
+                    <Icon icon="heroicons:trash" className="h-4 w-4" />
+                  </Button>
               </div>
               <div className="col-span-12 md:col-span-8">
                 <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4">

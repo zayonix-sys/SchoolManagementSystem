@@ -23,7 +23,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DepartmentData } from "@/services/departmentService";
+import { deleteDepartment, DepartmentData } from "@/services/departmentService";
 import EditDepartment from "./edit-department";
 import { CampusData } from "@/services/campusService";
 
@@ -68,6 +68,22 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
+  const handleDelete = async (id: number) => {
+    const isConfirmed = confirm("Are you sure you want to delete this department?");
+    
+    if (isConfirmed) {
+      try {
+        await deleteDepartment(id);
+        alert("Department deleted successfully");
+      } catch (error) {
+        console.error("Error deleting Department:", error);
+        alert("Failed to delete Department");
+      }
+    } else {
+      alert("Deletion cancelled");
+    }
+  };
+
 
   return (
     <>
@@ -107,11 +123,12 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
                 <EditDepartment department={item} campus={campus} />
-                  <Button
+                <Button
                     size="icon"
                     variant="outline"
-                    className=" h-7 w-7"
+                    className="h-7 w-7"
                     color="secondary"
+                    onClick={() => handleDelete(item.departmentId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
