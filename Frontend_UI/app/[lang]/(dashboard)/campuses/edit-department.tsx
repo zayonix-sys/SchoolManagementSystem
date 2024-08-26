@@ -77,16 +77,16 @@ export default function EditDepartment({
       if (response.success) {
         if (Array.isArray(response.data)) {
           toast.success(
-            `${response.data[0].campusName} Campus Added successfully!`
+            `${response.data[0].departmentName} Department Edit successfully!`
           );
         } else {
           toast.success(
-            `${response.data.campusName} Campus Added successfully!`
+            `${response.data.departmentName} Department Edit successfully!`
           );
         }
         reset();
       } else {
-        toast.error("Failed to update the campus");
+        toast.error("Failed to update the department");
       }
     } catch (error) {
       console.error("Request failed:", error);
@@ -123,7 +123,7 @@ export default function EditDepartment({
       </SheetTrigger>
       <SheetContent className="max-w-[736px]">
         <SheetHeader>
-          <SheetTitle>Add New Department</SheetTitle>
+          <SheetTitle>Edit Department</SheetTitle>
         </SheetHeader>
         <div
           className="flex flex-col justify-between"
@@ -185,7 +185,7 @@ export default function EditDepartment({
                   )}
                 </div>
                 <div className="col-span-2">
-                  <Button type="submit">Submit Form</Button>
+                  <Button type="submit">Update</Button>
                 </div>
               </div>
             </form>
