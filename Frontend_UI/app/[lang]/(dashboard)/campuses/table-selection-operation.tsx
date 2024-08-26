@@ -24,12 +24,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DepartmentData } from "@/services/departmentService";
-
+import EditDepartment from "./edit-department";
+import { CampusData } from "@/services/campusService";
 
 interface DepartmentProps {
-  departments: DepartmentData[];
+  campus: CampusData | null;
 }
-const SelectionOperation = ({departments}: DepartmentProps) => {
+const SelectionOperation = ({ campus }: DepartmentProps) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const handleSelectAll = () => {
@@ -66,57 +67,53 @@ const SelectionOperation = ({departments}: DepartmentProps) => {
     <Table className="text-left">
       <TableHeader>
         <TableRow>
-          <TableHead className=" font-semibold">Campus</TableHead>
-          <TableHead>Department</TableHead>
-          <TableHead>Description</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead className=" text-end">Action</TableHead>
+          {/* <TableHead className=" font-semibold">Campus</TableHead> */}
+          <TableHead className="h-10 p-2.5">Department</TableHead>
+          <TableHead className="h-10 p-2.5">Description</TableHead>
+          <TableHead className="h-10 p-2.5">Status</TableHead>
+          <TableHead className="h-10 p-2.5 text-end">Action</TableHead>
         </TableRow>
       </TableHeader>
 
       <TableBody>
-        {departments.map((item: DepartmentData) => (
-          <TableRow
-            key={item.departmentId}
-            className="hover:bg-muted"
-            data-state={selectedRows.includes(item.departmentId!) && "selected"}
-          >
-            
-            <TableCell>{item.campus?.campusName}</TableCell>
-            <TableCell>{item.departmentName}</TableCell>
-            <TableCell>{item.description}</TableCell>
-            <TableCell>
-            <Badge
-                variant="outline"
-                color={item.isActive ? "success" : "destructive"} // Adjust colors based on status
-                className="capitalize"
-              >
-                {item.isActive ? "Active" : "Inactive"}
-              </Badge>
-            </TableCell>
+        {campus &&
+          campus.departments &&
+          campus.departments.map((item: DepartmentData) => (
+            <TableRow
+              key={item.departmentId}
+              className="hover:bg-default-200"
+              data-state={
+                selectedRows.includes(item.departmentId!) && "selected"
+              }
+            >
+              {/* <TableCell>{item.campus?.campusName}</TableCell> */}
+              <TableCell className="p-2.5">{item.departmentName}</TableCell>
+              <TableCell className="p-2.5">{item.description}</TableCell>
+              <TableCell className="p-2.5">
+                <Badge
+                  variant="outline"
+                  color={item.isActive ? "success" : "destructive"} // Adjust colors based on status
+                  className="capitalize"
+                >
+                  {item.isActive ? "Active" : "Inactive"}
+                </Badge>
+              </TableCell>
 
-            <TableCell className="flex justify-end">
-              <div className="flex gap-3">
-                <Button
-                  size="icon"
-                  variant="outline"
-                  color="secondary"
-                  className="h-7 w-7"
-                >
-                  <Icon icon="heroicons:pencil" className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className=" h-7 w-7"
-                  color="secondary"
-                >
-                  <Icon icon="heroicons:trash" className="h-4 w-4" />
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
+              <TableCell className="p-2.5 flex justify-end">
+                <div className="flex gap-3">
+                  <EditDepartment department={item} campus={campus} />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className=" h-7 w-7"
+                    color="secondary"
+                  >
+                    <Icon icon="heroicons:trash" className="h-4 w-4" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
       </TableBody>
     </Table>
   );

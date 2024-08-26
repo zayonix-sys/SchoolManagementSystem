@@ -1,4 +1,5 @@
-﻿using SchoolManagementSystem.Application.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
@@ -30,9 +31,19 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task<List<CampusDTO>> GetAllCampusesAsync()
         {
-            var lst = new List<CampusDTO>();
-            var response =  (await _campusRepository.GetAllAsync()).ToList();
-            response.ForEach(x => lst.Add(_mapper.MapToDto(x)));
+            //var lst = new List<CampusDTO>();
+            //var response =  (await _campusRepository.GetAllAsync()).ToList();
+            //response.ForEach(x => lst.Add(_mapper.MapToDto(x)));
+
+            //return lst;
+
+            var campuses = await _campusRepository.GetAllAsync(
+                include: query => query.Include(c => c.Departments));
+            //.Include(c => c.Classrooms)
+            //.Include(c => c.Employees));
+
+            var lst = campuses.Select(_mapper.MapToDtoWithSubEntity).ToList();
+
 
             return lst;
         }

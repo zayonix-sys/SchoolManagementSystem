@@ -55,7 +55,7 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null,
-                                                  Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+                          Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {
             IQueryable<T> query = _dbSet;
 
