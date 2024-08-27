@@ -34,9 +34,9 @@ namespace SchoolManagementSystem.Application.Services
             return await _sectionRepository.GetByIdAsync(sectionId);
         }
 
-        public async Task UpdateSectionAsync(int id, Section sec)
+        public async Task UpdateSectionAsync(Section sec)
         {
-            await _sectionRepository.UpdateAsync(id, sec);
+            await _sectionRepository.UpdateAsync(sec);
         }
     }
 }
