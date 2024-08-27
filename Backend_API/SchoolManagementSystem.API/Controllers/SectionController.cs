@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolManagementSystem.API.Models;
+using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Domain.Entities;
 
@@ -76,25 +78,20 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpPut("[action]")]
-        public async Task<IActionResult> UpdateSection(int id, Section sec)
+        public async Task<IActionResult> UpdateSection(Section sec)
         {
-            if (id != sec.SectionId)
-            {
-                _logger.LogWarning("Section ID mismatch: {Id} does not match {SectionId}.", id, sec.SectionId);
-                return BadRequest("Section ID mismatch.");
-            }
-
-            _logger.LogInformation("Updating Section with ID {SectionId}.", id);
+            
+                _logger.LogWarning("Section ID mismatch: {Id} does not match {SectionId}.", sec.SectionId);
             try
             {
-                await _sectionService.UpdateSectionAsync(id, sec);
-                _logger.LogInformation("Successfully updated Section with ID {SectionId}.", id);
-                return NoContent();
+                await _sectionService.UpdateSectionAsync(sec);
+                _logger.LogInformation("Successfully updated Section with ID {SectionId}.", sec.SectionId);
+                return Ok(ApiResponse<Section>.SuccessResponse(sec, "Section updated successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while updating Section with ID {SectionId}.", id);
-                return StatusCode(500, "Internal server error.");
+                _logger.LogError(ex, "An error occurred while updating Section with ID {SectionId}.", sec.SectionId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
             }
         }
 
