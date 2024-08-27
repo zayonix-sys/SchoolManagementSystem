@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.API.Models;
-using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Domain.Entities;
+
 
 namespace SchoolManagementSystem.API.Controllers
 {
@@ -20,7 +20,7 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Section>>> GetSection()
+        public async Task<ActionResult<IEnumerable<SectionDTO>>> GetSection()
         {
             _logger.LogInformation("Fetching all sections.");
             try
@@ -37,7 +37,7 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("[action]")]
         public async Task<ActionResult<Section>> GetSection(int id)
         {
             _logger.LogInformation("Fetching sections with ID {SectionId}.", id);
@@ -60,15 +60,15 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Section>> AddSection(Section sec)
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ApiResponse<SectionDTO>>> AddSection([FromBody] SectionDTO sec)
         {
             _logger.LogInformation("Adding a new section with name {SectionName}.", sec.SectionName);
             try
             {
                 await _sectionService.AddSectionAsync(sec);
                 _logger.LogInformation("Successfully added section with ID {SectionId}.", sec.SectionId);
-                return CreatedAtAction(nameof(GetSection), new { id = sec.SectionId }, sec);
+                return Ok(ApiResponse<SectionDTO>.SuccessResponse(sec, "Section Added Successfully"));
             }
             catch (Exception ex)
             {
@@ -78,15 +78,15 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpPut("[action]")]
-        public async Task<IActionResult> UpdateSection(Section sec)
+        public async Task<IActionResult> UpdateSection(SectionDTO sec)
         {
-            
-                _logger.LogWarning("Section ID mismatch: {Id} does not match {SectionId}.", sec.SectionId);
+
+            _logger.LogWarning("Section ID mismatch: {Id} does not match {SectionId}.", sec.SectionId);
             try
             {
                 await _sectionService.UpdateSectionAsync(sec);
                 _logger.LogInformation("Successfully updated Section with ID {SectionId}.", sec.SectionId);
-                return Ok(ApiResponse<Section>.SuccessResponse(sec, "Section updated successfully"));
+                return Ok(ApiResponse<SectionDTO>.SuccessResponse(sec, "Section updated successfully"));
             }
             catch (Exception ex)
             {
