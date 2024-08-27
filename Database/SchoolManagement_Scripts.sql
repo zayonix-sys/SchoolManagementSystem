@@ -23,6 +23,14 @@ CREATE TABLE Campuses (
     Email NVARCHAR(100)
 );
 
+ALTER TABLE Campuses
+ADD	
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1
+
 CREATE TABLE Departments (
     DepartmentId INT PRIMARY KEY IDENTITY,
     CampusId INT,
@@ -31,6 +39,14 @@ CREATE TABLE Departments (
     
     FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId)
 );
+
+ALTER TABLE Departments
+ADD	
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1
 ---------- User Access Control ----------
 
 CREATE TABLE UserRoles (
