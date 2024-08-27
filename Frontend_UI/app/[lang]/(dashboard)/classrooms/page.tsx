@@ -5,11 +5,55 @@ import { Icon } from "@iconify/react";
 import CampusSheet from "./classroom-sheet";
 import ReportsCard from "./reports";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import ClassSheet from "./class-sheet";
 import ClassroomSheet from "./classroom-sheet";
-import SectionSheet from "./section-sheet";
+import AddSection from "./add-section";
 import { Table } from "@/components/ui/table";
+import AddClass from "./add-class";
+import { ClassData, deleteClass, fetchClasses } from "@/services/ClassService";
+import { useEffect, useState } from "react";
+import EditClass from "./edit-class";
+
+
+
 const Classroom = () => {
+  const [classes, setClasses] = useState<ClassData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchClassesData = async () => {
+      setLoading(true);
+      try {
+        const classData = await fetchClasses();
+        setClasses(classData.data as ClassData[]);
+      } catch (err) {
+        setError(err as any);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClassesData();
+  }, []);
+  const handleDelete = async (id: number) => {
+    const isConfirmed = confirm("Are you sure you want to delete this campus?");
+    
+    if (isConfirmed) {
+      try {
+        await deleteClass(id);
+        alert("Class deleted successfully");
+      } catch (error) {
+        console.error("Error deleting class:", error);
+        alert("Failed to delete class");
+      }
+    } else {
+      alert("Deletion cancelled");
+    }
+  };
+
+
+ 
+
   return (
     <div>
       <div> 
@@ -19,8 +63,8 @@ const Classroom = () => {
         </Breadcrumbs>
         <div className="flex justify-end space-x-4">
           <ClassroomSheet/>
-          <ClassSheet/>
-          <SectionSheet/>
+          <AddClass/>
+          <AddSection/>
         </div>
       </div>
       {/* <div className="mt-5 text-2xl font-medium text-default-900">Campus Registration</div> */}
@@ -34,8 +78,9 @@ const Classroom = () => {
         <AccordionItem value="item-1" className=" shadow-none rounded-none open">
           <AccordionTrigger>Classroom Details</AccordionTrigger>
           <AccordionContent>
+             
             <div className="col-span-12 md:col-span-8">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-2 gap-5">
                     <ReportsCard />
                     <Table/>
                   </div>
@@ -43,6 +88,7 @@ const Classroom = () => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+  
     </div>
   );
 };
