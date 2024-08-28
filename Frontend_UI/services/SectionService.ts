@@ -18,7 +18,7 @@ const BASE_URL = "/Section";
 
 export const fetchSection = async (): Promise<ApiResponse> => {
   try {
-    const response = await api.get<ApiResponse>(`$BASE_URL/GetSection`);
+    const response = await api.get<ApiResponse>(`${BASE_URL}/GetSection`);
     return response.data;
   } catch (error) {
     console.error("Failed to fetch Section:", error);
@@ -50,22 +50,29 @@ export const addSection = async (sectionData: SectionData): Promise<ApiResponse>
 };
 
 export const updateSection = async (
-  id: number,
   sectionData: SectionData
-): Promise<void> => {
+): Promise<ApiResponse> => {
   try {
-    await api.put<void>(`${BASE_URL}/UpdateSection/${id}`, sectionData);
-  } catch (error) {
-    console.error(`Failed to update section with ID ${id}:`, error);
-    throw new Error(`Failed to update section with ID ${id}`);
+    const response = await api.put<ApiResponse>(
+      `${BASE_URL}/UpdateSection`,
+      sectionData
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to update class`, error);
+    throw new Error(`Failed to update class`);
   }
 };
 
-export const deleteSection = async (id: number): Promise<void> => {
+export const deleteSection = async (id: number): Promise<ApiResponse> => {
   try {
-    await api.delete<void>(`${BASE_URL}/DeleteSection/${id}`);
-  } catch (error) {
-    console.error(`Failed to delete section with ID ${id}:`, error);
-    throw new Error(`Failed to delete section with ID ${id}`);
+    const response = await api.delete<ApiResponse>(
+      `${BASE_URL}/DeleteSection?sectionId=${id}`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to delete section `, error);
+    throw new Error(`Failed to delete section`);
   }
 };
+

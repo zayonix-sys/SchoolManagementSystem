@@ -32,14 +32,33 @@ namespace SchoolManagementSystem.Application.Services
             }
         }
 
-        public Task DeleteSectionAsync(int sectionId)
+        public async Task DeleteSectionAsync(int sectionId)
         {
-            throw new NotImplementedException();
+            var sections = await _sectionRepository.GetByIdAsync(sectionId);
+            if (sections != null)
+            {
+                sections.IsActive = false;
+                await _sectionRepository.UpdateAsync(sections);
+            }
         }
 
-        public Task<List<SectionDTO>> GetAllSectionAsync()
+        public async Task<List<SectionDTO>> GetAllSectionAsync()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var sections = await _sectionRepository.GetAllAsync();
+                var activeSections = sections.Where(c => c.IsActive);
+
+                // Map the entities to DTOs
+                var sectionDtos = activeSections.Select(c => _mapper.MapToDto(c)).ToList();
+
+                return sectionDtos;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public Task<SectionDTO> GetSectionByIdAsync(int sectionId)
@@ -53,35 +72,6 @@ namespace SchoolManagementSystem.Application.Services
             await _sectionRepository.UpdateAsync(model);
         }
 
-        //public async Task UpdateSectionAsync(SectionDTO sec)
-        //{
-        //    await _sectionRepository.UpdateAsync(sec);
-        //}
-
-        //public async Task AddSectionAsync(Section sec)
-        //{
-        //    await _sectionRepository.AddAsync(sec);
-
-        //}
-
-        //public async Task DeleteSectionAsync(int sectionId)
-        //{
-        //    await _sectionRepository.DeleteAsync(sectionId);
-        //}
-
-        //public async Task<List<Section>> GetAllSectionAsync()
-        //{
-        //    return (await _sectionRepository.GetAllAsync()).ToList();
-        //}
-
-        //public async Task<Section> GetSectionByIdAsync(int sectionId)
-        //{
-        //    return await _sectionRepository.GetByIdAsync(sectionId);
-        //}
-
-        //public async Task UpdateSectionAsync(int id, Section sec)
-        //{
-        //    //await _sectionRepository.UpdateAsync(id, sec);
-        //}
+        
     }
 }
