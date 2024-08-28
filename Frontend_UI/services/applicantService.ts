@@ -1,17 +1,5 @@
 import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
-import { DepartmentData } from "./departmentService";
-
-export interface FamilyMember {
-    fullName: string;
-    parentEmail?: string;
-    parentPhoneNumber: string;
-    parentAddress: string;
-    relationWithApplicant: string;
-    qualification?: string;
-    occupation: string;
-    sourceOfIncome: string;
-}
 
 export interface ApplicantData {
     firstName: string;
@@ -23,14 +11,13 @@ export interface ApplicantData {
     applicantAddress: string;
     nationality: string;
     applicationDate: string;
-    lastClassAttended: string;
-    admissionRequiredInClass: string;
+    lastClassId: number;
+    admissionClassId: number;
     languages: string;
     residenceStatus: string;
     states: string;
     city: string;
     phoneNumber: string;
-    familyMembers: FamilyMember[]; // Declaring the array of family members
 }
 
 const BASE_URL = "/applicant";

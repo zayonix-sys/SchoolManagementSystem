@@ -21,7 +21,7 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Applicants>>> GetAllApplicants()
+        public async Task<ActionResult<IEnumerable<Applicant>>> GetAllApplicants()
         {
             _logger.LogInformation("Fetching all applicants.");
             try
@@ -40,7 +40,7 @@ namespace SchoolManagementSystem.API.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Applicants>> GetApplicantById(int appId)
+        public async Task<ActionResult<Applicant>> GetApplicantById(int appId)
         {
             _logger.LogInformation("Fetching applicant with Id {ApplicantId}.", appId);
             try

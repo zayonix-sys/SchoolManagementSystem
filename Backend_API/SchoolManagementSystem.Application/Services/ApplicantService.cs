@@ -11,10 +11,10 @@ namespace SchoolManagementSystem.Application.Services
 {
     public class ApplicantService : IApplicant
     {
-        private readonly IGenericRepository<Applicants> _applicantRepository;
+        private readonly IGenericRepository<Applicant> _applicantRepository;
         private readonly ApplicantMapper _mapper;
 
-        public ApplicantService(IGenericRepository<Applicants> genericRepository, ApplicantMapper applicantMapper)
+        public ApplicantService(IGenericRepository<Applicant> genericRepository, ApplicantMapper applicantMapper)
         {
             _applicantRepository = genericRepository;
             _mapper = applicantMapper;
@@ -32,12 +32,12 @@ namespace SchoolManagementSystem.Application.Services
             await _applicantRepository.DeleteAsync(appId);
         }
 
-        public async Task<List<Applicants>> GetAllApplicantsAsync()
+        public async Task<List<Applicant>> GetAllApplicantsAsync()
         {
             return (await _applicantRepository.GetAllAsync()).ToList();
         }
 
-        public async Task<Applicants> GetApplicantByIdAsync(int appId)
+        public async Task<Applicant> GetApplicantByIdAsync(int appId)
         {
             return await _applicantRepository.GetByIdAsync(appId);
         }

@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -10,19 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { addApplicant } from "@/services/applicantService";
-import { log } from "console";
-
-// Define Zod schema
-const FamilyMember = z.object({
-  fullName: z.string().min(1, "First Name is required"),
-  parentEmail: z.string().email({ message: "Invalid email address" }).optional(),
-  parentPhoneNumber: z.string().max(15, "Phone number must be 15 characters long"),
-  parentAddress: z.string().min(1, "Address is required"),
-  relationWithApplicant: z.string().min(1, "Relation with Applicant is required"),
-  qualification: z.string().optional().default(""),
-  occupation: z.string().min(1, "Occupation is required"),
-  sourceOfIncome: z.string().min(1, "Income is required"),
-});
+import { fetchClasses } from "@/services/ClassService";
 
 const applicantSchema = z.object({
   firstName: z.string().min(1, "First Name is required"),
@@ -34,8 +22,8 @@ const applicantSchema = z.object({
   applicantAddress: z.string().min(5, "Address is required"),
   nationality: z.string().min(1, "Nationality is required"),
   applicationDate: z.string().min(1, "Date of Application is required"),
-  lastClassAttended: z.string().min(1, "Last Class Attended is required"),
-  admissionRequiredInClass: z.string().min(1, "Admission Required In Class is required"),
+  lastClassId: z.number().min(1, "Last Class Attended is required"),
+  admissionClassId: z.number().min(1, "Admission Required In Class is required"),
   languages: z.string().min(1, "Language is required"),
   residenceStatus: z.string().min(1, "Residence Status is required"),
   states: z.string().min(1, "State is required"),
@@ -43,7 +31,6 @@ const applicantSchema = z.object({
   phoneNumber: z
     .string()
     .max(15, "Phone number must be 15 characters long"),
-  familyMembers: z.array(FamilyMember),
 });
 
 type ApplicantFormValues = z.infer<typeof applicantSchema>;
@@ -52,10 +39,23 @@ const VStepForm = () => {
 
   const { control, register, handleSubmit, reset, setValue, formState: { errors }, } = useForm<ApplicantFormValues>({
     resolver: zodResolver(applicantSchema),
-    defaultValues: {
-      familyMembers: [{ fullName: '', parentEmail: '', parentPhoneNumber: '', parentAddress: '', relationWithApplicant: '', qualification: '', occupation: '', sourceOfIncome: '' }],
-    },
   });
+
+  const [classes, setClasses] = useState([]);
+
+  useEffect(() => {
+    // Fetch the classes from the API
+    const loadClasses = async () => {
+      try {
+        const response = await fetchClasses();
+        setClasses(response.data); // Assume response contains an array of class objects
+      } catch (error) {
+        console.error("Failed to fetch classes:", error);
+      }
+    };
+
+    loadClasses();
+  }, []);
 
   const onSubmit: SubmitHandler<ApplicantFormValues> = async (data) => {
     console.log("Submitting form with data:", data);
@@ -91,12 +91,6 @@ const VStepForm = () => {
     }
   };
 
-
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'familyMembers',
-  });
-
   const [activeStep, setActiveStep] = React.useState<number>(0);
 
   const steps = [
@@ -108,10 +102,10 @@ const VStepForm = () => {
       label: "Contact Information",
       content: "Fill in contact info of applicant",
     },
-    {
-      label: "Family Details",
-      content: "Fill in family details of applicant",
-    },
+    // {
+    //   label: "Family Details",
+    //   content: "Fill in family details of applicant",
+    // },
   ];
 
   const isStepOptional = (step: number) => {
@@ -244,24 +238,59 @@ const VStepForm = () => {
                       />
                       {errors.dateOfBirth && (<p className="text-destructive">{errors.dateOfBirth.message}</p>)}
                     </div>
+
                     <div className="col-span-12 lg:col-span-4">
                       <label className="text-default-600">Last Class Attended</label>
-                      <Input
-                        type="text"
-                        placeholder="Previous Class"
-                        {...register("lastClassAttended")}
-                      />
-                      {errors.lastClassAttended && (<p className="text-destructive">{errors.lastClassAttended.message}</p>)}
+                      <Select
+                        onValueChange={(value) =>
+                          setValue("lastClassId", parseInt(value))
+                        }
+                        // {...register("lastClassAttended", {
+                        //   setValueAs: (value) => Number(value),  // Convert the value to a number
+                        // })}
+                        // className="form-select"  // Add your own classes here
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a Class" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {classes.map((classItem) => (
+                            <SelectItem key={classItem.classId} value={classItem.classId?.toString() ?? ""}>
+                              {classItem.className}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.lastClassId && (
+                        <p className="text-destructive">{errors.lastClassId.message}</p>
+                      )}
                     </div>
 
                     <div className="col-span-12 lg:col-span-4">
                       <label className="text-default-600">Admission Required In Class</label>
-                      <Input
-                        type="text"
-                        placeholder="Class of Admission"
-                        {...register("admissionRequiredInClass")}
-                      />
-                      {errors.admissionRequiredInClass && (<p className="text-destructive">{errors.admissionRequiredInClass.message}</p>)}
+                      <Select
+                        onValueChange={(value) =>
+                          setValue("admissionClassId", parseInt(value))
+                        }
+                        // {...register("admissionRequiredInClass", {
+                        //   setValueAs: (value) => Number(value),  // Convert the value to a number
+                        // })}
+                        // className="form-select"  // Add your own classes here
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a Class" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {classes.map((classItem) => (
+                            <SelectItem key={classItem.classId} value={classItem.classId?.toString() ?? ""}>
+                              {classItem.className}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.admissionClassId && (
+                        <p className="text-destructive">{errors.admissionClassId.message}</p>
+                      )}
                     </div>
                     <div className="col-span-12 lg:col-span-4">
                       <label className="text-default-600">Date Of Application</label>
@@ -363,15 +392,9 @@ const VStepForm = () => {
                   </>
                 )}
 
-                {activeStep === 2 && (
+                {/* {activeStep === 2 && (
                   <>
                     <div className="col-span-12 ">
-                      {/* <h4 className="text-sm font-medium text-default-600">
-                        Enter Your Social Links
-                      </h4>
-                      <p className="text-xs text-default-600 mt-1">
-                        Fill in the box with correct data
-                      </p> */}
                     </div>
                     <div className="grid col-span-12">
                       {fields.map((item, index) => (
@@ -384,13 +407,6 @@ const VStepForm = () => {
                               />
                               {errors.firstName && (<p className="text-destructive">{errors.firstName.message}</p>)}
                             </div>
-                            {/* <div className="col-span-12 lg:col-span-4">
-                              <Input
-                                placeholder="Last Name of Family Member"
-                                {...register(`familyMembers.${index}.lastName`)}
-                              />
-                              {errors.lastName && (<p className="text-destructive">{errors.lastName.message}</p>)}
-                            </div> */}
                             <div className="col-span-12 lg:col-span-4">
                               <Input
                                 type="email"
@@ -501,7 +517,7 @@ const VStepForm = () => {
                     </div>
                   </>
 
-                )}
+                )} */}
               </div>
 
 

@@ -7,8 +7,8 @@ namespace SchoolManagementSystem.Application.Interfaces
 {
     public interface IApplicant
     {
-        Task<List<Applicants>> GetAllApplicantsAsync();
-        Task<Applicants> GetApplicantByIdAsync(int appId);
+        Task<List<Applicant>> GetAllApplicantsAsync();
+        Task<Applicant> GetApplicantByIdAsync(int appId);
         Task AddApplicantAsync(ApplicantDTO dto);
         //Task UpdateApplicantAsync(Applicants app);
         Task DeleteApplicantAsync(int appId);
