@@ -32,15 +32,17 @@ builder.Services.AddDbContext<SchoolContext>(options =>
 // Register the generic repository
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ICampuses, CampusService>();
-builder.Services.AddScoped<ISection, SectionService>();
-
 builder.Services.AddScoped<CampusMapper>();
 builder.Services.AddScoped<IDepartments, DepartmentService>();
 builder.Services.AddScoped<DepartmentMapper>();
-builder.Services.AddScoped<IStudent, StudentService>();
+builder.Services.AddScoped<IClass, ClassService>();
+builder.Services.AddScoped<ClassMapper>();
+builder.Services.AddScoped<ISection, SectionService>();
+builder.Services.AddScoped<SectionMapper>();
 builder.Services.AddScoped<IApplicant, ApplicantService>();
 builder.Services.AddScoped <ApplicantMapper>();
 
+builder.Services.AddScoped<IStudent, StudentService>();
 
 // Add controllers
 builder.Services.AddControllers();
