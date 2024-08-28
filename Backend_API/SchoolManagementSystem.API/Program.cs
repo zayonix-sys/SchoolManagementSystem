@@ -38,6 +38,10 @@ builder.Services.AddScoped<CampusMapper>();
 builder.Services.AddScoped<IDepartments, DepartmentService>();
 builder.Services.AddScoped<DepartmentMapper>();
 builder.Services.AddScoped<IStudent, StudentService>();
+builder.Services.AddScoped<ISection, SectionService>();
+builder.Services.AddScoped<SectionMapper>();
+builder.Services.AddScoped<IClass, ClassService>();
+builder.Services.AddScoped<ClassMapper>();
 
 
 // Add controllers

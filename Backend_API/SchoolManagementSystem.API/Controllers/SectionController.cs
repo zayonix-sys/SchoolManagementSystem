@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.API.Models;
+using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
+using SchoolManagementSystem.Application.Services;
 using SchoolManagementSystem.Domain.Entities;
+using static System.Collections.Specialized.BitVector32;
 
 
 namespace SchoolManagementSystem.API.Controllers
@@ -19,26 +22,27 @@ namespace SchoolManagementSystem.API.Controllers
             _sectionService = sec;
         }
 
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<SectionDTO>>> GetSection()
         {
             _logger.LogInformation("Fetching all sections.");
             try
             {
-                var sec = await _sectionService.GetAllSectionAsync();
-                _logger.LogInformation("Successfully retrieved {Count} section.", sec?.Count() ?? 0);
+                var sections = await _sectionService.GetAllSectionAsync();
+                _logger.LogInformation("Successfully retrieved {Count} sections.", sections?.Count() ?? 0);
 
-                return Ok(sec);
+                return Ok(ApiResponse<IEnumerable<SectionDTO>>.SuccessResponse(sections, "sections retrieved successfully"));
+
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while fetching all section.");
+                _logger.LogError(ex, "An error occurred while fetching all sections.");
                 return StatusCode(500, "Internal server error.");
             }
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<Section>> GetSection(int id)
+        public async Task<ActionResult<SectionDTO>> GetSectionById(int id)
         {
             _logger.LogInformation("Fetching sections with ID {SectionId}.", id);
             try
@@ -81,11 +85,11 @@ namespace SchoolManagementSystem.API.Controllers
         public async Task<IActionResult> UpdateSection(SectionDTO sec)
         {
 
-            _logger.LogWarning("Section ID mismatch: {Id} does not match {SectionId}.", sec.SectionId);
+            _logger.LogInformation("Updating Section with ID .", sec.SectionId);
             try
             {
                 await _sectionService.UpdateSectionAsync(sec);
-                _logger.LogInformation("Successfully updated Section with ID {SectionId}.", sec.SectionId);
+                _logger.LogInformation("Successfully updated Section with ID SectionId.", sec.SectionId);
                 return Ok(ApiResponse<SectionDTO>.SuccessResponse(sec, "Section updated successfully"));
             }
             catch (Exception ex)
@@ -96,19 +100,19 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpDelete("[action]")]
-        public async Task<IActionResult> DeleteSection(int id)
+        public async Task<IActionResult> DeleteSection(int sectionId)
         {
-            _logger.LogInformation("Deleting section with ID {SectionId}.", id);
+            _logger.LogInformation("Deleting class with ID {SectionId}.", sectionId);
             try
             {
-                await _sectionService.DeleteSectionAsync(id);
-                _logger.LogInformation("Successfully deleted Section with ID {SectionId}.", id);
-                return NoContent();
+                await _sectionService.DeleteSectionAsync(sectionId);
+                _logger.LogInformation("Successfully deleted section with ID {SectionId}.", sectionId);
+                return Ok(ApiResponse<object>.SuccessResponse(null, "Section deleted successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while deleting section with ID {SectionId}.", id);
-                return StatusCode(500, "Internal server error.");
+                _logger.LogError(ex, "An error occurred while deleting Section with ID {SectionId}.", sectionId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
             }
         }
     }
