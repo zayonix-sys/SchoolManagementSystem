@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,38 +11,48 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { deleteClass, fetchClasses, ClassData } from "../../../../services/ClassService"; 
-import EditClass from "./edit-class";
+import EditClass from "../classrooms/edit-class";
+import { Input } from "@/components/ui/input";
+
 const ClassListTable = () => {
   const [classes, setClasses] = useState<ClassData[]>([]);
+  const [filteredClasses, setFilteredClasses] = useState<ClassData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 10;
-  
-  // Function to fetch class data
+
   useEffect(() => {
     const fetchClassesData = async () => {
       setLoading(true);
       try {
-        const response = await fetchClasses(); // assuming fetchClasses is a function that fetches the data
+        const response = await fetchClasses();
         setClasses(response.data as ClassData[]);
+        setFilteredClasses(response.data as ClassData[]);
       } catch (err) {
         setError(err as any);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchClassesData();
   }, []);
-  
+
+  useEffect(() => {
+    const filtered = classes.filter((cls) =>
+      cls.className.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredClasses(filtered);
+  }, [searchQuery, classes]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = classes.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredClasses.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(classes.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredClasses.length / itemsPerPage);
 
   const handleSelectAll = () => {
     if (selectedRows.length === currentItems.length) {
@@ -91,10 +99,17 @@ const ClassListTable = () => {
     }
   };
 
-
-
   return (
     <>
+      <div className="mb-4 flex justify-between items-center">
+        <Input
+          type="text"
+          placeholder="Search by class name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border p-2 rounded"
+        />
+      </div>
       <Table className="text-left">
         <TableHeader>
           <TableRow>
@@ -111,9 +126,7 @@ const ClassListTable = () => {
             <TableRow
               key={item.classId}
               className="hover:bg-default-200"
-              data-state={
-                selectedRows.includes(item.classId!) && "selected"
-              }
+              data-state={selectedRows.includes(item.classId!) && "selected"}
             >
               <TableCell className="p-2.5">{item.className}</TableCell>
               <TableCell className="p-2.5">{item.classDescription}</TableCell>
@@ -130,7 +143,7 @@ const ClassListTable = () => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                <EditClass classData={item}  />
+                  <EditClass classData={item} />
 
                   <Button
                     size="icon"
@@ -158,6 +171,7 @@ const ClassListTable = () => {
           Next
         </Button>
       </div>
+      
     </>
   );
 };
