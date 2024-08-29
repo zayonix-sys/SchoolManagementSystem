@@ -9,8 +9,8 @@ import { Step, StepLabel, Stepper } from "@/components/ui/steps";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { addApplicant } from "@/services/applicantService";
-import { fetchClasses } from "@/services/ClassService";
+import { addApplicant, ApplicantData } from "@/services/applicantService";
+import { ClassData, fetchClasses } from "@/services/ClassService";
 
 const applicantSchema = z.object({
   firstName: z.string().min(1, "First Name is required"),
@@ -19,7 +19,7 @@ const applicantSchema = z.object({
   dateOfBirth: z.string().min(1, "Date of Birth is required"),
   gender: z.string().min(1, "Gender is required"),
   email: z.string().email({ message: "Invalid email address" }).optional().default(""),
-  applicantAddress: z.string().min(5, "Address is required"),
+  applicantAddress: z.string().min(1, "Address is required"),
   nationality: z.string().min(1, "Nationality is required"),
   applicationDate: z.string().min(1, "Date of Application is required"),
   lastClassId: z.number().min(1, "Last Class Attended is required"),
@@ -41,7 +41,7 @@ const VStepForm = () => {
     resolver: zodResolver(applicantSchema),
   });
 
-  const [classes, setClasses] = useState([]);
+  const [classes, setClasses] = useState<ClassData[]>([]);
 
   useEffect(() => {
     // Fetch the classes from the API
