@@ -123,6 +123,17 @@ const menuItems: MenuItemProps[] = [
       },
     ],
   },
+  {
+    title: "Academic",
+    icon: DashBoard,
+    child: [
+      {
+        title: "Applicants",
+        href: "/applicant",
+        icon: Graph,
+      }
+    ],
+  },
   // Add more menu items here
 ];
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,48 +11,56 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataRows, users } from "./data";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { deleteDepartment, DepartmentData } from "@/services/departmentService";
-import EditDepartment from "./edit-department";
-import { CampusData } from "@/services/campusService";
+import { deleteSection, fetchSection, SectionData } from "@/services/SectionService";
+import EditSection from "./edit-section";
+import { ClassData } from "@/services/ClassService";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
-interface DepartmentProps {
-  campus: CampusData;
-}
-const SelectionOperation = ({ campus }: DepartmentProps) => {
+const SectionListTable = ({ selectedClass }: { selectedClass: ClassData[] }) => {
+  const [sections, setSections] = useState<SectionData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(""); 
   const itemsPerPage = 10;
+
+  
+  useEffect(() => {
+    const fetchSectionsData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetchSection();
+        setSections(response.data as SectionData[]);
+      } catch (err) {
+        setError(err as any);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSectionsData();
+  }, []);
+
+  // Apply search filter and pagination
+  const filteredSections = sections.filter((section) =>
+    section.sectionName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems =
-    campus?.departments?.slice(indexOfFirstItem, indexOfLastItem) || [];
+  const currentItems = filteredSections.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages =
-    campus && campus.departments
-      ? Math.ceil(campus.departments.length / itemsPerPage)
-      : 0;
+  const totalPages = Math.ceil(filteredSections.length / itemsPerPage);
 
   const handleSelectAll = () => {
     if (selectedRows.length === currentItems.length) {
       setSelectedRows([]);
     } else {
       setSelectedRows(
-        currentItems
-          .map((row) => row.departmentId!)
-          .filter((id) => id !== null && id !== undefined)
+        currentItems.map((row) => row.classId!).filter((id) => id !== null && id !== undefined)
       );
     }
   };
@@ -76,52 +84,56 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
   };
 
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm(
-      "Are you sure you want to delete this department?"
-    );
+    const isConfirmed = confirm("Are you sure you want to delete this section?");
 
     if (isConfirmed) {
       try {
-        await deleteDepartment(id);
-        alert("Department deleted successfully");
+        await deleteSection(id);
+        toast.success("Section deleted successfully");
+        fetchSection(); // Refresh the data after deletion
       } catch (error) {
-        console.error("Error deleting Department:", error);
-        alert("Failed to delete Department");
+        console.error("Error deleting Section:", error);
+        toast.error("Failed to delete Section");
       }
     } else {
-      alert("Deletion cancelled");
+      toast.success("Deletion cancelled");
     }
   };
 
   return (
     <>
+      <div className="mb-4 flex justify-between items-center">
+        <Input
+          type="text"
+          placeholder="Search by section name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border p-2 rounded"
+        />
+      </div>
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-            {/* <TableHead className=" font-semibold">Campus</TableHead> */}
-            <TableHead className="h-10 p-2.5">Department</TableHead>
-            <TableHead className="h-10 p-2.5">Description</TableHead>
+            <TableHead className="h-10 p-2.5">Section Name</TableHead>
+            <TableHead className="h-10 p-2.5">Capacity</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
             <TableHead className="h-10 p-2.5 text-end">Action</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item: DepartmentData) => (
+          {currentItems.map((item) => (
             <TableRow
-              key={item.departmentId}
+              key={item.sectionId}
               className="hover:bg-default-200"
-              data-state={
-                selectedRows.includes(item.departmentId!) && "selected"
-              }
+              data-state={selectedRows.includes(item.sectionId!) && "selected"}
             >
-              {/* <TableCell>{item.campus?.campusName}</TableCell> */}
-              <TableCell className="p-2.5">{item.departmentName}</TableCell>
-              <TableCell className="p-2.5">{item.description}</TableCell>
+              <TableCell className="p-2.5">{item.sectionName}</TableCell>
+              <TableCell className="p-2.5">{item.capacity}</TableCell>
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
-                  color={item.isActive ? "success" : "destructive"} // Adjust colors based on status
+                  color={item.isActive ? "success" : "destructive"}
                   className="capitalize"
                 >
                   {item.isActive ? "Active" : "Inactive"}
@@ -130,13 +142,13 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditDepartment department={item} campus={campus} />
+                  <EditSection sectionData={item} />
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDelete(item.departmentId!)}
+                    onClick={() => handleDelete(item.sectionId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -161,4 +173,4 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
   );
 };
 
-export default SelectionOperation;
+export default SectionListTable;
