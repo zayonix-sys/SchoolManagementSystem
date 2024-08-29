@@ -2,22 +2,22 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
 export interface ApplicantData {
-    firstName: string;
-    lastName: string;
-    formBNumber: string;
-    dateOfBirth: string;
-    gender: string;
-    email: string;
-    applicantAddress: string;
-    nationality: string;
-    applicationDate: string;
-    lastClassId: number;
-    admissionClassId: number;
-    languages: string;
-    residenceStatus: string;
-    states: string;
-    city: string;
-    phoneNumber: string;
+  firstName: string;
+  lastName: string;
+  formBNumber: string;
+  dateOfBirth: string;
+  gender: string;
+  email: string;
+  applicantAddress: string;
+  nationality: string;
+  applicationDate: string;
+  lastClassId: number;
+  admissionClassId: number;
+  motherTounge: string;
+  residenceStatus: string;
+  states: string;
+  city: string;
+  phoneNumber: string;
 }
 
 const BASE_URL = "/applicant";
@@ -62,10 +62,7 @@ export const addApplicant = async (
 //   }
 // };
 
-
-
 // Other commits
-
 
 // export const fetchClassById = async (id: number): Promise<ClassroomData> => {
 //   try {

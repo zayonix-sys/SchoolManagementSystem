@@ -28,7 +28,7 @@ import EditDepartment from "./edit-department";
 import { CampusData } from "@/services/campusService";
 
 interface DepartmentProps {
-  campus: CampusData | null;
+  campus: CampusData;
 }
 const SelectionOperation = ({ campus }: DepartmentProps) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
@@ -37,16 +37,23 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = campus?.departments?.slice(indexOfFirstItem, indexOfLastItem) || [];
+  const currentItems =
+    campus?.departments?.slice(indexOfFirstItem, indexOfLastItem) || [];
 
-  const totalPages = campus && campus.departments ? Math.ceil(campus.departments.length / itemsPerPage) : 0;
-
+  const totalPages =
+    campus && campus.departments
+      ? Math.ceil(campus.departments.length / itemsPerPage)
+      : 0;
 
   const handleSelectAll = () => {
     if (selectedRows.length === currentItems.length) {
       setSelectedRows([]);
     } else {
-      setSelectedRows(currentItems.map((row) => row.departmentId!).filter((id) => id !== null && id !== undefined));
+      setSelectedRows(
+        currentItems
+          .map((row) => row.departmentId!)
+          .filter((id) => id !== null && id !== undefined)
+      );
     }
   };
 
@@ -69,8 +76,10 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
   };
 
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this department?");
-    
+    const isConfirmed = confirm(
+      "Are you sure you want to delete this department?"
+    );
+
     if (isConfirmed) {
       try {
         await deleteDepartment(id);
@@ -84,22 +93,21 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
     }
   };
 
-
   return (
     <>
-    <Table className="text-left">
-      <TableHeader>
-        <TableRow>
-          {/* <TableHead className=" font-semibold">Campus</TableHead> */}
-          <TableHead className="h-10 p-2.5">Department</TableHead>
-          <TableHead className="h-10 p-2.5">Description</TableHead>
-          <TableHead className="h-10 p-2.5">Status</TableHead>
-          <TableHead className="h-10 p-2.5 text-end">Action</TableHead>
-        </TableRow>
-      </TableHeader>
+      <Table className="text-left">
+        <TableHeader>
+          <TableRow>
+            {/* <TableHead className=" font-semibold">Campus</TableHead> */}
+            <TableHead className="h-10 p-2.5">Department</TableHead>
+            <TableHead className="h-10 p-2.5">Description</TableHead>
+            <TableHead className="h-10 p-2.5">Status</TableHead>
+            <TableHead className="h-10 p-2.5 text-end">Action</TableHead>
+          </TableRow>
+        </TableHeader>
 
-      <TableBody>
-        {currentItems.map((item: DepartmentData) => (
+        <TableBody>
+          {currentItems.map((item: DepartmentData) => (
             <TableRow
               key={item.departmentId}
               className="hover:bg-default-200"
@@ -122,8 +130,8 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                <EditDepartment department={item} campus={campus} />
-                <Button
+                  <EditDepartment department={item} campus={campus} />
+                  <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
@@ -136,9 +144,9 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
               </TableCell>
             </TableRow>
           ))}
-      </TableBody>
-    </Table>
-    <div className="flex justify-between items-center mt-4">
+        </TableBody>
+      </Table>
+      <div className="flex justify-between items-center mt-4">
         <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
           Previous
         </Button>
@@ -149,7 +157,7 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
           Next
         </Button>
       </div>
-  </>
+    </>
   );
 };
 

@@ -41,6 +41,6 @@ namespace SchoolManagementSystem.Domain.Entities
 
         // Navigation Properties
         [ForeignKey("ApplicantId")]
-        public virtual Applicants Applicant { get; set; }
+        public virtual Applicant Applicant { get; set; }
     }
 }
