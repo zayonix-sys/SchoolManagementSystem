@@ -16,11 +16,7 @@ import { CampusData } from "@/services/campusService";
 
 //we can change the props "side"'s value to 'top', 'left', 'bottom', 'right' so that the sheet will come out from different direction.
 
-export default function ViewDepartment({
-  campus,
-}: {
-  campus: CampusData | null;
-}) {
+export default function ViewDepartment({ campus }: { campus: CampusData }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -39,7 +35,7 @@ export default function ViewDepartment({
         </SheetHeader>
         <div>
           <div className="py-6">
-            <SelectionOperation campus={campus ?? null} />
+            <SelectionOperation campus={campus} />
           </div>
         </div>
         <SheetFooter>
