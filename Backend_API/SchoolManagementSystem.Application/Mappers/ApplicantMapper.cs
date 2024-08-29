@@ -12,69 +12,67 @@ namespace SchoolManagementSystem.Application.Mappers
     {
         public ApplicantDTO MapToDto(Applicant entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            return new ApplicantDTO
+            {
+                ApplicantId = entity.ApplicantId,
+                LastClassId = entity.LastClassId,
+                AdmissionClassId = entity.AdmissionClassId,
+                FirstName = entity.FirstName,
+                LastName = entity.LastName,
+                FormBNumber = entity.FormBNumber,
+                DateOfBirth = entity.DateOfBirth,
+                Gender = entity.Gender,
+                Email = entity.Email,
+                PhoneNumber = entity.PhoneNumber,
+                ApplicantAddress = entity.ApplicantAddress,
+                ResidenceStatus = entity.ResidenceStatus,
+                City = entity.City,
+                MotherTounge = entity.MotherTounge,
+                States = entity.States,
+                CreatedAt = entity.CreatedAt,
+                CreatedBy = entity.CreatedBy,
+                UpdatedAt = entity.UpdatedAt,
+                UpdatedBy = entity.UpdatedBy,
+                IsActive = entity.IsActive
+            };
         }
 
         public Applicant MapToEntity(ApplicantDTO dto)
         {
+            if (dto == null)
+            {
+                throw new ArgumentNullException(nameof(dto));
+            }
+
             return new Applicant
             {
                 ApplicantId = dto.ApplicantId,
+                LastClassId = dto.LastClassId,
+                AdmissionClassId = dto.AdmissionClassId,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 FormBNumber = dto.FormBNumber,
                 DateOfBirth = dto.DateOfBirth,
                 Gender = dto.Gender,
-                ApplicationDate = dto.ApplicationDate,
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
                 ApplicantAddress = dto.ApplicantAddress,
-                Nationality = dto.Nationality,
-                States = dto.States,
-                City = dto.City,
-                Languages = dto.Languages,
                 ResidenceStatus = dto.ResidenceStatus,
-                LastClassAttended = dto.LastClassId,  // Mapping the ID to Class entity
-                AdmissionRequiredInClass = dto.AdmissionClassId  // Mapping the ID to Class entity
-
+                City = dto.City,
+                MotherTounge = dto.MotherTounge,
+                States = dto.States,
+                CreatedAt = dto.CreatedAt,
+                CreatedBy = dto.CreatedBy,
+                UpdatedAt = dto.UpdatedAt,
+                UpdatedBy = dto.UpdatedBy,
+                IsActive = dto.IsActive
             };
-        }
 
-        //public ApplicantDTO MapToDtoWithSubEntity(ApplicantDTO entity)
-        //{
-            //return new Applicants
-            //{
-            //    ApplicantId = entity.ApplicantId,
-            //    FirstName = entity.FirstName,
-            //    LastName = entity.LastName,
-            //    FormBNumber = entity.FormBNumber,
-            //    DateOfBirth = entity.DateOfBirth,
-            //    Gender = entity.Gender,
-            //    AdmissionRequiredInClass = entity.AdmissionRequiredInClass,
-            //    LastClassAttended = entity.LastClassAttended,
-            //    ApplicationDate = entity.ApplicationDate,
-            //    Email = entity.Email,
-            //    PhoneNumber = entity.PhoneNumber,
-            //    ApplicantAddress = entity.ApplicantAddress,
-            //    Nationality = entity.Nationality,
-            //    States = entity.States,
-            //    City = entity.City,
-            //    Languages = entity.Languages,                
-            //    Parents = entity.Parents.Select(d => d.ApplicantId == entity.ApplicantId)
-                // Map related entities
-                //Parents = entity.Parents.Select(d => new ParentDTO
-                //{
-                //    ParentId = d.ParentId,
-                //    FirstName = d.FirstName,
-                //    LastName = d.LastName,
-                //    Email = d.Email,
-                //    PhoneNumber = d.PhoneNumber,
-                //    ParentAddress = d.ParentAddress,
-                //    RelationWithApplicant = d.RelationWithApplicant,
-                //    Qualification = d.Qualification,
-                //    Occupation = d.Occupation,
-                //    SourceOfIncome = d.SourceOfIncome
-                //}).ToList(),
-            //};
+        }
     }
 }
