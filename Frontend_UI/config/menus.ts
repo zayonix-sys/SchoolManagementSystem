@@ -121,6 +121,11 @@ const menuItems: MenuItemProps[] = [
         href: "/classrooms",
         icon: Graph,
       },
+      {
+        title: "Manage Employees",
+        href: "/employees",
+        icon: Graph,
+      },
     ],
   },
   {

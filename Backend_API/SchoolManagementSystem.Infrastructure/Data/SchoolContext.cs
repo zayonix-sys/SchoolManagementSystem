@@ -23,6 +23,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Admission> Admissions { get; set; }
         public DbSet<Campus> Campuses { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<EmployeeRoles> EmployeeRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,6 +53,9 @@ namespace SchoolManagementSystem.Infrastructure.Data
                 .HasIndex(ad => new { ad.StudentId, ad.ApplicationId })
                 .IsUnique();
 
+            //modelBuilder.Entity<Employee>()
+            //    .HasOne(e => e.Campuses);
+                //.HasForeignKey(e => e.CampusId);
             // Add configurations for other entities
         }
     }
