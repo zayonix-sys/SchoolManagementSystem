@@ -14,7 +14,7 @@ namespace SchoolManagementSystem.Domain.Entities
 
         [Required]
         [StringLength(100)]
-        public string CampusName { get; set; }
+        public string? CampusName { get; set; }
 
         [StringLength(255)]
         public string Address { get; set; }
@@ -42,13 +42,12 @@ namespace SchoolManagementSystem.Domain.Entities
         // Navigation properties for related entities
         public virtual ICollection<Department> Departments { get; set; }
         //public virtual ICollection<Classroom> Classrooms { get; set; }
-        //public virtual ICollection<Employee> Employees { get; set; }
-
+        public virtual ICollection<Employee> Employees { get; set; }
         public Campus()
         {
             Departments = new HashSet<Department>();
             //Classrooms = new HashSet<Classroom>();
-            //Employees = new HashSet<Employee>();
+            Employees = new HashSet<Employee>();
         }
     }
 
