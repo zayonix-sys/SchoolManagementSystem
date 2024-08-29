@@ -10,11 +10,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useEffect, useState } from "react";
-import { ClassData } from "@/services/ClassService"; // Replace with actual service import
+import { ClassData } from "@/services/ClassService";
 import { SectionData } from "@/services/SectionService";
 import SectionListTable from "./section-table";
 
-// This component allows you to view class details in a sheet.
 export default function ViewSection({
   selectedSection,
   selectedClass,

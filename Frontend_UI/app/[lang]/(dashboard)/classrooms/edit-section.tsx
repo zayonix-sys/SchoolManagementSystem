@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/sheet";
 import { SectionData, updateSection } from "@/services/SectionService";
 
-// Define Zod schema for class form validation
 const sectionSchema = z.object({
   sectionName: z.string().min(1, "Class Name is required"),
   capacity: z.number().min(1, "Capacity is required").max(999),
