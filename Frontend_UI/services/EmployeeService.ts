@@ -4,14 +4,16 @@ import { ApiResponse } from "./apiResponse";
 export interface EmployeesData {
   employeeId?: number;
   roleId?: number;
+  employeeRoleName?: string;
   campusId?: number;
+  campusName?: string;
   departmentId?: number;
+  departmentName?: string;
   firstName?: string;
   lastName?: string;
   email?: string;
   phoneNumber?: string;
   hireDate?: string; // or Date if you want to use Date objects
-  department?: string;
   address?: string;
   emergencyContact?: string;
   qualifications?: string;
@@ -20,8 +22,7 @@ export interface EmployeesData {
   updatedAt?: string; // or Date
   updatedBy?: string;
   isActive?: boolean;
-};
-
+}
 
 const BASE_URL = "/Employees";
 
@@ -37,7 +38,9 @@ export const fetchEmployees = async (): Promise<ApiResponse> => {
 
 export const fetchEmployeeById = async (id: number): Promise<EmployeesData> => {
   try {
-    const response = await api.get<EmployeesData>(`${BASE_URL}/GetEmployeeById/${id}`);
+    const response = await api.get<EmployeesData>(
+      `${BASE_URL}/GetEmployeeById/${id}`
+    );
     return response.data;
   } catch (error) {
     console.error(`Failed to fetch Employee with ID ${id}:`, error);
@@ -45,7 +48,9 @@ export const fetchEmployeeById = async (id: number): Promise<EmployeesData> => {
   }
 };
 
-export const addEmployee = async (EmployeeData: EmployeesData): Promise<ApiResponse> => {
+export const addEmployee = async (
+  EmployeeData: EmployeesData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddEmployee`,
@@ -84,4 +89,3 @@ export const deleteEmployee = async (id: number): Promise<ApiResponse> => {
     throw new Error(`Failed to delete Employee`);
   }
 };
-

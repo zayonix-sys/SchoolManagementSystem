@@ -63,14 +63,15 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<ApiResponse<ApplicantDTO>>> AddApplicant([FromBody] ApplicantDTO dto)
+        public async Task<ActionResult<ApiResponse<ApplicantDTO>>> AddApplicant([FromBody] ApplicantAdmissionDTO dto)
         {
             _logger.LogInformation("Adding a new Applicant with name {FirstName}.", dto.FirstName);
             try
             {
-                await _applicantService.AddApplicantAsync(dto);
+                var applicantId = await _applicantService.AddApplicantAsync(dto);
+                await _applicantService.AddAdmissionApplicationAsync(dto, applicantId);
                 _logger.LogInformation("Successfully added applicant with ID {ApplicantId}.", dto.ApplicantId);
-                return Ok(ApiResponse<ApplicantDTO>.SuccessResponse(dto, "Applicant added successfully"));
+                return Ok(ApiResponse<ApplicantAdmissionDTO>.SuccessResponse(dto, "Applicant added successfully"));
 
             }
             catch (Exception ex)

@@ -3,9 +3,9 @@ using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
-    public class EmployeesMapper : IMapper<EmployeesDTO, Employee>
+    public class EmployeeMapper : IMapper<EmployeeDTO, Employee>
     {
-        public Employee MapToEntity(EmployeesDTO dto)
+        public Employee MapToEntity(EmployeeDTO dto)
         {
             return new Employee
             {
@@ -18,11 +18,10 @@ namespace SchoolManagementSystem.Application.Mappers
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
                 HireDate = dto.HireDate,
-                Department = dto.Department,
                 Address = dto.Address,
                 EmergencyContact = dto.EmergencyContact,
                 Qualifications = dto.Qualifications,
-                CreatedAt = dto.CreatedAt ?? DateTime.Now,
+                CreatedAt = dto.CreatedAt,
                 CreatedBy = dto.CreatedBy,
                 UpdatedAt = dto.UpdatedAt,
                 UpdatedBy = dto.UpdatedBy,
@@ -30,9 +29,9 @@ namespace SchoolManagementSystem.Application.Mappers
             };
         }
 
-        public EmployeesDTO MapToDto(Employee entity)
+        public EmployeeDTO MapToDto(Employee entity)
         {
-            return new EmployeesDTO
+            return new EmployeeDTO
             {
                 EmployeeId = entity.EmployeeId,
                 RoleId = entity.RoleId,
@@ -43,7 +42,6 @@ namespace SchoolManagementSystem.Application.Mappers
                 Email = entity.Email,
                 PhoneNumber = entity.PhoneNumber,
                 HireDate = entity.HireDate,
-                Department = entity.Department,
                 Address = entity.Address,
                 EmergencyContact = entity.EmergencyContact,
                 Qualifications = entity.Qualifications,
@@ -56,9 +54,9 @@ namespace SchoolManagementSystem.Application.Mappers
         }
 
 
-        public EmployeesDTO MapToDtoWithSubEntity(Employee entity)
+        public EmployeeDTO MapToDtoWithSubEntity(Employee entity)
         {
-            return new EmployeesDTO
+            return new EmployeeDTO
             {
                 EmployeeId = entity.EmployeeId,
                 RoleId = entity.RoleId,
@@ -69,7 +67,6 @@ namespace SchoolManagementSystem.Application.Mappers
                 Email = entity.Email,
                 PhoneNumber = entity.PhoneNumber,
                 HireDate = entity.HireDate,
-                Department = entity.Department,
                 Address = entity.Address,
                 EmergencyContact = entity.EmergencyContact,
                 Qualifications = entity.Qualifications,
@@ -79,19 +76,13 @@ namespace SchoolManagementSystem.Application.Mappers
                 UpdatedBy = entity.UpdatedBy,
                 IsActive = entity.IsActive,
 
-                // Map related entities
-                Campuses = entity.Campuses.Select(d => new CampusDTO
-                {
-                    CampusId = d.CampusId,
-                    CampusName = d.CampusName,
-                    IsActive = d.IsActive,
-                    Departments = (ICollection<DepartmentDTO>)d.Departments.Select(e => new DepartmentDTO
-                    {
-                        DepartmentId = e.DepartmentId,
-                        DepartmentName = e.DepartmentName,
-                        IsActive = e.IsActive,
-                    })
-                }).ToList(),
+                //EmployeeRole = entity.EmployeeRole,    // Include the full EmployeeRole object
+                //Campus = entity.Campus,                // Include the full Campus object with Departments
+
+                // Additional properties can be added if needed
+                EmployeeRoleName = entity.EmployeeRole.RoleName,    // Assuming EmployeeRole has a RoleName property
+                CampusName = entity.Campus.CampusName,              // Assuming Campus has a CampusName property
+                DepartmentName = entity.Departments.DepartmentName
             };
         }
 

@@ -41,8 +41,9 @@ builder.Services.AddScoped<ISection, SectionService>();
 builder.Services.AddScoped<SectionMapper>();
 builder.Services.AddScoped<IApplicant, ApplicantService>();
 builder.Services.AddScoped <ApplicantMapper>();
-builder.Services.AddScoped<IEmployees, EmployeesService>();
-builder.Services.AddScoped<EmployeesMapper>();
+builder.Services.AddScoped<ApplicationMapper>();
+builder.Services.AddScoped<IEmployee, EmployeeService>();
+builder.Services.AddScoped<EmployeeMapper>();
 
 builder.Services.AddScoped<IStudent, StudentService>();
 

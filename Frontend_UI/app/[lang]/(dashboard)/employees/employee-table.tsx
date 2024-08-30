@@ -12,7 +12,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { deleteSection, fetchSection, SectionData } from "@/services/SectionService";
+import {
+  deleteSection,
+  fetchSection,
+  SectionData,
+} from "@/services/SectionService";
 // import EditSection from "./edit-section";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -24,14 +28,14 @@ const EmployeeListTable = () => {
   const [error, setError] = useState(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 10;
 
   useEffect(() => {
     const fetchEmployeesData = async () => {
       setLoading(true);
       try {
-        const response = await fetchEmployees()
+        const response = await fetchEmployees();
         setEmployees(response.data as EmployeesData[]);
       } catch (err) {
         setError(err as any);
@@ -50,7 +54,10 @@ const EmployeeListTable = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSections.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredSections.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const totalPages = Math.ceil(filteredSections.length / itemsPerPage);
 
@@ -59,7 +66,9 @@ const EmployeeListTable = () => {
       setSelectedRows([]);
     } else {
       setSelectedRows(
-        currentItems.map((row) => row.employeeId!).filter((id) => id !== null && id !== undefined)
+        currentItems
+          .map((row) => row.employeeId!)
+          .filter((id) => id !== null && id !== undefined)
       );
     }
   };
@@ -83,7 +92,9 @@ const EmployeeListTable = () => {
   };
 
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this section?");
+    const isConfirmed = confirm(
+      "Are you sure you want to delete this section?"
+    );
 
     if (isConfirmed) {
       try {
@@ -134,10 +145,12 @@ const EmployeeListTable = () => {
               className="hover:bg-default-200"
               data-state={selectedRows.includes(item.employeeId!) && "selected"}
             >
-              <TableCell className="p-2.5">{item.roleId}</TableCell>
-              <TableCell className="p-2.5">{item.campusId}</TableCell>
-              <TableCell className="p-2.5">{item.departmentId}</TableCell>
-              <TableCell className="p-2.5">{item.firstName} {item.lastName}</TableCell>
+              <TableCell className="p-2.5">{item.employeeRoleName}</TableCell>
+              <TableCell className="p-2.5">{item.campusName}</TableCell>
+              <TableCell className="p-2.5">{item.departmentName}</TableCell>
+              <TableCell className="p-2.5">
+                {item.firstName} {item.lastName}
+              </TableCell>
               <TableCell className="p-2.5">{item.email}</TableCell>
               <TableCell className="p-2.5">{item.phoneNumber}</TableCell>
               <TableCell className="p-2.5">{item.hireDate}</TableCell>

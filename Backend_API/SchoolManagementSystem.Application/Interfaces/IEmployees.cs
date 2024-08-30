@@ -2,12 +2,12 @@
 
 namespace SchoolManagementSystem.Application.Interfaces
 {
-    public interface IEmployees
+    public interface IEmployee
     {
-        Task<List<EmployeesDTO>> GetAllEmployeesAsync();
-        Task<EmployeesDTO> GetEmployeeByIdAsync(int employeeId);
-        Task AddEmployeeAsync(EmployeesDTO emp);
-        Task UpdateEmployeeAsync(EmployeesDTO emp);
+        Task<List<EmployeeDTO>> GetAllEmployeesAsync();
+        Task<EmployeeDTO> GetEmployeeByIdAsync(int employeeId);
+        Task AddEmployeeAsync(EmployeeDTO emp);
+        Task UpdateEmployeeAsync(EmployeeDTO emp);
         Task DeleteEmployeeAsync(int employeeId);
 
     }

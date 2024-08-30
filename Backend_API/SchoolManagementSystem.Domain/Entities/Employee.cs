@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,50 +12,46 @@ namespace SchoolManagementSystem.Domain.Entities
         [Key]
         public int? EmployeeId { get; set; }
 
-        [ForeignKey("EmployeeRoles")]
+        [ForeignKey("EmployeeRole")]
         public int? RoleId { get; set; }
 
-        //[ForeignKey("Campuses")]
+        [ForeignKey("Campus")]
         public int? CampusId { get; set; }
 
-        [ForeignKey("Departments")]
+        [ForeignKey("Department")]
         public int? DepartmentId { get; set; }
 
-        [MaxLength(50)]
-        public string? FirstName { get; set; }
+        [StringLength(50)]
+        public string FirstName { get; set; }
 
-        [MaxLength(50)]
+        [StringLength(50)]
         public string? LastName { get; set; }
 
-        [Required]
-        [EmailAddress]
+        [StringLength(100)]
         public string? Email { get; set; }
 
-        [Phone]
+        [StringLength(15)]
         public string? PhoneNumber { get; set; }
 
-        [Required]
         public DateTime? HireDate { get; set; }
 
-        [MaxLength(100)]
-        public string? Department { get; set; }
+        [StringLength(255)]
+        public string Address { get; set; }
 
-        [MaxLength(250)]
-        public string? Address { get; set; }
-
-        [MaxLength(100)]
+        [StringLength(50)]
         public string? EmergencyContact { get; set; }
 
-        [MaxLength(250)]
-        public string? Qualifications { get; set; }
+        [StringLength(255)]
+        public string Qualifications { get; set; }
 
         [Required]
-        public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("CreatedUser")]
         public int? CreatedBy { get; set; }
 
-        public DateTime? UpdatedAt { get; set; }
+        [Required]
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("UpdatedUser")]
         public int? UpdatedBy { get; set; }
@@ -63,15 +60,10 @@ namespace SchoolManagementSystem.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         // Navigation properties
-        public virtual ICollection<Campus> Campuses { get; set; }
-        public virtual ICollection<Department> Departments { get; set; }
-        public EmployeeRoles EmployeeRoles { get; set; }
+        public EmployeeRole EmployeeRole { get; set; }
+        public Campus Campus { get; set; }
+        public Department Departments { get; set; }
         public User CreatedUser { get; set; }
         public User UpdatedUser { get; set; }
-        public Employee()
-        {
-            Campuses = new HashSet<Campus>();
-            Departments = new HashSet<Department>();
-        }
     }
 }

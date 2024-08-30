@@ -7,18 +7,18 @@ using SchoolManagementSystem.Domain.Interfaces;
 
 namespace SchoolManagementSystem.Application.Services
 {
-    public class EmployeesService : IEmployees
+    public class EmployeeService : IEmployee
     {
         private readonly IGenericRepository<Employee> _employeeRepository;
-        private readonly EmployeesMapper _mapper;
+        private readonly EmployeeMapper _mapper;
 
-        public EmployeesService(IGenericRepository<Employee> genericRepository, EmployeesMapper employeeMapper)
+        public EmployeeService(IGenericRepository<Employee> genericRepository, EmployeeMapper employeeMapper)
         {
             _employeeRepository = genericRepository;
             _mapper = employeeMapper;
         }
 
-        public async Task AddEmployeeAsync(EmployeesDTO dto)
+        public async Task AddEmployeeAsync(EmployeeDTO dto)
         {
             var model = _mapper.MapToEntity(dto);
             await _employeeRepository.AddAsync(model);
@@ -34,32 +34,36 @@ namespace SchoolManagementSystem.Application.Services
             }
         }
 
-        public async Task<List<EmployeesDTO>> GetAllEmployeesAsync()
+        public async Task<List<EmployeeDTO>> GetAllEmployeesAsync()
         {
             try
             {
                 var employees = await _employeeRepository.GetAllAsync(
-                    include: query => query.Include(c => c.Campuses.Where(d => d.IsActive))
-                 );
-                var activeEmployees = employees.Where(c => c.IsActive).ToList();
+                    include: query => query
+                        .Include(e => e.EmployeeRole)              // Include EmployeeRole details
+                        .Include(e => e.Campus)                    // Include Campus details
+                            .ThenInclude(c => c.Departments)       // Include Departments within Campus
+                        /*.Include(e => e.Departments)*/               // Include Department details directly
+                );
 
-                var result = activeEmployees.Select(c => _mapper.MapToDtoWithSubEntity(c)).ToList();
+                var activeEmployees = employees.Where(e => e.IsActive).ToList();
+
+                var result = activeEmployees.Select(e => _mapper.MapToDtoWithSubEntity(e)).ToList();
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                throw ex;
             }
         }
 
-        public async Task<EmployeesDTO> GetEmployeeByIdAsync(int employeeId)
+        public async Task<EmployeeDTO> GetEmployeeByIdAsync(int employeeId)
         {
            var result = await _employeeRepository.GetByIdAsync(employeeId);
             return _mapper.MapToDto(result);
         }
 
-        public async Task UpdateEmployeeAsync(EmployeesDTO emp)
+        public async Task UpdateEmployeeAsync(EmployeeDTO emp)
         {
             var model = _mapper.MapToEntity(emp);
             await _employeeRepository.UpdateAsync(model);

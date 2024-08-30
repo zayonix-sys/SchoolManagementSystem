@@ -12,18 +12,33 @@ namespace SchoolManagementSystem.Application.Services
     public class ApplicantService : IApplicant
     {
         private readonly IGenericRepository<Applicant> _applicantRepository;
+        private readonly IGenericRepository<AdmissionApplication> _applicationRepository;
         private readonly ApplicantMapper _mapper;
+        private readonly ApplicationMapper _mapperApplication;
 
-        public ApplicantService(IGenericRepository<Applicant> genericRepository, ApplicantMapper applicantMapper)
+        public ApplicantService(IGenericRepository<Applicant> genericRepository, IGenericRepository<AdmissionApplication> applicationRepository, ApplicantMapper applicantMapper, ApplicationMapper mapperApplication)
         {
             _applicantRepository = genericRepository;
+            _applicationRepository = applicationRepository;
             _mapper = applicantMapper;
+            _mapperApplication = mapperApplication;
         }
 
-        public async Task AddApplicantAsync(ApplicantDTO dto)
+        public async Task<int> AddApplicantAsync(ApplicantAdmissionDTO dto)
         {
+            //Adding Applicant
             var model = _mapper.MapToEntity(dto);
-            await _applicantRepository.AddAsync(model);
+            var applicantId = await _applicantRepository.AddAsync(model);
+
+            return (int)applicantId;
+        }
+
+        public async Task AddAdmissionApplicationAsync(ApplicantAdmissionDTO dto, int applicantId)
+        {
+            //Adding Applicant
+            dto.ApplicantId = applicantId;
+            var model = _mapperApplication.MapToEntity(dto);
+            await _applicationRepository.AddAsync(model);
         }
 
 
