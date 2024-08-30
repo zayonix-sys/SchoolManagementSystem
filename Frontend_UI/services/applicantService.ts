@@ -10,14 +10,46 @@ export interface ApplicantData {
   email: string;
   applicantAddress: string;
   nationality: string;
-  applicationDate: string;
   lastClassId: number;
   admissionClassId: number;
+  campusId: number;
   motherTounge: string;
   residenceStatus: string;
   states: string;
   city: string;
   phoneNumber: string;
+}
+
+export interface ApplicantAdmissionDTO {
+  // Applicant Details
+  lastClassId?: number;
+  admissionClassId?: number;
+  firstName: string;
+  lastName: string;
+  formBNumber: string;
+  dateOfBirth?: Date;
+  gender: string;
+  email: string;
+  phoneNumber: string;
+  applicantAddress: string;
+  residenceStatus: string;
+  city: string;
+  motherTounge: string;
+  states: string;
+
+  // Application Details
+  campusId?: number;
+  classId?: number;
+  applicationStatus?: string;
+  admissionDecisionDate?: string;
+  remarks?: string;
+
+  // Common Fields
+  //createdAt?: Date;
+  //createdBy?: number;
+  //updatedAt?: Date;
+  //updatedBy?: number;
+  //isActive?: boolean;
 }
 
 const BASE_URL = "/applicant";
@@ -33,7 +65,7 @@ const BASE_URL = "/applicant";
 // };
 
 export const addApplicant = async (
-  applicantData: ApplicantData
+  applicantData: ApplicantAdmissionDTO
 ): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
