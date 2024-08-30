@@ -18,7 +18,7 @@ import { ClassData } from "@/services/ClassService";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
-const SectionListTable = ({ selectedClass }: { selectedClass: ClassData[] }) => {
+const SectionListTable = () => {
   const [sections, setSections] = useState<SectionData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

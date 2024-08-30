@@ -64,6 +64,7 @@ export { default as ClipBoard } from "./duel-tone/clip-board.svg";
 export { default as Envelope } from "./duel-tone/envelope.svg";
 export { default as Messages } from "./duel-tone/message.svg";
 export { default as Monitor } from "./duel-tone/monitor.svg";
+export { default as Campus } from "./duel-tone/building-campus.svg";
 export { default as List } from "./duel-tone/list.svg";
 export { default as ListFill } from "./duel-tone/list-fill.svg";
 export { default as Calendar } from "./duel-tone/calendar.svg";

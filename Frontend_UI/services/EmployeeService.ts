@@ -24,7 +24,7 @@ export interface EmployeesData {
   isActive?: boolean;
 }
 
-const BASE_URL = "/Employees";
+const BASE_URL = "/Employee";
 
 export const fetchEmployees = async (): Promise<ApiResponse> => {
   try {

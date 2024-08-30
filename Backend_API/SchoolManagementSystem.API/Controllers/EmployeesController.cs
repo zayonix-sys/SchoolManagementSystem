@@ -8,12 +8,12 @@ namespace SchoolManagementSystem.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class EmployeesController : ControllerBase
+    public class EmployeeController : ControllerBase
     {
-        private readonly ILogger<EmployeesController> _logger;
+        private readonly ILogger<EmployeeController> _logger;
         private readonly IEmployee _employeeService;
 
-        public EmployeesController(ILogger<EmployeesController> logger, IEmployee emp)
+        public EmployeeController(ILogger<EmployeeController> logger, IEmployee emp)
         {
             _logger = logger;
             _employeeService = emp;
