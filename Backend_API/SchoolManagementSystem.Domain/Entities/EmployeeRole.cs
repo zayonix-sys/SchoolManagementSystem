@@ -1,31 +1,25 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
-    public class Classroom
+    public class EmployeeRole
     {
         [Key]
-        public int ClassroomId { get; set; }
-
-        [ForeignKey("Campus")]
-        public int CampusId { get; set; }
+        public int RoleId { get; set; }
 
         [Required]
-        [StringLength(20)]
-        public string RoomNumber { get; set; }
+        [StringLength(50)]
+        public string RoleName { get; set; }
 
-        [Required]
-        [StringLength(100)]
-        public string Building { get; set; }
-
-        [Required]
-        public int Capacity { get; set; }
+        [StringLength(255)]
+        public string RoleDescription { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
@@ -42,8 +36,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         // Navigation properties
-        //public Campus Campus { get; set; }
-        //public User? CreatedUser { get; set; }
-        //public User? UpdatedUser { get; set; }
+        public User CreatedUser { get; set; }
+        public User UpdatedUser { get; set; }
     }
 }

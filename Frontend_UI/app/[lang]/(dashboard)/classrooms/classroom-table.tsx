@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState,useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,55 +12,52 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { deleteSection, fetchSection, SectionData } from "@/services/SectionService";
-import EditSection from "./edit-section";
-import { ClassData } from "@/services/ClassService";
-import { toast } from "sonner";
+import { ClassroomData, deleteClassroom, fetchClassrooms } from "@/services/classroomService";
 import { Input } from "@/components/ui/input";
+import EditClassroom from "./edit-classroom";
 
-const SectionListTable = () => {
-  const [sections, setSections] = useState<SectionData[]>([]);
+const ClassroomListTable = () => {
+  const [classroom, setClassroom] = useState<ClassroomData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(""); 
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(""); 
   const itemsPerPage = 10;
-
   
+  // Function to fetch class data
   useEffect(() => {
-    const fetchSectionsData = async () => {
+    const fetchClassroomData = async () => {
       setLoading(true);
       try {
-        const response = await fetchSection();
-        setSections(response.data as SectionData[]);
+        const response = await fetchClassrooms(); // assuming fetchClasses is a function that fetches the data
+        setClassroom(response.data as ClassroomData[]);
       } catch (err) {
         setError(err as any);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchSectionsData();
+  
+    fetchClassroomData();
   }, []);
-
-  // Apply search filter and pagination
-  const filteredSections = sections.filter((section) =>
-    section.sectionName.toLowerCase().includes(searchQuery.toLowerCase())
+  
+  const filteredClassrooms = classroom.filter((classroom) =>
+    classroom.roomNumber.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSections.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredClassrooms.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredSections.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredClassrooms.length / itemsPerPage);
 
   const handleSelectAll = () => {
     if (selectedRows.length === currentItems.length) {
       setSelectedRows([]);
     } else {
       setSelectedRows(
-        currentItems.map((row) => row.classId!).filter((id) => id !== null && id !== undefined)
+        currentItems.map((row) => row.classroomId!).filter((id) => id !== null && id !== undefined)
       );
     }
   };
@@ -84,28 +81,30 @@ const SectionListTable = () => {
   };
 
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this section?");
-
+    const isConfirmed = confirm("Are you sure you want to delete this classroom?");
+    
     if (isConfirmed) {
       try {
-        await deleteSection(id);
-        toast.success("Section deleted successfully");
-        fetchSection(); // Refresh the data after deletion
+        await deleteClassroom(id);
+        alert("Classroom deleted successfully");
+        fetchClassrooms(); // Refresh the data after deletion
       } catch (error) {
-        console.error("Error deleting Section:", error);
-        toast.error("Failed to delete Section");
+        console.error("Error deleting classroom:", error);
+        alert("Failed to delete classroom");
       }
     } else {
-      toast.success("Deletion cancelled");
+      alert("Deletion cancelled");
     }
   };
+
+
 
   return (
     <>
       <div className="mb-4 flex justify-between items-center">
         <Input
           type="text"
-          placeholder="Search by section name..."
+          placeholder="Search by Room Number..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border p-2 rounded"
@@ -114,7 +113,8 @@ const SectionListTable = () => {
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-            <TableHead className="h-10 p-2.5">Section Name</TableHead>
+            <TableHead className="h-10 p-2.5">Room Number</TableHead>
+            <TableHead className="h-10 p-2.5">Building</TableHead>
             <TableHead className="h-10 p-2.5">Capacity</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
             <TableHead className="h-10 p-2.5 text-end">Action</TableHead>
@@ -124,11 +124,14 @@ const SectionListTable = () => {
         <TableBody>
           {currentItems.map((item) => (
             <TableRow
-              key={item.sectionId}
+              key={item.classroomId}
               className="hover:bg-default-200"
-              data-state={selectedRows.includes(item.sectionId!) && "selected"}
+              data-state={
+                selectedRows.includes(item.classroomId!) && "selected"
+              }
             >
-              <TableCell className="p-2.5">{item.sectionName}</TableCell>
+              <TableCell className="p-2.5">{item.roomNumber}</TableCell>
+              <TableCell className="p-2.5">{item.building}</TableCell>
               <TableCell className="p-2.5">{item.capacity}</TableCell>
               <TableCell className="p-2.5">
                 <Badge
@@ -142,13 +145,14 @@ const SectionListTable = () => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditSection sectionData={item} />
+                <EditClassroom classroomData={item}/>
+
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDelete(item.sectionId!)}
+                    onClick={() => handleDelete(item.classroomId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -173,4 +177,4 @@ const SectionListTable = () => {
   );
 };
 
-export default SectionListTable;
+export default ClassroomListTable;

@@ -14,7 +14,7 @@ namespace SchoolManagementSystem.Domain.Interfaces
         Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null,
                                       Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null);
         Task<T> GetByIdAsync(int id);
-        Task AddAsync(T entity);
+        Task<object> AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(int id);
     }

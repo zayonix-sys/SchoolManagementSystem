@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -18,11 +18,14 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Class> Classes { get; set; }
         public DbSet<Section> Sections { get; set; }
         public DbSet<Applicant> Applicants { get; set; }
-        public DbSet<Application> Applications { get; set; }
+        public DbSet<AdmissionApplication> Applications { get; set; }
         public DbSet<AdmissionTest> AdmissionTests { get; set; }
         public DbSet<Admission> Admissions { get; set; }
         public DbSet<Campus> Campuses { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Classroom> Classrooms { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<EmployeeRole> EmployeeRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,7 +40,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
             modelBuilder.Entity<Admission>()
                 .HasOne(a => a.Student);
 
-            modelBuilder.Entity<Application>()
+            modelBuilder.Entity<AdmissionApplication>()
                 .HasIndex(a => a.ApplicantId);
 
             modelBuilder.Entity<AdmissionTest>()
@@ -51,7 +54,15 @@ namespace SchoolManagementSystem.Infrastructure.Data
                 .HasIndex(ad => new { ad.StudentId, ad.ApplicationId })
                 .IsUnique();
 
-            // Add configurations for other entities
+            modelBuilder.Entity<EmployeeRole>()
+                .HasIndex(er => er.RoleName)
+                .IsUnique();
+
+            modelBuilder.Entity<Employee>()
+                .HasIndex(e => e.Email)
+                .IsUnique();
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

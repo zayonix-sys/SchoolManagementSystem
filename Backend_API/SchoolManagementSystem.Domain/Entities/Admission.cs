@@ -33,7 +33,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public virtual Student Student { get; set; }
 
         [ForeignKey("ApplicationId")]
-        public virtual Application Application { get; set; }
+        public virtual AdmissionApplication Application { get; set; }
 
         [ForeignKey("ClassId")]
         public virtual Class Class { get; set; }
