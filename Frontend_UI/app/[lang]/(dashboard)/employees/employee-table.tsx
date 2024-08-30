@@ -12,46 +12,36 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { deleteSection, fetchSection, SectionData } from "@/services/SectionService";
-import EditSection from "./edit-section";
-import { ClassData } from "@/services/ClassService";
+import {
+  deleteSection,
+  fetchSection,
+  SectionData,
+} from "@/services/SectionService";
+// import EditSection from "./edit-section";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import { deleteEmployee, EmployeesData } from "@/services/EmployeeService";
 
-const SectionListTable = () => {
-  const [sections, setSections] = useState<SectionData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+interface EmployeeListTableProps {
+  employees: EmployeesData[];
+}
+const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(""); 
-  const itemsPerPage = 10;
-
-  
-  useEffect(() => {
-    const fetchSectionsData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchSection();
-        setSections(response.data as SectionData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSectionsData();
-  }, []);
+  const [searchQuery, setSearchQuery] = useState("");
+  const itemsPerPage = 5;
 
   // Apply search filter and pagination
-  const filteredSections = sections.filter((section) =>
-    section.sectionName.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredSections = (employees as any[]).filter((employee) =>
+    employee?.firstName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSections.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredSections.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const totalPages = Math.ceil(filteredSections.length / itemsPerPage);
 
@@ -60,7 +50,9 @@ const SectionListTable = () => {
       setSelectedRows([]);
     } else {
       setSelectedRows(
-        currentItems.map((row) => row.classId!).filter((id) => id !== null && id !== undefined)
+        currentItems
+          .map((row) => row.employeeId!)
+          .filter((id) => id !== null && id !== undefined)
       );
     }
   };
@@ -84,16 +76,18 @@ const SectionListTable = () => {
   };
 
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this section?");
+    const isConfirmed = confirm(
+      "Are you sure you want to delete this employee?"
+    );
 
     if (isConfirmed) {
       try {
-        await deleteSection(id);
-        toast.success("Section deleted successfully");
+        await deleteEmployee(id);
+        toast.success("Employee deleted successfully");
         fetchSection(); // Refresh the data after deletion
       } catch (error) {
-        console.error("Error deleting Section:", error);
-        toast.error("Failed to delete Section");
+        console.error("Error deleting Employee:", error);
+        toast.error("Failed to delete Employee");
       }
     } else {
       toast.success("Deletion cancelled");
@@ -114,8 +108,15 @@ const SectionListTable = () => {
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-            <TableHead className="h-10 p-2.5">Section Name</TableHead>
-            <TableHead className="h-10 p-2.5">Capacity</TableHead>
+            <TableHead className="h-10 p-2.5">Role</TableHead>
+            <TableHead className="h-10 p-2.5">Campus</TableHead>
+            <TableHead className="h-10 p-2.5">Department</TableHead>
+            <TableHead className="h-10 p-2.5">Name</TableHead>
+            <TableHead className="h-10 p-2.5">Email</TableHead>
+            <TableHead className="h-10 p-2.5">Number</TableHead>
+            <TableHead className="h-10 p-2.5">HireDate</TableHead>
+            <TableHead className="h-10 p-2.5">Address</TableHead>
+            <TableHead className="h-10 p-2.5">Qualifications</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
             <TableHead className="h-10 p-2.5 text-end">Action</TableHead>
           </TableRow>
@@ -124,12 +125,21 @@ const SectionListTable = () => {
         <TableBody>
           {currentItems.map((item) => (
             <TableRow
-              key={item.sectionId}
+              key={item.employeeId}
               className="hover:bg-default-200"
-              data-state={selectedRows.includes(item.sectionId!) && "selected"}
+              data-state={selectedRows.includes(item.employeeId!) && "selected"}
             >
-              <TableCell className="p-2.5">{item.sectionName}</TableCell>
-              <TableCell className="p-2.5">{item.capacity}</TableCell>
+              <TableCell className="p-2.5">{item.employeeRoleName}</TableCell>
+              <TableCell className="p-2.5">{item.campusName}</TableCell>
+              <TableCell className="p-2.5">{item.departmentName}</TableCell>
+              <TableCell className="p-2.5">
+                {item.firstName} {item.lastName}
+              </TableCell>
+              <TableCell className="p-2.5">{item.email}</TableCell>
+              <TableCell className="p-2.5">{item.phoneNumber}</TableCell>
+              <TableCell className="p-2.5">{item.hireDate}</TableCell>
+              <TableCell className="p-2.5">{item.address}</TableCell>
+              <TableCell className="p-2.5">{item.qualifications}</TableCell>
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
@@ -139,16 +149,15 @@ const SectionListTable = () => {
                   {item.isActive ? "Active" : "Inactive"}
                 </Badge>
               </TableCell>
-
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditSection sectionData={item} />
+                  {/* <EditSection sectionData={item} /> */}
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDelete(item.sectionId!)}
+                    onClick={() => handleDelete(item.employeeId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -173,4 +182,4 @@ const SectionListTable = () => {
   );
 };
 
-export default SectionListTable;
+export default EmployeeListTable;

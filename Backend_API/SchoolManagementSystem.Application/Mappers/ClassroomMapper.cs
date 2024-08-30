@@ -14,10 +14,6 @@ namespace SchoolManagementSystem.Application.Mappers
                 RoomNumber = dto.RoomNumber,
                 Building = dto.Building,
                 Capacity = dto.Capacity,
-                CreatedAt = dto.CreatedAt,
-                CreatedBy = dto?.CreatedBy,
-                UpdatedAt = dto.UpdatedAt,
-                UpdatedBy = dto?.UpdatedBy,
                 IsActive = dto.IsActive,
 
             };
@@ -31,10 +27,6 @@ namespace SchoolManagementSystem.Application.Mappers
                 RoomNumber = entity.RoomNumber,
                 Building = entity.Building,
                 Capacity = entity.Capacity,
-                CreatedAt = entity.CreatedAt,
-                CreatedBy = entity?.CreatedBy,
-                UpdatedAt = entity.UpdatedAt,
-                UpdatedBy = entity?.UpdatedBy,
                 IsActive = entity.IsActive,
             };
         }

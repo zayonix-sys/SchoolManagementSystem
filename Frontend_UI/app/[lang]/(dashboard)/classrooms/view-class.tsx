@@ -17,7 +17,7 @@ import ClassListTable from "./class-table";
 export default function ViewClass({
   selectedClass,
 }: {
-  selectedClass: ClassData | null;
+  selectedClass: ClassData[] | null;
 }) {
   return (
     <Sheet>

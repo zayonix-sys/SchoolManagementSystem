@@ -32,10 +32,13 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task AddAsync(T entity)
+        public async Task<object> AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
+            
+            // Use reflection to get the ID property value
+            return entity.GetType().GetProperty(entity.GetType().Name + "Id")?.GetValue(entity);
         }
 
         public async Task UpdateAsync(T entity)
