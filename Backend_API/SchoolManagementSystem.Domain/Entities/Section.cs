@@ -18,7 +18,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public string SectionName { get; set; }
 
         [ForeignKey("Class")]
-        public int ClassId { get; set; }
+        public int? ClassId { get; set; }
 
         [Required]
         public int Capacity { get; set; }
