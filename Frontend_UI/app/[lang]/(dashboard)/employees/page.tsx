@@ -1,10 +1,9 @@
 "use client";
 import { BreadcrumbItem, Breadcrumbs } from "@/components/ui/breadcrumbs";
-import AddEmployee from "./add-employee";
-//import AddEmployeeRole from "./add-employee-role";
-import EmployeeListTable from "./employee-table";
 import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
 import { useEffect, useState } from "react";
+import AddEmployee from "./add-employee";
+import EmployeeListTable from "./employee-table";
 
 const Page = () => {
   const [employees, setEmployees] = useState<EmployeesData[]>([]);

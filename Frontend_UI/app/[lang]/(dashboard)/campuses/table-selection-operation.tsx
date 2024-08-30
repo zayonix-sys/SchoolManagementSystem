@@ -30,8 +30,6 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems =
-    campus?.departments?.slice(indexOfFirstItem, indexOfLastItem) || [];
 
   // Filter and paginate items based on search query
   const filteredDepartments =
