@@ -79,7 +79,12 @@ const Classroom = () => {
         <CollapsibleTable />
         </CardContent>
       </Card> */}
-      <Accordion type="single" collapsible className="w-full border rounded-md divide-y mt-5">
+      <Accordion 
+      type="single" 
+      collapsible 
+      className="w-full border rounded-md divide-y mt-5"
+      defaultValue={`item-1`}
+      >
         <AccordionItem value="item-1" className=" shadow-none rounded-none open">
           <AccordionTrigger>Classroom Details</AccordionTrigger>
           <AccordionContent>

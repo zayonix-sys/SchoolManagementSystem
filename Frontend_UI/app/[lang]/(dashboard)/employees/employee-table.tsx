@@ -29,7 +29,7 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
 
   // Apply search filter and pagination
   const filteredSections = (employees as any[]).filter((employee) =>
