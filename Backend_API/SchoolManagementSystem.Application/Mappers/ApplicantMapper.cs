@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
-    public class ApplicantMapper : IMapper<ApplicantDTO, Applicant>
+    public class ApplicantMapper : IMapper<ApplicantAdmissionDTO, Applicant>
     {
-        public ApplicantDTO MapToDto(Applicant entity)
+        public ApplicantAdmissionDTO MapToDto(Applicant entity)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            return new ApplicantDTO
+            return new ApplicantAdmissionDTO
             {
                 ApplicantId = entity.ApplicantId,
                 LastClassId = entity.LastClassId,
@@ -42,7 +42,7 @@ namespace SchoolManagementSystem.Application.Mappers
             };
         }
 
-        public Applicant MapToEntity(ApplicantDTO dto)
+        public Applicant MapToEntity(ApplicantAdmissionDTO dto)
         {
             if (dto == null)
             {

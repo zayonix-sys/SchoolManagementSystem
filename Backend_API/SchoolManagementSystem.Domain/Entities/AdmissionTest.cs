@@ -26,6 +26,6 @@ namespace SchoolManagementSystem.Domain.Entities
 
         // Navigation Property
         [ForeignKey("ApplicationId")]
-        public virtual Application Application { get; set; }
+        public virtual AdmissionApplication Application { get; set; }
     }
 }

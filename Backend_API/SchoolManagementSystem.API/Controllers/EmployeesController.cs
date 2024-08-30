@@ -11,16 +11,16 @@ namespace SchoolManagementSystem.API.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly ILogger<EmployeesController> _logger;
-        private readonly IEmployees _employeeService;
+        private readonly IEmployee _employeeService;
 
-        public EmployeesController(ILogger<EmployeesController> logger, IEmployees emp)
+        public EmployeesController(ILogger<EmployeesController> logger, IEmployee emp)
         {
             _logger = logger;
             _employeeService = emp;
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<EmployeesDTO>>> GetEmployees()
+        public async Task<ActionResult<ApiResponse<IEnumerable<EmployeeDTO>>>> GetEmployees()
         {
             _logger.LogInformation("Fetching all Employees.");
             try
@@ -28,7 +28,7 @@ namespace SchoolManagementSystem.API.Controllers
                 var employees = await _employeeService.GetAllEmployeesAsync();
                 _logger.LogInformation("Successfully retrieved {Count} employees.", employees?.Count() ?? 0);
 
-                return Ok(ApiResponse<IEnumerable<EmployeesDTO>>.SuccessResponse(employees, "employees retrieved successfully"));
+                return Ok(ApiResponse<IEnumerable<EmployeeDTO>>.SuccessResponse(employees, "employees retrieved successfully"));
 
             }
             catch (Exception ex)
@@ -39,7 +39,7 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<EmployeesDTO>> GetEmployeeById(int employeeId)
+        public async Task<ActionResult<EmployeeDTO>> GetEmployeeById(int employeeId)
         {
             _logger.LogInformation("Fetching employees with ID {employeeId}.", employeeId);
             try
@@ -62,14 +62,14 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<ApiResponse<EmployeesDTO>>> AddEmployee([FromBody] EmployeesDTO emp)
+        public async Task<ActionResult<ApiResponse<EmployeeDTO>>> AddEmployee([FromBody] EmployeeDTO emp)
         {
             _logger.LogInformation("Adding a new employee with name {employeeName}.", emp.FirstName);
             try
             {
                 await _employeeService.AddEmployeeAsync(emp);
                 _logger.LogInformation("Successfully added employee with ID {employeeId}.", emp.EmployeeId);
-                return Ok(ApiResponse<EmployeesDTO>.SuccessResponse(emp, "employee Added Successfully"));
+                return Ok(ApiResponse<EmployeeDTO>.SuccessResponse(emp, "employee Added Successfully"));
             }
             catch (Exception ex)
             {
@@ -79,7 +79,7 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpPut("[action]")]
-        public async Task<IActionResult> UpdatEmployee(EmployeesDTO emp)
+        public async Task<IActionResult> UpdatEmployee(EmployeeDTO emp)
         {
 
             _logger.LogInformation("Updating Employee with ID .", emp.EmployeeId);
@@ -87,7 +87,7 @@ namespace SchoolManagementSystem.API.Controllers
             {
                 await _employeeService.UpdateEmployeeAsync(emp);
                 _logger.LogInformation("Successfully updated employee with ID employeeId.", emp.EmployeeId);
-                return Ok(ApiResponse<EmployeesDTO>.SuccessResponse(emp, "employee updated successfully"));
+                return Ok(ApiResponse<EmployeeDTO>.SuccessResponse(emp, "employee updated successfully"));
             }
             catch (Exception ex)
             {

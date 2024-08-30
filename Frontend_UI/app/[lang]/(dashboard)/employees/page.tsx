@@ -1,7 +1,7 @@
 "use client";
 import { BreadcrumbItem, Breadcrumbs } from "@/components/ui/breadcrumbs";
 import AddEmployee from "./add-employee";
-import AddEmployeeRole from "./add-employee-role";
+//import AddEmployeeRole from "./add-employee-role";
 import EmployeeListTable from "./employee-table";
 
 const Page = () => {
@@ -13,7 +13,7 @@ const Page = () => {
       </Breadcrumbs>
       <div className="flex justify-end space-x-4">
         <AddEmployee />
-        <AddEmployeeRole />
+        {/* <AddEmployeeRole /> */}
       </div>
       <EmployeeListTable />
     </div>
