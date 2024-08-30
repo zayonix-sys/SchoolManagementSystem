@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -23,6 +23,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Admission> Admissions { get; set; }
         public DbSet<Campus> Campuses { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Classroom> Classrooms { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeRole> EmployeeRoles { get; set; }
 

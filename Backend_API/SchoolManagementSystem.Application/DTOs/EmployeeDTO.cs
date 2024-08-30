@@ -12,14 +12,14 @@ namespace SchoolManagementSystem.Application.DTOs
         public string? LastName { get; set; }
         public string? Email { get; set; }
         public string PhoneNumber { get; set; }
-        public DateTime? HireDate { get; set; }
-        public string Address { get; set; }
+        public DateTime? HireDate { get; set; } = DateTime.Now;
+        public string? Address { get; set; }
         public string? EmergencyContact { get; set; }
         public string Qualifications { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public int? CreatedBy { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public int? UpdatedBy { get; set; }
+        public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        public int? CreatedBy { get; set; } = 1;
+        public DateTime? UpdatedAt { get; set; } = DateTime.Now;
+        public int? UpdatedBy { get; set; } = 1;
         public bool IsActive { get; set; }
 
         //// Additional properties Full objects for related entities
@@ -29,8 +29,9 @@ namespace SchoolManagementSystem.Application.DTOs
         ///
 
         // Additional properties for related entities
-        public string EmployeeRoleName { get; set; }
-        public string CampusName { get; set; }
-        public string DepartmentName { get; set; }
+        public string? EmployeeRoleName { get; set; }
+        public string? CampusName { get; set; }
+        public string? DepartmentName { get; set; }
     }
+
 }

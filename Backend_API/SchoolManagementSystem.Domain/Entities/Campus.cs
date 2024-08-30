@@ -40,9 +40,9 @@ namespace SchoolManagementSystem.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         // Navigation properties for related entities
-        public virtual ICollection<Department> Departments { get; set; }
+        public virtual ICollection<Department>? Departments { get; set; }
         //public virtual ICollection<Classroom> Classrooms { get; set; }
-        public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<Employee>? Employees { get; set; }
         public Campus()
         {
             Departments = new HashSet<Department>();

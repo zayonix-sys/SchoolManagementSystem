@@ -10,16 +10,16 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useEffect, useState } from "react";
-import { ClassData } from "@/services/ClassService";
-import { SectionData } from "@/services/SectionService";
-import SectionListTable from "./section-table";
+import { ClassData } from "@/services/ClassService"; // Replace with actual service import
+import ClassListTable from "./class-table";
+import { ClassroomData } from "@/services/classroomService";
+import ClassroomListTable from "./classroom-table";
 
-export default function ViewSection({
-  selectedSection,
-  selectedClass,
+// This component allows you to view class details in a sheet.
+export default function ViewClassroom({
+  selectedClassroom,
 }: {
-  selectedSection: SectionData[] | null;
-  selectedClass: ClassData[] | null;
+  selectedClassroom: ClassroomData | null;
 }) {
   return (
     <Sheet>
@@ -34,12 +34,12 @@ export default function ViewSection({
       </SheetTrigger>
       <SheetContent side="top">
         <SheetHeader>
-          <SheetTitle>Sections</SheetTitle>
+          <SheetTitle>Classrooms</SheetTitle>
           {/* <SheetDescription>Class Name - {classes.className}</SheetDescription> */}
         </SheetHeader>
         <div>
           <div className="py-6">
-            <SectionListTable/>
+            <ClassroomListTable />
           </div>
         </div>
         <SheetFooter>

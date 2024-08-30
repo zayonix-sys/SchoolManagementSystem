@@ -11,39 +11,38 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataRows, users } from "./data";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { deleteDepartment, DepartmentData } from "@/services/departmentService";
 import EditDepartment from "./edit-department";
 import { CampusData } from "@/services/campusService";
+import { Input } from "@/components/ui/input";
 
 interface DepartmentProps {
   campus: CampusData;
 }
+
 const SelectionOperation = ({ campus }: DepartmentProps) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const itemsPerPage = 10;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems =
-    campus?.departments?.slice(indexOfFirstItem, indexOfLastItem) || [];
 
-  const totalPages =
-    campus && campus.departments
-      ? Math.ceil(campus.departments.length / itemsPerPage)
-      : 0;
+  // Filter and paginate items based on search query
+  const filteredDepartments =
+    campus?.departments?.filter((dept) =>
+      dept.departmentName.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
+
+  const currentItems = filteredDepartments.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const totalPages = Math.ceil(filteredDepartments.length / itemsPerPage);
 
   const handleSelectAll = () => {
     if (selectedRows.length === currentItems.length) {
@@ -95,10 +94,18 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
 
   return (
     <>
+      <div className="mb-4 flex justify-between items-center">
+        <Input
+          type="text"
+          placeholder="Search by department name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border p-2 rounded"
+        />
+      </div>
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-            {/* <TableHead className=" font-semibold">Campus</TableHead> */}
             <TableHead className="h-10 p-2.5">Department</TableHead>
             <TableHead className="h-10 p-2.5">Description</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
@@ -111,17 +118,14 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
             <TableRow
               key={item.departmentId}
               className="hover:bg-default-200"
-              data-state={
-                selectedRows.includes(item.departmentId!) && "selected"
-              }
+              data-state={selectedRows.includes(item.departmentId!) && "selected"}
             >
-              {/* <TableCell>{item.campus?.campusName}</TableCell> */}
               <TableCell className="p-2.5">{item.departmentName}</TableCell>
               <TableCell className="p-2.5">{item.description}</TableCell>
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
-                  color={item.isActive ? "success" : "destructive"} // Adjust colors based on status
+                  color={item.isActive ? "success" : "destructive"}
                   className="capitalize"
                 >
                   {item.isActive ? "Active" : "Inactive"}
