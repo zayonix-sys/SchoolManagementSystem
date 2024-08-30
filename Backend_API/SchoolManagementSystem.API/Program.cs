@@ -33,6 +33,10 @@ builder.Services.AddDbContext<SchoolContext>(options =>
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ICampuses, CampusService>();
 builder.Services.AddScoped<CampusMapper>();
+builder.Services.AddScoped<IClassroom, ClassroomService>();
+builder.Services.AddScoped<ClassroomMapper>();
+builder.Services.AddScoped<ISection, SectionService>();
+builder.Services.AddScoped<SectionMapper>();
 builder.Services.AddScoped<IDepartments, DepartmentService>();
 builder.Services.AddScoped<DepartmentMapper>();
 builder.Services.AddScoped<IClass, ClassService>();
@@ -41,6 +45,8 @@ builder.Services.AddScoped<ISection, SectionService>();
 builder.Services.AddScoped<SectionMapper>();
 builder.Services.AddScoped<IApplicant, ApplicantService>();
 builder.Services.AddScoped <ApplicantMapper>();
+builder.Services.AddScoped <IClass, ClassService>();
+builder.Services.AddScoped<ClassMapper>();
 
 builder.Services.AddScoped<IStudent, StudentService>();
 
