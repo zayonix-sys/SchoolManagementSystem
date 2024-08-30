@@ -11,42 +11,50 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataRows, users } from "./data";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { deleteDepartment, DepartmentData } from "@/services/departmentService";
 import EditDepartment from "./edit-department";
 import { CampusData } from "@/services/campusService";
+import { Input } from "@/components/ui/input";
 
 interface DepartmentProps {
-  campus: CampusData | null;
+  campus: CampusData;
 }
+
 const SelectionOperation = ({ campus }: DepartmentProps) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const itemsPerPage = 10;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = campus?.departments?.slice(indexOfFirstItem, indexOfLastItem) || [];
+  const currentItems =
+    campus?.departments?.slice(indexOfFirstItem, indexOfLastItem) || [];
 
-  const totalPages = campus && campus.departments ? Math.ceil(campus.departments.length / itemsPerPage) : 0;
+  // Filter and paginate items based on search query
+  const filteredDepartments =
+    campus?.departments?.filter((dept) =>
+      dept.departmentName.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
 
+  const currentItems = filteredDepartments.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const totalPages = Math.ceil(filteredDepartments.length / itemsPerPage);
 
   const handleSelectAll = () => {
     if (selectedRows.length === currentItems.length) {
       setSelectedRows([]);
     } else {
-      setSelectedRows(currentItems.map((row) => row.departmentId!).filter((id) => id !== null && id !== undefined));
+      setSelectedRows(
+        currentItems
+          .map((row) => row.departmentId!)
+          .filter((id) => id !== null && id !== undefined)
+      );
     }
   };
 
@@ -69,8 +77,10 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
   };
 
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this department?");
-    
+    const isConfirmed = confirm(
+      "Are you sure you want to delete this department?"
+    );
+
     if (isConfirmed) {
       try {
         await deleteDepartment(id);
@@ -84,36 +94,40 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
     }
   };
 
-
   return (
     <>
-    <Table className="text-left">
-      <TableHeader>
-        <TableRow>
-          {/* <TableHead className=" font-semibold">Campus</TableHead> */}
-          <TableHead className="h-10 p-2.5">Department</TableHead>
-          <TableHead className="h-10 p-2.5">Description</TableHead>
-          <TableHead className="h-10 p-2.5">Status</TableHead>
-          <TableHead className="h-10 p-2.5 text-end">Action</TableHead>
-        </TableRow>
-      </TableHeader>
+      <div className="mb-4 flex justify-between items-center">
+        <Input
+          type="text"
+          placeholder="Search by department name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border p-2 rounded"
+        />
+      </div>
+      <Table className="text-left">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="h-10 p-2.5">Department</TableHead>
+            <TableHead className="h-10 p-2.5">Description</TableHead>
+            <TableHead className="h-10 p-2.5">Status</TableHead>
+            <TableHead className="h-10 p-2.5 text-end">Action</TableHead>
+          </TableRow>
+        </TableHeader>
 
-      <TableBody>
-        {currentItems.map((item: DepartmentData) => (
+        <TableBody>
+          {currentItems.map((item: DepartmentData) => (
             <TableRow
               key={item.departmentId}
               className="hover:bg-default-200"
-              data-state={
-                selectedRows.includes(item.departmentId!) && "selected"
-              }
+              data-state={selectedRows.includes(item.departmentId!) && "selected"}
             >
-              {/* <TableCell>{item.campus?.campusName}</TableCell> */}
               <TableCell className="p-2.5">{item.departmentName}</TableCell>
               <TableCell className="p-2.5">{item.description}</TableCell>
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
-                  color={item.isActive ? "success" : "destructive"} // Adjust colors based on status
+                  color={item.isActive ? "success" : "destructive"}
                   className="capitalize"
                 >
                   {item.isActive ? "Active" : "Inactive"}
@@ -122,8 +136,8 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                <EditDepartment department={item} campus={campus} />
-                <Button
+                  <EditDepartment department={item} campus={campus} />
+                  <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
@@ -136,9 +150,9 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
               </TableCell>
             </TableRow>
           ))}
-      </TableBody>
-    </Table>
-    <div className="flex justify-between items-center mt-4">
+        </TableBody>
+      </Table>
+      <div className="flex justify-between items-center mt-4">
         <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
           Previous
         </Button>
@@ -149,7 +163,7 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
           Next
         </Button>
       </div>
-  </>
+    </>
   );
 };
 

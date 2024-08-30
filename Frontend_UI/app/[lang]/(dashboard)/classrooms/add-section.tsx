@@ -29,7 +29,6 @@ import { addSection } from "../../../../services/SectionService";
 // Zod schema definition
 const sectionSchema = z.object({
   sectionName: z.string().min(1, "Section Name is required"),
-  classId: z.number().min(1, "Class is required"),
   capacity: z.number().min(1, "Capacity is required").max(999),
 });
 
@@ -41,7 +40,6 @@ export default function AddSection() {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm<SectionFormValues>({
     resolver: zodResolver(sectionSchema),
@@ -112,28 +110,6 @@ export default function AddSection() {
                   />
                   {errors.sectionName && (
                     <p className="text-destructive">{errors.sectionName.message}</p>
-                  )}
-                </div>
-                <div className="col-span-2">
-                  <Select
-                    onValueChange={(value) => setValue("classId", parseInt(value))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a class" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {classes.map((classItem) => (
-                        <SelectItem
-                          key={classItem.classId}
-                          value={classItem.classId.toString()}
-                        >
-                          {classItem.className}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.classId && (
-                    <p className="text-destructive">{errors.classId.message}</p>
                   )}
                 </div>
                 <div className="col-span-2">

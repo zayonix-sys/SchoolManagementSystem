@@ -9,14 +9,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import SelectionOperation from "./table-selection-operation";
 import { useEffect, useState } from "react";
-import { DepartmentData } from "@/services/departmentService";
-import { CampusData } from "@/services/campusService";
+import { ClassData } from "@/services/ClassService";
+import { SectionData } from "@/services/SectionService";
+import SectionListTable from "./section-table";
 
-//we can change the props "side"'s value to 'top', 'left', 'bottom', 'right' so that the sheet will come out from different direction.
-
-export default function ViewDepartment({ campus }: { campus: CampusData }) {
+export default function ViewSection({
+  selectedSection,
+  selectedClass,
+}: {
+  selectedSection: SectionData | null;
+  selectedClass: ClassData[] | null;
+}) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -30,12 +34,12 @@ export default function ViewDepartment({ campus }: { campus: CampusData }) {
       </SheetTrigger>
       <SheetContent side="top">
         <SheetHeader>
-          <SheetTitle>Department</SheetTitle>
-          <SheetDescription>Campus - {campus?.campusName}</SheetDescription>
+          <SheetTitle>Sections</SheetTitle>
+          {/* <SheetDescription>Class Name - {classes.className}</SheetDescription> */}
         </SheetHeader>
         <div>
           <div className="py-6">
-            <SelectionOperation campus={campus} />
+            <SectionListTable class={selectedClass} />
           </div>
         </div>
         <SheetFooter>

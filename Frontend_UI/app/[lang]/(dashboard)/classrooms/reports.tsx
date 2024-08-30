@@ -6,17 +6,25 @@ import { TrendingUp } from "lucide-react";
 import React, { Fragment, useEffect, useState } from "react";
 import ViewClass from "./view-class";
 import { ClassData, fetchClasses } from "@/services/ClassService";
+import ViewSection from "./view-section";
+import { fetchSection, SectionData } from "@/services/SectionService";
 
 const ReportsCard = () => {
   const [classes, setClasses] = useState<ClassData[]>([]);
+  const [sections, setSections] = useState<SectionData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
   useEffect(() => {
-    const fetchClassesData = async () => {
+    const fetchClassesAndSectionsData = async () => {
       setLoading(true);
       try {
-        const response = await fetchClasses(); // assuming fetchClasses is a function that fetches the data
-        setClasses(response.data as ClassData[]);
+        const classResponse = await fetchClasses();
+        const sectionResponse = await fetchSection()// assuming fetchClasses is a function that fetches the data
+        setClasses(classResponse.data as ClassData[]);
+        setSections(sectionResponse.data as SectionData[]);
+        console.log(classResponse, "Class");
+        console.log(sectionResponse, "Sections");
       } catch (err) {
         setError(err as any);
       } finally {
@@ -24,9 +32,10 @@ const ReportsCard = () => {
       }
     };
   
-    fetchClassesData();
+    fetchClassesAndSectionsData();
   }, []);
   const classesCount = classes.length.toString();
+  const sectionsCount = sections.length.toString();
   interface ReportItem {
     id: number;
     name: string;
@@ -40,7 +49,6 @@ const ReportsCard = () => {
     {
       id: 1,
       name: "No. of Classes",
-      // count:"10",
       count: (classesCount ? classesCount : 0).toString(),
       rate: "8.2",
       icon: <Docs className="w-6 h-6 text-destructive" />,
@@ -49,7 +57,7 @@ const ReportsCard = () => {
     {
       id: 2,
       name: "No. of Sections",
-      count: "18",
+      count: (sectionsCount ? sectionsCount : 0).toString(),
       rate: "8.2",
       icon: <Docs className="w-6 h-6 text-info" />,
       color: "info"
@@ -71,7 +79,7 @@ const ReportsCard = () => {
               {item.count}
             </div>
             {item.id === 1 && <ViewClass selectedClass={classes} />}
-            {/* {item.id === 2 && <ViewDepartment campusId={campusId} />} */}
+            {item.id === 2 && <ViewSection selectedSection={sections} selectedClass={classes}/>}
           
               {/* <div className={`text-3xl font-semibold text-${item.color} mt-1`}>{item.count}</div> */}
               {/* <div className="flex items-center gap-1 mt-2.5">
