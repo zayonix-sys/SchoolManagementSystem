@@ -31,7 +31,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("CreatedUser")]
-        public int CreatedBy { get; set; }
+        public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
@@ -42,8 +42,8 @@ namespace SchoolManagementSystem.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         // Navigation properties
-        public Campus Campus { get; set; }
-        public User CreatedUser { get; set; }
-        public User UpdatedUser { get; set; }
+        //public Campus Campus { get; set; }
+        //public User? CreatedUser { get; set; }
+        //public User? UpdatedUser { get; set; }
     }
 }
