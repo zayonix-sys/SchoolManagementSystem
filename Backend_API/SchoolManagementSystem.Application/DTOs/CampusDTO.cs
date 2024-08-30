@@ -21,7 +21,7 @@ namespace SchoolManagementSystem.Application.DTOs
         public bool IsActive { get; set; }
 
         // Collections of related entities
-        public ICollection<DepartmentDTO> Departments { get; set; }
+        public ICollection<DepartmentDTO>? Departments { get; set; }
         //public ICollection<ClassroomDTO> Classrooms { get; set; }
         //public ICollection<EmployeeDTO> Employees { get; set; }
     }

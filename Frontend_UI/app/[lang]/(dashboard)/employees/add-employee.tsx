@@ -15,33 +15,38 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { addCampus } from "../../../../services/campusService";
+} from "@/components/ui/sheet"; // Adjusted service import
+import { addEmployee, EmployeesData } from "@/services/EmployeeService";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+interface EmployeeListTableProps {
+  employees: EmployeesData[];
+}
 // Define Zod schema
 const employeeSchema = z.object({
-  campusName: z.string().min(1, "Campus Name is required"),
-  address: z.string().min(1, "Address is required"),
-  country: z.string().min(1, "Campus Name is required"),
-  city: z.string().min(1, "City is required"),
-  state: z.string().min(1, "State is required"),
-  postalCode: z
-    .string()
-    .min(5, "Zip Code is required")
-    .regex(/^\d{5}$/, "Invalid Zip Code"),
+  roleId: z.number().int().positive("Role is required"),
+  campusId: z.number().int().positive("Campus is required"),
+  departmentId: z.number().int().positive("Department is required"),
+  firstName: z.string().min(1, "First Name is required"),
+  lastName: z.string().min(1, "Last Name is required"),
+  email: z.string().email({ message: "Invalid email address" }),
   phoneNumber: z
     .string()
+    .min(10, "Phone number must be at least 10 characters long")
     .max(15, "Phone number must be at most 15 characters long"),
-  email: z.string().email({ message: "Invalid email address" }).optional(),
+  address: z.string().min(1, "Address is required"),
+  emergencyContact: z.string().min(1, "Emergency Contact is required"),
+  qualifications: z.string().min(1, "Qualifications are required"),
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
-export default function AddEmployee() {
+const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees }) => {
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
@@ -49,18 +54,10 @@ export default function AddEmployee() {
 
   const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
     try {
-      const response = await addCampus(data);
+      const response = await addEmployee(data);  // Corrected function call
 
       if (response.success) {
-        if (Array.isArray(response.data)) {
-          toast.success(
-            `${response.data[0].campusName} Campus Added successfully!`
-          );
-        } else {
-          toast.success(
-            `${response.data.campusName} Campus Added successfully!`
-          );
-        }
+        toast.success(`Employee ${data.firstName} ${data.lastName} added successfully!`);
         reset();
       } else {
         console.error("Error:", response);
@@ -103,64 +100,118 @@ export default function AddEmployee() {
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
               <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <Input
-                    type="text"
-                    placeholder="Campus Name"
-                    {...register("campusName")}
-                  />
-                  {errors.campusName && (
+              <div className="col-span-2">
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("campusId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Campus" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {employees.map((employee) => (
+                        <SelectItem
+                          className="hover:bg-default-300"
+                          key={employee.employeeId}
+                          value={employee.campusId?.toString() ?? ""}
+                        >
+                          {employee.campusName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {errors.campusId && (
                     <p className="text-destructive">
-                      {errors.campusName.message}
+                      {errors.campusId.message}
                     </p>
                   )}
                 </div>
-                <div className="col-span-2">
-                  <Input
-                    type="text"
-                    placeholder="Address"
-                    {...register("address")}
-                  />
-                  {errors.address && (
-                    <p className="text-destructive">{errors.address.message}</p>
+                <div className="col-span-2 lg:col-span-1">
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("departmentId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {employees.map((employee) => (
+                        <SelectItem
+                          className="hover:bg-default-300"
+                          key={employee.departmentId}
+                          value={employee.departmentId?.toString() ?? ""}
+                        >
+                          {employee.departmentName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {errors.departmentId && (
+                    <p className="text-destructive">
+                      {errors.departmentId.message}
+                    </p>
                   )}
                 </div>
-                <div className="col-span-3 lg:col-span-1">
-                  <Input
-                    type="text"
-                    placeholder="Country"
-                    {...register("country")}
-                  />
-                  {errors.country && (
-                    <p className="text-destructive">{errors.country.message}</p>
-                  )}
-                </div>
-                <div className="col-span-3 lg:col-span-1">
-                  <Input
-                    type="text"
-                    placeholder="State"
-                    {...register("state")}
-                  />
-                  {errors.state && (
-                    <p className="text-destructive">{errors.state.message}</p>
-                  )}
-                </div>
-                <div className="col-span-3 lg:col-span-1">
-                  <Input type="text" placeholder="City" {...register("city")} />
-                  {errors.city && (
-                    <p className="text-destructive">{errors.city.message}</p>
+                <div className="col-span-2 lg:col-span-1">
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("roleId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {employees.map((employee) => (
+                        <SelectItem
+                          className="hover:bg-default-300"
+                          key={employee.roleId}
+                          value={employee.roleId?.toString() ?? ""}
+                        >
+                          {employee.employeeRoleName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {errors.roleId && (
+                    <p className="text-destructive">
+                      {errors.roleId.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
                   <Input
-                    type="number"
-                    placeholder="Zip Code"
-                    {...register("postalCode")}
+                    type="text"
+                    placeholder="First Name"
+                    {...register("firstName")}
                   />
-                  {errors.postalCode && (
-                    <p className="text-destructive">
-                      {errors.postalCode.message}
-                    </p>
+                  {errors.firstName && (
+                    <p className="text-destructive">{errors.firstName.message}</p>
+                  )}
+                </div>
+                <div className="col-span-2 lg:col-span-1">
+                  <Input
+                    type="text"
+                    placeholder="Last Name"
+                    {...register("lastName")}
+                  />
+                  {errors.lastName && (
+                    <p className="text-destructive">{errors.lastName.message}</p>
+                  )}
+                </div>
+                <div className="col-span-2 lg:col-span-1">
+                  <Input
+                    type="email"
+                    placeholder="Email"
+                    {...register("email")}
+                  />
+                  {errors.email && (
+                    <p className="text-destructive">{errors.email.message}</p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
@@ -175,14 +226,34 @@ export default function AddEmployee() {
                     </p>
                   )}
                 </div>
+                <div className="col-span-2">
+                  <Input
+                    type="text"
+                    placeholder="Address"
+                    {...register("address")}
+                  />
+                  {errors.address && (
+                    <p className="text-destructive">{errors.address.message}</p>
+                  )}
+                </div>
                 <div className="col-span-2 lg:col-span-1">
                   <Input
-                    type="email"
-                    placeholder="Email"
-                    {...register("email")}
+                    type="text"
+                    placeholder="Emergency Contact"
+                    {...register("emergencyContact")}
                   />
-                  {errors.email && (
-                    <p className="text-destructive">{errors.email.message}</p>
+                  {errors.emergencyContact && (
+                    <p className="text-destructive">{errors.emergencyContact.message}</p>
+                  )}
+                </div>
+                <div className="col-span-2 lg:col-span-1">
+                  <Input
+                    type="text"
+                    placeholder="Qualifications"
+                    {...register("qualifications")}
+                  />
+                  {errors.qualifications && (
+                    <p className="text-destructive">{errors.qualifications.message}</p>
                   )}
                 </div>
                 <div className="col-span-2">
@@ -199,3 +270,4 @@ export default function AddEmployee() {
     </Sheet>
   );
 }
+export default AddEmployee;

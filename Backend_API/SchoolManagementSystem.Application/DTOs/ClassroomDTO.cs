@@ -16,10 +16,6 @@ namespace SchoolManagementSystem.Application.DTOs
         public string RoomNumber { get; set; }
         public string Building { get; set; }
         public int Capacity { get; set; } 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public int? CreatedBy { get; set; } = 2;
-        public DateTime? UpdatedAt { get; set; }
-        public int? UpdatedBy { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }

@@ -20,35 +20,19 @@ import {
 // import EditSection from "./edit-section";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
+import { deleteEmployee, EmployeesData } from "@/services/EmployeeService";
 
-const EmployeeListTable = () => {
-  const [employees, setEmployees] = useState<EmployeesData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+interface EmployeeListTableProps {
+  employees: EmployeesData[];
+}
+const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    const fetchEmployeesData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchEmployees();
-        setEmployees(response.data as EmployeesData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEmployeesData();
-  }, []);
-
   // Apply search filter and pagination
-  const filteredSections = employees.filter((employee) =>
+  const filteredSections = (employees as any[]).filter((employee) =>
     employee?.firstName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -93,17 +77,17 @@ const EmployeeListTable = () => {
 
   const handleDelete = async (id: number) => {
     const isConfirmed = confirm(
-      "Are you sure you want to delete this section?"
+      "Are you sure you want to delete this employee?"
     );
 
     if (isConfirmed) {
       try {
-        await deleteSection(id);
-        toast.success("Section deleted successfully");
+        await deleteEmployee(id);
+        toast.success("Employee deleted successfully");
         fetchSection(); // Refresh the data after deletion
       } catch (error) {
-        console.error("Error deleting Section:", error);
-        toast.error("Failed to delete Section");
+        console.error("Error deleting Employee:", error);
+        toast.error("Failed to delete Employee");
       }
     } else {
       toast.success("Deletion cancelled");

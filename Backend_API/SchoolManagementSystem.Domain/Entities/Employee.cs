@@ -45,13 +45,13 @@ namespace SchoolManagementSystem.Domain.Entities
         public string Qualifications { get; set; }
 
         [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? CreatedAt { get; set; }
 
         [ForeignKey("CreatedUser")]
         public int? CreatedBy { get; set; }
 
         [Required]
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public DateTime? UpdatedAt { get; set; }
 
         [ForeignKey("UpdatedUser")]
         public int? UpdatedBy { get; set; }
@@ -60,10 +60,11 @@ namespace SchoolManagementSystem.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         // Navigation properties
-        public EmployeeRole EmployeeRole { get; set; }
-        public Campus Campus { get; set; }
-        public Department Departments { get; set; }
-        public User CreatedUser { get; set; }
-        public User UpdatedUser { get; set; }
+        public EmployeeRole? EmployeeRole { get; set; }
+        public Campus? Campus { get; set; }
+        public Department? Departments { get; set; }
+        public User? CreatedUser { get; set; }
+        public User? UpdatedUser { get; set; }
     }
+
 }
