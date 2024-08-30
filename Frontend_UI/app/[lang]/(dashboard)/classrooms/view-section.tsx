@@ -18,7 +18,7 @@ export default function ViewSection({
   selectedSection,
   selectedClass,
 }: {
-  selectedSection: SectionData | null;
+  selectedSection: SectionData[] | null;
   selectedClass: ClassData[] | null;
 }) {
   return (
@@ -39,7 +39,7 @@ export default function ViewSection({
         </SheetHeader>
         <div>
           <div className="py-6">
-            <SectionListTable class={selectedClass} />
+            <SectionListTable/>
           </div>
         </div>
         <SheetFooter>
