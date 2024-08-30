@@ -23,6 +23,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Admission> Admissions { get; set; }
         public DbSet<Campus> Campuses { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Classroom> Classrooms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
