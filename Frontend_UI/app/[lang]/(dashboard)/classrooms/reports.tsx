@@ -8,23 +8,30 @@ import ViewClass from "./view-class";
 import { ClassData, fetchClasses } from "@/services/ClassService";
 import ViewSection from "./view-section";
 import { fetchSection, SectionData } from "@/services/SectionService";
+import { ClassroomData, fetchClassrooms } from "@/services/classroomService";
+import ViewClassroom from "./view-classroom";
 
 const ReportsCard = () => {
+  const [classrooms, setClassrooms] = useState<ClassroomData[]>([]);
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [sections, setSections] = useState<SectionData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchClassesAndSectionsData = async () => {
+    const fetchClassroomsAndClassesAndSectionsData = async () => {
       setLoading(true);
       try {
         const classResponse = await fetchClasses();
-        const sectionResponse = await fetchSection()// assuming fetchClasses is a function that fetches the data
+        const sectionResponse = await fetchSection();// assuming fetchClasses is a function that fetches the data
+        const classroomResponse = await fetchClassrooms();
         setClasses(classResponse.data as ClassData[]);
         setSections(sectionResponse.data as SectionData[]);
+        setClassrooms(classroomResponse.data as ClassroomData[]);
         console.log(classResponse, "Class");
         console.log(sectionResponse, "Sections");
+        console.log(classroomResponse, "Classroom");
+
       } catch (err) {
         setError(err as any);
       } finally {
@@ -32,10 +39,11 @@ const ReportsCard = () => {
       }
     };
   
-    fetchClassesAndSectionsData();
+    fetchClassroomsAndClassesAndSectionsData();
   }, []);
   const classesCount = classes.length.toString();
   const sectionsCount = sections.length.toString();
+  const classroomCount = classrooms.length.toString();
   interface ReportItem {
     id: number;
     name: string;
@@ -48,6 +56,15 @@ const ReportsCard = () => {
   const reports: ReportItem[] = [
     {
       id: 1,
+      name: "No. of Classrooms",
+      // count:"10",
+      count: (classroomCount ? classroomCount : 0).toString(),
+      rate: "8.2",
+      icon: <Docs className="w-6 h-6 text-destructive" />,
+      color: "destructive"
+    },
+    {
+      id: 2,
       name: "No. of Classes",
       count: (classesCount ? classesCount : 0).toString(),
       rate: "8.2",
@@ -55,7 +72,7 @@ const ReportsCard = () => {
       color: "destructive"
     },
     {
-      id: 2,
+      id: 3,
       name: "No. of Sections",
       count: (sectionsCount ? sectionsCount : 0).toString(),
       rate: "8.2",
@@ -78,9 +95,9 @@ const ReportsCard = () => {
                <div className={"text-3xl font-semibold text-${item.color} mt-1"}>
               {item.count}
             </div>
-            {item.id === 1 && <ViewClass selectedClass={classes} />}
-            {item.id === 2 && <ViewSection selectedSection={sections} selectedClass={classes}/>}
-          
+            {item.id === 1 && <ViewClassroom selectedClassroom={classrooms} />}
+            {item.id === 2 && <ViewClass selectedClass={classes} />}
+            {item.id === 3 && <ViewSection selectedSection={sections} selectedClass={classes} />}
               {/* <div className={`text-3xl font-semibold text-${item.color} mt-1`}>{item.count}</div> */}
               {/* <div className="flex items-center gap-1 mt-2.5">
                 <span className="text-xs xl:text-sm font-medium text-default-600 whitespace-nowrap">Project Progress</span>
