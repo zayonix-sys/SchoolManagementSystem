@@ -12,23 +12,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import {
-  deleteSection,
-  fetchSection,
-  SectionData,
-} from "@/services/SectionService";
-// import EditSection from "./edit-section";
+import { fetchSection } from "@/services/SectionService";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { deleteEmployee, EmployeesData } from "@/services/EmployeeService";
+import EditEmployee from "./edit-employee";
+import ConfirmationDialog from "../common/confirmation-dialog";
 
 interface EmployeeListTableProps {
   employees: EmployeesData[];
 }
+
 const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
   const itemsPerPage = 5;
 
   // Apply search filter and pagination
@@ -75,22 +74,23 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
-  const handleDelete = async (id: number) => {
-    const isConfirmed = confirm(
-      "Are you sure you want to delete this employee?"
-    );
+  const handleDeleteConfirmation = (id: number) => {
+    setEmployeeToDelete(id);
+  };
 
-    if (isConfirmed) {
-      try {
-        await deleteEmployee(id);
-        toast.success("Employee deleted successfully");
-        fetchSection(); // Refresh the data after deletion
-      } catch (error) {
-        console.error("Error deleting Employee:", error);
-        toast.error("Failed to delete Employee");
-      }
-    } else {
-      toast.success("Deletion cancelled");
+  const handleCancelDelete = () => {
+    setEmployeeToDelete(null);
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteEmployee(id);
+      toast.success("Employee deleted successfully");
+      fetchSection(); // Refresh the data after deletion
+      setEmployeeToDelete(null); // Close dialog after successful deletion
+    } catch (error) {
+      console.error("Error deleting Employee:", error);
+      toast.error("Failed to delete Employee");
     }
   };
 
@@ -151,13 +151,13 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  {/* <EditSection sectionData={item} /> */}
+                  <EditEmployee employeeData={item} employees={employees} />
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDelete(item.employeeId!)}
+                    onClick={() => handleDeleteConfirmation(item.employeeId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -178,6 +178,14 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
           Next
         </Button>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      {employeeToDelete !== null && (
+        <ConfirmationDialog
+          onDelete={() => handleDelete(employeeToDelete)}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </>
   );
 };
