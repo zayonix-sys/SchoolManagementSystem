@@ -44,12 +44,15 @@ builder.Services.AddScoped<ClassMapper>();
 builder.Services.AddScoped<ISection, SectionService>();
 builder.Services.AddScoped<SectionMapper>();
 builder.Services.AddScoped<IApplicant, ApplicantService>();
-builder.Services.AddScoped <ApplicantMapper>();
+builder.Services.AddScoped<ApplicantMapper>();
 builder.Services.AddScoped<ApplicationMapper>();
 builder.Services.AddScoped<IEmployee, EmployeeService>();
 builder.Services.AddScoped<EmployeeMapper>();
-
+builder.Services.AddScoped<IEmployeeRoles, RolesService>();
+builder.Services.AddScoped<RoleMapper>();
 builder.Services.AddScoped<IStudent, StudentService>();
+builder.Services.AddScoped<ISubject, SubjectService>();
+builder.Services.AddScoped<SubjectMapper>();
 
 // Add controllers
 builder.Services.AddControllers();
