@@ -19,7 +19,7 @@ import ClassroomListTable from "./classroom-table";
 export default function ViewClassroom({
   selectedClassroom,
 }: {
-  selectedClassroom: ClassroomData | null;
+  selectedClassroom: ClassroomData[] | null;
 }) {
   return (
     <Sheet>
