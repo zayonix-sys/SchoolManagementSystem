@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { ClassroomData, deleteClassroom, fetchClassrooms } from "@/services/classroomService";
 import { Input } from "@/components/ui/input";
 import EditClassroom from "./edit-classroom";
+import ConfirmationDialog from "../common/confirmation-dialog";
+import { toast } from "sonner";
 
 const ClassroomListTable = () => {
   const [classroom, setClassroom] = useState<ClassroomData[]>([]);
@@ -22,6 +24,7 @@ const ClassroomListTable = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); 
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [classroomToDelete, setClassroomToDelete] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
@@ -79,24 +82,27 @@ const ClassroomListTable = () => {
   const handleNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
+  const handleDeleteConfirmation = (id: number) => {
+    setClassroomToDelete(id);
+  };
+
+  const handleCancelDelete = () => {
+    setClassroomToDelete(null);
+  };
 
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this classroom?");
-    
-    if (isConfirmed) {
-      try {
-        await deleteClassroom(id);
-        alert("Classroom deleted successfully");
-        fetchClassrooms(); // Refresh the data after deletion
-      } catch (error) {
-        console.error("Error deleting classroom:", error);
-        alert("Failed to delete classroom");
-      }
-    } else {
-      alert("Deletion cancelled");
+    try {
+      await deleteClassroom(id);
+      toast.success("Classroom deleted successfully");
+      setClassroomToDelete(null); // Close dialog after successful deletion
+    } catch (error) {
+      console.error("Error deleting Classroom:", error);
+      toast.error("Failed to delete Classroom");
     }
   };
 
+
+  
 
 
   return (
@@ -152,7 +158,7 @@ const ClassroomListTable = () => {
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDelete(item.classroomId!)}
+                    onClick={() =>  handleDeleteConfirmation(item.classroomId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -173,6 +179,12 @@ const ClassroomListTable = () => {
           Next
         </Button>
       </div>
+      {classroomToDelete !== null && (
+        <ConfirmationDialog
+          onDelete={() => handleDelete(classroomToDelete)}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </>
   );
 };

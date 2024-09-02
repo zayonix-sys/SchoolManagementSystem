@@ -17,6 +17,7 @@ import EditSection from "./edit-section";
 import { ClassData } from "@/services/ClassService";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import ConfirmationDialog from "../common/confirmation-dialog";
 
 const SectionListTable = () => {
   const [sections, setSections] = useState<SectionData[]>([]);
@@ -24,6 +25,7 @@ const SectionListTable = () => {
   const [error, setError] = useState(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sectionToDelete, setSectionToDelete] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState(""); 
   const itemsPerPage = 10;
 
@@ -82,21 +84,22 @@ const SectionListTable = () => {
   const handleNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
+  const handleDeleteConfirmation = (id: number) => {
+    setSectionToDelete(id);
+  };
+
+  const handleCancelDelete = () => {
+    setSectionToDelete(null);
+  };
 
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this section?");
-
-    if (isConfirmed) {
-      try {
-        await deleteSection(id);
-        toast.success("Section deleted successfully");
-        fetchSection(); // Refresh the data after deletion
-      } catch (error) {
-        console.error("Error deleting Section:", error);
-        toast.error("Failed to delete Section");
-      }
-    } else {
-      toast.success("Deletion cancelled");
+    try {
+      await deleteSection(id);
+      toast.success("Section deleted successfully");
+      setSectionToDelete(null); // Close dialog after successful deletion
+    } catch (error) {
+      console.error("Error deleting Section:", error);
+      toast.error("Failed to delete Section");
     }
   };
 
@@ -148,7 +151,7 @@ const SectionListTable = () => {
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDelete(item.sectionId!)}
+                    onClick={() => handleDeleteConfirmation(item.sectionId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -169,6 +172,12 @@ const SectionListTable = () => {
           Next
         </Button>
       </div>
+      {sectionToDelete !== null && (
+        <ConfirmationDialog
+          onDelete={() => handleDelete(sectionToDelete)}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </>
   );
 };
