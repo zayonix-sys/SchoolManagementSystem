@@ -79,7 +79,7 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpPut("[action]")]
-        public async Task<IActionResult> UpdatEmployee(EmployeeDTO emp)
+        public async Task<IActionResult> UpdateEmployee(EmployeeDTO emp)
         {
 
             _logger.LogInformation("Updating Employee with ID .", emp.EmployeeId);

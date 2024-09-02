@@ -21,6 +21,7 @@ import {
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { deleteEmployee, EmployeesData } from "@/services/EmployeeService";
+import EditEmployee from "./edit-employee";
 
 interface EmployeeListTableProps {
   employees: EmployeesData[];
@@ -151,7 +152,7 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  {/* <EditSection sectionData={item} /> */}
+                  <EditEmployee employeeData={item} employees={employees}/>
                   <Button
                     size="icon"
                     variant="outline"
