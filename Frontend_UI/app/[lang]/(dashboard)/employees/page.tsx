@@ -4,6 +4,8 @@ import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
 import { useEffect, useState } from "react";
 import AddEmployee from "./add-employee";
 import EmployeeListTable from "./employee-table";
+import AddRole from "./add-roles";
+import ViewRole from "./view-roles";
 
 const Page = () => {
   const [employees, setEmployees] = useState<EmployeesData[]>([]);
@@ -33,6 +35,8 @@ const Page = () => {
       </Breadcrumbs>
       <div className="flex justify-end space-x-4">
         <AddEmployee employees={employees}/>
+        <AddRole />
+        <ViewRole selectedRole={null}/>
         {/* <AddEmployeeRole /> */}
       </div>
       <EmployeeListTable employees={employees}/>
