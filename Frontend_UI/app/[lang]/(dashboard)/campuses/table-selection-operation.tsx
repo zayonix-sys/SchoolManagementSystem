@@ -17,6 +17,8 @@ import { deleteDepartment, DepartmentData } from "@/services/departmentService";
 import EditDepartment from "./edit-department";
 import { CampusData } from "@/services/campusService";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import ConfirmationDialog from "../common/confirmation-dialog";
 
 interface DepartmentProps {
   campus: CampusData;
@@ -24,6 +26,8 @@ interface DepartmentProps {
 
 const SelectionOperation = ({ campus }: DepartmentProps) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [departmentToDelete, setDepartmentToDelete] = useState<number | null>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const itemsPerPage = 10;
@@ -74,23 +78,25 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
-  const handleDelete = async (id: number) => {
-    const isConfirmed = confirm(
-      "Are you sure you want to delete this department?"
-    );
+  const handleDeleteConfirmation = (id: number) => {
+    setDepartmentToDelete(id);
+  };
 
-    if (isConfirmed) {
-      try {
-        await deleteDepartment(id);
-        alert("Department deleted successfully");
-      } catch (error) {
-        console.error("Error deleting Department:", error);
-        alert("Failed to delete Department");
-      }
-    } else {
-      alert("Deletion cancelled");
+  const handleCancelDelete = () => {
+    setDepartmentToDelete(null);
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteDepartment(id);
+      toast.success("Department deleted successfully");
+      setDepartmentToDelete(null); // Close dialog after successful deletion
+    } catch (error) {
+      console.error("Error deleting Department:", error);
+      toast.error("Failed to delete Department");
     }
   };
+
 
   return (
     <>
@@ -140,7 +146,7 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDelete(item.departmentId!)}
+                    onClick={() => handleDeleteConfirmation(item.departmentId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -161,6 +167,12 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
           Next
         </Button>
       </div>
+      {departmentToDelete !== null && (
+        <ConfirmationDialog
+          onDelete={() => handleDelete(departmentToDelete)}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </>
   );
 };
