@@ -21,6 +21,9 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Classroom> Classrooms { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeRole> EmployeeRoles { get; set; }
+
+        public DbSet<ClassSectionAssignment> ClassSectionAssignments { get; set; }
+
         public DbSet<Subject> Subjects { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
