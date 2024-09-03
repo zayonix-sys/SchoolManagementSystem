@@ -3,18 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
-    public class EmployeeRole
+    public class Subject
     {
         [Key]
-        public int RoleId { get; set; }
+        public int? SubjectId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string RoleName { get; set; }
+        public string SubjectName { get; set; }
 
         [StringLength(255)]
-        public string RoleDescription { get; set; }
-
+        public string SubjectDescription { get; set; }
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

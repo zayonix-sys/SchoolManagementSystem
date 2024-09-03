@@ -23,9 +23,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
+import ConfirmationDialog from "../common/confirmation-dialog";
 
 const Campus = () => {
   const [campuses, setCampuses] = useState<CampusData[]>([]);
+  const [campusToDelete, setCampusToDelete] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -45,24 +48,29 @@ const Campus = () => {
     fetchCampuses();
   }, []);
 
+  const handleDeleteConfirmation = (id: number) => {
+    setCampusToDelete(id);
+  };
+
+  const handleCancelDelete = () => {
+    setCampusToDelete(null);
+  };
+
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this campus?");
-    
-    if (isConfirmed) {
-      try {
-        await deleteCampus(id);
-        alert("Campus deleted successfully");
-      } catch (error) {
-        console.error("Error deleting campus:", error);
-        alert("Failed to delete campus");
-      }
-    } else {
-      alert("Deletion cancelled");
+    try {
+      await deleteCampus(id);
+      toast.success("Campus deleted successfully");
+      setCampusToDelete(null); // Close dialog after successful deletion
+    } catch (error) {
+      console.error("Error deleting Campus:", error);
+      toast.error("Failed to delete Campus");
     }
   };
-  
+
+ 
 
   return (
+    <>
     <div aria-hidden="true">
       <div>
         <Breadcrumbs>
@@ -107,7 +115,7 @@ const Campus = () => {
                     // variant="outline"
                     className="mr-2"
                     // color="secondary"
-                    onClick={() => handleDelete(campus.campusId!)}
+                    onClick={() => handleDeleteConfirmation(campus.campusId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -122,6 +130,13 @@ const Campus = () => {
         ))}
       </Accordion>
     </div>
+    {campusToDelete !== null && (
+      <ConfirmationDialog
+        onDelete={() => handleDelete(campusToDelete)}
+        onCancel={handleCancelDelete}
+      />
+    )}
+    </>
   );
 };
 

@@ -13,12 +13,15 @@ import { Badge } from "@/components/ui/badge";
 import { deleteClass, fetchClasses, ClassData } from "../../../../services/ClassService"; 
 import EditClass from "../classrooms/edit-class";
 import { Input } from "@/components/ui/input";
+import ConfirmationDialog from "../common/confirmation-dialog";
+import { toast } from "sonner";
 
 const ClassListTable = () => {
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [filteredClasses, setFilteredClasses] = useState<ClassData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [classToDelete, setClassToDelete] = useState<number | null>(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -81,21 +84,22 @@ const ClassListTable = () => {
   const handleNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
+  const handleDeleteConfirmation = (id: number) => {
+    setClassToDelete(id);
+  };
+
+  const handleCancelDelete = () => {
+    setClassToDelete(null);
+  };
 
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this class?");
-    
-    if (isConfirmed) {
-      try {
-        await deleteClass(id);
-        alert("Class deleted successfully");
-        fetchClasses(); // Refresh the data after deletion
-      } catch (error) {
-        console.error("Error deleting class:", error);
-        alert("Failed to delete class");
-      }
-    } else {
-      alert("Deletion cancelled");
+    try {
+      await deleteClass(id);
+      toast.success("Class deleted successfully");
+      setClassToDelete(null); // Close dialog after successful deletion
+    } catch (error) {
+      console.error("Error deleting Class:", error);
+      toast.error("Failed to delete Class");
     }
   };
 
@@ -150,7 +154,7 @@ const ClassListTable = () => {
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDelete(item.classId!)}
+                    onClick={() => handleDeleteConfirmation(item.classId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -171,7 +175,12 @@ const ClassListTable = () => {
           Next
         </Button>
       </div>
-      
+      {classToDelete !== null && (
+        <ConfirmationDialog
+          onDelete={() => handleDelete(classToDelete)}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </>
   );
 };
