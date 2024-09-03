@@ -1,5 +1,6 @@
-"use client";
-import React, { useState } from "react";
+"use client"; // Make sure this is at the very top
+
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,22 +16,22 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"; // Adjusted service import
-import { addEmployee, EmployeesData } from "@/services/EmployeeService";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CampusData } from "@/services/campusService";
-import { RoleData } from "@/services/employeeRoleService";
+} from "@/components/ui/sheet";
+import { EmployeesData, updateEmployee } from "@/services/EmployeeService";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CampusData, getCampuses } from "@/services/campusService";
+import { getRoles, RoleData } from "@/services/employeeRoleService";
 
-interface EmployeeListTableProps {
-  employees: EmployeesData[];
-  campuses: CampusData[];
-  employeeRole: RoleData[];
-}
-// Define Zod schema
 const employeeSchema = z.object({
-  roleId: z.number().int().positive("Role is required"),
   campusId: z.number().int().positive("Campus is required"),
   departmentId: z.number().int().positive("Department is required"),
+  roleId: z.number().int().positive("Role is required"),
   firstName: z.string().min(1, "First Name is required"),
   lastName: z.string().min(1, "Last Name is required"),
   email: z.string().email({ message: "Invalid email address" }),
@@ -45,8 +46,31 @@ const employeeSchema = z.object({
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
-const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, employeeRole }) => {
+export default function EditEmployee({
+  employeeData,
+}: {
+  employeeData: EmployeesData;
+}) {
+  const {
+    employeeId,
+    roleId,
+    campusId,
+    departmentId,
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    address,
+    emergencyContact,
+    qualifications,
+  } = employeeData;
+
   const [selectedCampusId, setSelectedCampusId] = useState<number | null>(null);
+  const [campuses, setCampuses] = useState<CampusData[]>([]);
+  const [employeeRole, setEmployeeRole] = useState<RoleData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -55,22 +79,64 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
     formState: { errors },
   } = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
+    defaultValues: {
+      campusId,
+      departmentId,
+      roleId,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      address,
+      emergencyContact,
+      qualifications,
+    },
   });
+
+  useEffect(() => {
+    const fetchEmployeeAndCampusData = async () => {
+      setLoading(true);
+      try {
+        const campusResponse = await getCampuses();
+        const empRoleResponse = await getRoles();
+        setCampuses(campusResponse.data as CampusData[]);
+        setEmployeeRole(empRoleResponse.data as RoleData[]);
+        // Set selected campus and department after fetching data
+        const validCampusId = campusId ?? 0;
+        const validDepartmentId = departmentId ?? 0;
+          setSelectedCampusId(validCampusId);
+          setValue("campusId", validCampusId);
+        setValue("departmentId", validDepartmentId);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployeeAndCampusData();
+  }, [campusId, departmentId, setValue]);
+
+  const filteredDepartments =
+    campuses.find((campus) => campus.campusId === selectedCampusId)
+      ?.departments || [];
 
   const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
     try {
-      const response = await addEmployee(data);  // Corrected function call
+      const updatedEmployee = { ...data, employeeId };
+      const response = await updateEmployee(updatedEmployee);
 
       if (response.success) {
-        toast.success(`Employee ${data.firstName} ${data.lastName} added successfully!`);
+        toast.success(
+          `${updatedEmployee.firstName} ${updatedEmployee.lastName} was updated successfully!`
+        );
         reset();
       } else {
-        console.error("Error:", response);
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error("Failed to update the employee");
       }
     } catch (error) {
-      console.error("Request Failed:", error);
-      toast.error("Request Failed");
+      console.error("Request failed:", error);
+      toast.error("Request failed");
     }
   };
 
@@ -84,29 +150,19 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
     const campusId = parseInt(value);
     setSelectedCampusId(campusId);
     setValue("campusId", campusId);
-    // Reset departmentId when campus changes
     setValue("departmentId", 0);
   };
-
-  const filteredDepartments = campuses.find(campus => campus.campusId === selectedCampusId)?.departments || [];
-
 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button>
-          <span className="text-xl mr-1">
-            <Icon
-              icon="heroicons:building-library-solid"
-              className="w-6 h-6 mr-2"
-            />
-          </span>
-          Add Employee
+        <Button size="icon" variant="outline" className="h-7 w-7">
+          <Icon icon="heroicons:pencil" className="h-4 w-4" />
         </Button>
       </SheetTrigger>
       <SheetContent className="max-w-[736px]">
         <SheetHeader>
-          <SheetTitle>Add New Employee</SheetTitle>
+          <SheetTitle>Edit Employee</SheetTitle>
         </SheetHeader>
         <div
           className="flex flex-col justify-between"
@@ -116,8 +172,9 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
               <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
+                <div className="col-span-2">
                   <Select
+                    defaultValue={campusId?.toString() ?? ""}
                     onValueChange={handleCampusChange}
                   >
                     <SelectTrigger>
@@ -144,12 +201,18 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
                 </div>
                 <div className="col-span-2 lg:col-span-1">
                   <Select
+                    defaultValue={departmentId?.toString() ?? ""}
                     onValueChange={(value) =>
                       setValue("departmentId", parseInt(value))
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Department" />
+                      <SelectValue>
+                        {filteredDepartments.find(
+                          (department) =>
+                            department.departmentId === departmentId
+                        )?.departmentName || "Select Department"}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {filteredDepartments.length > 0 ? (
@@ -178,6 +241,7 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
                 </div>
                 <div className="col-span-2 lg:col-span-1">
                   <Select
+                    defaultValue={roleId?.toString() ?? ""}
                     onValueChange={(value) =>
                       setValue("roleId", parseInt(value))
                     }
@@ -199,9 +263,7 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
                   </Select>
 
                   {errors.roleId && (
-                    <p className="text-destructive">
-                      {errors.roleId.message}
-                    </p>
+                    <p className="text-destructive">{errors.roleId.message}</p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
@@ -211,7 +273,9 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
                     {...register("firstName")}
                   />
                   {errors.firstName && (
-                    <p className="text-destructive">{errors.firstName.message}</p>
+                    <p className="text-destructive">
+                      {errors.firstName.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
@@ -221,7 +285,9 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
                     {...register("lastName")}
                   />
                   {errors.lastName && (
-                    <p className="text-destructive">{errors.lastName.message}</p>
+                    <p className="text-destructive">
+                      {errors.lastName.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
@@ -256,38 +322,54 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
                     <p className="text-destructive">{errors.address.message}</p>
                   )}
                 </div>
-                <div className="col-span-2 lg:col-span-1">
+                <div className="col-span-2">
                   <Input
                     type="text"
                     placeholder="Emergency Contact"
                     {...register("emergencyContact")}
                   />
                   {errors.emergencyContact && (
-                    <p className="text-destructive">{errors.emergencyContact.message}</p>
+                    <p className="text-destructive">
+                      {errors.emergencyContact.message}
+                    </p>
                   )}
                 </div>
-                <div className="col-span-2 lg:col-span-1">
+                <div className="col-span-2">
                   <Input
                     type="text"
                     placeholder="Qualifications"
                     {...register("qualifications")}
                   />
                   {errors.qualifications && (
-                    <p className="text-destructive">{errors.qualifications.message}</p>
+                    <p className="text-destructive">
+                      {errors.qualifications.message}
+                    </p>
                   )}
                 </div>
-                <div className="col-span-2">
-                  <Button type="submit">Submit Form</Button>
-                </div>
               </div>
+              <SheetFooter className="py-5">
+                <SheetClose asChild>
+                  <Button
+                    type="submit"
+                    className="w-full sm:w-auto"
+                  >
+                    Save Changes
+                  </Button>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                  >
+                    Cancel
+                  </Button>
+                </SheetClose>
+              </SheetFooter>
             </form>
           </div>
         </div>
-        <SheetFooter>
-          <SheetClose asChild>footer content</SheetClose>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
 }
-export default AddEmployee;

@@ -1,10 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Infrastructure.Data
 {
@@ -26,7 +21,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Classroom> Classrooms { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeRole> EmployeeRoles { get; set; }
-
+        public DbSet<Subject> Subjects { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and keys here
