@@ -99,10 +99,10 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
       <div className="mb-4 flex justify-between items-center">
         <Input
           type="text"
-          placeholder="Search by section name..."
+          placeholder="Search by Employee Name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="border p-2 rounded"
+          className="border p-2 rounded m-2"
         />
       </div>
       <Table className="text-left">
@@ -151,7 +151,7 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditEmployee employeeData={item} employees={employees} />
+                  <EditEmployee employeeData={item}/>
                   <Button
                     size="icon"
                     variant="outline"

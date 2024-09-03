@@ -20,7 +20,7 @@ namespace SchoolManagementSystem.Application.DTOs
         public int? CreatedBy { get; set; } = 1;
         public DateTime? UpdatedAt { get; set; } = DateTime.Now;
         public int? UpdatedBy { get; set; } = 1;
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
         //// Additional properties Full objects for related entities
         //public EmployeeRole EmployeeRole { get; set; }

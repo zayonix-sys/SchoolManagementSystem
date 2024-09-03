@@ -91,7 +91,7 @@
 // export type ClassicNavType = (typeof menusConfig.sidebarNav.classic)[number]
 // export type MainNavType = (typeof menusConfig.mainNav)[number]
 
-import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2 } from "@/components/svg";
+import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book } from "@/components/svg";
 
 export interface MenuItemProps {
   title: string;
@@ -125,6 +125,11 @@ const menuItems: MenuItemProps[] = [
         title: "Manage Employees",
         href: "/employees",
         icon: Users,
+      },
+      {
+        title: "Manage Subjects",
+        href: "/subjects",
+        icon: Book,
       },
     ],
   },

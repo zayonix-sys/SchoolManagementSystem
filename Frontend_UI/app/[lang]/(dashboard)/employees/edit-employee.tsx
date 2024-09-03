@@ -1,6 +1,6 @@
 "use client"; // Make sure this is at the very top
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,8 +18,15 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { EmployeesData, updateEmployee } from "@/services/EmployeeService";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CampusData, getCampuses } from "@/services/campusService";
+import { getRoles, RoleData } from "@/services/employeeRoleService";
 
 const employeeSchema = z.object({
   campusId: z.number().int().positive("Campus is required"),
@@ -39,10 +46,38 @@ const employeeSchema = z.object({
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
-export default function EditEmployee({ employees, employeeData }: { employees: EmployeesData[]; employeeData: EmployeesData }) {
-  const { employeeId, roleId, campusId, departmentId, firstName, lastName, email, phoneNumber,address, emergencyContact, qualifications  } = employeeData;
+export default function EditEmployee({
+  employeeData,
+}: {
+  employeeData: EmployeesData;
+}) {
+  const {
+    employeeId,
+    roleId,
+    campusId,
+    departmentId,
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    address,
+    emergencyContact,
+    qualifications,
+  } = employeeData;
 
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<EmployeeFormValues>({
+  const [selectedCampusId, setSelectedCampusId] = useState<number | null>(null);
+  const [campuses, setCampuses] = useState<CampusData[]>([]);
+  const [employeeRole, setEmployeeRole] = useState<RoleData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
       campusId,
@@ -54,9 +89,37 @@ export default function EditEmployee({ employees, employeeData }: { employees: E
       phoneNumber,
       address,
       emergencyContact,
-      qualifications
+      qualifications,
     },
   });
+
+  useEffect(() => {
+    const fetchEmployeeAndCampusData = async () => {
+      setLoading(true);
+      try {
+        const campusResponse = await getCampuses();
+        const empRoleResponse = await getRoles();
+        setCampuses(campusResponse.data as CampusData[]);
+        setEmployeeRole(empRoleResponse.data as RoleData[]);
+        // Set selected campus and department after fetching data
+        const validCampusId = campusId ?? 0;
+        const validDepartmentId = departmentId ?? 0;
+          setSelectedCampusId(validCampusId);
+          setValue("campusId", validCampusId);
+        setValue("departmentId", validDepartmentId);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployeeAndCampusData();
+  }, [campusId, departmentId, setValue]);
+
+  const filteredDepartments =
+    campuses.find((campus) => campus.campusId === selectedCampusId)
+      ?.departments || [];
 
   const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
     try {
@@ -64,10 +127,12 @@ export default function EditEmployee({ employees, employeeData }: { employees: E
       const response = await updateEmployee(updatedEmployee);
 
       if (response.success) {
-        toast.success(`${updatedEmployee.firstName} Employee Updated successfully!`);
+        toast.success(
+          `${updatedEmployee.firstName} ${updatedEmployee.lastName} was updated successfully!`
+        );
         reset();
       } else {
-        toast.error("Failed to update the Employee");
+        toast.error("Failed to update the employee");
       }
     } catch (error) {
       console.error("Request failed:", error);
@@ -81,44 +146,48 @@ export default function EditEmployee({ employees, employeeData }: { employees: E
     }
   };
 
+  const handleCampusChange = (value: string) => {
+    const campusId = parseInt(value);
+    setSelectedCampusId(campusId);
+    setValue("campusId", campusId);
+    setValue("departmentId", 0);
+  };
+
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          className="h-7 w-7"
-        >
+        <Button size="icon" variant="outline" className="h-7 w-7">
           <Icon icon="heroicons:pencil" className="h-4 w-4" />
         </Button>
       </SheetTrigger>
       <SheetContent className="max-w-[736px]">
         <SheetHeader>
-          <SheetTitle>Edit Class</SheetTitle>
+          <SheetTitle>Edit Employee</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-between" style={{ height: "calc(100vh - 80px)" }}>
+        <div
+          className="flex flex-col justify-between"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
           <div className="py-5">
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
               <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
+                <div className="col-span-2">
                   <Select
-                  defaultValue={campusId?.toString() ?? ""}
-                    onValueChange={(value) =>
-                      setValue("campusId", parseInt(value))
-                    }
+                    defaultValue={campusId?.toString() ?? ""}
+                    onValueChange={handleCampusChange}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees.map((employee) => (
+                      {campuses.map((campus) => (
                         <SelectItem
                           className="hover:bg-default-300"
-                          key={employee.employeeId}
-                          value={employee.campusId?.toString() ?? ""}
+                          key={campus.campusId}
+                          value={campus.campusId?.toString() ?? ""}
                         >
-                          {employee.campusName}
+                          {campus.campusName}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -132,24 +201,35 @@ export default function EditEmployee({ employees, employeeData }: { employees: E
                 </div>
                 <div className="col-span-2 lg:col-span-1">
                   <Select
-                  defaultValue={departmentId?.toString() ?? ""}
+                    defaultValue={departmentId?.toString() ?? ""}
                     onValueChange={(value) =>
                       setValue("departmentId", parseInt(value))
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Department" />
+                      <SelectValue>
+                        {filteredDepartments.find(
+                          (department) =>
+                            department.departmentId === departmentId
+                        )?.departmentName || "Select Department"}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {employees.map((employee) => (
-                        <SelectItem
-                          className="hover:bg-default-300"
-                          key={employee.departmentId}
-                          value={employee.departmentId?.toString() ?? ""}
-                        >
-                          {employee.departmentName}
+                      {filteredDepartments.length > 0 ? (
+                        filteredDepartments.map((department) => (
+                          <SelectItem
+                            className="hover:bg-default-300"
+                            key={department.departmentId}
+                            value={department.departmentId?.toString() ?? ""}
+                          >
+                            {department.departmentName}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem disabled value="">
+                          No Departments Available
                         </SelectItem>
-                      ))}
+                      )}
                     </SelectContent>
                   </Select>
 
@@ -161,7 +241,7 @@ export default function EditEmployee({ employees, employeeData }: { employees: E
                 </div>
                 <div className="col-span-2 lg:col-span-1">
                   <Select
-                  defaultValue={roleId?.toString() ?? ""}
+                    defaultValue={roleId?.toString() ?? ""}
                     onValueChange={(value) =>
                       setValue("roleId", parseInt(value))
                     }
@@ -170,22 +250,20 @@ export default function EditEmployee({ employees, employeeData }: { employees: E
                       <SelectValue placeholder="Select Role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees.map((employee) => (
+                      {employeeRole.map((role) => (
                         <SelectItem
                           className="hover:bg-default-300"
-                          key={employee.roleId}
-                          value={employee.roleId?.toString() ?? ""}
+                          key={role.roleId}
+                          value={role.roleId?.toString() ?? ""}
                         >
-                          {employee.employeeRoleName}
+                          {role.roleName}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
 
                   {errors.roleId && (
-                    <p className="text-destructive">
-                      {errors.roleId.message}
-                    </p>
+                    <p className="text-destructive">{errors.roleId.message}</p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
@@ -195,7 +273,9 @@ export default function EditEmployee({ employees, employeeData }: { employees: E
                     {...register("firstName")}
                   />
                   {errors.firstName && (
-                    <p className="text-destructive">{errors.firstName.message}</p>
+                    <p className="text-destructive">
+                      {errors.firstName.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
@@ -205,7 +285,9 @@ export default function EditEmployee({ employees, employeeData }: { employees: E
                     {...register("lastName")}
                   />
                   {errors.lastName && (
-                    <p className="text-destructive">{errors.lastName.message}</p>
+                    <p className="text-destructive">
+                      {errors.lastName.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
@@ -240,38 +322,53 @@ export default function EditEmployee({ employees, employeeData }: { employees: E
                     <p className="text-destructive">{errors.address.message}</p>
                   )}
                 </div>
-                <div className="col-span-2 lg:col-span-1">
+                <div className="col-span-2">
                   <Input
                     type="text"
                     placeholder="Emergency Contact"
                     {...register("emergencyContact")}
                   />
                   {errors.emergencyContact && (
-                    <p className="text-destructive">{errors.emergencyContact.message}</p>
+                    <p className="text-destructive">
+                      {errors.emergencyContact.message}
+                    </p>
                   )}
                 </div>
-                <div className="col-span-2 lg:col-span-1">
+                <div className="col-span-2">
                   <Input
                     type="text"
                     placeholder="Qualifications"
                     {...register("qualifications")}
                   />
                   {errors.qualifications && (
-                    <p className="text-destructive">{errors.qualifications.message}</p>
+                    <p className="text-destructive">
+                      {errors.qualifications.message}
+                    </p>
                   )}
                 </div>
-                <div className="col-span-2">
-                  <Button type="submit">Update</Button>
-                </div>
               </div>
+              <SheetFooter className="py-5">
+                <SheetClose asChild>
+                  <Button
+                    type="submit"
+                    className="w-full sm:w-auto"
+                  >
+                    Save Changes
+                  </Button>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                  >
+                    Cancel
+                  </Button>
+                </SheetClose>
+              </SheetFooter>
             </form>
           </div>
         </div>
-        <SheetFooter>
-          <SheetClose asChild>
-            <Button variant="ghost">Close</Button>
-          </SheetClose>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

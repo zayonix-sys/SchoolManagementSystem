@@ -18,9 +18,13 @@ import {
 } from "@/components/ui/sheet"; // Adjusted service import
 import { addEmployee, EmployeesData } from "@/services/EmployeeService";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CampusData } from "@/services/campusService";
+import { RoleData } from "@/services/employeeRoleService";
 
 interface EmployeeListTableProps {
   employees: EmployeesData[];
+  campuses: CampusData[];
+  employeeRole: RoleData[];
 }
 // Define Zod schema
 const employeeSchema = z.object({
@@ -41,7 +45,8 @@ const employeeSchema = z.object({
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
-const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees }) => {
+const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, employeeRole }) => {
+  const [selectedCampusId, setSelectedCampusId] = useState<number | null>(null);
   const {
     register,
     handleSubmit,
@@ -75,6 +80,17 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees }) => {
     }
   };
 
+  const handleCampusChange = (value: string) => {
+    const campusId = parseInt(value);
+    setSelectedCampusId(campusId);
+    setValue("campusId", campusId);
+    // Reset departmentId when campus changes
+    setValue("departmentId", 0);
+  };
+
+  const filteredDepartments = campuses.find(campus => campus.campusId === selectedCampusId)?.departments || [];
+
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -102,21 +118,19 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees }) => {
               <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
                   <Select
-                    onValueChange={(value) =>
-                      setValue("campusId", parseInt(value))
-                    }
+                    onValueChange={handleCampusChange}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees.map((employee) => (
+                      {campuses.map((campus) => (
                         <SelectItem
                           className="hover:bg-default-300"
-                          key={employee.employeeId}
-                          value={employee.campusId?.toString() ?? ""}
+                          key={campus.campusId}
+                          value={campus.campusId?.toString() ?? ""}
                         >
-                          {employee.campusName}
+                          {campus.campusName}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -138,15 +152,21 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees }) => {
                       <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees.map((employee) => (
-                        <SelectItem
-                          className="hover:bg-default-300"
-                          key={employee.departmentId}
-                          value={employee.departmentId?.toString() ?? ""}
-                        >
-                          {employee.departmentName}
+                      {filteredDepartments.length > 0 ? (
+                        filteredDepartments.map((department) => (
+                          <SelectItem
+                            className="hover:bg-default-300"
+                            key={department.departmentId}
+                            value={department.departmentId?.toString() ?? ""}
+                          >
+                            {department.departmentName}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem disabled value="">
+                          No Departments Available
                         </SelectItem>
-                      ))}
+                      )}
                     </SelectContent>
                   </Select>
 
@@ -166,13 +186,13 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees }) => {
                       <SelectValue placeholder="Select Role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employees.map((employee) => (
+                      {employeeRole.map((role) => (
                         <SelectItem
                           className="hover:bg-default-300"
-                          key={employee.roleId}
-                          value={employee.roleId?.toString() ?? ""}
+                          key={role.roleId}
+                          value={role.roleId?.toString() ?? ""}
                         >
-                          {employee.employeeRoleName}
+                          {role.roleName}
                         </SelectItem>
                       ))}
                     </SelectContent>
