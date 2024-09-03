@@ -16,10 +16,14 @@ import AddClassroom from "./add-classroom";
 import { ClassroomData, fetchClassrooms } from "@/services/classroomService";
 import Campus from "../campuses/page";
 import { CampusData, getCampuses } from "@/services/campusService";
+import AssignClasses from "./add-assignclasses";
+import { fetchSection, SectionData } from "@/services/SectionService";
+import ClassAssignTable from "./classassign-table";
 
 const Classroom = () => {
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [classroom, setClassroom] = useState<ClassroomData[]>([]);
+  const [section, setSection] = useState<SectionData[]>([]);
   const [campuses, setCampuses] = useState<CampusData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -30,9 +34,11 @@ const Classroom = () => {
       try {
         const classData = await fetchClasses();
         const classroomData = await fetchClassrooms();
+        const sectionData = await fetchSection();
         const campuses = await getCampuses();
         setClasses(classData.data as ClassData[]);
         setClassroom(classroomData.data as ClassroomData[]);
+        setSection(sectionData.data as SectionData[]);
         setCampuses(campuses.data as CampusData[]);
       } catch (err) {
         setError(err as any); 
@@ -70,6 +76,8 @@ const Classroom = () => {
           <AddClassroom campuses={campuses} />
           <AddClass/>
           <AddSection/>
+          <AssignClasses classes={classes} section={section} classroom={classroom}/>
+
         </div>
       </div>
       {/* <div className="mt-5 text-2xl font-medium text-default-900">Campus Registration</div> */}
@@ -92,8 +100,27 @@ const Classroom = () => {
             <div className="col-span-12 md:col-span-8">
                   <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5">
                     <ReportsCard />
-                    <Table/>
                   </div>
+                </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+
+      <Accordion 
+      type="single" 
+      collapsible 
+      className="w-full border rounded-md divide-y mt-5"
+      // defaultValue={`item-1`}
+      >
+        <AccordionItem value="item-1" className=" shadow-none rounded-none open">
+          <AccordionTrigger>Classroom Assignment</AccordionTrigger>
+          <AccordionContent>
+             
+            <div className="col-span-12 md:col-span-8">
+                  
+                    {/* <ReportsCard/>x */}
+                    <ClassAssignTable classes={classes} section={section} classroom={classroom}/>
+                  
                 </div>
           </AccordionContent>
         </AccordionItem>
