@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,55 +10,56 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ClassroomData, deleteClassroom, fetchClassrooms } from "@/services/classroomService";
 import { Input } from "@/components/ui/input";
-import EditClassroom from "./edit-classroom";
-import ConfirmationDialog from "../common/confirmation-dialog";
-import { toast } from "sonner";
+import { deleteRole, getRoles, RoleData } from "@/services/employeeRoleService";
+import EditRoles from "./edit-roles";
 
-const ClassroomListTable = () => {
-  const [classroom, setClassroom] = useState<ClassroomData[]>([]);
+const RoleListTable = () => {
+  const [roles, setRoles] = useState<RoleData[]>([]);
+  const [filteredRoles, setFilteredRoles] = useState<RoleData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(""); 
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
-  const [classroomToDelete, setClassroomToDelete] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 10;
-  
-  // Function to fetch class data
+
   useEffect(() => {
-    const fetchClassroomData = async () => {
+    const fetchRolesData = async () => {
       setLoading(true);
       try {
-        const response = await fetchClassrooms(); // assuming fetchClasses is a function that fetches the data
-        setClassroom(response.data as ClassroomData[]);
+        const response = await getRoles();
+        setRoles(response.data as RoleData[]);
+        setFilteredRoles(response.data as RoleData[]);
       } catch (err) {
         setError(err as any);
       } finally {
         setLoading(false);
       }
     };
-  
-    fetchClassroomData();
+
+    fetchRolesData();
   }, []);
-  
-  const filteredClassrooms = classroom.filter((classroom) =>
-    classroom.roomNumber.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+
+  useEffect(() => {
+    const filtered = roles.filter((role) =>
+      role.roleName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredRoles(filtered);
+  }, [searchQuery, roles]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredClassrooms.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredRoles.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredClassrooms.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredRoles.length / itemsPerPage);
 
   const handleSelectAll = () => {
     if (selectedRows.length === currentItems.length) {
       setSelectedRows([]);
     } else {
       setSelectedRows(
-        currentItems.map((row) => row.classroomId!).filter((id) => id !== null && id !== undefined)
+        currentItems.map((row) => row.roleId!).filter((id) => id !== null && id !== undefined)
       );
     }
   };
@@ -82,35 +81,30 @@ const ClassroomListTable = () => {
   const handleNextPage = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
-  const handleDeleteConfirmation = (id: number) => {
-    setClassroomToDelete(id);
-  };
-
-  const handleCancelDelete = () => {
-    setClassroomToDelete(null);
-  };
 
   const handleDelete = async (id: number) => {
-    try {
-      await deleteClassroom(id);
-      toast.success("Classroom deleted successfully");
-      setClassroomToDelete(null); // Close dialog after successful deletion
-    } catch (error) {
-      console.error("Error deleting Classroom:", error);
-      toast.error("Failed to delete Classroom");
+    const isConfirmed = confirm("Are you sure you want to delete this role?");
+    
+    if (isConfirmed) {
+      try {
+        await deleteRole(id);
+        alert("role deleted successfully");
+        getRoles(); // Refresh the data after deletion
+      } catch (error) {
+        console.error("Error deleting role:", error);
+        alert("Failed to delete role");
+      }
+    } else {
+      alert("Deletion cancelled");
     }
   };
-
-
-  
-
 
   return (
     <>
       <div className="mb-4 flex justify-between items-center">
         <Input
           type="text"
-          placeholder="Search by Room Number..."
+          placeholder="Search by role name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border p-2 rounded"
@@ -119,9 +113,8 @@ const ClassroomListTable = () => {
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-            <TableHead className="h-10 p-2.5">Room Number</TableHead>
-            <TableHead className="h-10 p-2.5">Building</TableHead>
-            <TableHead className="h-10 p-2.5">Capacity</TableHead>
+            <TableHead className="h-10 p-2.5">Role Name</TableHead>
+            <TableHead className="h-10 p-2.5">Description</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
             <TableHead className="h-10 p-2.5 text-end">Action</TableHead>
           </TableRow>
@@ -130,15 +123,12 @@ const ClassroomListTable = () => {
         <TableBody>
           {currentItems.map((item) => (
             <TableRow
-              key={item.classroomId}
+              key={item.roleId}
               className="hover:bg-default-200"
-              data-state={
-                selectedRows.includes(item.classroomId!) && "selected"
-              }
+              data-state={selectedRows.includes(item.roleId!) && "selected"}
             >
-              <TableCell className="p-2.5">{item.roomNumber}</TableCell>
-              <TableCell className="p-2.5">{item.building}</TableCell>
-              <TableCell className="p-2.5">{item.capacity}</TableCell>
+              <TableCell className="p-2.5">{item.roleName}</TableCell>
+              <TableCell className="p-2.5">{item.roleDescription}</TableCell>
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
@@ -151,14 +141,14 @@ const ClassroomListTable = () => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                <EditClassroom classroomData={item}/>
+                  <EditRoles roleData={item} />
 
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() =>  handleDeleteConfirmation(item.classroomId!)}
+                    onClick={() => handleDelete(item.roleId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -179,14 +169,9 @@ const ClassroomListTable = () => {
           Next
         </Button>
       </div>
-      {classroomToDelete !== null && (
-        <ConfirmationDialog
-          onDelete={() => handleDelete(classroomToDelete)}
-          onCancel={handleCancelDelete}
-        />
-      )}
+      
     </>
   );
 };
 
-export default ClassroomListTable;
+export default RoleListTable;

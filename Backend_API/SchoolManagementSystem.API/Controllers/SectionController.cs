@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.API.Models;
-using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
-using SchoolManagementSystem.Application.Services;
 using SchoolManagementSystem.Domain.Entities;
-using static System.Collections.Specialized.BitVector32;
 
 
 namespace SchoolManagementSystem.API.Controllers
@@ -102,7 +99,7 @@ namespace SchoolManagementSystem.API.Controllers
         [HttpDelete("[action]")]
         public async Task<IActionResult> DeleteSection(int sectionId)
         {
-            _logger.LogInformation("Deleting class with ID {SectionId}.", sectionId);
+            _logger.LogInformation("Deleting selection with ID {SectionId}.", sectionId);
             try
             {
                 await _sectionService.DeleteSectionAsync(sectionId);

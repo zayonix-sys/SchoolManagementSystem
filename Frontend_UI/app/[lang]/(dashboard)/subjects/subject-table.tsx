@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
@@ -12,46 +10,37 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { fetchSection } from "@/services/SectionService";
-import { toast } from "sonner";
+import { deleteClass, fetchClasses, ClassData } from "../../../../services/ClassService"; 
+import EditClass from "../classrooms/edit-class";
 import { Input } from "@/components/ui/input";
-import { deleteEmployee, EmployeesData } from "@/services/EmployeeService";
-import EditEmployee from "./edit-employee";
+import { deleteSubject, SubjectData } from "@/services/subjectService";
+import EditSubject from "./edit-subject";
+import { toast } from "sonner";
 import ConfirmationDialog from "../common/confirmation-dialog";
 
-interface EmployeeListTableProps {
-  employees: EmployeesData[];
-}
-
-const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
+const SubjectListTable = ({subject}:{subject: SubjectData[]}) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
-  const itemsPerPage = 5;
+  const [searchQuery, setSearchQuery] = useState(""); 
+  const [subjectToDelete, setSubjectToDelete] = useState<number | null>(null);
+  const itemsPerPage = 10;
 
-  // Apply search filter and pagination
-  const filteredSections = (employees as any[]).filter((employee) =>
-    employee?.firstName?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredSubjects = subject.filter((sub) =>
+    sub.subjectName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSections.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = filteredSubjects.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredSections.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredSubjects.length / itemsPerPage);
 
   const handleSelectAll = () => {
     if (selectedRows.length === currentItems.length) {
       setSelectedRows([]);
     } else {
       setSelectedRows(
-        currentItems
-          .map((row) => row.employeeId!)
-          .filter((id) => id !== null && id !== undefined)
+        currentItems.map((row) => row.subjectId!).filter((id) => id !== null && id !== undefined)
       );
     }
   };
@@ -75,22 +64,21 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
   };
 
   const handleDeleteConfirmation = (id: number) => {
-    setEmployeeToDelete(id);
+    setSubjectToDelete(id);
   };
 
   const handleCancelDelete = () => {
-    setEmployeeToDelete(null);
+    setSubjectToDelete(null);
   };
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteEmployee(id);
-      toast.success("Employee deleted successfully");
-      fetchSection(); // Refresh the data after deletion
-      setEmployeeToDelete(null); // Close dialog after successful deletion
+      await deleteSubject(id);
+      toast.success("Subject deleted successfully");
+      setSubjectToDelete(null); // Close dialog after successful deletion
     } catch (error) {
-      console.error("Error deleting Employee:", error);
-      toast.error("Failed to delete Employee");
+      console.error("Error deleting Subject:", error);
+      toast.error("Failed to delete Subject");
     }
   };
 
@@ -99,24 +87,17 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
       <div className="mb-4 flex justify-between items-center">
         <Input
           type="text"
-          placeholder="Search by Employee Name..."
+          placeholder="Search by class name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="border p-2 rounded m-2"
+          className="border p-2 rounded"
         />
       </div>
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-            <TableHead className="h-10 p-2.5">Role</TableHead>
-            <TableHead className="h-10 p-2.5">Campus</TableHead>
-            <TableHead className="h-10 p-2.5">Department</TableHead>
-            <TableHead className="h-10 p-2.5">Name</TableHead>
-            <TableHead className="h-10 p-2.5">Email</TableHead>
-            <TableHead className="h-10 p-2.5">Number</TableHead>
-            <TableHead className="h-10 p-2.5">HireDate</TableHead>
-            <TableHead className="h-10 p-2.5">Address</TableHead>
-            <TableHead className="h-10 p-2.5">Qualifications</TableHead>
+            <TableHead className="h-10 p-2.5">Subject Name</TableHead>
+            <TableHead className="h-10 p-2.5">Description</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
             <TableHead className="h-10 p-2.5 text-end">Action</TableHead>
           </TableRow>
@@ -125,21 +106,12 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
         <TableBody>
           {currentItems.map((item) => (
             <TableRow
-              key={item.employeeId}
+              key={item.subjectId}
               className="hover:bg-default-200"
-              data-state={selectedRows.includes(item.employeeId!) && "selected"}
+              data-state={selectedRows.includes(item.subjectId!) && "selected"}
             >
-              <TableCell className="p-2.5">{item.employeeRoleName}</TableCell>
-              <TableCell className="p-2.5">{item.campusName}</TableCell>
-              <TableCell className="p-2.5">{item.departmentName}</TableCell>
-              <TableCell className="p-2.5">
-                {item.firstName} {item.lastName}
-              </TableCell>
-              <TableCell className="p-2.5">{item.email}</TableCell>
-              <TableCell className="p-2.5">{item.phoneNumber}</TableCell>
-              <TableCell className="p-2.5">{item.hireDate}</TableCell>
-              <TableCell className="p-2.5">{item.address}</TableCell>
-              <TableCell className="p-2.5">{item.qualifications}</TableCell>
+              <TableCell className="p-2.5">{item.subjectName}</TableCell>
+              <TableCell className="p-2.5">{item.subjectDescription}</TableCell>
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
@@ -149,15 +121,17 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
                   {item.isActive ? "Active" : "Inactive"}
                 </Badge>
               </TableCell>
+
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditEmployee employeeData={item}/>
+                  <EditSubject subject={item}/>
+
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDeleteConfirmation(item.employeeId!)}
+                    onClick={() => handleDeleteConfirmation(item.subjectId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -178,11 +152,9 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
           Next
         </Button>
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      {employeeToDelete !== null && (
+      {subjectToDelete !== null && (
         <ConfirmationDialog
-          onDelete={() => handleDelete(employeeToDelete)}
+          onDelete={() => handleDelete(subjectToDelete)}
           onCancel={handleCancelDelete}
         />
       )}
@@ -190,4 +162,4 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
   );
 };
 
-export default EmployeeListTable;
+export default SubjectListTable;
