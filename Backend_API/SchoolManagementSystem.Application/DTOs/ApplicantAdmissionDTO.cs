@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SchoolManagementSystem.Application.DTOs
+﻿namespace SchoolManagementSystem.Application.DTOs
 {
     public class ApplicantAdmissionDTO
     {
@@ -38,6 +32,6 @@ namespace SchoolManagementSystem.Application.DTOs
         public int? CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
-        public bool? IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = true;
     }
 }

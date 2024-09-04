@@ -12,6 +12,8 @@ import {
 import { RoleData } from "@/services/employeeRoleService";
 import { useEffect, useState } from "react";
 import RoleListTable from "./role-table";
+import { Icon } from "@iconify/react";
+import AddRole from "./add-roles";
 
 
 // This component allows you to view role details in a sheet.
@@ -23,17 +25,22 @@ export default function ViewRole({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="hover:bg-transparent text-xs hover:text-default-800 px-1"
-        >
-          View List
+      <Button>
+          <span className="text-xl mr-1">
+            <Icon icon="heroicons:building-library-solid" className="w-6 h-6 mr-2" />
+          </span>
+          Add/View Role
         </Button>
       </SheetTrigger>
       <SheetContent side="top">
         <SheetHeader>
-          <SheetTitle>Role</SheetTitle>
+          <SheetTitle>Role
+          </SheetTitle>
+          {/* <div className="relative"> */}
+  <SheetDescription className="absolute top-0 right-4  p-4">
+    <AddRole />
+  </SheetDescription>
+{/* </div> */}
         </SheetHeader>
         <div>
           <div className="py-6">

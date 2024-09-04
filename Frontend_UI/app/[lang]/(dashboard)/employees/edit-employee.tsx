@@ -207,12 +207,7 @@ export default function EditEmployee({
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue>
-                        {filteredDepartments.find(
-                          (department) =>
-                            department.departmentId === departmentId
-                        )?.departmentName || "Select Department"}
-                      </SelectValue>
+                    <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
                       {filteredDepartments.length > 0 ? (
