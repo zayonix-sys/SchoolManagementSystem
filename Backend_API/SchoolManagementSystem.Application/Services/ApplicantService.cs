@@ -3,9 +3,6 @@ using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
 using SchoolManagementSystem.Domain.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Services
 {
@@ -44,12 +41,24 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task DeleteApplicantAsync(int appId)
         {
-            await _applicantRepository.DeleteAsync(appId);
+            var applicant = await _applicantRepository.GetByIdAsync(appId);
+            if (applicant != null)
+            {
+                applicant.IsActive = false;
+                await _applicantRepository.UpdateAsync(applicant);
+            }
         }
 
-        public async Task<List<Applicant>> GetAllApplicantsAsync()
+        public async Task<List<ApplicantAdmissionDTO>> GetAllApplicantsAsync()
         {
-            return (await _applicantRepository.GetAllAsync()).ToList();
+
+            var applicant = await _applicantRepository.GetAllAsync();
+            var activeApplicant = applicant.Where(c => c.IsActive);
+
+            // Map the entities to DTOs
+            var applicantDTOs = activeApplicant.Select(c => _mapper.MapToDto(c)).ToList();
+
+            return applicantDTOs;
         }
 
         public async Task<Applicant> GetApplicantByIdAsync(int appId)
@@ -57,10 +66,11 @@ namespace SchoolManagementSystem.Application.Services
             return await _applicantRepository.GetByIdAsync(appId);
         }
 
-        //public async Task UpdateApplicantAsync(Applicants app)
-        //{
-        //    await _applicantRepository.UpdateAsync(app);
-        //}
+        public async Task UpdateApplicantAsync(ApplicantAdmissionDTO app)
+        {
+            var model = _mapper.MapToEntity(app);
+            await _applicantRepository.UpdateAsync(model);
+        }
 
     }
 }

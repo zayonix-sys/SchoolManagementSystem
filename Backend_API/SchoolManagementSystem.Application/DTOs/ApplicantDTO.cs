@@ -1,8 +1,4 @@
-﻿
-using SchoolManagementSystem.Domain.Entities;
-using System.ComponentModel.DataAnnotations;
-
-namespace SchoolManagementSystem.Application.DTOs
+﻿namespace SchoolManagementSystem.Application.DTOs
 {
     public class ApplicantDTO
     {
@@ -25,6 +21,6 @@ namespace SchoolManagementSystem.Application.DTOs
         public int? CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }
