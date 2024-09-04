@@ -1,4 +1,5 @@
 "use client";
+
 import { Breadcrumbs, BreadcrumbItem } from "@/components/ui/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
@@ -9,16 +10,40 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Reports from "./reports";
-import {
-  Form,
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import AddApplicant from "./add-applicant";
+import { useState, useEffect } from "react";
+import { ApplicantData, getApplicants } from "@/services/applicantService";
+import ApplicantListTable from "./veiw-applicant";
 
 const Applicants = () => {
+  const [applicants, setApplicants] = useState<ApplicantData[]>([]);
+  const [loading, setLoading] = useState(true); // Add loading state
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch applicants on component mount
+  useEffect(() => {
+    const fetchApplicants = async () => {
+      try {
+        const data = await getApplicants(); // Fetch applicant data
+        setApplicants(data);
+        setLoading(false); // Set loading to false once data is fetched
+      } catch (error) {
+        setError("Error fetching applicants"); // Set error if any
+        setLoading(false);
+      }
+    };
+
+    fetchApplicants();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show loading state
+  }
+
+  if (error) {
+    return <div>{error}</div>; // Show error message if any
+  }
+
   return (
     <div>
       <div>
@@ -26,19 +51,14 @@ const Applicants = () => {
           <BreadcrumbItem>Academic</BreadcrumbItem>
           <BreadcrumbItem className="text-primary">Applicants</BreadcrumbItem>
         </Breadcrumbs>
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-end space-x-4 m-2">
           <AddApplicant />
-
-          {/* <Button>
-            <Icon icon="heroicons:building-office" className="w-6 h-6 mr-2  " />
-            Add Department
-          </Button> */}
-          <Button>
-            <Icon icon="heroicons:building-office" className="w-6 h-6 mr-2  " />
-            List of Applications
-          </Button>
+          
         </div>
       </div>
+
+      {/* Render ApplicantListTable directly */}
+      <ApplicantListTable applicants={applicants} />
 
       <Accordion
         type="single"
@@ -47,7 +67,7 @@ const Applicants = () => {
       >
         <AccordionItem
           value="item-1"
-          className=" shadow-none rounded-none open"
+          className="shadow-none rounded-none open"
         >
           <AccordionTrigger>Campus 1 - Gulshan-e-Maymar</AccordionTrigger>
           <AccordionContent>

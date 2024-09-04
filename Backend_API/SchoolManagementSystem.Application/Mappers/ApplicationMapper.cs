@@ -1,10 +1,5 @@
 ﻿using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
@@ -26,11 +21,11 @@ namespace SchoolManagementSystem.Application.Mappers
                 AdmissionDecisionDate = entity.AdmissionDecisionDate,
                 ApplicationStatus = entity.ApplicationStatus,
                 Remarks = entity.Remarks,
-                CreatedAt = entity.CreatedAt,   
+                CreatedAt = entity.CreatedAt,
                 CreatedBy = entity.CreatedBy,
                 UpdatedAt = entity.UpdatedAt,
                 UpdatedBy = entity.UpdatedBy,
-                
+
                 IsActive = entity.IsActive,
 
             };
@@ -47,11 +42,11 @@ namespace SchoolManagementSystem.Application.Mappers
             {
                 ApplicationId = dto.ApplicationId,
                 ApplicantId = dto.ApplicantId,
-                CampusId= dto.CampusId,
-                ClassId= dto.ClassId,
+                CampusId = dto.CampusId,
+                ClassId = dto.ClassId,
                 AdmissionDecisionDate = dto.AdmissionDecisionDate,
                 ApplicationStatus = dto.ApplicationStatus,
-                Remarks= dto.Remarks,
+                Remarks = dto.Remarks,
                 CreatedAt = dto.CreatedAt,
                 CreatedBy = dto.CreatedBy,
                 UpdatedAt = dto.UpdatedAt,

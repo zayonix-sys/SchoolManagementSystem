@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SchoolManagementSystem.Domain.Entities;
-using SchoolManagementSystem.Application.Interfaces;
-using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.API.Models;
-using SchoolManagementSystem.Application.Services;
+using SchoolManagementSystem.Application.DTOs;
+using SchoolManagementSystem.Application.Interfaces;
+using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.API.Controllers
 {
@@ -21,7 +20,7 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Applicant>>> GetAllApplicants()
+        public async Task<ActionResult<IEnumerable<ApplicantAdmissionDTO>>> GetAllApplicants()
         {
             _logger.LogInformation("Fetching all applicants.");
             try
@@ -33,7 +32,7 @@ namespace SchoolManagementSystem.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while fetching all classrooms.");
+                _logger.LogError(ex, "An error occurred while fetching all applicant.");
                 return StatusCode(500, "Internal server error.");
             }
         }
@@ -81,30 +80,24 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
-        //[HttpPut("{appId}")]
-        //public async Task<IActionResult> UpdateApplicant(Applicants app)
-        //{
-        //    if (appId != app.ApplicantId)
-        //    {
-        //        _logger.LogWarning("Applicant ID mismatch: {Id} does not match {ApplicantId}.", app.ApplicantId);
-        //        return BadRequest("Classroom ID mismatch.");
-        //    }
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateApplicant(ApplicantAdmissionDTO app)
+        {
+            _logger.LogInformation("Updating applicant with ID {ApplicantId}.", app.ApplicantId);
+            try
+            {
+                await _applicantService.UpdateApplicantAsync(app);
+                _logger.LogInformation("Successfully updated Applicant with ID {ApplicantId}.", app.ApplicantId);
+                return Ok(ApiResponse<ApplicantAdmissionDTO>.SuccessResponse(app, "Applicant updated successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating Applicant with ID {ApplicantId}.", app.ApplicantId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
+            }
+        }
 
-        //    _logger.LogInformation("Updating applicant with ID {ApplicantId}.", app);
-        //    try
-        //    {
-        //        await _applicantService.UpdateApplicantAsync(app);
-        //        _logger.LogInformation("Successfully updated applicant with ID {ApplicantId}.", app);
-        //        return NoContent();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "An error occurred while updating applicant with ID {ApplicantId}.", app);
-        //        return StatusCode(500, "Internal server error.");
-        //    }
-        //}
-
-        [HttpDelete("{appId}")]
+        [HttpDelete("[action]")]
         public async Task<IActionResult> DeleteApplicant(int appId)
         {
             _logger.LogInformation("Deleting applicant with ID {ApplicantId}.", appId);
