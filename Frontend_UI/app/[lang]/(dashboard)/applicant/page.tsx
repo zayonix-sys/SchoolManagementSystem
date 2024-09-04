@@ -24,8 +24,8 @@ const Applicants = () => {
   useEffect(() => {
     const fetchApplicants = async () => {
       try {
-        const data = await getApplicants(); // Fetch applicant data
-        setApplicants(data);
+        const response = await getApplicants(); // Fetch applicant data
+        setApplicants(response.data);
         setLoading(false); // Set loading to false once data is fetched
       } catch (error) {
         setError("Error fetching applicants"); // Set error if any
