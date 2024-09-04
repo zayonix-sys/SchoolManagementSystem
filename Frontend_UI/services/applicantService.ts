@@ -2,6 +2,7 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
 export interface ApplicantData {
+  applicantId?:number;
   firstName: string;
   lastName: string;
   formBNumber: string;
@@ -9,15 +10,22 @@ export interface ApplicantData {
   gender: string;
   email: string;
   applicantAddress: string;
-  nationality: string;
-  lastClassId: number;
-  admissionClassId: number;
-  campusId: number;
+  nationality?: string;
+  lastClassId?: number;
+  admissionClassId?: number;
+  campusId?: number;
   motherTounge: string;
   residenceStatus: string;
   states: string;
   city: string;
   phoneNumber: string;
+  applicationStatus:string;
+  
+  createdAt?: Date; // Corresponds to CreatedAt in the entity
+  createdBy?: number; // Corresponds to CreatedBy in the entity
+  updatedBy?: number; // Corresponds to UpdatedBy in the entity
+  updatedAt?: Date; // Corresponds to UpdatedAt in the entity
+  isActive?: boolean; // Corrected typo from 'isActice' to 'isActive'
 }
 
 export interface ApplicantAdmissionDTO {
@@ -52,17 +60,17 @@ export interface ApplicantAdmissionDTO {
   //isActive?: boolean;
 }
 
-const BASE_URL = "/applicant";
+const BASE_URL = "/Applicant";
 
-// export const getCampuses = async (): Promise<ApiResponse> => {
-//   try {
-//     const response = await api.get<ApiResponse>(BASE_URL + "/GetCampuses");
-//     return response.data;
-//   } catch (error: any) {
-//     console.error("Error fetching campuses:", error);
-//     throw error;
-//   }
-// };
+export const getApplicants = async (): Promise<ApiResponse> => {
+  try {
+    const response = await api.get<ApiResponse>(BASE_URL + "/GetAllApplicants");
+    return response.data;
+  } catch (error: any) {
+    console.error("Error fetching Applicants:", error);
+    throw error;
+  }
+};
 
 export const addApplicant = async (
   applicantData: ApplicantAdmissionDTO
@@ -78,46 +86,28 @@ export const addApplicant = async (
     throw error;
   }
 };
-
-// export const updateCampus = async (
-//   campusData: CampusData
-// ): Promise<ApiResponse> => {
-//   try {
-//     const response = await api.put<ApiResponse>(
-//       `${BASE_URL}/UpdateCampus`,
-//       campusData
-//     );
-//     return response.data;
-//   } catch (error: any) {
-//     console.error("Error updating campus:", error);
-//     throw error;
-//   }
-// };
-
-// Other commits
-
-// export const fetchClassById = async (id: number): Promise<ClassroomData> => {
-//   try {
-//     const response = await api.get<ClassroomData>(`/classroom/${id}`);
-//     return response.data;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export const updateClass = async (id: number, classroomData: ClassroomData): Promise<ClassroomData> => {
-//   try {
-//     const response = await api.put<ClassroomData>(`/classroom/${id}`, classroomData);
-//     return response.data;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-// export const deleteClass = async (id: number): Promise<void> => {
-//   try {
-//     await api.delete(`/classroom/${id}`);
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+export const updateApplicant = async (
+  applicantData: ApplicantData
+): Promise<ApiResponse> => {
+  try {
+    const response = await api.put<ApiResponse>(
+      `${BASE_URL}/UpdateApplicant`,
+      applicantData
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to update applicant`, error);
+    throw new Error(`Failed to update applicant`);
+  }
+};
+export const deleteApplicant = async (id: number): Promise<ApiResponse> => {
+  try {
+    const response = await api.delete<ApiResponse>(
+      `${BASE_URL}/DeleteApplicant?appId=${id}`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to delete applicant `, error);
+    throw new Error(`Failed to delete applicant`);
+  }
+};
