@@ -43,7 +43,7 @@ const Page = () => {
         <BreadcrumbItem className="text-primary">Employees</BreadcrumbItem>
       </Breadcrumbs>
       <div className="flex justify-end space-x-4 m-2">
-        <AddEmployee employees={employees}/>
+        <AddEmployee employees={employees} campuses={campuses} employeeRole={employeeRole}/>
         <ViewRole selectedRole={null}/>
       </div>
       <EmployeeListTable employees={employees}/>
