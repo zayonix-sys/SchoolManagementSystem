@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SchoolManagementSystem.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,5 +21,9 @@ namespace SchoolManagementSystem.Application.DTOs
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
         public bool IsActive { get; set; }
+        public virtual Applicant? Applicant { get; set; }
+        public virtual Class? Class { get; set; }
+
+        public virtual Campus? Campus { get; set; }
     }
 }

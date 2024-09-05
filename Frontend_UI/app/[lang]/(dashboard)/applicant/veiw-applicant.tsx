@@ -59,7 +59,7 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
     indexOfLastItem
   );
 
-  const totalPages = Math.ceil(filteredApplicants.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredApplicants?.length / itemsPerPage);
 
   const handleSelectAll = () => {
     if (selectedRows.length === currentItems.length) {
@@ -264,10 +264,13 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
             <span className="font-bold">Mother Tongue </span>
             {detailedApplicant.motherTounge}
           </div>
-         
+          <div className="flex flex-col">
+            <span className="font-bold">Class for Admission</span>
+            {detailedApplicant.className}
+          </div>
            <div className="flex flex-col">
             <span className="font-bold">Last Class Attendent </span>
-            {detailedApplicant.lastClassId}
+            {detailedApplicant.className}
           </div>
          
         </div>

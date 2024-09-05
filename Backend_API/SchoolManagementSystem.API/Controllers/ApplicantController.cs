@@ -27,13 +27,12 @@ namespace SchoolManagementSystem.API.Controllers
             {
                 var applicants = await _applicantService.GetAllApplicantsAsync();
                 _logger.LogInformation("Successfully retrieved {Count} applicants.", applicants?.Count() ?? 0);
-
-                return Ok(applicants);
+                return Ok(ApiResponse<IEnumerable<ApplicantAdmissionDTO>>.SuccessResponse(applicants, "Applicants retrieved successfully"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while fetching all applicant.");
-                return StatusCode(500, "Internal server error.");
+                return StatusCode(500, ApiResponse<IEnumerable<ApplicantAdmissionDTO>>.ErrorResponse("Internal server error."));
             }
         }
 
