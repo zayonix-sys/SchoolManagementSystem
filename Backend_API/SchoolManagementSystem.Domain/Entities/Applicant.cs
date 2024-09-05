@@ -9,9 +9,6 @@ namespace SchoolManagementSystem.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ApplicantId { get; set; }
 
-        public int? LastClassId { get; set; }
-        public int? AdmissionClassId { get; set; }
-
         [MaxLength(100)]
         public string FirstName { get; set; }
 
@@ -22,6 +19,10 @@ namespace SchoolManagementSystem.Domain.Entities
         public string FormBNumber { get; set; }
 
         public DateTime? DateOfBirth { get; set; }
+
+        [ForeignKey("ClassId")]
+        public int? ClassId { get; set; }
+        public virtual Class Class { get; set; }
 
         [MaxLength(10)]
         public string Gender { get; set; }
@@ -55,11 +56,7 @@ namespace SchoolManagementSystem.Domain.Entities
 
 
         //Navigation Properties
-        [ForeignKey("AdmissionClassId")]
-        public virtual Class AdmissionClass { get; set; }
-
-        [ForeignKey("LastClassId")]
-        public virtual Class LastClass { get; set; }
+        public virtual AdmissionApplication? Application { get; set; }
 
         [ForeignKey("CreatedBy")]
         public virtual User CreatedByUser { get; set; }

@@ -20,6 +20,8 @@ export interface ApplicantData {
   city: string;
   phoneNumber: string;
   applicationStatus:string;
+  campusName: string;
+  className: string;
   
   createdAt?: Date; // Corresponds to CreatedAt in the entity
   createdBy?: number; // Corresponds to CreatedBy in the entity
