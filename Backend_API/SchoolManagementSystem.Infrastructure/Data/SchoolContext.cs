@@ -22,6 +22,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeRole> EmployeeRoles { get; set; }
 
+        public DbSet<ClassSubject> ClassSubjects { get; set; }
+
         public DbSet<ClassSectionAssignment> ClassSectionAssignments { get; set; }
 
         public DbSet<Subject> Subjects { get; set; }

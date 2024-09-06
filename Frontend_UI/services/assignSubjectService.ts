@@ -6,7 +6,7 @@ export interface AssignSubjectData {
   classSubjectId?: number;
   classId: number;
   subjectId: number; // Corresponds to ClassId in the entity
-  // isActive?: boolean;
+  isActive?: boolean;
 }
 
 const BASE_URL = "/ClassSubjectAssignment";

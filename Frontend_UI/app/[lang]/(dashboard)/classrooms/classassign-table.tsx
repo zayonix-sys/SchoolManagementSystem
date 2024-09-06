@@ -19,14 +19,16 @@ import { AssignClassData, assignClasses, deleteClassassignment } from "@/service
 import { ClassData } from "@/services/ClassService";
 import { SectionData } from "@/services/SectionService";
 import EditClassSectionAssign from "./edit-classsectionassignment";
+import { CampusData } from "@/services/campusService";
 
 interface ClassAssignmentProps {
   classes: ClassData[];
   classroom: ClassroomData[];
   section: SectionData[];
+  campus: CampusData[];
 }
 
-const ClassAssignTable = ({classes, classroom, section,}: ClassAssignmentProps) => {
+const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignmentProps) => {
   const [classassignment, setClassassignment] = useState<AssignClassData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -35,12 +37,11 @@ const ClassAssignTable = ({classes, classroom, section,}: ClassAssignmentProps) 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   
-  // Function to fetch class data
   useEffect(() => {
     const fetchClassAssignData = async () => {
       setLoading(true);
       try {
-        const response = await assignClasses(); // assuming fetchClasses is a function that fetches the data
+        const response = await assignClasses(); 
         setClassassignment(response.data as AssignClassData[]);
       } catch (err) {
         setError(err as any);
@@ -53,29 +54,24 @@ const ClassAssignTable = ({classes, classroom, section,}: ClassAssignmentProps) 
   }, []);
   
     const combinedData = classassignment.map((assignment) => {
-    const associatedClass = classes.find((cls) => cls.classId === assignment.classId); // Adjust this according to your data structure
+    const associatedClass = classes.find((cls) => cls.classId === assignment.classId);
     const associatedSection = section.find((sec) => sec.sectionId === assignment.sectionId);
     const associatedClassroom = classroom.find((classroom => classroom.classroomId === assignment.classroomId))
+    const associatedCampusId = campus.find((campus => campus.campusId === assignment.campusId))
   
-    // console.log({
-    //   classId: assignment.classId,
-    //   sectionId: assignment.sectionId,
-    //   classroomId: assignment.classroomId,
-    //   className: associatedClass?.className,
-    //   sectionName: associatedSection?.sectionName,
-    //   roomNumber: associatedClassroom?.roomNumber,
-    //   // isActive: assignment.isActive,
-    // });
 
     return {
       assignmentId: assignment.assignmentId,
       className: associatedClass?.className || "",
       sectionName: associatedSection?.sectionName || "",
       roomNumber: associatedClassroom?.roomNumber || "",
+      campusName: associatedCampusId?.campusName || "",
       isActive: assignment.isActive,
       classId: assignment.classId,
       classroomId: assignment.classroomId,
-      sectionId: assignment.sectionId
+      sectionId: assignment.sectionId,
+      campusId: assignment.campusId
+      
     };
   });
 
@@ -85,32 +81,11 @@ const ClassAssignTable = ({classes, classroom, section,}: ClassAssignmentProps) 
     item.sectionName.toLowerCase().includes(searchQuery.toLowerCase())
 );
 
-// Pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredClassassignments.slice(indexOfFirstItem, indexOfLastItem);
 
   const totalPages = Math.ceil(filteredClassassignments.length / itemsPerPage);
-
-  // const handleSelectAll = () => {
-  //   if (selectedRows.length === currentItems.length) {
-  //     setSelectedRows([]);
-  //   } else {
-  //     setSelectedRows(
-  //       currentItems.map((row) => row.assignmentId!).filter((id) => id !== null && id !== undefined)
-  //     );
-  //   }
-  // };
-
-  // const handleRowSelect = (id: number) => {
-  //   const updatedSelectedRows = [...selectedRows];
-  //   if (selectedRows.includes(id)) {
-  //     updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
-  //   } else {
-  //     updatedSelectedRows.push(id);
-  //   }
-  //   setSelectedRows(updatedSelectedRows);
-  // };
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -150,9 +125,10 @@ const ClassAssignTable = ({classes, classroom, section,}: ClassAssignmentProps) 
           className="border p-2 rounded"
         />
       </div>
-      <Table className="text-left">
+      <Table className="text-left condensed">
         <TableHeader>
           <TableRow>
+          <TableHead className="h-10 p-2.5">Campus Name</TableHead>
             <TableHead className="h-10 p-2.5">Classroom Number</TableHead>
             <TableHead className="h-10 p-2.5">Class Name</TableHead>
             <TableHead className="h-10 p-2.5">Section Name</TableHead>
@@ -169,7 +145,8 @@ const ClassAssignTable = ({classes, classroom, section,}: ClassAssignmentProps) 
               data-state={
                 selectedRows.includes(item.assignmentId!) && "selected"
               }
-            >
+            > 
+              <TableCell className="p-2.5">{item.campusName}</TableCell>
               <TableCell className="p-2.5">{item.roomNumber}</TableCell>
               <TableCell className="p-2.5">{item.className}</TableCell>
               <TableCell className="p-2.5">{item.sectionName}</TableCell>

@@ -12,71 +12,17 @@ import { SubjectData } from '@/services/subjectService';
 import { addClassSubjectAssignment } from '@/services/assignSubjectService';
 import { useEffect, useState } from 'react';
 
-//we can change the props "side"'s value to 'top', 'left', 'bottom', 'right' so that the sheet will come out from different direction.
  
 const assignSubjectsSchema = z.object({
   classSubjectId: z.coerce.number().optional(),
   classId: z.coerce.number(),
   subjectId: z.number().min(1, "Subject is Required"),
-  // subjectId: z.array(z.coerce.number()).nonempty("At least one subject must be selected."),
   
 });
 
 type AssignSubjectFormValues = z.infer<typeof assignSubjectsSchema>;
 
-// interface OptionType {
-//   value: number;
-//   label: string;
-// }
-
-// interface SubjectData {
-//   subjectId: number;
-//   subjectName: string;
-// }
-// interface ClassSubjectProps {
-//   classes: ClassData[];
-//   subject: SubjectData[];
-// }
-
 export default function AddAssignSubject({classes, subject}: {classes: ClassData[], subject: SubjectData[]}) {
-  
-  // const subjectOptions: OptionType[] = subject.map(sub => ({
-  //   value: sub.subjectId,
-  //   label: sub.subjectName,
-  // }));
-
-  // const handleSelectChange = (selectedOptions: OptionType[] | null) => {
-  //   const selectedValues = selectedOptions ? selectedOptions.map(option => option.value) : [];
-    
-  //   console.log(selectedValues); // Log the array of selected subject IDs
-  // };
-  // const handleSelectChange = (newValue: MultiValue<OptionType>, actionMeta: ActionMeta<OptionType>) => {
-  //   const selectedValues = newValue.map(option => option.value);
-  //   setValue("subjectId", selectedValues); 
-  //   console.log(selectedValues); // Log the array of selected subject IDs
-  // };
-  // const [subjects, setSubjects] = useState<SubjectData[]>([]);
-  // const [classes, setClasses] = useState<ClassData[]>([]);
-  // const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchClassesAndSubjectsData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const classData = await fetchClasses();
-  //       const sectionData = await fetchSection();
-  //       setClasses(classData.data as ClassData[]);
-  //       setSubjects(sectionData.data as SubjectData[]);
-  //     } catch (err) {
-  //       setError(err as any); 
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchClassesAndSubjectsData();
-  // }, []);
 
     const {
       register,
@@ -93,9 +39,6 @@ export default function AddAssignSubject({classes, subject}: {classes: ClassData
         const response = await addClassSubjectAssignment(data);
   
         if (response.success) {
-          // const subjectName = Array.isArray(response.data)
-          //   ? response.data[0].subjectName
-          //   : response.data.subjectName;
           toast.success("Subject Assigned successfully!");
           reset();
         } else {

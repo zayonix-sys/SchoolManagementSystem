@@ -22,38 +22,16 @@ namespace SchoolManagementSystem.Application.Services
         {
             try
             {
+
                 var model = _mapper.MapToEntity(classsubject);
                 await _classSubjectRepository.AddAsync(model);
-                //var classSubjects = new List<ClassSubject>();
 
-                //foreach (var subjectId in classsubject.SubjectIds)
-                //{
-                //    var classSubjectDto = new ClassSubjectAssignmentDTO
-                //    {
-                //        ClassId = classsubject.ClassId,
-                //        SubjectIds = new List<int> { subjectId },
-                //        CreatedAt = classsubject.CreatedAt,
-                //        CreatedBy = classsubject.CreatedBy,
-                //        UpdatedAt = classsubject.UpdatedAt,
-                //        UpdatedBy = classsubject.UpdatedBy,
-                //        IsActive = classsubject.IsActive
-                //    };
-
-                //    var classSubject = _mapper.MapToEntity(classSubjectDto);
-                //    classSubjects.Add(classSubject);
-                //}
-
-                //foreach (var classSubject in classSubjects)
-                //{
-                //    await _classSubjectRepository.AddAsync(classSubject);
-                //}
             }
             catch (Exception)
             {
 
                 throw;
             }
-
         }
 
         public async Task DeleteClassSubjectAsync(int classsubjectId)

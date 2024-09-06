@@ -76,7 +76,7 @@ const Classroom = () => {
           <AddClassroom campuses={campuses} />
           <AddClass/>
           <AddSection/>
-          <AssignClasses classes={classes} section={section} classroom={classroom}/>
+          <AssignClasses classes={classes} section={section} classroom={classroom} campus={campuses}/>
 
         </div>
       </div>
@@ -119,7 +119,7 @@ const Classroom = () => {
             <div className="col-span-12 md:col-span-8">
                   
                     {/* <ReportsCard/>x */}
-                    <ClassAssignTable classes={classes} section={section} classroom={classroom}/>
+                    <ClassAssignTable classes={classes} section={section} classroom={classroom} campus={campuses}/>
                   
                 </div>
           </AccordionContent>
