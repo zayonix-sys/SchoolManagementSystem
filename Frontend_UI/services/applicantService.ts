@@ -4,20 +4,20 @@ import { ApiResponse } from "./apiResponse";
 export interface ApplicantApplicationDetail {
   // Application Details
   applicationId: number;
-  applicantId: number;
+  applicantId?: number;
   applicationStatus: string;
-  campusId: number;
-  campusName: string;
+  campusId?: number;
+  campusName?: string;
   admissionDecisionDate?: string; // DateOnly in C#, use string or Date in TypeScript
   remarks?: string;
 
   // Applied Class Details
-  appliedClassId: number;
-  appliedClassName: string;
+  appliedClassId?: number;
+  appliedClassName?: string;
 
   // Last Attended Class Details
-  lastClassId: number;
-  lastAttendedClassName: string;
+  lastClassId?: number;
+  lastAttendedClassName?: string;
 
   // Applicant Personal Details
   firstName: string;
@@ -95,20 +95,22 @@ export const addApplicant = async (dto: any): Promise<ApiResponse> => {
     throw error;
   }
 };
-// export const updateApplicant = async (
-//   applicantData: ApplicantData
-// ): Promise<ApiResponse> => {
-//   try {
-//     const response = await api.put<ApiResponse>(
-//       `${BASE_URL}/UpdateApplicant`,
-//       applicantData
-//     );
-//     return response.data;
-//   } catch (error: any) {
-//     console.error(`Failed to update applicant`, error);
-//     throw new Error(`Failed to update applicant`);
-//   }
-// };
+export const updateApplicant = async (
+  dto: any
+): Promise<ApiResponse> => {
+  try {
+    console.log(dto);
+    
+    const response = await api.put<ApiResponse>(
+      `${BASE_URL}/UpdateApplicant`,
+      mapFormDataToDto(dto)
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to update applicant`, error);
+    throw new Error(`Failed to update applicant`);
+  }
+};
 export const deleteApplicant = async (id: number): Promise<ApiResponse> => {
   try {
     const response = await api.delete<ApiResponse>(

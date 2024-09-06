@@ -43,7 +43,7 @@ export default function AddApplicant() {
       <SheetContent
         // className="max-w-[736px]"
         side="top"
-        className="p-0 max-h-[450px] overflow-y-auto"
+        className="p-0  overflow-y-auto"
       >
         <SheetHeader className="p-3 border-b border-default-200">
           <SheetTitle>Applicant Registration Form</SheetTitle>

@@ -8,13 +8,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Icon } from "@iconify/react";
 const DashboardDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           size="icon"
-          className="group h-6 w-6 bg-transparent hover:bg-transparent  text-default-800 border border-default-200"
+          variant="outline"
+          className="h-7 w-7"
+          color="secondary"
         >
           <MoreHorizontal className="h-4 w-4" />
         </Button>
@@ -25,10 +28,20 @@ const DashboardDropdown = () => {
         side="bottom"
         avoidCollisions
       >
-        <DropdownMenuLabel>View All</DropdownMenuLabel>
-        <DropdownMenuItem>Download</DropdownMenuItem>
-        <DropdownMenuItem>Refresh</DropdownMenuItem>
-
+        <DropdownMenuItem>
+          <Icon
+            icon="heroicons:hand-thumb-up-16-solid"
+            className=" h-4 w-4 mr-2 text-green-500"
+          />
+          Admission Approved
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Icon
+            icon="heroicons:hand-thumb-down-16-solid"
+            className=" h-4 w-4 mr-2 text-red-500"
+          />
+          Admission Rejected
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

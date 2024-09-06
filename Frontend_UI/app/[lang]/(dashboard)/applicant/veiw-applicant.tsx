@@ -27,6 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import DashboardDropdown from "@/components/dashboard-dropdown";
 
 interface ApplicantListTableProps {
   applicants: ApplicantApplicationDetail[];
@@ -132,35 +133,32 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-            <TableHead className="h-10 p-2.5">S.No</TableHead>
-            <TableHead className="h-10 p-2.5">Full Name</TableHead>
+            <TableHead className="h-10 p-2.5">Application No.</TableHead>
+            <TableHead className="h-10 p-2.5">Applicant</TableHead>
             <TableHead className="h-10 p-2.5">Gender</TableHead>
-            <TableHead className="h-10 p-2.5">Email</TableHead>
-            <TableHead className="h-10 p-2.5">Phone Number</TableHead>
-            <TableHead className="h-10 p-2.5">Status</TableHead>
-            <TableHead className="h-10 p-2.5 ">Action</TableHead>
+            <TableHead className="h-10 p-2.5">Campus</TableHead>
+            <TableHead className="h-10 p-2.5">Application Status</TableHead>
+            <TableHead className="h-10 p-2.5">Last Attended Class</TableHead>
+            <TableHead className="h-10 p-2.5">Class Applied For</TableHead>
+            <TableHead className="h-10 p-2.5">Action</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {currentItems.map((item) => (
             <TableRow
-              key={item.applicantId}
+              key={item.applicationId}
               className="hover:bg-default-200"
               data-state={
-                selectedRows.includes(item.applicantId!) && "selected"
+                selectedRows.includes(item.applicationId!) && "selected"
               }
             >
-              <TableCell className="p-2.5">{item.formBNumber}</TableCell>
+              <TableCell className="p-2.5">{item.applicationId}</TableCell>
               <TableCell className="p-2.5">
                 {item.firstName} {item.lastName}
               </TableCell>
-              <TableCell className="p-2.5">
-                {item.dateOfBirth.toString()}
-              </TableCell>
               <TableCell className="p-2.5">{item.gender}</TableCell>
-              <TableCell className="p-2.5">{item.email}</TableCell>
-              <TableCell className="p-2.5">{item.phoneNumber}</TableCell>
+              <TableCell className="p-2.5">{item.campusName}</TableCell>
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
@@ -176,8 +174,13 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
                   {item.applicationStatus}
                 </Badge>
               </TableCell>
+              <TableCell className="p-2.5">
+                {item.lastAttendedClassName}
+              </TableCell>
+              <TableCell className="p-2.5">{item.appliedClassName}</TableCell>
               <TableCell className="p-2.5 flex justify-end">
-                <div className="flex gap-3">
+                <div className="flex gap-3 justify-center">
+                  <DashboardDropdown />
                   <Button
                     size="icon"
                     variant="outline"
@@ -219,7 +222,7 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
       <Dialog open={!!detailedApplicant} onOpenChange={handleCloseDetails}>
         <DialogContent className="max-w-screen-sm mx-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-medium">
+            <DialogTitle className="text-xl font-large">
               Applicant Details
             </DialogTitle>
             <DialogClose onClick={handleCloseDetails} />
@@ -228,6 +231,42 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
           {detailedApplicant && (
             <div className="text-sm text-default-500">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col">
+                  <span className="font-bold">Application No: </span>
+                  {detailedApplicant.applicationId}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Application Status: </span>
+                  <Badge
+                    variant="outline"
+                    color={
+                      detailedApplicant.applicationStatus == "Pending"
+                        ? "warning"
+                        : detailedApplicant.applicationStatus == "Approved"
+                        ? "success"
+                        : "destructive"
+                    }
+                    className="capitalize"
+                  >
+                    {detailedApplicant.applicationStatus}
+                  </Badge>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Admission Date </span>
+                  {detailedApplicant.admissionDecisionDate}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Campus </span>
+                  {detailedApplicant.campusName}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Class Applied For</span>
+                  {detailedApplicant.appliedClassName}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Last Class Attended </span>
+                  {detailedApplicant.lastAttendedClassName}
+                </div>
                 <div className="flex flex-col">
                   <span className="font-bold">Full Name: </span>
                   {detailedApplicant.firstName} {detailedApplicant.lastName}
@@ -269,21 +308,10 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
                   <span className="font-bold">Residence Status: </span>
                   {detailedApplicant.residenceStatus}
                 </div>
-                <div className="flex flex-col">
-                  <span className="font-bold">Campus </span>
-                  {detailedApplicant.campusName}
-                </div>
+
                 <div className="flex flex-col">
                   <span className="font-bold">Mother Tongue </span>
                   {detailedApplicant.motherTounge}
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold">Class for Admission</span>
-                  {detailedApplicant.appliedClassName}
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold">Last Class Attendent </span>
-                  {detailedApplicant.lastAttendedClassName}
                 </div>
               </div>
             </div>

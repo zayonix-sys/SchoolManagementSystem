@@ -48,7 +48,7 @@ namespace SchoolManagementSystem.Domain.Entities
         [MaxLength(30)]
         public string States { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; } = DateTime.Now;
         public int? CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }

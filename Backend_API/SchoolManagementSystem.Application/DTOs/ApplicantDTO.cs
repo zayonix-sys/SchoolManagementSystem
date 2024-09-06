@@ -18,10 +18,10 @@ namespace SchoolManagementSystem.Application.DTOs
         public string City { get; set; }
         public string MotherTounge { get; set; }
         public string States { get; set; }
-        public DateTime? CreatedAt { get; set; }
+        //public DateTime? CreatedAt { get; set; }
         public int? CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
-        public bool IsActive { get; set; } = true;
+        //public bool IsActive { get; set; }
     }
 }

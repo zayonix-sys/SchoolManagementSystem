@@ -27,7 +27,7 @@ namespace SchoolManagementSystem.Domain.Entities
         [MaxLength(255)]
         public string? Remarks { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; } = DateTime.Now;
 
         public int? CreatedBy { get; set; }
         [ForeignKey(nameof(CreatedBy))]

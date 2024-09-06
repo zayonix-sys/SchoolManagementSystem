@@ -38,12 +38,12 @@ namespace SchoolManagementSystem.Application.Mappers
                 ClassId = dto.AdmissionClassId,
                 AdmissionDecisionDate = dto.AdmissionDecisionDate,
                 ApplicationStatus = dto.ApplicationStatus,
-                Remarks = dto.Remarks,
-                CreatedAt = dto.CreatedAt,
-                CreatedBy = dto.CreatedBy,
-                UpdatedAt = dto.UpdatedAt,
-                UpdatedBy = dto.UpdatedBy,
-                IsActive = dto.IsActive
+                Remarks = dto.Remarks
+                //CreatedAt = dto.CreatedAt,
+                //CreatedBy = dto.CreatedBy,
+                //UpdatedAt = dto.UpdatedAt,
+                //UpdatedBy = dto.UpdatedBy,
+                //IsActive = dto.IsActive
             };
 
         }

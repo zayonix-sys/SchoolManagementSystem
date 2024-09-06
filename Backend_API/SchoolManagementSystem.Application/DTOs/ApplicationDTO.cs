@@ -16,10 +16,10 @@ namespace SchoolManagementSystem.Application.DTOs
         public string ApplicationStatus { get; set; }
         public DateOnly? AdmissionDecisionDate { get; set; }
         public string? Remarks { get; set; }
-        public DateTime? CreatedAt { get; set; }
+        //public DateTime? CreatedAt { get; set; }
         public int? CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
-        public bool IsActive { get; set; }
+        //public bool IsActive { get; set; }
     }
 }

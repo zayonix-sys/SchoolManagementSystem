@@ -80,9 +80,9 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         //[HttpPut("[action]")]
-        //public async Task<IActionResult> UpdateApplicant(ApplicantAdmissionDTO app)
+        //public async Task<IActionResult> UpdateApplicationStatus(int applicationId, string status)
         //{
-        //    _logger.LogInformation("Updating applicant with ID {ApplicantId}.", app.ApplicantId);
+        //    _logger.LogInformation("Updating applicant with ID {ApplicantId}.", applicationId);
         //    try
         //    {
         //        await _applicantService.UpdateApplicantAsync(app);
@@ -95,6 +95,24 @@ namespace SchoolManagementSystem.API.Controllers
         //        return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
         //    }
         //}
+
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateApplicant(ApplicantAdmissionDTO dto)
+        {
+            _logger.LogInformation("Updating applicant with ID {ApplicantId}.", dto.Application.ApplicationId);
+            try
+            {
+                await _applicantService.UpdateApplicantAsync(dto.Applicant);
+                await _applicantService.UpdateApplicationAsync(dto.Application);
+                _logger.LogInformation("Successfully updated Applicant with ID {ApplicantId}.", dto.Application.ApplicationId);
+                return Ok(ApiResponse<ApplicantAdmissionDTO>.SuccessResponse(dto, "Applicant updated successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating Applicant with ID {ApplicantId}.", dto.Application.ApplicationId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
+            }
+        }
 
         [HttpDelete("[action]")]
         public async Task<IActionResult> DeleteApplicant(int appId)
