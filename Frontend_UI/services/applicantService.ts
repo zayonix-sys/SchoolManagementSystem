@@ -1,64 +1,75 @@
 import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
-export interface ApplicantData {
-  applicantId?:number;
-  firstName: string;
-  lastName: string;
-  formBNumber: string;
-  dateOfBirth: string;
-  gender: string;
-  email: string;
-  applicantAddress: string;
-  nationality?: string;
-  lastClassId?: number;
-  admissionClassId?: number;
-  campusId?: number;
-  motherTounge: string;
-  residenceStatus: string;
-  states: string;
-  city: string;
-  phoneNumber: string;
-  applicationStatus:string;
-  
-  createdAt?: Date; // Corresponds to CreatedAt in the entity
-  createdBy?: number; // Corresponds to CreatedBy in the entity
-  updatedBy?: number; // Corresponds to UpdatedBy in the entity
-  updatedAt?: Date; // Corresponds to UpdatedAt in the entity
-  isActive?: boolean; // Corrected typo from 'isActice' to 'isActive'
-}
-
-export interface ApplicantAdmissionDTO {
-  // Applicant Details
-  lastClassId?: number;
-  admissionClassId?: number;
-  firstName: string;
-  lastName: string;
-  formBNumber: string;
-  dateOfBirth?: Date;
-  gender: string;
-  email: string;
-  phoneNumber: string;
-  applicantAddress: string;
-  residenceStatus: string;
-  city: string;
-  motherTounge: string;
-  states: string;
-
+export interface ApplicantApplicationDetail {
   // Application Details
+  applicationId: number;
+  applicantId?: number;
+  applicationStatus: string;
   campusId?: number;
-  classId?: number;
-  applicationStatus?: string;
-  admissionDecisionDate?: string;
+  campusName?: string;
+  admissionDecisionDate?: string; // DateOnly in C#, use string or Date in TypeScript
   remarks?: string;
 
-  // Common Fields
-  //createdAt?: Date;
-  //createdBy?: number;
-  //updatedAt?: Date;
-  //updatedBy?: number;
-  //isActive?: boolean;
+  // Applied Class Details
+  appliedClassId?: number;
+  appliedClassName?: string;
+
+  // Last Attended Class Details
+  lastClassId?: number;
+  lastAttendedClassName?: string;
+
+  // Applicant Personal Details
+  firstName: string;
+  lastName: string;
+  formBNumber: string;
+  dateOfBirth: string | Date; // Use string or Date based on your needs
+  email: string;
+  gender: string;
+  motherTounge: string;
+  applicantAddress: string;
+  phoneNumber: string;
+  residenceStatus: string;
+  city: string;
+  states: string;
 }
+
+// Mapping function to create DTO
+const mapFormDataToDto = (data: any) => {
+  const applicantData = {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    formBNumber: data.formBNumber,
+    dateOfBirth: data.dateOfBirth,
+    gender: data.gender,
+    email: data.email,
+    applicantAddress: data.applicantAddress,
+    residenceStatus: data.residenceStatus,
+    city: data.city,
+    motherTounge: data.motherTounge,
+    states: data.states,
+    lastClassId: data.lastClassId,
+    phoneNumber: data.phoneNumber,
+  };
+
+  const applicationData = {
+    campusId: data.campusId,
+    admissionClassId: data.admissionClassId,
+    applicationStatus: data.applicationStatus,
+    admissionDecisionDate: data.admissionDecisionDate,
+    remarks: data.remarks,
+    isActive: data.isActive,
+  };
+
+  // Create the DTO object with separate Applicant and Application data
+  const dto = {
+    Applicant: applicantData,
+    Application: applicationData,
+  };
+
+  return dto;
+};
+//export interface ApplicantAdmissionDTO extends ApplicantData, ApplicationData {}
 
 const BASE_URL = "/Applicant";
 
@@ -72,13 +83,11 @@ export const getApplicants = async (): Promise<ApiResponse> => {
   }
 };
 
-export const addApplicant = async (
-  applicantData: ApplicantAdmissionDTO
-): Promise<ApiResponse> => {
+export const addApplicant = async (dto: any): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       BASE_URL + "/AddApplicant",
-      applicantData
+      mapFormDataToDto(dto)
     );
     return response.data;
   } catch (error: any) {
@@ -87,12 +96,14 @@ export const addApplicant = async (
   }
 };
 export const updateApplicant = async (
-  applicantData: ApplicantData
+  dto: any
 ): Promise<ApiResponse> => {
   try {
+    console.log(dto);
+    
     const response = await api.put<ApiResponse>(
       `${BASE_URL}/UpdateApplicant`,
-      applicantData
+      mapFormDataToDto(dto)
     );
     return response.data;
   } catch (error: any) {

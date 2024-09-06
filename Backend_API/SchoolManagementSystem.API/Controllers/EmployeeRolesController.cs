@@ -32,7 +32,8 @@ namespace SchoolManagementSystem.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while fetching all roles.");
-                return StatusCode(500, "Internal server error.");
+                return StatusCode(500, ApiResponse<IEnumerable<RolesDTO>>.ErrorResponse("Internal server error."));
+
             }
         }
 

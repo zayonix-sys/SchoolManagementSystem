@@ -1,13 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SchoolManagementSystem.Domain.Interfaces;
-using SchoolManagementSystem.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using SchoolManagementSystem.Application.Interfaces;
-using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.API.Models;
-using SchoolManagementSystem.Application.Services;
+using SchoolManagementSystem.Application.DTOs;
+using SchoolManagementSystem.Application.Interfaces;
+using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.API.Controllers
 {

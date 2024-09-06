@@ -24,6 +24,29 @@ const Subjects = () => {
         const subjectData = await fetchSubject();
         setClasses(classData.data as ClassData[]);
         setSubject(subjectData.data as SubjectData[]);
+
+import SubjectTeacherTable from "./veiw-subject-teacher";
+import AssignSubjectTeacher from "./assign-subject-teacher";
+import { useEffect, useState } from "react";
+import { fetchSubject, SubjectData } from "@/services/subjectService";
+import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
+
+
+const Subjects = () => {
+  const [employees, setEmployees] = useState<EmployeesData[]>([]);
+  const [subjects, setSubjects] = useState<SubjectData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+   
+  useEffect(() => {
+    const fetchEmployeeAndSubjectData = async () => {
+      setLoading(true);
+      try {
+        const employeeResponse = await fetchEmployees();
+        const subjectResponse = await fetchSubject();
+        setEmployees(employeeResponse.data as EmployeesData[]);
+        setSubjects(subjectResponse.data as SubjectData[]);
+
       } catch (err) {
         setError(err as any);
       } finally {
@@ -31,7 +54,11 @@ const Subjects = () => {
       }
     };
 
+
     fetchClassesAndSubjectData();
+
+    fetchEmployeeAndSubjectData();
+
   }, []);
   return (
     <div>
@@ -42,7 +69,10 @@ const Subjects = () => {
         </Breadcrumbs>
         <div className="flex justify-end space-x-4">
           <AddSubject />
+
           <AddAssignSubject classes={classes} subject={subject} />
+          <AssignSubjectTeacher subject={subjects} employee={employees}/>
+
         </div>
       </div>
       <Accordion
@@ -82,6 +112,8 @@ const Subjects = () => {
       </Accordion>
 
 
+
+    <SubjectTeacherTable employee={employees} subject={subjects} />
     </div>
   );
 };

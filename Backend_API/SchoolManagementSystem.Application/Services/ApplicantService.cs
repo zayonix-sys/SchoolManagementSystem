@@ -1,4 +1,6 @@
-﻿using SchoolManagementSystem.Application.DTOs;
+﻿using LinqKit;
+using Microsoft.EntityFrameworkCore;
+using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
@@ -10,18 +12,25 @@ namespace SchoolManagementSystem.Application.Services
     {
         private readonly IGenericRepository<Applicant> _applicantRepository;
         private readonly IGenericRepository<AdmissionApplication> _applicationRepository;
+        private readonly IGenericRepository<ApplicantApplicationView> _applicationApplicationRepository;
         private readonly ApplicantMapper _mapper;
         private readonly ApplicationMapper _mapperApplication;
+        private readonly ApplicantApplicationMapper _mapperApplicantApplication;
 
-        public ApplicantService(IGenericRepository<Applicant> genericRepository, IGenericRepository<AdmissionApplication> applicationRepository, ApplicantMapper applicantMapper, ApplicationMapper mapperApplication)
+        public ApplicantService(IGenericRepository<Applicant> genericRepository, 
+            IGenericRepository<AdmissionApplication> applicationRepository, 
+            IGenericRepository<ApplicantApplicationView> applicantApplicationRepository,
+            ApplicantMapper applicantMapper, ApplicationMapper mapperApplication, ApplicantApplicationMapper applicantApplicationMapper)
         {
             _applicantRepository = genericRepository;
             _applicationRepository = applicationRepository;
+            _applicationApplicationRepository = applicantApplicationRepository;
             _mapper = applicantMapper;
             _mapperApplication = mapperApplication;
+            _mapperApplicantApplication = applicantApplicationMapper;
         }
 
-        public async Task<int> AddApplicantAsync(ApplicantAdmissionDTO dto)
+        public async Task<int> AddApplicantAsync(ApplicantDTO dto)
         {
             //Adding Applicant
             var model = _mapper.MapToEntity(dto);
@@ -30,7 +39,7 @@ namespace SchoolManagementSystem.Application.Services
             return (int)applicantId;
         }
 
-        public async Task AddAdmissionApplicationAsync(ApplicantAdmissionDTO dto, int applicantId)
+        public async Task AddAdmissionApplicationAsync(ApplicationDTO dto, int applicantId)
         {
             //Adding Applicant
             dto.ApplicantId = applicantId;
@@ -41,35 +50,38 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task DeleteApplicantAsync(int appId)
         {
-            var applicant = await _applicantRepository.GetByIdAsync(appId);
+            var applicant = await _applicationRepository.GetByIdAsync(appId);
             if (applicant != null)
             {
                 applicant.IsActive = false;
-                await _applicantRepository.UpdateAsync(applicant);
+                await _applicationRepository.UpdateAsync(applicant);
             }
         }
 
-        public async Task<List<ApplicantAdmissionDTO>> GetAllApplicantsAsync()
+        public async Task<List<ApplicantApplicationViewDTO>> GetAllApplicantApplicationAsync()
         {
+            var lst = new List<ApplicantApplicationViewDTO>();
+            var applicantEntites = await _applicationApplicationRepository.GetAllAsync();
+            applicantEntites.ForEach(x => lst.Add(_mapperApplicantApplication.MapToDto(x)));
 
-            var applicant = await _applicantRepository.GetAllAsync();
-            var activeApplicant = applicant.Where(c => c.IsActive);
-
-            // Map the entities to DTOs
-            var applicantDTOs = activeApplicant.Select(c => _mapper.MapToDto(c)).ToList();
-
-            return applicantDTOs;
+            return lst;
         }
 
-        public async Task<Applicant> GetApplicantByIdAsync(int appId)
+        public async Task<AdmissionApplication> GetApplicantByIdAsync(int appId)
         {
-            return await _applicantRepository.GetByIdAsync(appId);
+            return await _applicationRepository.GetByIdAsync(appId);
         }
 
-        public async Task UpdateApplicantAsync(ApplicantAdmissionDTO app)
+        public async Task UpdateApplicantAsync(ApplicantDTO dto)
         {
-            var model = _mapper.MapToEntity(app);
+            var model = _mapper.MapToEntity(dto);
             await _applicantRepository.UpdateAsync(model);
+        }
+
+        public async Task UpdateApplicationAsync(ApplicationDTO dto)
+        {
+            var model = _mapperApplication.MapToEntity(dto);
+            await _applicationRepository.UpdateAsync(model);
         }
 
     }

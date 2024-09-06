@@ -3,35 +3,27 @@ using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
-    public class ApplicationMapper : IMapper<ApplicantAdmissionDTO, AdmissionApplication>
+    public class ApplicationMapper : IMapper<ApplicationDTO, AdmissionApplication>
     {
-        public ApplicantAdmissionDTO MapToDto(AdmissionApplication entity)
+        public ApplicationDTO MapToDto(AdmissionApplication entity)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            return new ApplicantAdmissionDTO
+            return new ApplicationDTO
             {
-                ApplicationId = entity.ApplicationId,
                 ApplicantId = entity.ApplicantId,
                 CampusId = entity.CampusId,
-                ClassId = entity.ClassId,
+                AdmissionClassId = entity.ClassId,
                 AdmissionDecisionDate = entity.AdmissionDecisionDate,
                 ApplicationStatus = entity.ApplicationStatus,
                 Remarks = entity.Remarks,
-                CreatedAt = entity.CreatedAt,
-                CreatedBy = entity.CreatedBy,
-                UpdatedAt = entity.UpdatedAt,
-                UpdatedBy = entity.UpdatedBy,
-
-                IsActive = entity.IsActive,
-
             };
         }
 
-        public AdmissionApplication MapToEntity(ApplicantAdmissionDTO dto)
+        public AdmissionApplication MapToEntity(ApplicationDTO dto)
         {
             if (dto == null)
             {
@@ -41,17 +33,17 @@ namespace SchoolManagementSystem.Application.Mappers
             return new AdmissionApplication
             {
                 ApplicationId = dto.ApplicationId,
-                ApplicantId = dto.ApplicantId,
+                ApplicantId = Convert.ToInt32(dto.ApplicantId),
                 CampusId = dto.CampusId,
-                ClassId = dto.ClassId,
+                ClassId = dto.AdmissionClassId,
                 AdmissionDecisionDate = dto.AdmissionDecisionDate,
                 ApplicationStatus = dto.ApplicationStatus,
-                Remarks = dto.Remarks,
-                CreatedAt = dto.CreatedAt,
-                CreatedBy = dto.CreatedBy,
-                UpdatedAt = dto.UpdatedAt,
-                UpdatedBy = dto.UpdatedBy,
-                IsActive = dto.IsActive
+                Remarks = dto.Remarks
+                //CreatedAt = dto.CreatedAt,
+                //CreatedBy = dto.CreatedBy,
+                //UpdatedAt = dto.UpdatedAt,
+                //UpdatedBy = dto.UpdatedBy,
+                //IsActive = dto.IsActive
             };
 
         }

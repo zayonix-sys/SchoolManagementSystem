@@ -3,20 +3,18 @@ using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
-    public class ApplicantMapper : IMapper<ApplicantAdmissionDTO, Applicant>
+    public class ApplicantMapper : IMapper<ApplicantDTO, Applicant>
     {
-        public ApplicantAdmissionDTO MapToDto(Applicant entity)
+        public ApplicantDTO MapToDto(Applicant entity)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            return new ApplicantAdmissionDTO
+            return new ApplicantDTO
             {
                 ApplicantId = entity.ApplicantId,
-                LastClassId = entity.LastClassId,
-                AdmissionClassId = entity.AdmissionClassId,
                 FirstName = entity.FirstName,
                 LastName = entity.LastName,
                 FormBNumber = entity.FormBNumber,
@@ -29,15 +27,17 @@ namespace SchoolManagementSystem.Application.Mappers
                 City = entity.City,
                 MotherTounge = entity.MotherTounge,
                 States = entity.States,
-                CreatedAt = entity.CreatedAt,
-                CreatedBy = entity.CreatedBy,
-                UpdatedAt = entity.UpdatedAt,
-                UpdatedBy = entity.UpdatedBy,
-                IsActive = entity.IsActive
+                //CreatedAt = entity.CreatedAt,
+                //CreatedBy = entity.CreatedBy,
+                //UpdatedAt = entity.UpdatedAt,
+                //UpdatedBy = entity.UpdatedBy,
+                //IsActive = entity.IsActive,
+                LastClassId = entity.ClassId,
+                
             };
         }
 
-        public Applicant MapToEntity(ApplicantAdmissionDTO dto)
+        public Applicant MapToEntity(ApplicantDTO dto)
         {
             if (dto == null)
             {
@@ -46,10 +46,8 @@ namespace SchoolManagementSystem.Application.Mappers
 
             return new Applicant
             {
-                ApplicantId = dto.ApplicantId,
-                LastClassId = dto.LastClassId,
-                AdmissionClassId = dto.AdmissionClassId,
-                FirstName = dto.FirstName,
+                ClassId = dto.LastClassId,
+                FirstName = dto.FirstName, 
                 LastName = dto.LastName,
                 FormBNumber = dto.FormBNumber,
                 DateOfBirth = dto.DateOfBirth,
@@ -59,13 +57,10 @@ namespace SchoolManagementSystem.Application.Mappers
                 ApplicantAddress = dto.ApplicantAddress,
                 ResidenceStatus = dto.ResidenceStatus,
                 City = dto.City,
-                MotherTounge = dto.MotherTounge,
-                States = dto.States,
-                CreatedAt = dto.CreatedAt,
-                CreatedBy = dto.CreatedBy,
-                UpdatedAt = dto.UpdatedAt,
-                UpdatedBy = dto.UpdatedBy,
-                IsActive = dto.IsActive
+                //IsActive= dto.IsActive,
+                ApplicantId = dto.ApplicantId,
+                MotherTounge= dto.MotherTounge,
+                States= dto.States
             };
 
         }
