@@ -9,7 +9,8 @@ namespace SchoolManagementSystem.Application.Interfaces
         Task<AdmissionApplication> GetApplicantByIdAsync(int appId);
         Task<int> AddApplicantAsync(ApplicantDTO dto);
         Task AddAdmissionApplicationAsync(ApplicationDTO dto, int id);
-        Task UpdateApplicantAsync(ApplicantAdmissionDTO app);
+        Task UpdateApplicantAsync(ApplicantDTO dto);
+        Task UpdateApplicationAsync(ApplicationDTO dto);
         Task DeleteApplicantAsync(int appId);
 
     }

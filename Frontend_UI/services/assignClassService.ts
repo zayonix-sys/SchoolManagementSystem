@@ -4,9 +4,10 @@ import { ApiResponse } from "./apiResponse";
 
 export interface AssignClassData {
   assignmentId?: number;
+  campusId: number;
   classId: number; // Corresponds to ClassId in the entity
   classroomId: number; // Corresponds to ClassName in the entity
-  sectionId?: number; // Corresponds to ClassDescription in the entity
+  sectionId: number; // Corresponds to ClassDescription in the entity
   isActive?: boolean;
 }
 
@@ -21,16 +22,6 @@ export const assignClasses = async (): Promise<ApiResponse> => {
     throw new Error("Failed to fetch class assignments");
   }
 };
-
-// export const fetchClassById = async (id: number): Promise<ClassData> => {
-//   try {
-//     const response = await api.get<ClassData>(`${BASE_URL}/GetClassById/${id}`);
-//     return response.data;
-//   } catch (error) {
-//     console.error(`Failed to fetch class with ID ${id}:`, error);
-//     throw new Error(`Failed to fetch class with ID ${id}`);
-//   }
-// };
 
 export const addClassSectionAssignment = async (AssignClassData: AssignClassData): Promise<ApiResponse> => {
   try {

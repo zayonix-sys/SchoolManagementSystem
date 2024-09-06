@@ -72,10 +72,16 @@ namespace SchoolManagementSystem.Application.Services
             return await _applicationRepository.GetByIdAsync(appId);
         }
 
-        public async Task UpdateApplicantAsync(ApplicantAdmissionDTO app)
+        public async Task UpdateApplicantAsync(ApplicantDTO dto)
         {
-            //var model = _mapper.MapToEntity(app);
-            //await _applicationRepository.UpdateAsync(model);
+            var model = _mapper.MapToEntity(dto);
+            await _applicantRepository.UpdateAsync(model);
+        }
+
+        public async Task UpdateApplicationAsync(ApplicationDTO dto)
+        {
+            var model = _mapperApplication.MapToEntity(dto);
+            await _applicationRepository.UpdateAsync(model);
         }
 
     }

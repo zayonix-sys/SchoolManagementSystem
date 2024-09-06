@@ -57,7 +57,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 ApplicantAddress = dto.ApplicantAddress,
                 ResidenceStatus = dto.ResidenceStatus,
                 City = dto.City,
-                IsActive= dto.IsActive,
+                //IsActive= dto.IsActive,
                 ApplicantId = dto.ApplicantId,
                 MotherTounge= dto.MotherTounge,
                 States= dto.States
