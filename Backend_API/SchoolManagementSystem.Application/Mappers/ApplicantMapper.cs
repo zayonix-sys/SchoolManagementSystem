@@ -3,75 +3,64 @@ using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
-    public class ApplicantMapper : IMapper<ApplicantAdmissionDTO, AdmissionApplication>
+    public class ApplicantMapper : IMapper<ApplicantDTO, Applicant>
     {
-        public ApplicantAdmissionDTO MapToDto(AdmissionApplication entity)
+        public ApplicantDTO MapToDto(Applicant entity)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            return new ApplicantAdmissionDTO
+            return new ApplicantDTO
             {
-                ApplicantId = entity.Applicant.ApplicantId,
-                FirstName = entity.Applicant.FirstName,
-                LastName = entity.Applicant.LastName,
-                FormBNumber = entity.Applicant.FormBNumber,
-                DateOfBirth = entity.Applicant.DateOfBirth,
-                Gender = entity.Applicant.Gender,
-                Email = entity.Applicant.Email,
-                PhoneNumber = entity.Applicant.PhoneNumber,
-                ApplicantAddress = entity.Applicant.ApplicantAddress,
-                ResidenceStatus = entity.Applicant.ResidenceStatus,
-                City = entity.Applicant.City,
-                MotherTounge = entity.Applicant.MotherTounge,
-                States = entity.Applicant.States,
-                CreatedAt = entity.CreatedAt,
-                CreatedBy = entity.CreatedBy,
-                UpdatedAt = entity.UpdatedAt,
-                UpdatedBy = entity.UpdatedBy,
-                IsActive = entity.IsActive,
-                LastClassId = entity.Applicant.ClassId,
-                LastAttendedClass = entity.Class?.ClassName,
-                AdmissionClassId = entity.ClassId,
-                ClassForAdmission = entity.Applicant.Class?.ClassName,
-                CampusId = entity.CampusId,
-                CampusName = entity.Campus.CampusName
+                ApplicantId = entity.ApplicantId,
+                FirstName = entity.FirstName,
+                LastName = entity.LastName,
+                FormBNumber = entity.FormBNumber,
+                DateOfBirth = entity.DateOfBirth,
+                Gender = entity.Gender,
+                Email = entity.Email,
+                PhoneNumber = entity.PhoneNumber,
+                ApplicantAddress = entity.ApplicantAddress,
+                ResidenceStatus = entity.ResidenceStatus,
+                City = entity.City,
+                MotherTounge = entity.MotherTounge,
+                States = entity.States,
+                //CreatedAt = entity.CreatedAt,
+                //CreatedBy = entity.CreatedBy,
+                //UpdatedAt = entity.UpdatedAt,
+                //UpdatedBy = entity.UpdatedBy,
+                //IsActive = entity.IsActive,
+                LastClassId = entity.ClassId,
+                
             };
         }
 
-        public AdmissionApplication MapToEntity(ApplicantAdmissionDTO dto)
+        public Applicant MapToEntity(ApplicantDTO dto)
         {
             if (dto == null)
             {
                 throw new ArgumentNullException(nameof(dto));
             }
 
-            return new AdmissionApplication
+            return new Applicant
             {
-                ApplicantId = dto.ApplicantId,
-                Applicant = new Applicant {
-                    FirstName = dto.FirstName,
-                    LastName = dto.LastName,
-                    FormBNumber = dto.FormBNumber,
-                    DateOfBirth = dto.DateOfBirth,
-                    Gender = dto.Gender,
-                    Email = dto.Email,
-                    PhoneNumber = dto.PhoneNumber,
-                    ApplicantAddress = dto.ApplicantAddress,
-                    ResidenceStatus = dto.ResidenceStatus,
-                    City = dto.City,
-                    MotherTounge = dto.MotherTounge,
-                    States = dto.States,
-                    ClassId = dto.LastClassId,
-                },
                 ClassId = dto.LastClassId,
-                CreatedAt = dto.CreatedAt,
-                CreatedBy = dto.CreatedBy,
-                UpdatedAt = dto.UpdatedAt,
-                UpdatedBy = dto.UpdatedBy,
-                IsActive = dto.IsActive
+                FirstName = dto.FirstName, 
+                LastName = dto.LastName,
+                FormBNumber = dto.FormBNumber,
+                DateOfBirth = dto.DateOfBirth,
+                Gender = dto.Gender,
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                ApplicantAddress = dto.ApplicantAddress,
+                ResidenceStatus = dto.ResidenceStatus,
+                City = dto.City,
+                IsActive= dto.IsActive,
+                ApplicantId = dto.ApplicantId,
+                MotherTounge= dto.MotherTounge,
+                States= dto.States
             };
 
         }

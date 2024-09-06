@@ -22,12 +22,12 @@ namespace SchoolManagementSystem.Domain.Entities
         [MaxLength(50)]
         public string? ApplicationStatus { get; set; } = "Pending";
 
-        public DateTime? AdmissionDecisionDate { get; set; }
+        public DateOnly? AdmissionDecisionDate { get; set; }
 
         [MaxLength(255)]
         public string? Remarks { get; set; }
 
-        public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? CreatedAt { get; set; }
 
         public int? CreatedBy { get; set; }
         [ForeignKey(nameof(CreatedBy))]
