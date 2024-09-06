@@ -20,20 +20,19 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<ApplicantAdmissionDTO>>> GetAllApplicants()
+        public async Task<ActionResult<IEnumerable<ApplicantApplicationViewDTO>>> GetAllApplicants()
         {
             _logger.LogInformation("Fetching all applicants.");
             try
             {
-                var applicants = await _applicantService.GetAllApplicantsAsync();
+                var applicants = await _applicantService.GetAllApplicantApplicationAsync();
                 _logger.LogInformation("Successfully retrieved {Count} applicants.", applicants?.Count() ?? 0);
-
-                return Ok(applicants);
+                return Ok(ApiResponse<IEnumerable<ApplicantApplicationViewDTO>>.SuccessResponse(applicants, "Applicants retrieved successfully"));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while fetching all applicant.");
-                return StatusCode(500, "Internal server error.");
+                return StatusCode(500, ApiResponse<IEnumerable<ApplicantApplicationViewDTO>>.ErrorResponse("Internal server error."));
             }
         }
 
@@ -64,12 +63,12 @@ namespace SchoolManagementSystem.API.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<ApiResponse<ApplicantDTO>>> AddApplicant([FromBody] ApplicantAdmissionDTO dto)
         {
-            _logger.LogInformation("Adding a new Applicant with name {FirstName}.", dto.FirstName);
+            _logger.LogInformation("Adding a new Applicant with name {FirstName}.", dto.Applicant.FirstName);
             try
             {
-                var applicantId = await _applicantService.AddApplicantAsync(dto);
-                await _applicantService.AddAdmissionApplicationAsync(dto, applicantId);
-                _logger.LogInformation("Successfully added applicant with ID {ApplicantId}.", dto.ApplicantId);
+                var applicantId = await _applicantService.AddApplicantAsync(dto.Applicant);
+                await _applicantService.AddAdmissionApplicationAsync(dto.Application, applicantId);
+                _logger.LogInformation("Successfully added applicant with ID {ApplicantId}.", dto.Applicant.ApplicantId);
                 return Ok(ApiResponse<ApplicantAdmissionDTO>.SuccessResponse(dto, "Applicant added successfully"));
 
             }
@@ -80,19 +79,37 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
+        //[HttpPut("[action]")]
+        //public async Task<IActionResult> UpdateApplicationStatus(int applicationId, string status)
+        //{
+        //    _logger.LogInformation("Updating applicant with ID {ApplicantId}.", applicationId);
+        //    try
+        //    {
+        //        await _applicantService.UpdateApplicantAsync(app);
+        //        _logger.LogInformation("Successfully updated Applicant with ID {ApplicantId}.", app.ApplicantId);
+        //        return Ok(ApiResponse<ApplicantAdmissionDTO>.SuccessResponse(app, "Applicant updated successfully"));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "An error occurred while updating Applicant with ID {ApplicantId}.", app.ApplicantId);
+        //        return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
+        //    }
+        //}
+
         [HttpPut("[action]")]
-        public async Task<IActionResult> UpdateApplicant(ApplicantAdmissionDTO app)
+        public async Task<IActionResult> UpdateApplicant(ApplicantAdmissionDTO dto)
         {
-            _logger.LogInformation("Updating applicant with ID {ApplicantId}.", app.ApplicantId);
+            _logger.LogInformation("Updating applicant with ID {ApplicantId}.", dto.Application.ApplicationId);
             try
             {
-                await _applicantService.UpdateApplicantAsync(app);
-                _logger.LogInformation("Successfully updated Applicant with ID {ApplicantId}.", app.ApplicantId);
-                return Ok(ApiResponse<ApplicantAdmissionDTO>.SuccessResponse(app, "Applicant updated successfully"));
+                await _applicantService.UpdateApplicantAsync(dto.Applicant);
+                await _applicantService.UpdateApplicationAsync(dto.Application);
+                _logger.LogInformation("Successfully updated Applicant with ID {ApplicantId}.", dto.Application.ApplicationId);
+                return Ok(ApiResponse<ApplicantAdmissionDTO>.SuccessResponse(dto, "Applicant updated successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while updating Applicant with ID {ApplicantId}.", app.ApplicantId);
+                _logger.LogError(ex, "An error occurred while updating Applicant with ID {ApplicantId}.", dto.Application.ApplicationId);
                 return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
             }
         }

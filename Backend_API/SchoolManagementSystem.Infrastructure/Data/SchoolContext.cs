@@ -61,6 +61,13 @@ namespace SchoolManagementSystem.Infrastructure.Data
                 .HasIndex(e => e.Email)
                 .IsUnique();
 
+            modelBuilder.Entity<ApplicantApplicationView>()
+                .HasNoKey();
+                
+
+            // Map the entity to the SQL Server view
+            modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
+
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -12,11 +12,11 @@ import {
 import Reports from "./reports";
 import AddApplicant from "./add-applicant";
 import { useState, useEffect } from "react";
-import { ApplicantData, getApplicants } from "@/services/applicantService";
+import { ApplicantApplicationDetail, getApplicants } from "@/services/applicantService";
 import ApplicantListTable from "./veiw-applicant";
 
 const Applicants = () => {
-  const [applicants, setApplicants] = useState<ApplicantData[]>([]);
+  const [applicants, setApplicants] = useState<ApplicantApplicationDetail[]>([]);
   const [loading, setLoading] = useState(true); // Add loading state
   const [error, setError] = useState<string | null>(null);
 
