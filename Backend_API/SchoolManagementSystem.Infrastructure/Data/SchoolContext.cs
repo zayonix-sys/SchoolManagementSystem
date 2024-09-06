@@ -25,7 +25,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<ClassSectionAssignment> ClassSectionAssignments { get; set; }
 
         public DbSet<Subject> Subjects { get; set; }
-
+        public DbSet<SubjectTeacherAssignment> SubjectTeachers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and keys here
