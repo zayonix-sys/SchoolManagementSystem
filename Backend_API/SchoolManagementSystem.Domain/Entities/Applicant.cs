@@ -18,7 +18,7 @@ namespace SchoolManagementSystem.Domain.Entities
         [MaxLength(15)]
         public string FormBNumber { get; set; }
 
-        public DateTime? DateOfBirth { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
 
         [ForeignKey("ClassId")]
         public int? ClassId { get; set; }
@@ -48,7 +48,7 @@ namespace SchoolManagementSystem.Domain.Entities
         [MaxLength(30)]
         public string States { get; set; }
 
-        public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? CreatedAt { get; set; }
         public int? CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }

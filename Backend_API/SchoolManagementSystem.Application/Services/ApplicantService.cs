@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
@@ -11,27 +12,34 @@ namespace SchoolManagementSystem.Application.Services
     {
         private readonly IGenericRepository<Applicant> _applicantRepository;
         private readonly IGenericRepository<AdmissionApplication> _applicationRepository;
+        private readonly IGenericRepository<ApplicantApplicationView> _applicationApplicationRepository;
         private readonly ApplicantMapper _mapper;
         private readonly ApplicationMapper _mapperApplication;
+        private readonly ApplicantApplicationMapper _mapperApplicantApplication;
 
-        public ApplicantService(IGenericRepository<Applicant> genericRepository, IGenericRepository<AdmissionApplication> applicationRepository, ApplicantMapper applicantMapper, ApplicationMapper mapperApplication)
+        public ApplicantService(IGenericRepository<Applicant> genericRepository, 
+            IGenericRepository<AdmissionApplication> applicationRepository, 
+            IGenericRepository<ApplicantApplicationView> applicantApplicationRepository,
+            ApplicantMapper applicantMapper, ApplicationMapper mapperApplication, ApplicantApplicationMapper applicantApplicationMapper)
         {
             _applicantRepository = genericRepository;
             _applicationRepository = applicationRepository;
+            _applicationApplicationRepository = applicantApplicationRepository;
             _mapper = applicantMapper;
             _mapperApplication = mapperApplication;
+            _mapperApplicantApplication = applicantApplicationMapper;
         }
 
-        public async Task<int> AddApplicantAsync(ApplicantAdmissionDTO dto)
+        public async Task<int> AddApplicantAsync(ApplicantDTO dto)
         {
             //Adding Applicant
             var model = _mapper.MapToEntity(dto);
-            var applicantId = await _applicationRepository.AddAsync(model);
+            var applicantId = await _applicantRepository.AddAsync(model);
 
             return (int)applicantId;
         }
 
-        public async Task AddAdmissionApplicationAsync(ApplicantAdmissionDTO dto, int applicantId)
+        public async Task AddAdmissionApplicationAsync(ApplicationDTO dto, int applicantId)
         {
             //Adding Applicant
             dto.ApplicantId = applicantId;
@@ -50,21 +58,13 @@ namespace SchoolManagementSystem.Application.Services
             }
         }
 
-        public async Task<List<ApplicantAdmissionDTO>> GetAllApplicantsAsync()
+        public async Task<List<ApplicantApplicationViewDTO>> GetAllApplicantApplicationAsync()
         {
+            var lst = new List<ApplicantApplicationViewDTO>();
+            var applicantEntites = await _applicationApplicationRepository.GetAllAsync();
+            applicantEntites.ForEach(x => lst.Add(_mapperApplicantApplication.MapToDto(x)));
 
-            var applicant = await _applicationRepository.GetAllAsync(
-                include: query => query
-                .Include(c => c.Class)
-                .Include(a => a.Applicant)
-                .Include(c => c.Campus)
-                );
-            var activeApplicant = applicant.Where(c => c.IsActive);
-
-            // Map the entities to DTOs
-            var applicantDTOs = activeApplicant.Select(c => _mapper.MapToDto(c)).ToList();
-
-            return applicantDTOs;
+            return lst;
         }
 
         public async Task<AdmissionApplication> GetApplicantByIdAsync(int appId)
@@ -74,8 +74,8 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task UpdateApplicantAsync(ApplicantAdmissionDTO app)
         {
-            var model = _mapper.MapToEntity(app);
-            await _applicationRepository.UpdateAsync(model);
+            //var model = _mapper.MapToEntity(app);
+            //await _applicationRepository.UpdateAsync(model);
         }
 
     }

@@ -5,10 +5,10 @@ namespace SchoolManagementSystem.Application.Interfaces
 {
     public interface IApplicant
     {
-        Task<List<ApplicantAdmissionDTO>> GetAllApplicantsAsync();
+        Task<List<ApplicantApplicationViewDTO>> GetAllApplicantApplicationAsync();
         Task<AdmissionApplication> GetApplicantByIdAsync(int appId);
-        Task<int> AddApplicantAsync(ApplicantAdmissionDTO dto);
-        Task AddAdmissionApplicationAsync(ApplicantAdmissionDTO dto, int id);
+        Task<int> AddApplicantAsync(ApplicantDTO dto);
+        Task AddAdmissionApplicationAsync(ApplicationDTO dto, int id);
         Task UpdateApplicantAsync(ApplicantAdmissionDTO app);
         Task DeleteApplicantAsync(int appId);
 

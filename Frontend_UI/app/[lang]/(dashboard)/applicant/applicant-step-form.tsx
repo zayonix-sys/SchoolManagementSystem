@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Step, StepLabel, Stepper } from "@/components/ui/steps";
 import { cn } from "@/lib/utils";
 import { CampusData, getCampuses } from "@/services/campusService";
+import { format } from "date-fns";
 
 const applicantSchema = z.object({
   applicantId: z.number().optional(),
@@ -30,7 +31,7 @@ const applicantSchema = z.object({
     .refine((value) => !isNaN(Date.parse(value)), {
       message: "Invalid date format",
     })
-    .transform((value) => new Date(value)),
+    .transform((value) => format(new Date(value), "yyyy-MM-dd")),
   gender: z.string().min(1, "Gender is required"),
   email: z.string().email("Invalid email address").optional().default(""),
   applicantAddress: z.string().min(5, "Address is required"),
@@ -47,11 +48,11 @@ const applicantSchema = z.object({
   applicationStatus: z.string().optional().default("Pending"),
   admissionDecisionDate: z.string().optional(),
   remarks: z.string().optional(),
-  createdAt: z.string().optional(),
-  createdBy: z.number().optional(),
-  updatedAt: z.string().optional(),
-  updatedBy: z.number().optional(),
-  isActive: z.boolean().optional().default(true),
+  // createdAt: z.string().optional(),
+  // createdBy: z.number().optional(),
+  // updatedAt: z.string().optional(),
+  // updatedBy: z.number().optional(),
+  // isActive: z.boolean().optional().default(true),
   phoneNumber: z.string().max(15, "Phone number must be 15 characters long"),
 });
 
@@ -132,7 +133,6 @@ const ApplicantStepForm = () => {
   const onSubmit: SubmitHandler<ApplicantFormValues> = async (data) => {
     try {
       const response = await addApplicant(data);
-
       if (response.success) {
         toast.success(
           `${response.data.firstName} Applicant Added successfully!`
@@ -143,6 +143,7 @@ const ApplicantStepForm = () => {
         toast.error(`Error: ${response.message || "Something went wrong"}`);
       }
     } catch (error) {
+      console.error(error);
       toast.error("Request Failed");
     }
   };
