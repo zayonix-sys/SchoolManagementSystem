@@ -56,6 +56,8 @@ builder.Services.AddScoped<ClassSectionAssignmentMapper>();
 builder.Services.AddScoped<IStudent, StudentService>();
 builder.Services.AddScoped<ISubject, SubjectService>();
 builder.Services.AddScoped<SubjectMapper>();
+builder.Services.AddScoped<ISubjectTeacherAssignment, SubjectTeacherAssignmentService>();
+builder.Services.AddScoped<SubjectTeacherAssignmentMapper>();
 
 // Add controllers
 builder.Services.AddControllers();
