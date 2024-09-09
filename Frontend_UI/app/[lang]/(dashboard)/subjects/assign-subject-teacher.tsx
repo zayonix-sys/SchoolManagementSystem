@@ -101,7 +101,6 @@ export default function AssignSubjectTeacher({
         >
           <div className="py-5">
             <hr />
-            {/* form */}
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
               <div className="grid grid-cols-6 gap-4 mt-5">
                 <div className="col-span-3">
@@ -126,7 +125,9 @@ export default function AssignSubjectTeacher({
                     </SelectContent>
                   </Select>
                   {errors.employeeId && (
-                    <p className="text-destructive">{errors.employeeId.message}</p>
+                    <p className="text-destructive">
+                      {errors.employeeId.message}
+                    </p>
                   )}
                 </div>
 
@@ -152,7 +153,9 @@ export default function AssignSubjectTeacher({
                     </SelectContent>
                   </Select>
                   {errors.subjectId && (
-                    <p className="text-destructive">{errors.subjectId.message}</p>
+                    <p className="text-destructive">
+                      {errors.subjectId.message}
+                    </p>
                   )}
                 </div>
 
