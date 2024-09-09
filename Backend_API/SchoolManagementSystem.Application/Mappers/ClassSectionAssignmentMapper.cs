@@ -29,7 +29,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 IsActive = entity.IsActive,
                 ClassroomCapacity = entity.Classroom.Capacity,
                 ClassCapacity = entity.Class.Capacity,
-                SectionCapacity = entity.Section.Capacity,
+                SectionCapacity = entity.Section?.Capacity ?? 0
 
             };
         }
