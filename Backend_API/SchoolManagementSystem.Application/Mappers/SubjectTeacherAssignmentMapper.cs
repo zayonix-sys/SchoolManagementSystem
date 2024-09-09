@@ -23,7 +23,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 EmployeeId = entity.EmployeeId,
                 EmployeeRoleName = entity.Employee.EmployeeRole.RoleName,
                 SubjectName = entity.Subject.SubjectName,
-                EmployeeName = entity.Employee.FirstName,
+                EmployeeName = $"{entity.Employee.FirstName} {entity.Employee.LastName}",
                 IsActive = entity.IsActive,
 
             };
