@@ -1,100 +1,120 @@
-"use client"
-import { Icon } from '@iconify/react';
+"use client";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { z } from 'zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { SubjectData } from '@/services/subjectService';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { z } from "zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SubjectData } from "@/services/subjectService";
+import { useEffect, useState } from "react";
+import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
+import { addSubjectTeacher } from "@/services/subjectTeacherService";
+import { Input } from "@/components/ui/input";
 
-import { useEffect, useState } from 'react';
-import { EmployeesData } from '@/services/EmployeeService';
-import { addSubjectTeacher } from '@/services/subjectTeacherService';
-import { Input } from '@/components/ui/input';
-
- 
 const assignSubjectTeacherSchema = z.object({
   subjectTeacherId: z.coerce.number().optional(),
   employeeId: z.coerce.number(),
   subjectId: z.number().min(1, "Subject is Required"),
-  teacherRole:z.string().min(1,"Teacer Role Required")
-  
 });
 
 type AssignSubjectFormValues = z.infer<typeof assignSubjectTeacherSchema>;
 
-export default function AssignSubjectTeacher({employee, subject}: {employee: EmployeesData[], subject: SubjectData[]}) {
+export default function AssignSubjectTeacher({
+  employee,
+  subject,
+}: {
+  employee: EmployeesData[];
+  subject: SubjectData[];
+}) {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<AssignSubjectFormValues>({
+    resolver: zodResolver(assignSubjectTeacherSchema),
+  });
+  const subjectTeacher = employee.filter(
+    (emp) => emp.employeeRoleName === "Teacher"
+  );
 
-    const {
-      register,
-      handleSubmit,
-      setValue,
-      reset,
-      formState: { errors },
-    } = useForm<AssignSubjectFormValues>({
-      resolver: zodResolver(assignSubjectTeacherSchema),
-    });
+  const onSubmit: SubmitHandler<AssignSubjectFormValues> = async (data) => {
+    try {
+      const response = await addSubjectTeacher(data);
 
-    console.log(employee);
-    
-
-    const onSubmit: SubmitHandler<AssignSubjectFormValues> = async (data) => {
-      try {
-        const response = await addSubjectTeacher(data);
-  
-        if (response.success) {
-          toast.success("Subject Teacher Assigned successfully!");
-          reset();
-        } else {
-          console.error("Error:", response);
-          toast.error( `Error: ${response.message || "Something went wrong"}`);
-        }
-      } catch (error) {
-        console.error("Request Failed:", error);
-        toast.error("Request Failed");
+      if (response.success) {
+        toast.success("Subject Teacher Assigned successfully!");
+        reset();
+      } else {
+        console.error("Error:", response);
+        toast.error(`Error: ${response.message || "Something went wrong"}`);
       }
-    };
-  
-    const handleError = () => {
-      if (Object.keys(errors).length > 0) {
-        toast.error("Please correct the errors in the form.");
-      }
-    };
-  
+    } catch (error) {
+      console.error("Request Failed:", error);
+      toast.error("Request Failed");
+    }
+  };
+
+  const handleError = () => {
+    if (Object.keys(errors).length > 0) {
+      toast.error("Please correct the errors in the form.");
+    }
+  };
 
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button>
-            <span className='text-xl mr-1'>
-                <Icon icon="heroicons:building-library-solid" className="w-6 h-6 mr-2  " />
-            </span>
-            Assign Subjects To Teacher
-          </Button>
+          <span className="text-xl mr-1">
+            <Icon
+              icon="heroicons:building-library-solid"
+              className="w-6 h-6 mr-2"
+            />
+          </span>
+          Assign Subjects To Teacher
+        </Button>
       </SheetTrigger>
       <SheetContent className="max-w-[736px]">
         <SheetHeader>
-          <SheetTitle>Select Subjects </SheetTitle>
+          <SheetTitle>Select Subjects</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-between" style={{ height: "calc(100vh - 80px)" }}>
-          <div className="py-5 ">
+        <div
+          className="flex flex-col justify-between"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
+          <div className="py-5">
             <hr />
             {/* form */}
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
               <div className="grid grid-cols-6 gap-4 mt-5">
-              <div className="col-span-3">
+                <div className="col-span-3">
                   <Select
                     onValueChange={(value) =>
                       setValue("employeeId", parseInt(value))
                     }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a Employee" />
+                      <SelectValue placeholder="Select an Employee" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employee?.map((employeeData) => (
+                      {subjectTeacher?.map((employeeData) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={employeeData.employeeId}
@@ -106,16 +126,12 @@ export default function AssignSubjectTeacher({employee, subject}: {employee: Emp
                     </SelectContent>
                   </Select>
                   {errors.employeeId && (
-                    <p className="text-destructive">
-                      {errors.employeeId.message}
-                    </p>
+                    <p className="text-destructive">{errors.employeeId.message}</p>
                   )}
                 </div>
 
-                
-
                 <div className="col-span-3">
-                <Select
+                  <Select
                     onValueChange={(value) =>
                       setValue("subjectId", parseInt(value))
                     }
@@ -139,7 +155,7 @@ export default function AssignSubjectTeacher({employee, subject}: {employee: Emp
                     <p className="text-destructive">{errors.subjectId.message}</p>
                   )}
                 </div>
-               
+
                 <div className="col-span-2">
                   <Button type="submit">Submit Form</Button>
                 </div>

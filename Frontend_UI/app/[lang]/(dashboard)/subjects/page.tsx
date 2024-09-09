@@ -59,13 +59,13 @@ const Subjects = () => {
             <div className="col-span-12 md:col-span-8">
                   <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5">
                     <SubjectReportCard/>
+                    
                     <Table/>
                   </div>
                 </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-    <SubjectTeacherTable employee={employees} subject={subjects} />
     </div>
   );
 };

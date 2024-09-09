@@ -4,7 +4,7 @@ import { ApiResponse } from "./apiResponse";
 export interface SubjectTeacherData {
   subjectTeacherId?: number; 
   teacherRole?: string; 
-  employeeId?: number;
+  employeeId: number;
   employeeRoleName?:string;
   subjectName?: string;
   employeeName?:string;
@@ -47,7 +47,7 @@ export const addSubjectTeacher = async (subjectTeacherData: SubjectTeacherData):
   }
 };
 
-export const updateSubject = async (
+export const updateSubjectTeacher = async (
   subjectTeacherData: SubjectTeacherData
 ): Promise<ApiResponse> => {
   try {
