@@ -10,6 +10,7 @@ namespace SchoolManagementSystem.Application.Mappers
             return new ClassSectionAssignment
             {
                 AssignmentId = dto.AssignmentId,
+                CampusId = dto.CampusId,
                 ClassId = dto.ClassId,
                 SectionId = dto.SectionId,
                 ClassroomId = dto.ClassroomId,
@@ -21,11 +22,15 @@ namespace SchoolManagementSystem.Application.Mappers
             return new ClassSectionAssignmentDTO
             {
                 AssignmentId = entity.AssignmentId,
+                CampusId = entity.CampusId,
                 ClassroomId = entity.ClassroomId,
                 ClassId = entity.ClassId,
                 SectionId = entity.SectionId,
                 IsActive = entity.IsActive,
-                
+                ClassroomCapacity = entity.Classroom.Capacity,
+                ClassCapacity = entity.Class.Capacity,
+                SectionCapacity = entity.Section.Capacity,
+
             };
         }
 
