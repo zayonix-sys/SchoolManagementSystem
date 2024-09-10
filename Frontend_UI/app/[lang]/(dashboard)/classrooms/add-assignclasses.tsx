@@ -70,9 +70,11 @@ interface ClassAssignmentProps {
           console.error("Error:", response);
           toast.error(`Error: ${response.message || "Something went wrong"}`);
         }
-      } catch (error) {
-        console.error("Request Failed:", error);
-        toast.error("Request Failed");
+      } catch (error: any) {
+        // Check if the error has a response message, else show fallback error
+        const errorMessage = error.response?.data?.message || "Request Failed";
+        console.error("Request Failed:", errorMessage);
+        toast.error(errorMessage);
       }
     };
   

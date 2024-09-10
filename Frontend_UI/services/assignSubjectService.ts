@@ -5,8 +5,9 @@ import { ApiResponse } from "./apiResponse";
 export interface AssignSubjectData {
   classSubjectId?: number;
   classId: number;
-  subjectId: number; // Corresponds to ClassId in the entity
+  subjectIds: number[]; 
   isActive?: boolean;
+  subjectName?: string;
 }
 
 const BASE_URL = "/ClassSubjectAssignment";
