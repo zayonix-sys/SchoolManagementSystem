@@ -5,9 +5,16 @@ import { Card } from "@/components/ui/card";
 import { fetchSubject, SubjectData } from "@/services/subjectService";
 import React, { Fragment, useEffect, useState } from "react";
 import ViewSubject from "./view-subject";
+import SubjectTeacherTable from "./veiw-subject-teacher";
+import { getSubjectTeacher, SubjectTeacherData } from "@/services/subjectTeacherService";
+import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
+import ViewSubjectTeacher from "./veiw-subject-teacher";
 
 const SubjectReportCard = () => {
   const [subject, setSubject] = useState<SubjectData[]>([]);
+  const [subjectTeacher, setSubjectTeacher] = useState<SubjectTeacherData[]>([]);
+  const [employee, setEmployees] = useState<EmployeesData[]>([]);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -27,7 +34,27 @@ const SubjectReportCard = () => {
     fetchSubjectData();
   }, []);
 
+
+  useEffect(() => {
+    const fetchEmployeeAndSubjectData = async () => {
+      setLoading(true);
+      try {
+        const employeeSubjectResponse = await getSubjectTeacher();
+        // const employeeResponse = await fetchEmployees();
+        // const subjectResponse = await fetchSubject();
+        setSubjectTeacher(employeeSubjectResponse.data as SubjectTeacherData[]);
+        // setSubject(subjectResponse.data as SubjectData[]);
+      } catch (err) {
+        setError(err as any);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployeeAndSubjectData();
+  }, []);
   const subjectCount = subject.length.toString();
+  const subjectTeacherCount = subjectTeacher.length.toString();
 
   interface ReportItem {
     id: number;
@@ -47,6 +74,15 @@ const SubjectReportCard = () => {
       icon: <Docs className="w-6 h-6 text-destructive" />,
       color: "destructive"
     },
+    {
+      id: 2,
+      name: "No. of Subjects Teacher",
+      count: (subjectTeacherCount ? subjectTeacherCount : 0).toString(),
+      rate: "8.2",
+      icon: <Docs className="w-6 h-6 text-destructive" />,
+      color: "destructive"
+    },
+
   ]
   return (
     <Fragment>
@@ -64,6 +100,7 @@ const SubjectReportCard = () => {
               {item.count}
             </div>
             {item.id === 1 && <ViewSubject subject={subject} />}
+            {item.id === 2 && <ViewSubjectTeacher employee={employee} subject={subject} />}
             </div>
           </Card>
         ))
