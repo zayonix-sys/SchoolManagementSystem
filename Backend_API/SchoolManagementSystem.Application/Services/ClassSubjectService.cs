@@ -1,4 +1,5 @@
-﻿using SchoolManagementSystem.Application.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
@@ -18,21 +19,49 @@ namespace SchoolManagementSystem.Application.Services
 
         }
 
+        //public async Task AddClassSubjectAsync(ClassSubjectAssignmentDTO classsubject)
+        //{
+        //    try
+        //    {
+
+        //        var model = _mapper.MapToEntity(classsubject);
+        //        await _classSubjectRepository.AddAsync(model);
+
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
+
         public async Task AddClassSubjectAsync(ClassSubjectAssignmentDTO classsubject)
         {
+
             try
             {
+                var entities = _mapper.MapToEntity(classsubject);
 
-                var model = _mapper.MapToEntity(classsubject);
-                await _classSubjectRepository.AddAsync(model);
+                foreach (var entity in entities)
+                {
+                    var existingEntity = await _classSubjectRepository.
+                        GetAllAsync(cs => cs.ClassId == entity.ClassId && cs.SubjectId == entity.SubjectId);
 
-            }
+                    if (existingEntity == null)
+                    {
+                        throw new Exception("Couldn't assign subjects");
+                    }
+
+                    var model = _classSubjectRepository.AddAsync(entity);
+                    _classSubjectRepository.AddAsync(entity);
+                }
+             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
 
         public async Task DeleteClassSubjectAsync(int classsubjectId)
         {
@@ -58,8 +87,7 @@ namespace SchoolManagementSystem.Application.Services
         public async Task UpdateClassSubjectAsync(ClassSubjectAssignmentDTO classsubject)
         {
             var model = _mapper.MapToEntity(classsubject);
-            
-            await _classSubjectRepository.UpdateAsync(model);
+            //await _classSubjectRepository.UpdateAsync(model);
         }
 
 
