@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
 
@@ -9,6 +10,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         {
         }
 
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<Section> Sections { get; set; }
@@ -21,20 +24,17 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Classroom> Classrooms { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeRole> EmployeeRoles { get; set; }
-
         public DbSet<ClassSubject> ClassSubjects { get; set; }
-
         public DbSet<ClassSectionAssignment> ClassSectionAssignments { get; set; }
-
         public DbSet<Subject> Subjects { get; set; }
 
         public DbSet<TimeTable> TimeTables { get; set; }
 
         public DbSet<SubjectTeacherAssignment> SubjectTeachers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and keys here
-
             modelBuilder.Entity<Student>()
                 .HasKey(s => s.StudentId);
 
@@ -69,7 +69,6 @@ namespace SchoolManagementSystem.Infrastructure.Data
             modelBuilder.Entity<ApplicantApplicationView>()
                 .HasNoKey();
                 
-
             // Map the entity to the SQL Server view
             modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
 

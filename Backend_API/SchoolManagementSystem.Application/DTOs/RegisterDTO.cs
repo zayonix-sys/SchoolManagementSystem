@@ -6,19 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchoolManagementSystem.Domain.Entities
+namespace SchoolManagementSystem.Application.DTOs
 {
-    public class User
+    public class RegisterDTO
     {
-        [Key]
-        public int UserId { get; set; }
-
-        [Required]
-        [StringLength(50)]
         public string UserName { get; set; }
-
-        [Required]
-        [StringLength(255)]
         public string PasswordHash { get; set; }
 
         [ForeignKey("UserRole")]
@@ -29,14 +21,5 @@ namespace SchoolManagementSystem.Domain.Entities
 
         [Required]
         public bool IsActive { get; set; }
-
-        [Required]
-        public DateTime? CreatedAt { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
-
-        // Navigation properties
-        public UserRole UserRole { get; set; }
-        public Campus Campus { get; set; }
     }
 }
