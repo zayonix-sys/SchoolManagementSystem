@@ -18,7 +18,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("CreatedUser")]
-        public int? CreatedBy { get; set; } = 2;
+        public int? CreatedBy { get; set; } = 1;
 
         public DateTime? UpdatedAt { get; set; }
 

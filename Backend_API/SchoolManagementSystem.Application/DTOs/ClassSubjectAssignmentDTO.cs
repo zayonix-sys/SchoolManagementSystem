@@ -8,7 +8,7 @@ namespace SchoolManagementSystem.Application.DTOs
         //public int? SubjectId { get; set; }
         public List<int>? SubjectIds { get; set; } = new List<int>();
         public DateTime? CreatedAt { get; set; }
-        public int? CreatedBy { get; set; } = 2;
+        public int? CreatedBy { get; set; } = 1;
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
         public bool IsActive { get; set; } = true;
