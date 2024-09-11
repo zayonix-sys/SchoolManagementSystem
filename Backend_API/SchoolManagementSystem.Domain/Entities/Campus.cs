@@ -43,6 +43,9 @@ namespace SchoolManagementSystem.Domain.Entities
         public virtual ICollection<Department>? Departments { get; set; }
         //public virtual ICollection<Classroom> Classrooms { get; set; }
         public virtual ICollection<Employee>? Employees { get; set; }
+
+        public virtual ICollection<TimeTable>? TimeTables { get; set; }
+
         public Campus()
         {
             Departments = new HashSet<Department>();
