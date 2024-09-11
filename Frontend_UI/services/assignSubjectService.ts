@@ -5,8 +5,10 @@ import { ApiResponse } from "./apiResponse";
 export interface AssignSubjectData {
   classSubjectId?: number;
   classId: number;
-  subjectId: number; // Corresponds to ClassId in the entity
+  subjectIds: number[]; 
   isActive?: boolean;
+  subjectName?: string;
+  subjects?: string[];
 }
 
 const BASE_URL = "/ClassSubjectAssignment";
@@ -52,7 +54,7 @@ export const updateClassSubjectAssignment = async (
 export const deleteClassSubjectAssignment = async (id: number): Promise<ApiResponse> => {
   try {
     const response = await api.delete<ApiResponse>(
-      `${BASE_URL}/DeleteClassSubjectAssignment?classSubjectId=${id}`
+      `${BASE_URL}/DeleteClassSubjectAssignment?classId=${id}`
     );
     return response.data;
   } catch (error: any) {

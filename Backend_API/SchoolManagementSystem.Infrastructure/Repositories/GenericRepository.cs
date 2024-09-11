@@ -57,6 +57,14 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             }
         }
 
+        public async Task DeleteAsync(T entity)
+        {
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
         public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null,
                           Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
         {

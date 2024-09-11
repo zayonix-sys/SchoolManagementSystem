@@ -3,10 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
-    public class ClassSubject
+    public class TimeTable
     {
         [Key]
-        public int ClassSubjectId { get; set; }
+        public int? TimetableId { get; set; }
+
+        [ForeignKey("Campus")]
+        public int? CampusId { get; set; }
 
         [ForeignKey("Class")]
         public int? ClassId { get; set; }
@@ -14,11 +17,17 @@ namespace SchoolManagementSystem.Domain.Entities
         [ForeignKey("Subject")]
         public int? SubjectId { get; set; }
 
+        public string? DayOfWeek { get; set; }
+
+        public TimeSpan? StartTime { get; set; }
+
+        public TimeSpan? EndTime { get; set; }
+
         [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? CreatedAt { get; set; }
 
         [ForeignKey("CreatedUser")]
-        public int? CreatedBy { get; set; } = 1;
+        public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
@@ -29,10 +38,10 @@ namespace SchoolManagementSystem.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         // Navigation properties
-
-        public Class Class { get; set; }
-        public Subject Subject { get; set; }
-        public User CreatedUser { get; set; }
-        public User UpdatedUser { get; set; }
+        public User? CreatedUser { get; set; }
+        public User? UpdatedUser { get; set; }
+        public Campus? Campus { get; set; }
+        public Class? Class { get; set; }
+        public Subject? Subject { get; set; }
     }
 }

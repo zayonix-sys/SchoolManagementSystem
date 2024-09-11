@@ -75,7 +75,14 @@ const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignment
     };
   });
 
-  const filteredClassassignments = combinedData.filter((item) =>
+  const sortedData = combinedData.sort((a, b) => {
+    if (a.roomNumber < b.roomNumber) return -1;
+    if (a.roomNumber > b.roomNumber) return 1;
+  
+    return 0;
+  });
+  
+  const filteredClassassignments = sortedData.filter((item) =>
     item.roomNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.className.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.sectionName.toLowerCase().includes(searchQuery.toLowerCase())
