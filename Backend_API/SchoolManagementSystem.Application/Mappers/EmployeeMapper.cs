@@ -86,5 +86,9 @@ namespace SchoolManagementSystem.Application.Mappers
             };
         }
 
+        public List<Employee> MapToEntities(EmployeeDTO dto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

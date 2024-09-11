@@ -12,20 +12,17 @@ namespace SchoolManagementSystem.Domain.Entities
 
         public int ApplicantId { get; set; }
         [ForeignKey(nameof(ApplicantId))]
-        public virtual Applicant Applicant { get; set; }
 
         public int? CampusId { get; set; }
         [ForeignKey(nameof(CampusId))]
-        public virtual Campus Campus { get; set; }
-
+        
         public int? ClassId { get; set; }
         [ForeignKey(nameof(ClassId))]
-        public virtual Class Class { get; set; }
 
         [MaxLength(50)]
         public string? ApplicationStatus { get; set; } = "Pending";
 
-        public DateTime? AdmissionDecisionDate { get; set; }
+        public DateOnly? AdmissionDecisionDate { get; set; }
 
         [MaxLength(255)]
         public string? Remarks { get; set; }
@@ -43,5 +40,9 @@ namespace SchoolManagementSystem.Domain.Entities
         public virtual User UpdatedByUser { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        public virtual Applicant Applicant { get; set; }
+        public virtual Campus Campus { get; set; }
+        public virtual Class Class { get; set; }
     }
 }

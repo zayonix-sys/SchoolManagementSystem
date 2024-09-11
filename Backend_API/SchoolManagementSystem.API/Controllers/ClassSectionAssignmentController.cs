@@ -78,7 +78,7 @@ namespace SchoolManagementSystem.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while assigning a new classroom.");
-                return StatusCode(500, "Internal server error.");
+                return StatusCode(500, ApiResponse<ClassSectionAssignmentDTO>.ErrorResponse(ex.Message));
             }
         }
 

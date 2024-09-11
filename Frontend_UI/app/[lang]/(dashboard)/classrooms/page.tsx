@@ -19,6 +19,7 @@ import { CampusData, getCampuses } from "@/services/campusService";
 import AssignClasses from "./add-assignclasses";
 import { fetchSection, SectionData } from "@/services/SectionService";
 import ClassAssignTable from "./classassign-table";
+import AddAssignClasses from "./add-assignclasses";
 
 const Classroom = () => {
   const [classes, setClasses] = useState<ClassData[]>([]);
@@ -76,7 +77,7 @@ const Classroom = () => {
           <AddClassroom campuses={campuses} />
           <AddClass/>
           <AddSection/>
-          <AssignClasses classes={classes} section={section} classroom={classroom}/>
+          <AssignClasses classes={classes} section={section} classroom={classroom} campus={campuses}/>
 
         </div>
       </div>
@@ -119,7 +120,7 @@ const Classroom = () => {
             <div className="col-span-12 md:col-span-8">
                   
                     {/* <ReportsCard/>x */}
-                    <ClassAssignTable classes={classes} section={section} classroom={classroom}/>
+                    <ClassAssignTable classes={classes} section={section} classroom={classroom} campus={campuses}/>
                   
                 </div>
           </AccordionContent>

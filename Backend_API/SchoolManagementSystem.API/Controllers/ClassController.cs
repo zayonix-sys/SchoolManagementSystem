@@ -33,7 +33,8 @@ namespace SchoolManagementSystem.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while fetching all classes.");
-                return StatusCode(500, "Internal server error.");
+                return StatusCode(500, ApiResponse<IEnumerable<ClassDto>>.ErrorResponse("Internal server error."));
+
             }
         }
 

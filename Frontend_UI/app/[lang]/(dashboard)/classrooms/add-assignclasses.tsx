@@ -11,10 +11,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ClassData } from '@/services/ClassService';
 import { SectionData } from '@/services/SectionService';
 import { addClassSectionAssignment } from '@/services/assignClassService';
+import { CampusData } from '@/services/campusService';
 
 //we can change the props "side"'s value to 'top', 'left', 'bottom', 'right' so that the sheet will come out from different direction.
  
 const assignclassesSchema = z.object({
+  campusId: z.coerce.number(),
   classroomId: z.coerce.number(),
   classId: z.coerce.number(),
   sectionId: z.coerce.number(),
@@ -26,19 +28,33 @@ interface ClassAssignmentProps {
   classes: ClassData[];
   classroom: ClassroomData[];
   section: SectionData[];
+  campus: CampusData[];
 }
 
-  export default function AddAssignClasses({classes, classroom, section,}: ClassAssignmentProps) {
+  export default function AddAssignClasses({classes, classroom, section, campus}: ClassAssignmentProps) {
 
     const {
       register,
       handleSubmit,
       setValue,
       reset,
+      watch,
       formState: { errors },
     } = useForm<AssignClassFormValues>({
       resolver: zodResolver(assignclassesSchema),
     });
+
+    const selectedCampusId = watch("campusId");
+    // const selectedClassId = watch("sectionId")
+
+    // Filter classrooms based on selected campusId
+    const filteredClassrooms = classroom.filter(
+       (classroomData) => classroomData.campusId === selectedCampusId
+  );
+
+  // const filteredSections = section.filter(
+  //   (sectionData) => sectionData.classId === selectedClassId
+  // );
 
     const onSubmit: SubmitHandler<AssignClassFormValues> = async (data) => {
       try {
@@ -54,9 +70,11 @@ interface ClassAssignmentProps {
           console.error("Error:", response);
           toast.error(`Error: ${response.message || "Something went wrong"}`);
         }
-      } catch (error) {
-        console.error("Request Failed:", error);
-        toast.error("Request Failed");
+      } catch (error: any) {
+        // Check if the error has a response message, else show fallback error
+        const errorMessage = error.response?.data?.message || "Request Failed";
+        console.error("Request Failed:", errorMessage);
+        toast.error(errorMessage);
       }
     };
   
@@ -90,6 +108,35 @@ interface ClassAssignmentProps {
               <div className="col-span-3">
                   <Select
                     onValueChange={(value) =>
+                      setValue("campusId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Campus" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {campus.map((campusData) => (
+                        <SelectItem
+                          className="hover:bg-default-300"
+                          key={campusData.campusId}
+                          value={campusData.campusId?.toString() ?? ""}
+                        >
+                          {campusData.campusName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {errors.campusId && (
+                    <p className="text-destructive">
+                      {errors.campusId.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="col-span-3">
+                  <Select
+                    onValueChange={(value) =>
                       setValue("classroomId", parseInt(value))
                     }
                   >
@@ -97,7 +144,7 @@ interface ClassAssignmentProps {
                       <SelectValue placeholder="Select Classroom" />
                     </SelectTrigger>
                     <SelectContent>
-                      {classroom.map((classroomData) => (
+                      {filteredClassrooms.map((classroomData) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={classroomData.classroomId}
@@ -115,6 +162,7 @@ interface ClassAssignmentProps {
                     </p>
                   )}
                 </div>
+
                 <div className="col-span-3 ">
                 <Select
                     onValueChange={(value) =>

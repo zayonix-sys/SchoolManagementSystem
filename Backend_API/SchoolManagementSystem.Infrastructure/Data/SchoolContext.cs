@@ -22,9 +22,15 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Employee> Employees { get; set; }
         public DbSet<EmployeeRole> EmployeeRoles { get; set; }
 
+        public DbSet<ClassSubject> ClassSubjects { get; set; }
+
         public DbSet<ClassSectionAssignment> ClassSectionAssignments { get; set; }
 
         public DbSet<Subject> Subjects { get; set; }
+
+        public DbSet<TimeTable> TimeTables { get; set; }
+
+        public DbSet<SubjectTeacherAssignment> SubjectTeachers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and keys here
@@ -59,6 +65,13 @@ namespace SchoolManagementSystem.Infrastructure.Data
             modelBuilder.Entity<Employee>()
                 .HasIndex(e => e.Email)
                 .IsUnique();
+
+            modelBuilder.Entity<ApplicantApplicationView>()
+                .HasNoKey();
+                
+
+            // Map the entity to the SQL Server view
+            modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
 
             base.OnModelCreating(modelBuilder);
         }
