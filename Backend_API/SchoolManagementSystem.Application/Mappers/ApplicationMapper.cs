@@ -23,6 +23,11 @@ namespace SchoolManagementSystem.Application.Mappers
             };
         }
 
+        public List<AdmissionApplication> MapToEntities(ApplicationDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+
         public AdmissionApplication MapToEntity(ApplicationDTO dto)
         {
             if (dto == null)

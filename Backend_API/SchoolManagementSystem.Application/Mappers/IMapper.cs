@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SchoolManagementSystem.Application.DTOs;
+using SchoolManagementSystem.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +12,6 @@ namespace SchoolManagementSystem.Application.Mappers
     {
         TDto MapToDto(TEntity entity);
         TEntity MapToEntity(TDto dto);
-        
+        List<TEntity> MapToEntities(TDto dto);
     }
 }

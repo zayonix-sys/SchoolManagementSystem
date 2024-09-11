@@ -27,6 +27,9 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<ClassSectionAssignment> ClassSectionAssignments { get; set; }
 
         public DbSet<Subject> Subjects { get; set; }
+
+        public DbSet<TimeTable> TimeTables { get; set; }
+
         public DbSet<SubjectTeacherAssignment> SubjectTeachers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

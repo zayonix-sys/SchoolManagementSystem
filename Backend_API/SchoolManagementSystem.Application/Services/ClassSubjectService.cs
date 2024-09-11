@@ -34,43 +34,98 @@ namespace SchoolManagementSystem.Application.Services
         //        throw;
         //    }
         //}
-
+        //
         public async Task AddClassSubjectAsync(ClassSubjectAssignmentDTO classsubject)
         {
-
             try
             {
-                var entities = _mapper.MapToEntity(classsubject);
+                //var existingEntity = await _classSubjectRepository.GetByIdAsync(classsubject.ClassId);
+
+                //if (existingEntity != null)
+                //{
+                //    var existingSubjectIds = existingEntity.SubjectId?.Split(',').Select(int.Parse).ToList() ?? new List<int>();
+                //    var newSubjectIds = classsubject.SubjectIds.Except(existingSubjectIds).ToList();
+
+                //    if (!newSubjectIds.Any())
+                //    {
+                //        throw new Exception("All subjects are already assigned to this class.");
+                //    }
+
+                //    existingSubjectIds.AddRange(newSubjectIds);
+                //    existingEntity.SubjectId = string.Join(",", existingSubjectIds);
+                //    existingEntity.UpdatedAt = DateTime.Now;
+                //    existingEntity.UpdatedBy = classsubject.UpdatedBy;
+
+                //    await _classSubjectRepository.UpdateAsync(existingEntity);
+                //}
+                //else
+                //{
+                //    var entity = _mapper.MapToEntity(classsubject);
+                //    await _classSubjectRepository.AddAsync(entity);
+                //}
+
+                var entities = _mapper.MapToEntities(classsubject);
 
                 foreach (var entity in entities)
                 {
-                    var existingEntity = await _classSubjectRepository.
-                        GetAllAsync(cs => cs.ClassId == entity.ClassId && cs.SubjectId == entity.SubjectId);
+                    var existingEntities = await _classSubjectRepository.GetAllAsync(
+                        cs => cs.ClassId == entity.ClassId && cs.SubjectId == entity.SubjectId
+                    );
 
-                    if (existingEntity == null)
+                    if (existingEntities != null && existingEntities.Any())
                     {
-                        throw new Exception("Couldn't assign subjects");
+                        throw new Exception("Subject already assigned to this class.");
                     }
 
-                    var model = _classSubjectRepository.AddAsync(entity);
-                    _classSubjectRepository.AddAsync(entity);
+                    await _classSubjectRepository.AddAsync(entity);
                 }
-             }
-            catch (Exception)
+            }
+            catch (Exception ex)
             {
-                throw;
+                throw new Exception("An error occurred while adding class subjects.", ex);
+            }
+        }
+
+        public async Task UpdateClassSubjectAsync(ClassSubjectAssignmentDTO classsubject)
+        {
+            try
+            {
+                var existingEntities = await _classSubjectRepository.GetAllAsync(cs => cs.ClassId == classsubject.ClassId);
+
+                foreach (var existingEntity in existingEntities)
+                {
+                    await _classSubjectRepository.DeleteAsync(existingEntity);
+                }
+
+                var entities = _mapper.MapToEntities(classsubject);
+                foreach (var entity in entities)
+                {
+                    await _classSubjectRepository.AddAsync(entity);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating class subjects.", ex);
             }
         }
 
 
-        public async Task DeleteClassSubjectAsync(int classsubjectId)
+        public async Task DeleteClassSubjectAsync(int classId)
         {
-            var result = await _classSubjectRepository.GetByIdAsync(classsubjectId);
-            if (result != null)
+
+            var existingEntities = await _classSubjectRepository.GetAllAsync(cs => cs.ClassId == classId);
+
+            foreach (var existingEntity in existingEntities)
             {
-                result.IsActive = false;
-                await _classSubjectRepository.UpdateAsync(result);
+                existingEntity.IsActive = false;
+                await _classSubjectRepository.UpdateAsync(existingEntity);
             }
+            //var result = await _classSubjectRepository.GetByIdAsync(classsubjectId);
+            //if (result != null)
+            //{
+            //    result.IsActive = false;
+            //    await _classSubjectRepository.UpdateAsync(result);
+            //}
         }
 
         public async Task<List<ClassSubjectAssignmentDTO>> GetAllClassSubjectAsync()
@@ -82,12 +137,6 @@ namespace SchoolManagementSystem.Application.Services
             var classSubjectAssignmentDtos = activeClasssubjects.Select(c => _mapper.MapToDto(c)).ToList();
 
             return classSubjectAssignmentDtos;
-        }
-
-        public async Task UpdateClassSubjectAsync(ClassSubjectAssignmentDTO classsubject)
-        {
-            var model = _mapper.MapToEntity(classsubject);
-            //await _classSubjectRepository.UpdateAsync(model);
         }
 
 

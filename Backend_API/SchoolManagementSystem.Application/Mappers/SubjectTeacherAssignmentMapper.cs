@@ -29,5 +29,9 @@ namespace SchoolManagementSystem.Application.Mappers
             };
         }
 
+        public List<SubjectTeacherAssignment> MapToEntities(SubjectTeacherAssignmentDTO dto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
