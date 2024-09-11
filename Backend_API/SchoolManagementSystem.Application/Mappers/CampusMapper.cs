@@ -68,5 +68,10 @@ namespace SchoolManagementSystem.Application.Mappers
                 }).ToList(),
             };
         }
+
+        public List<Campus> MapToEntities(CampusDTO dto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -85,33 +85,33 @@ namespace SchoolManagementSystem.API.Controllers
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateClassSubjectAssignment(ClassSubjectAssignmentDTO classsubject)
         {
-            _logger.LogInformation("Updating Class Subject Assignment with ID {ClassSubjectId}.", classsubject.ClassSubjectId);
+            _logger.LogInformation("Updating Class Subject Assignment with ID {ClassId}.", classsubject.ClassId);
             try
             {
                 await _classSubjectService.UpdateClassSubjectAsync(classsubject);
-                _logger.LogInformation("Successfully updated Subjects Assigning to Class with ID {ClassSubjectId}.", classsubject.ClassSubjectId);
+                _logger.LogInformation("Successfully updated Subjects Assigning to Class with ID {ClassId}.", classsubject.ClassId);
                 return Ok(ApiResponse<ClassSubjectAssignmentDTO>.SuccessResponse(classsubject, "Subjects Assignment updated successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while updating Class Subject Assignment with ID {ClassSubjectId}.", classsubject.ClassSubjectId);
+                _logger.LogError(ex, "An error occurred while updating Class Subject Assignment with ID {ClassId}.", classsubject.ClassId);
                 return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
             }
         }
 
         [HttpDelete("[action]")]
-        public async Task<IActionResult> DeleteClassSubjectAssignment(int classsubjectId)
+        public async Task<IActionResult> DeleteClassSubjectAssignment(int classId)
         {
-            _logger.LogInformation("Deleting class Subject Assignment with ID {ClassSubjectId}.", classsubjectId);
+            _logger.LogInformation("Deleting class Subject Assignment with ID {classId}.", classId);
             try
             {
-                await _classSubjectService.DeleteClassSubjectAsync(classsubjectId);
-                _logger.LogInformation("Successfully deleted Class Subject Assignment with ID {ClassSubjecId}.", classsubjectId);
+                await _classSubjectService.DeleteClassSubjectAsync(classId);
+                _logger.LogInformation("Successfully deleted Class Subject Assignment with ID {classId}.", classId);
                 return Ok(ApiResponse<object>.SuccessResponse(null, "Subjects Assigned to Class deleted successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while deleting subjects assigned to class with ID {ClassSubjectId}.", classsubjectId);
+                _logger.LogError(ex, "An error occurred while deleting subjects assigned to class with ID {classId}.", classId);
                 return StatusCode(500, "Internal server error.");
             }
         }

@@ -22,6 +22,12 @@ namespace SchoolManagementSystem.Application.Mappers
                 Campus = entity.Campus,
             };
         }
+
+        public List<Department> MapToEntities(DepartmentDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+
         public Department MapToEntity(DepartmentDTO dto)
         {
             return new Department

@@ -56,6 +56,8 @@ builder.Services.AddScoped<IClassSectionAssignment, ClassSectionAssignmentServic
 builder.Services.AddScoped<ClassSectionAssignmentMapper>();
 builder.Services.AddScoped<IClassSubject, ClassSubjectService>();
 builder.Services.AddScoped<ClassSubjectMapper>();
+builder.Services.AddScoped<ITimeTable, TimeTableService>();
+builder.Services.AddScoped<TimeTableMapper>();
 
 builder.Services.AddScoped<IStudent, StudentService>();
 builder.Services.AddScoped<ISubject, SubjectService>();

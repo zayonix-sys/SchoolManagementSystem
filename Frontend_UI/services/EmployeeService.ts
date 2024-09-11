@@ -4,7 +4,7 @@ import { ApiResponse } from "./apiResponse";
 export interface EmployeesData {
   employeeId?: number;
   roleId?: number;
-  roleName?: string;
+  employeeRoleName?: string;
   campusId?: number;
   campusName?: string;
   departmentId?: number;

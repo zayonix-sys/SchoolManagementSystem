@@ -46,6 +46,11 @@ namespace SchoolManagementSystem.Application.Mappers
             };
         }
 
+        public List<ApplicantApplicationView> MapToEntities(ApplicantApplicationViewDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+
         public ApplicantApplicationView MapToEntity(ApplicantApplicationViewDTO dto)
         {
             if (dto == null)

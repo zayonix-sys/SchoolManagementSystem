@@ -1,11 +1,18 @@
 import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
-export interface ApplicantApplicationDetail {
-  // Application Details
-  applicationId: number;
-  applicantId?: number;
-  applicationStatus: string;
+export interface ApplicantData {
+  applicantId?:number;
+  firstName: string;
+  lastName: string;
+  formBNumber: string;
+  dateOfBirth: string;
+  gender: string;
+  email: string;
+  applicantAddress: string;
+  nationality?: string;
+  lastClassId?: number;
+  admissionClassId?: number;
   campusId?: number;
   campusName?: string;
   admissionDecisionDate?: string; // DateOnly in C#, use string or Date in TypeScript
@@ -14,12 +21,11 @@ export interface ApplicantApplicationDetail {
   // Applied Class Details
   appliedClassId?: number;
   appliedClassName?: string;
-
-  // Last Attended Class Details
+}
+export interface ApplicantAdmissionDTO {
+  // Applicant Details
   lastClassId?: number;
-  lastAttendedClassName?: string;
-
-  // Applicant Personal Details
+  admissionClassId?: number;
   firstName: string;
   lastName: string;
   formBNumber: string;

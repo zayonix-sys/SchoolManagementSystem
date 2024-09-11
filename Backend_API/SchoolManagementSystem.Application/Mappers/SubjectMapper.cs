@@ -31,5 +31,9 @@ namespace SchoolManagementSystem.Application.Mappers
             };
         }
 
+        public List<Subject> MapToEntities(SubjectDTO dto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

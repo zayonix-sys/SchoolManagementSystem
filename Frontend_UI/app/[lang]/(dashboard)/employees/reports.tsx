@@ -70,7 +70,7 @@ const ReportsCard = () => {
                <div className={"text-3xl font-semibold text-${item.color} mt-1"}>
               {item.count}
             </div>
-            {item.id === 1 && <ViewRole selectedRole={roles} />}
+            {item.id === 1 && <ViewRole selectedRole={roles[0]} />}
             </div>
           </Card>
         ))

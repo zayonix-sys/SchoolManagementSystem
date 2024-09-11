@@ -35,5 +35,6 @@ namespace SchoolManagementSystem.Domain.Entities
         // Navigation properties
         public User CreatedUser { get; set; }
         public User UpdatedUser { get; set; }
+        public virtual ICollection<TimeTable>? TimeTables { get; set; }
     }
 }

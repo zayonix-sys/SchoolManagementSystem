@@ -31,5 +31,6 @@ namespace SchoolManagementSystem.Domain.Entities
         // Navigation properties
         public User CreatedUser { get; set; }
         public User UpdatedUser { get; set; }
+        public TimeTable? TimeTable { get; set; }
     }
 }

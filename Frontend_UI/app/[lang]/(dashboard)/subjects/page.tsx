@@ -1,65 +1,56 @@
-"use client"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+"use client";
+import { useEffect, useState } from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Breadcrumbs, BreadcrumbItem } from "@/components/ui/breadcrumbs";
 import { Table } from "@/components/ui/table";
 import SubjectReportCard from "./reports";
 import AddSubject from "./add-subject";
 import AddAssignSubject from "./add-assignsubject";
-import { ClassData, fetchClasses } from "@/services/ClassService";
-import { fetchSubject, SubjectData } from "@/services/subjectService";
-import { useEffect, useState } from "react";
 import SubjectAssignTable from "./classSubject-table";
-
-const Subjects = () => {
-  const [classes, setClasses] = useState<ClassData[]>([]);
-  const [subject, setSubject] = useState<SubjectData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchClassesAndSubjectData = async () => {
-      setLoading(true);
-      try {
-        const classData = await fetchClasses();
-        const subjectData = await fetchSubject();
-        setClasses(classData.data as ClassData[]);
-        setSubject(subjectData.data as SubjectData[]);
-
-import SubjectTeacherTable from "./veiw-subject-teacher";
 import AssignSubjectTeacher from "./assign-subject-teacher";
-import { useEffect, useState } from "react";
+import SubjectTeacherTable from "./veiw-subject-teacher";
+import { ClassData, fetchClasses } from "@/services/ClassService";
 import { fetchSubject, SubjectData } from "@/services/subjectService";
 import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
 
-
 const Subjects = () => {
-  const [employees, setEmployees] = useState<EmployeesData[]>([]);
+  const [classes, setClasses] = useState<ClassData[]>([]);
   const [subjects, setSubjects] = useState<SubjectData[]>([]);
+  const [employees, setEmployees] = useState<EmployeesData[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-   
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    const fetchEmployeeAndSubjectData = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const employeeResponse = await fetchEmployees();
-        const subjectResponse = await fetchSubject();
-        setEmployees(employeeResponse.data as EmployeesData[]);
-        setSubjects(subjectResponse.data as SubjectData[]);
+        const [classData, subjectData, employeeData] = await Promise.all([
+          fetchClasses(),
+          fetchSubject(),
+          fetchEmployees(),
+        ]);
 
+        setClasses(classData.data as ClassData[]);
+        setSubjects(subjectData.data as SubjectData[]);
+        setEmployees(employeeData.data as EmployeesData[]);
       } catch (err) {
-        setError(err as any);
+        setError((err as Error).message);
       } finally {
         setLoading(false);
       }
     };
 
-
-    fetchClassesAndSubjectData();
-
-    fetchEmployeeAndSubjectData();
-
+    fetchData();
   }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <div>
       <div>
@@ -69,22 +60,20 @@ const Subjects = () => {
         </Breadcrumbs>
         <div className="flex justify-end space-x-4">
           <AddSubject />
-
-          <AddAssignSubject classes={classes} subject={subject} />
-          <AssignSubjectTeacher subject={subjects} employee={employees}/>
-
+          <AddAssignSubject classes={classes} subject={subjects} />
+          <AssignSubjectTeacher subject={subjects} employee={employees} />
         </div>
       </div>
+
       <Accordion
         type="single"
         collapsible
         className="w-full border rounded-md divide-y mt-5"
-        defaultValue={`item-1`}
+        defaultValue="item-1"
       >
-        <AccordionItem value="item-1" className=" shadow-none rounded-none open">
+        <AccordionItem value="item-1" className="shadow-none rounded-none open">
           <AccordionTrigger>Subject Details</AccordionTrigger>
           <AccordionContent>
-
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5">
                 <SubjectReportCard />
@@ -99,21 +88,19 @@ const Subjects = () => {
         type="single"
         collapsible
         className="w-full border rounded-md divide-y mt-5"
-        defaultValue={`item-1`}
+        defaultValue="item-2"
       >
-        <AccordionItem value="item-1" className=" shadow-none rounded-none open">
-          <AccordionTrigger>Subject Details</AccordionTrigger>
+        <AccordionItem value="item-2" className="shadow-none rounded-none open">
+          <AccordionTrigger>Class Subject Details</AccordionTrigger>
           <AccordionContent>
             <div className="col-span-12 md:col-span-8">
-              <SubjectAssignTable  classes={classes} subject={subject}/>
+              <SubjectAssignTable classes={classes} subject={subjects} />
             </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
 
-
-
-    <SubjectTeacherTable employee={employees} subject={subjects} />
+      <SubjectTeacherTable employee={employees} subject={subjects} />
     </div>
   );
 };
