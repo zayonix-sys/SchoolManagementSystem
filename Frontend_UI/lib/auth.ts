@@ -1,6 +1,6 @@
 import Credentials from "next-auth/providers/credentials";
 
-import {User as UserType, user} from "@/app/api/user/data";
+// import {User as UserType, user} from "@/app/api/user/data";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 
@@ -29,23 +29,23 @@ export const authOptions = {
           password: string,
         };
           
-        const foundUser = user.find((u) => u.email === email)
+        // const foundUser = user.find((u) => u.email === email)
 
-        if (!foundUser) {
-          return null;
-        }
+        // if (!foundUser) {
+        //   return null;
+        // }
 
-        const valid = password === foundUser.password  
+        // const valid = password === foundUser.password  
 
-        if (!valid) {
+        // if (!valid) {
           
-          return null;
-        }
+        //   return null;
+        // }
 
-        if (foundUser) {
-          return foundUser as any
+        // if (foundUser) {
+        //   return foundUser as any
           
-        }
+        // }
         return null;
       }
       
