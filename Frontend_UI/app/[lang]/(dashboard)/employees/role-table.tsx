@@ -22,7 +22,7 @@ const RoleListTable = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const itemsPerPage = 10;
+  const itemsPerPage = 50;
 
   useEffect(() => {
     const fetchRolesData = async () => {
