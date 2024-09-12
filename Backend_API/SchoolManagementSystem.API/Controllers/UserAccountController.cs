@@ -48,21 +48,26 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDTO dto)
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ApiResponse<LoginDTO>>> Login([FromBody] LoginDTO dto)
         {
+            _logger.LogInformation("Login with username {username}.", dto.UserName);
             try
             {
                 var user = await _userAccountService.ValidUser(dto);
                 if (user != null)
                 {
                     var token = GenerateJwtToken(user.UserName);
-                    return Ok(new { token });
+                    dto.Token = token;
+                    _logger.LogInformation("Successfully Login with {username}.", dto.UserName);
+                    return Ok(ApiResponse<LoginDTO>.SuccessResponse(dto, "Login successfully"));
+
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, "An error occurred while Login.");
+                return StatusCode(500, ApiResponse<LoginDTO>.ErrorResponse("Internal server error."));
             }
 
             return Unauthorized();
