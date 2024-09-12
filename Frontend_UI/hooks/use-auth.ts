@@ -1,51 +1,42 @@
+import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-// import { signIn as nextAuthSignIn, signOut as nextAuthSignOut } from "next-auth/react";
-// import { useRouter } from "next/router";
 
-export const useAuth = () => {
-  const [auth, setAuth] = useState<boolean>(false);
-//   const router = useRouter();
+const useAuth = () => {
+  const [token, setToken] = useState<string | null>(null);
+  const router = typeof window !== "undefined" ? useRouter() : null; // Ensure router only runs on the client
 
-//   useEffect(() => {
-//     // Ensure the code runs only on the client-side
-//     if (typeof window !== "undefined") {
-//       const token = localStorage.getItem("authToken");
-//       if (token) {
-//         setAuth(true);
-//       }
-//     }
-//   }, []);
+  // Load token from local storage when app starts
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("authToken");
+      setToken(storedToken);
+    }
+  }, []);
 
-//   const logIn = async (email: string, password: string) => {
-//     const response = await nextAuthSignIn("credentials", {
-//       email,
-//       password,
-//       redirect: false, // Handle redirects manually
-//     });
+  const login = (newToken: string) => {
+    setToken(newToken);
+    localStorage.setItem("authToken", newToken);
+    if (router) {
+      router.push("/dashboard"); // Redirect to dashboard on login
+    }
+  };
 
-//     if (response?.ok) {
-//       // Ensure window is available before using localStorage
-//       if (typeof window !== "undefined") {
-//         localStorage.setItem("authToken", "sample-token"); // Replace with actual token
-//         setAuth(true);
-//         // Use router.push inside useEffect to avoid the NextRouter issue
-//         router.push("/campuses");
-//       }
-//     } else if (response?.error) {
-//       throw new Error(response?.error);
-//     }
-//   };
+  const logout = () => {
+    setToken(null);
+    localStorage.removeItem("authToken");
+    if (router) {
+      router.push("/login"); // Redirect to login on logout
+    }
+  };
 
-//   const logOut = () => {
-//     if (typeof window !== "undefined") {
-//       localStorage.removeItem("authToken");
-//       setAuth(false);
-//       nextAuthSignOut();
-//       router.push("/"); // Redirect to login page
-//     }
-//   };
+  const isAuthenticated = token !== null; // Add this line
 
-  return { auth, 
-    // logIn, logOut 
+  return {
+    token,
+    login,
+    logout,
+    isAuthenticated, // Add this line
+  };
 };
-};
+
+export default useAuth;
