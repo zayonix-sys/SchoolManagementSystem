@@ -23,8 +23,21 @@ namespace SchoolManagementSystem.Application.Services
         {
             try
             {
-                var model = _mapper.MapToEntity(subteach);
-                await _SubjectTeacherAssignmentRepository.AddAsync(model);
+                var entities = _mapper.MapToEntities(subteach);
+
+                foreach (var entity in entities)
+                {
+                    var existingEntities = await _SubjectTeacherAssignmentRepository.GetAllAsync(
+                        cs => cs.EmployeeId == entity.EmployeeId && cs.SubjectId == entity.SubjectId
+                    );
+
+                    if (existingEntities != null && existingEntities.Any())
+                    {
+                        throw new Exception("Subject already assigned to this Teacher.");
+                    }
+
+                    await _SubjectTeacherAssignmentRepository.AddAsync(entity);
+                }
             }
             catch (Exception)
             {
@@ -33,15 +46,16 @@ namespace SchoolManagementSystem.Application.Services
             }
         }
 
-        public async Task DeleteSubjectTeacherAsync(int assignmentId)
+        public async Task DeleteSubjectTeacherAsync(int employeeId)
         {
             try
             {
-                var result = await _SubjectTeacherAssignmentRepository.GetByIdAsync(assignmentId);
-                if (result != null)
+                var existingEntities = await _SubjectTeacherAssignmentRepository.GetAllAsync(cs => cs.EmployeeId == employeeId);
+
+                foreach (var existingEntity in existingEntities)
                 {
-                    result.IsActive = false;
-                    await _SubjectTeacherAssignmentRepository.UpdateAsync(result);
+                    existingEntity.IsActive = false;
+                    await _SubjectTeacherAssignmentRepository.UpdateAsync(existingEntity);
                 }
             }
             catch (Exception)
@@ -81,9 +95,17 @@ namespace SchoolManagementSystem.Application.Services
         {
             try
             {
-                var model = _mapper.MapToEntity(subteach);
+                var existingEntities = await _SubjectTeacherAssignmentRepository.GetAllAsync(cs => cs.EmployeeId == subteach.EmployeeId);
 
-                await _SubjectTeacherAssignmentRepository.UpdateAsync(model);
+                foreach (var existingEntity in existingEntities)
+                {
+                    await _SubjectTeacherAssignmentRepository.DeleteAsync(existingEntity);
+                }
+                var entities = _mapper.MapToEntities(subteach);
+                foreach (var entity in entities)
+                {
+                    await _SubjectTeacherAssignmentRepository.AddAsync(entity);
+                }
             }
             catch (Exception)
             {

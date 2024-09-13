@@ -9,7 +9,9 @@ namespace SchoolManagementSystem.Application.Mappers
             return new SubjectTeacherAssignment
             {
                 SubjectTeacherId = dto.SubjectTeacherId,
-                SubjectId = dto.SubjectId,
+                //SubjectId = dto.SubjectId,
+                SubjectId = dto.SubjectIds.FirstOrDefault(),
+
                 EmployeeId = dto.EmployeeId,
                 IsActive = dto.IsActive,
             };
@@ -19,7 +21,9 @@ namespace SchoolManagementSystem.Application.Mappers
             return new SubjectTeacherAssignmentDTO
             {
                 SubjectTeacherId = entity.SubjectTeacherId,
-                SubjectId = entity.SubjectId,
+                //SubjectId = entity.SubjectId,
+                SubjectIds = entity.SubjectId.HasValue ? new List<int> { entity.SubjectId.Value } : new List<int>(),
+
                 EmployeeId = entity.EmployeeId,
                 EmployeeRoleName = entity.Employee.EmployeeRole.RoleName,
                 SubjectName = entity.Subject.SubjectName,
@@ -31,7 +35,20 @@ namespace SchoolManagementSystem.Application.Mappers
 
         public List<SubjectTeacherAssignment> MapToEntities(SubjectTeacherAssignmentDTO dto)
         {
-            throw new NotImplementedException();
+            var entities = new List<SubjectTeacherAssignment>();
+
+            foreach (var subjectId in dto.SubjectIds)
+            {
+                entities.Add(new SubjectTeacherAssignment
+                {
+                    SubjectTeacherId = dto.SubjectTeacherId,
+                    EmployeeId = dto.EmployeeId,
+                    SubjectId = subjectId,
+                    IsActive = dto.IsActive
+                });
+            }
+
+            return entities;
         }
     }
 }

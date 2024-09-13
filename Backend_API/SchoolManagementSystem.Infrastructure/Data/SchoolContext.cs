@@ -31,6 +31,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<TimeTable> TimeTables { get; set; }
 
         public DbSet<SubjectTeacherAssignment> SubjectTeachers { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -68,7 +69,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
             modelBuilder.Entity<ApplicantApplicationView>()
                 .HasNoKey();
-                
+
             // Map the entity to the SQL Server view
             modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
 
