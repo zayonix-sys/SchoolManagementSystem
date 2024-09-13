@@ -40,10 +40,11 @@ const SubjectReportCard = () => {
       setLoading(true);
       try {
         const employeeSubjectResponse = await getSubjectTeacher();
-        // const employeeResponse = await fetchEmployees();
-        // const subjectResponse = await fetchSubject();
+        const employeeResponse = await fetchEmployees();
+        const subjectResponse = await fetchSubject();
         setSubjectTeacher(employeeSubjectResponse.data as SubjectTeacherData[]);
-        // setSubject(subjectResponse.data as SubjectData[]);
+        setSubject(subjectResponse.data as SubjectData[]);
+        setEmployees(employeeResponse.data as EmployeesData[]);
       } catch (err) {
         setError(err as any);
       } finally {
@@ -79,7 +80,7 @@ const SubjectReportCard = () => {
       name: "No. of Subjects Teacher",
       count: (subjectTeacherCount ? subjectTeacherCount : 0).toString(),
       rate: "8.2",
-      icon: <Docs className="w-6 h-6 text-destructive" />,
+      icon: <Docs className="w-6 h-6 text-info" />,
       color: "destructive"
     },
 
