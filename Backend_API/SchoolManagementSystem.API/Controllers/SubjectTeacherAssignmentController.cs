@@ -73,23 +73,23 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
-        //[HttpDelete("[action]")]
-        //public async Task<IActionResult> DeleteSubjectTeacher(int assignmentId)
-        //{
-        //    _logger.LogInformation("Deleting subject teacher Assignment with ID {SubjectTeacherId}.", assignmentId);
-        //    try
-        //    {
-        //        await _subjectTeacherAssignmentService.DeleteSubjectTeacherAsync(assignmentId);
-        //        _logger.LogInformation("Successfully deleted subject Assignment with ID {SubjectTeacherId}.", assignmentId);
-        //        return Ok(ApiResponse<object>.SuccessResponse(null, "subject Assignment deleted successfully"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "An error occurred while deleting subject assignment with ID {SubjectTeacherId}.", assignmentId);
-        //        return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
+        [HttpDelete("[action]")]
+        public async Task<IActionResult> DeleteSubjectTeacher(int employeeId)
+        {
+            _logger.LogInformation("Deleting subject teacher Assignment with ID {SubjectTeacherId}.", employeeId);
+            try
+            {
+                await _subjectTeacherAssignmentService.DeleteSubjectTeacherAsync(employeeId);
+                _logger.LogInformation("Successfully deleted subject Assignment with ID {SubjectTeacherId}.", employeeId);
+                return Ok(ApiResponse<object>.SuccessResponse(null, "subject Assignment deleted successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting subject assignment with ID {SubjectTeacherId}.", employeeId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
 
-        //    }
-        //}
+            }
+        }
 
     }
 }

@@ -1,66 +1,93 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { SubjectData } from "@/services/subjectService";
 import { EmployeesData } from "@/services/EmployeeService";
-import { getSubjectTeacher, SubjectTeacherData } from "@/services/subjectTeacherService";
+import { deleteSubjectTeacher, getSubjectTeacher, SubjectTeacherData } from "@/services/subjectTeacherService";
 import EditSubjectTeacher from "./edit-subject-teacher";
+import { toast } from "sonner";
+import ConfirmationDialog from "../common/confirmation-dialog";
 
 interface SubjectTeacherProps {
   employee: EmployeesData[];
   subject: SubjectData[];
 }
 
+const itemsPerPage = 8;
+
 const SubjectTeacherTable = ({ employee, subject }: SubjectTeacherProps) => {
   const [subjectTeacherAssignment, setSubjectTeacherAssignment] = useState<SubjectTeacherData[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [subjectTeacherToDelete, setSubjectTeacherToDelete] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
-  useEffect(() => {
-    const fetchSubjectTeacher = async () => {
-      setLoading(true);
-      try {
-        const response = await getSubjectTeacher();
-        setSubjectTeacherAssignment(response.data as SubjectTeacherData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchSubjectTeacher();
+  const fetchSubjectTeacher = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getSubjectTeacher();
+      setSubjectTeacherAssignment(response.data as SubjectTeacherData[]);
+    } catch (err) {
+      setError("Failed to fetch data.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
-    const filtered = subjectTeacherAssignment.filter((item) =>
-      item.employeeName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.subjectName?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filtered.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(filtered.length / itemsPerPage);
-    const handlePreviousPage = () => {
-      setCurrentPage((prev) => Math.max(prev - 1, 1));
-    };
-    const handleNextPage = () => {
-      setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-    };
 
+  useEffect(() => {
+    fetchSubjectTeacher();
+  }, [fetchSubjectTeacher]);
+
+  const groupedAssignments = subjectTeacherAssignment.reduce((acc, assignment) => {
+    const associatedEmployee = employee.find(cls => cls?.employeeId === assignment?.employeeId);
+    const associatedSubjects = subject.filter(sub => assignment.subjectIds?.includes(sub.subjectId ?? 0));
+
+    if (associatedEmployee) {
+      if (!acc[assignment.employeeId]) {
+        acc[assignment.employeeId] = {
+          subjectTeacherId: assignment.subjectTeacherId,
+          employeeId: assignment.employeeId,
+          employeeName: assignment.employeeName,
+          subjects: [],
+          subjectIds: assignment.subjectIds ?? [],
+          isActive: assignment.isActive ?? false,
+        };
+      }
+      acc[assignment.employeeId].subjects.push(...associatedSubjects.map(sub => sub.subjectName));
+    }
+    return acc;
+  }, {} as Record<number, { subjectTeacherId?: number; employeeId: number; subjectIds: number[]; employeeName?: string; subjects: string[]; isActive?: boolean }>);
+
+  const combinedData = Object.values(groupedAssignments);
+  const filtered = combinedData.filter(item => item.employeeName?.toLowerCase().includes(searchQuery.toLowerCase()));
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filtered.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
+  const handlePageChange = (direction: "previous" | "next") => {
+    setCurrentPage(prev => direction === "previous" ? Math.max(prev - 1, 1) : Math.min(prev + 1, totalPages));
+  };
+
+  const handleDeleteConfirmation = (id: number) => setSubjectTeacherToDelete(id);
+  const handleCancelDelete = () => setSubjectTeacherToDelete(null);
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteSubjectTeacher(id);
+      toast.success("Subject Teacher deleted successfully");
+      setSubjectTeacherToDelete(null);
+    } catch (error) {
+      console.error("Error deleting Subject Teacher:", error);
+      toast.error("Failed to delete Subject Teacher");
+    }
+  };
 
   return (
     <>
@@ -76,25 +103,21 @@ const SubjectTeacherTable = ({ employee, subject }: SubjectTeacherProps) => {
       <Table className="text-left condensed">
         <TableHeader>
           <TableRow>
-          <TableHead className="h-10 p-2.5">Teacher Name</TableHead>
-          
+            <TableHead className="h-10 p-2.5">Teacher Name</TableHead>
             <TableHead className="h-10 p-2.5">Subject Name</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
             <TableHead className="h-10 p-2.5 text-end">Action</TableHead>
           </TableRow>
         </TableHeader>
-
         <TableBody>
-          {currentItems.map((item) => (
+          {currentItems.map(item => (
             <TableRow
               key={item.subjectTeacherId}
               className="hover:bg-default-200"
-              data-state={
-                selectedRows.includes(item.subjectTeacherId!) && "selected"
-              }
-            > 
-              <TableCell className="p-2.5">{item?.employeeName}</TableCell>
-              <TableCell className="p-2.5">{item?.subjectName}</TableCell>
+              data-state={selectedRows.includes(item.subjectTeacherId!) ? "selected" : undefined}
+            >
+              <TableCell className="p-2.5">{item.employeeName}</TableCell>
+              <TableCell className="p-2.5">{item.subjects.join(" | ")}</TableCell>
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
@@ -104,39 +127,41 @@ const SubjectTeacherTable = ({ employee, subject }: SubjectTeacherProps) => {
                   {item.isActive ? "Active" : "Inactive"}
                 </Badge>
               </TableCell>
-
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                 <EditSubjectTeacher subjectTeacherData={item} />
-
-                  {/* <Button
+                  <EditSubjectTeacher subjectTeacherData={item} />
+                  <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    // onClick={() => handleDelete(item.classSubjectId!)}
+                    onClick={() => handleDeleteConfirmation(item.employeeId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
-                  </Button> */}
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-
-   
       <div className="flex justify-between items-center mt-4">
-        <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
+        <Button onClick={() => handlePageChange("previous")} disabled={currentPage === 1}>
           Previous
         </Button>
         <span>
           Page {currentPage} of {totalPages}
         </span>
-        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+        <Button onClick={() => handlePageChange("next")} disabled={currentPage === totalPages}>
           Next
         </Button>
       </div>
+      {subjectTeacherToDelete !== null && (
+        <ConfirmationDialog
+          onDelete={() => handleDelete(subjectTeacherToDelete)}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </>
   );
 };

@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,67 +20,79 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
 import { fetchSubject, SubjectData } from "@/services/subjectService";
 import { SubjectTeacherData, updateSubjectTeacher } from "@/services/subjectTeacherService";
+import { Checkbox } from "@/components/ui/checkbox";
+
 const subjectTeacherSchema = z.object({
   subjectTeacherId: z.coerce.number().optional(),
-  employeeId: z.coerce.number(),
-  subjectId: z.number().min(1, "Subject is Required"),
+  employeeId: z.number().min(1, "Employee is required"),
+  subjectIds: z.array(z.number().min(1, "Subject is Required")),
 });
 
 type SubjectTeacherFormValues = z.infer<typeof subjectTeacherSchema>;
 
-export default function EditSubjectTeacher({subjectTeacherData}: 
-  {
-    subjectTeacherData: SubjectTeacherData
-  }) {
+export default function EditSubjectTeacher({
+  subjectTeacherData
+}: {
+  subjectTeacherData: SubjectTeacherData;
+}) {
+  const { employeeId, subjectIds = []  } = subjectTeacherData || {};
 
-  const {employeeId, subjectId, subjectTeacherId} = subjectTeacherData;
-
-
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<SubjectTeacherFormValues>({
+  const { register, handleSubmit, setValue, reset, watch, formState: { errors } } = useForm<SubjectTeacherFormValues>({
     resolver: zodResolver(subjectTeacherSchema),
     defaultValues: {
       employeeId,
-      subjectId,
+      subjectIds,
     },
   });
+
 
   const [employee, setEmployee] = useState<EmployeesData[]>([]);
   const [subjects, setSubjects] = useState<SubjectData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-
   const subjectTeacher = employee.filter(
     (emp) => emp.employeeRoleName === "Teacher"
   );
+
   useEffect(() => {
+    console.log("subjectTeacherData: ", subjectTeacherData);
+    
     const fetchEmployeeAndSubjectData = async () => {
       setLoading(true);
-      try{
-      const [employeeResponse, subjectResponse] = await Promise.all([
-        fetchEmployees(),
-        fetchSubject()
-      ]);
+      try {
+        const [employeeResponse, subjectResponse] = await Promise.all([
+          fetchEmployees(),
+          fetchSubject()
+        ]);
         setEmployee(employeeResponse.data as EmployeesData[]);
         setSubjects(subjectResponse.data as SubjectData[]);
-              
       } catch (err) {
         setError(err as any);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchEmployeeAndSubjectData();
   }, []);
 
+  useEffect(() => {
+    if (subjectTeacherData) {
+      reset({
+        employeeId: subjectTeacherData.employeeId ?? "",
+        subjectIds: subjectTeacherData.subjectIds ?? [],
+      });
+    }
+  }, [subjectTeacherData, reset]);
+
   const onSubmit: SubmitHandler<SubjectTeacherFormValues> = async (data) => {
     try {
-      const updatedSubjectTeacher = { ...data, subjectTeacherId };
+      const updatedSubjectTeacher = { ...data, employeeId }; 
       const response = await updateSubjectTeacher(updatedSubjectTeacher);
 
       if (response.success) {
-        toast.success( "Subject Teacher Updated successfully!");
+        toast.success("Subject Teacher Updated successfully!");
         reset();
       } else {
         toast.error("Failed to update the Subject Teacher");
@@ -95,6 +106,22 @@ export default function EditSubjectTeacher({subjectTeacherData}:
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
       toast.error("Please correct the errors in the form.");
+    }
+  };
+  
+
+  const handleCheckboxChange = (subjectId: number, isChecked: boolean) => {
+    const currentSubjects = watch("subjectIds") ?? [];
+
+    if (isChecked) {
+      setValue("subjectIds", [...currentSubjects, subjectId]);
+      console.log(currentSubjects,"currentSubjects");
+      
+    } else {
+      setValue(
+        "subjectIds",
+        currentSubjects.filter((id: number) => id !== subjectId)
+      );
     }
   };
 
@@ -118,15 +145,13 @@ export default function EditSubjectTeacher({subjectTeacherData}:
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
               <div className="grid grid-cols-6 gap-4 mt-5">
-              <div className="col-span-3">
+                <div className="col-span-3">
                   <Select
                     defaultValue={employeeId.toString() ?? ""}
-                    onValueChange={(value) =>
-                      setValue("employeeId", parseInt(value))
-                    }
+                    onValueChange={(value) => setValue("employeeId", parseInt(value))}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Class" />
+                      <SelectValue placeholder="Select Employee" />
                     </SelectTrigger>
                     <SelectContent>
                       {subjectTeacher.map((employeeData) => (
@@ -140,44 +165,43 @@ export default function EditSubjectTeacher({subjectTeacherData}:
                       ))}
                     </SelectContent>
                   </Select>
-
                   {errors.employeeId && (
                     <p className="text-destructive">
                       {errors.employeeId.message}
                     </p>
                   )}
-                </div>  
-
-              <div className="col-span-3">
-                  <Select
-                    defaultValue={subjectId?.toString() ?? ""}
-                    onValueChange={(value) =>
-                      setValue("subjectId", parseInt(value))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Subject" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {subjects.map((sub) => (
-                        <SelectItem
-                          className="hover:bg-default-300"
-                          key={sub.subjectId}
-                          value={sub.subjectId?.toString() ?? ""}
+                </div>
+                <div className="col-span-6">
+                  <label className="block mb-2">Select Subjects</label>
+                  <div className="grid grid-cols-1 gap-4">
+                    {subjects.map((sub) => (
+                      <div
+                        key={sub.subjectId !== undefined ? sub.subjectId : 0}
+                        className="flex items-center"
+                      >
+                        <Checkbox
+                          variant="filled"
+                          id={`subject-${sub.subjectId ?? 0}`}
+                          defaultChecked={watch("subjectIds")?.includes(
+                            sub.subjectId ?? 0
+                          )}
+                          checked={watch("subjectIds")?.includes(sub.subjectId ?? 0)}
+                          onCheckedChange={(isChecked) =>
+                            handleCheckboxChange(sub.subjectId ?? 0, Boolean(isChecked))
+                          }
+                          className="mr-2"
                         >
                           {sub.subjectName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  {errors.subjectId && (
+                        </Checkbox>
+                      </div>
+                    ))}
+                  </div>
+                  {errors.subjectIds && (
                     <p className="text-destructive">
-                      {errors.subjectId.message}
+                      {errors.subjectIds.message}
                     </p>
                   )}
                 </div>
-                
                 <div className="col-span-2">
                   <Button type="submit">Update Form</Button>
                 </div>
