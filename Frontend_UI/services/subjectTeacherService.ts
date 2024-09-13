@@ -2,13 +2,12 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
 export interface SubjectTeacherData {
-  subjectTeacherId?: number; 
-  teacherRole?: string; 
+  subjectTeacherId?: number | undefined; 
   employeeId: number;
   employeeRoleName?:string;
-  subjectName?: string;
   employeeName?:string;
-  subjectId?:number;
+  subjectIds: number[]; 
+  subjects?: string[];
   isActive?: boolean; 
 }
 
@@ -24,15 +23,15 @@ export const getSubjectTeacher = async (): Promise<ApiResponse> => {
   }
 };
 
-export const fetchSubjectById = async (id: number): Promise<ApiResponse> => {
-  try {
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetSubjectTeacherById/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error(`Failed to fetch Subject with ID ${id}:`, error);
-    throw new Error(`Failed to fetch Subject with ID ${id}`);
-  }
-};
+// export const fetchSubjectById = async (id: number): Promise<ApiResponse> => {
+//   try {
+//     const response = await api.get<ApiResponse>(`${BASE_URL}/GetSubjectTeacherById/${id}`);
+//     return response.data;
+//   } catch (error) {
+//     console.error(`Failed to fetch Subject with ID ${id}:`, error);
+//     throw new Error(`Failed to fetch Subject with ID ${id}`);
+//   }
+// };
 
 export const addSubjectTeacher = async (subjectTeacherData: SubjectTeacherData): Promise<ApiResponse> => {
   try {
@@ -62,10 +61,10 @@ export const updateSubjectTeacher = async (
   }
 };
 
-export const deleteSubject = async (id: number): Promise<ApiResponse> => {
+export const deleteSubjectTeacher = async (id: number): Promise<ApiResponse> => {
   try {
     const response = await api.delete<ApiResponse>(
-      `${BASE_URL}/DeleteSubjectTeacher?assginmentId=${id}`
+      `${BASE_URL}/DeleteSubjectTeacher?employeeId=${id}`
     );
     return response.data;
   } catch (error: any) {
