@@ -1,4 +1,7 @@
-﻿using SchoolManagementSystem.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolManagementSystem.Application.DTOs;
+using SchoolManagementSystem.Application.Interfaces;
+using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
 using SchoolManagementSystem.Domain.Interfaces;
 
@@ -7,35 +10,52 @@ namespace SchoolManagementSystem.Application.Services
     public class CampusService : ICampuses
     {
         private readonly IGenericRepository<Campus> _campusRepository;
+        private readonly CampusMapper _mapper;
 
-        public CampusService(IGenericRepository<Campus> genericRepository)
+        public CampusService(IGenericRepository<Campus> genericRepository, CampusMapper campusMapper)
         {
             _campusRepository = genericRepository;
+            _mapper = campusMapper;
         }
 
-        public async Task AddCampusAsync(Campus campus)
+        public async Task AddCampusAsync(CampusDTO dto)
         {
-            await _campusRepository.AddAsync(campus);
+            var model = _mapper.MapToEntity(dto);
+            await _campusRepository.AddAsync(model);
         }
 
         public async Task DeleteCampusAsync(int campusId)
         {
-            await _campusRepository.DeleteAsync(campusId);
+            var campus = await _campusRepository.GetByIdAsync(campusId);
+            if (campus != null)
+            {
+                campus.IsActive = false;
+                await _campusRepository.UpdateAsync(campus);
+            }
         }
 
-        public async Task<List<Campus>> GetAllCampusesAsync()
+        public async Task<List<CampusDTO>> GetAllCampusesAsync()
         {
-            return (await _campusRepository.GetAllAsync()).ToList();
+            var campuses = await _campusRepository.GetAllAsync(
+                include: query => query.Include(c => c.Departments.Where(d=>d.IsActive)));
+            var activeCampuses = campuses.Where(c => c.IsActive).ToList();
+
+            var lst = activeCampuses.Select(_mapper.MapToDtoWithSubEntity).ToList();
+
+
+            return lst;
         }
 
-        public async Task<Campus> GetCampusByIdAsync(int campusId)
+        public async Task<CampusDTO> GetCampusByIdAsync(int campusId)
         {
-            return await _campusRepository.GetByIdAsync(campusId);
+           var response = await _campusRepository.GetByIdAsync(campusId);
+            return _mapper.MapToDto(response);
         }
 
-        public async Task UpdateCampusAsync(int id, Campus campus)
+        public async Task UpdateCampusAsync(CampusDTO dto)
         {
-            await _campusRepository.UpdateAsync(id, campus);
+            var model = _mapper.MapToEntity(dto);
+            await _campusRepository.UpdateAsync(model);
         }
     }
 }

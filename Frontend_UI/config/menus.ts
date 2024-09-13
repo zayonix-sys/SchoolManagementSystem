@@ -1,12 +1,99 @@
-
-import {
-  Cart,
-  ClipBoard,
-  DashBoard,
-  Graph,
+// // Old Code
+// import {
+//   Cart,
+//   ClipBoard,
+//   DashBoard,
+//   Graph,
  
-} from "@/components/svg";
+// } from "@/components/svg";
 
+
+// export interface MenuItemProps {
+//   title: string;
+//   icon: any;
+//   href?: string;
+//   child?: MenuItemProps[];
+//   isHeader?: boolean;
+//   megaMenu?: MenuItemProps[];
+//   multi_menu? : MenuItemProps[]
+//   nested?: MenuItemProps[]
+//   onClick: () => void;
+// }
+
+// export const menusConfig = {
+//   mainNav: [
+//     {
+//       title: "Administration",
+//       icon: DashBoard,
+//       //href: "/blank",
+//       child: [
+//         {
+//           title: "Manage Campus",
+//           href: "/campuses",
+//           icon: Graph,
+//         },
+//         {
+//           title: "Manage Classes",
+//           href: "/classrooms",
+//           icon: Graph,
+//         },
+//       ],
+//     },
+//   ],
+//   sidebarNav: {
+//     modern: [
+//       {
+//           title: "Administration",
+//           icon: DashBoard,
+//           //href: "/blank",
+//           child: [
+//             {
+//               title: "Manage Campus",
+//               href: "/campuses",
+//               icon: Graph,
+//             },
+//             {
+//               title: "Manage Classes",
+//               href: "/classrooms",
+//               icon: Graph,
+//             },
+//           ],
+//         },
+//     ],
+//     classic: [
+//       //  {
+//       //   isHeader: true,
+//       //   title: "menu",
+//       // },
+//       {
+//         title: "Administration",
+//         icon: DashBoard,
+//         //href: "/blank",
+//         child: [
+//           {
+//             title: "Manage Campus",
+//             href: "/campuses",
+//             icon: Graph,
+//           },
+//           {
+//             title: "Manage Classes",
+//             href: "/classrooms",
+//             icon: Graph,
+//           },
+//         ],
+//       },
+//     ],
+//   },
+// };
+
+
+// export type ModernNavType = (typeof menusConfig.sidebarNav.modern)[number]
+// export type ClassicNavType = (typeof menusConfig.sidebarNav.classic)[number]
+// export type MainNavType = (typeof menusConfig.mainNav)[number]
+
+import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck } from "@/components/svg";
+import { Calendar } from "@/components/ui/calendar";
+import { Table } from "@/components/ui/table";
 
 export interface MenuItemProps {
   title: string;
@@ -15,78 +102,82 @@ export interface MenuItemProps {
   child?: MenuItemProps[];
   isHeader?: boolean;
   megaMenu?: MenuItemProps[];
-  multi_menu? : MenuItemProps[]
-  nested?: MenuItemProps[]
-  onClick: () => void;
+  multi_menu?: MenuItemProps[];
+  nested?: MenuItemProps[];
+  onClick?: () => void;
 }
 
-export const menusConfig = {
-  mainNav: [
-    {
-      title: "Administration",
-      icon: DashBoard,
-      href: "/blank",
-      child: [
-        {
-          title: "Campus Registration",
-          href: "/campus",
-          icon: Graph,
-        },
-        {
-          title: "Classroom Registration",
-          href: "/classroom",
-          icon: Graph,
-        },
-      ],
-    },
-  ],
-  sidebarNav: {
-    modern: [
+// Centralized menu configuration
+const menuItems: MenuItemProps[] = [
+  {
+    title: "Administration",
+    icon: DashBoard,
+    child: [
       {
-          title: "Administration",
-          icon: DashBoard,
-          //href: "/blank",
-          child: [
-            {
-              title: "Campus Registration",
-              href: "/campus",
-              icon: Graph,
-            },
-            {
-              title: "Classroom Registration",
-              href: "/classroom",
-              icon: Graph,
-            },
-          ],
-        },
-    ],
-    classic: [
-      //  {
-      //   isHeader: true,
-      //   title: "menu",
-      // },
+        title: "Manage Campus",
+        href: "/campuses",
+        icon: Campus,
+      },
       {
-        title: "Administration",
-        icon: DashBoard,
-        //href: "/blank",
-        child: [
-          {
-            title: "Campus Registration",
-            href: "/campus",
-            icon: Graph,
-          },
-          {
-            title: "Classroom Registration",
-            href: "/classroom",
-            icon: Graph,
-          },
-        ],
+        title: "Manage Classes",
+        href: "/classrooms",
+        icon: ClipBoard2,
+      },
+      {
+        title: "Time Tables",
+        href: "/timetables",
+        icon: CalenderCheck,
+      },
+      {
+        title: "Manage Employees",
+        href: "/employees",
+        icon: Users,
+      },
+      {
+        title: "Manage Subjects",
+        href: "/subjects",
+        icon: Book,
       },
     ],
   },
+  {
+    title: "Academic",
+    icon: DashBoard,
+    child: [
+      {
+        title: "Applicants",
+        href: "/applicant",
+        icon: Graph,
+      }
+    ],
+  },
+  // Add more menu items here
+];
+
+// Utility function to generate specific menu styles
+const generateMenus = (menuItems: MenuItemProps[]) => {
+  return {
+    mainNav: menuItems.map(item => ({
+      ...item,
+    })),
+    sidebarNav: {
+      modern: menuItems.map(item => ({
+        ...item,
+      })),
+      classic: menuItems.map(item => ({
+        ...item,
+      })),
+    },
+    mobileMenu: menuItems.map(item => ({
+      ...item,
+    })),
+  };
 };
 
+// Generate menus from the centralized configuration
+export const menusConfig = generateMenus(menuItems);
 
-export type ModernNavType = (typeof menusConfig.sidebarNav.modern)[number]
-export type ClassicNavType = (typeof menusConfig.sidebarNav.classic)[number]
-export type MainNavType = (typeof menusConfig.mainNav)[number]
+// Type definitions
+export type ModernNavType = (typeof menusConfig.sidebarNav.modern)[number];
+export type ClassicNavType = (typeof menusConfig.sidebarNav.classic)[number];
+export type MainNavType = (typeof menusConfig.mainNav)[number];

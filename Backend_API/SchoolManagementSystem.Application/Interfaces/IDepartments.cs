@@ -1,4 +1,5 @@
-﻿using SchoolManagementSystem.Domain.Entities;
+﻿using SchoolManagementSystem.Application.DTOs;
+using SchoolManagementSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,10 @@ namespace SchoolManagementSystem.Application.Interfaces
     public interface IDepartments
     {
         Task<List<Department>> GetAllDepartmentsAsync();
+        Task<List<DepartmentDTO>> GetAllDepartmentsWithCampusAsync(int id);
         Task<Department> GetDepartmentByIdAsync(int departmentId);
-        Task AddDepartmentAsync(Department department);
-        Task UpdateDepartmentAsync(int id, Department department);
+        Task AddDepartmentAsync(DepartmentDTO department);
+        Task UpdateDepartmentAsync(DepartmentDTO department);
         Task DeleteDepartmentAsync(int departmentId);
-        
     }
 }

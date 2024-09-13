@@ -3792,9 +3792,9 @@
   integrity sha1-dL+rEPo1vtUfoL0vNTmjMdfnjxs=
 
 "@tanstack/virtual-core@3.10.0":
-  version "3.9.0"
-  resolved "https://pkgs.dev.azure.com/elfoados/_packaging/NpmFeed/npm/registry/@tanstack/virtual-core/-/virtual-core-3.9.0.tgz#60db41fe8a19bb1a21873d86d8731416391e838a"
-  integrity sha1-YNtB/ooZuxohhz2G2HMUFjkeg4o=
+  version "3.10.1"
+  resolved "https://pkgs.dev.azure.com/elfoados/_packaging/NpmFeed/npm/registry/@tanstack/virtual-core/-/virtual-core-3.10.1.tgz#a2312c6cfc6f0d8e3e9a93bb99f96552b82082af"
+  integrity sha1-ojEsbPxvDY4+mpO7mfllUrgggq8=
 
 "@theguild/remark-mermaid@^0.0.5":
   version "0.0.5"
@@ -10812,6 +10812,11 @@ react-chartjs-2@^5.2.0:
   version "5.2.0"
   resolved "https://pkgs.dev.azure.com/elfoados/_packaging/NpmFeed/npm/registry/react-chartjs-2/-/react-chartjs-2-5.2.0.tgz#43c1e3549071c00a1a083ecbd26c1ad34d385f5d"
   integrity sha1-Q8HjVJBxwAoaCD7L0mwa0004X10=
+
+react-country-state-city@^1.1.3:
+  version "1.1.3"
+  resolved "https://pkgs.dev.azure.com/elfoados/_packaging/NpmFeed/npm/registry/react-country-state-city/-/react-country-state-city-1.1.3.tgz#c9927101ae6669e242730877fb18a17df044cb6f"
+  integrity sha1-yZJxAa5maeJCcwh3+xihffBEy28=
 
 react-day-picker@^8.8.1:
   version "8.10.1"

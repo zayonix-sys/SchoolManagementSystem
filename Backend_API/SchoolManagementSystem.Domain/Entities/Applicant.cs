@@ -1,49 +1,68 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
     public class Applicant
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ApplicantId { get; set; }
 
-        [Required]
         [MaxLength(100)]
         public string FirstName { get; set; }
 
-        [Required]
         [MaxLength(100)]
         public string LastName { get; set; }
 
-        [Required]
-        public DateTime DateOfBirth { get; set; }
+        [MaxLength(15)]
+        public string FormBNumber { get; set; }
 
-        [Required]
+        public DateOnly? DateOfBirth { get; set; }
+
+        [ForeignKey("ClassId")]
+        public int? ClassId { get; set; }
+        public virtual Class Class { get; set; }
+
         [MaxLength(10)]
         public string Gender { get; set; }
 
-        [Required]
         [MaxLength(100)]
         public string Email { get; set; }
 
-        [Required]
         [MaxLength(15)]
         public string PhoneNumber { get; set; }
 
         [MaxLength(255)]
-        public string Address { get; set; }
+        public string ApplicantAddress { get; set; }
+
+        [MaxLength(30)]
+        public string ResidenceStatus { get; set; }
 
         [MaxLength(50)]
-        public string Nationality { get; set; }
+        public string City { get; set; }
 
-        public DateTime ApplicationDate { get; set; } = DateTime.Now;
+        [MaxLength(50)]
+        public string MotherTounge { get; set; }
 
-        // Navigation Property
-        public virtual ICollection<Application> Applications { get; set; }
+        [MaxLength(30)]
+        public string States { get; set; }
+
+        public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        public int? CreatedBy { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public int? UpdatedBy { get; set; }
+        public bool IsActive { get; set; } = true;
+
+
+        //Navigation Properties
+        public virtual AdmissionApplication? Application { get; set; }
+
+        [ForeignKey("CreatedBy")]
+        public virtual User CreatedByUser { get; set; }
+
+        [ForeignKey("UpdatedBy")]
+        public virtual User UpdatedByUser { get; set; }
+
     }
 }

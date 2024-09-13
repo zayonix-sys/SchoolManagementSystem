@@ -1,9 +1,4 @@
 ﻿using SchoolManagementSystem.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Interfaces
 {
@@ -14,6 +9,6 @@ namespace SchoolManagementSystem.Application.Interfaces
         Task AddStudentAsync(Student std);
         Task UpdateStudentAsync(Student std);
         Task DeleteStudentAsync(int stdId);
-        
+
     }
 }

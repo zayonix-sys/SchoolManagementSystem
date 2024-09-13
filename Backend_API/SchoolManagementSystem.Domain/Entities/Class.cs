@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Collections.Specialized.BitVector32;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
     public class Class
     {
         [Key]
-        public int ClassId { get; set; }
+        public int? ClassId { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -28,7 +22,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("CreatedUser")]
-        public int CreatedBy { get; set; }
+        public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
@@ -41,5 +35,6 @@ namespace SchoolManagementSystem.Domain.Entities
         // Navigation properties
         public User CreatedUser { get; set; }
         public User UpdatedUser { get; set; }
+        public virtual ICollection<TimeTable>? TimeTables { get; set; }
     }
 }

@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using SchoolManagementSystem.Domain.Interfaces;
 using SchoolManagementSystem.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +24,7 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await _dbSet.ToListAsync() ?? new List<T>();
         }
 
         public async Task<T> GetByIdAsync(int id)
@@ -30,13 +32,16 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task AddAsync(T entity)
+        public async Task<object> AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
+            
+            // Use reflection to get the ID property value
+            return entity.GetType().GetProperty(entity.GetType().Name + "Id")?.GetValue(entity);
         }
 
-        public async Task UpdateAsync(int id, T entity)
+        public async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
@@ -51,5 +56,32 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task DeleteAsync(T entity)
+        {
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null,
+                          Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (include != null)
+            {
+                query = include(query);
+            }
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            return await query.ToListAsync();
+        }
+
     }
 }

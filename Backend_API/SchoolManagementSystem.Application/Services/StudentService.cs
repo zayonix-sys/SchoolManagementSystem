@@ -40,7 +40,7 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task UpdateStudentAsync(Student std)
         {
-            await _studentRepository.UpdateAsync(std);
+            //await _studentRepository.UpdateAsync(std);
         }
     }
 }

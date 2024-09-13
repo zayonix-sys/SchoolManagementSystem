@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SchoolManagementSystem.Domain.Interfaces;
-using SchoolManagementSystem.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SchoolManagementSystem.Application.Interfaces;
+using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.API.Controllers
 {
@@ -79,28 +75,28 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStudent(int id, Student student)
-        {
-            if (id != student.StudentId)
-            {
-                _logger.LogWarning("Student ID mismatch: {Id} does not match {StudentId}.", id, student.StudentId);
-                return BadRequest("Student ID mismatch.");
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> UpdateStudent(Student student)
+        //{
+            
+            
+        //        _logger.LogWarning("Student ID mismatch: {Id} does not match {StudentId}.", student.StudentId);
+        //        return BadRequest("Student ID mismatch.");
+            
 
-            _logger.LogInformation("Updating student with ID {StudentId}.", id);
-            try
-            {
-                await _studentService.UpdateStudentAsync(student);
-                _logger.LogInformation("Successfully updated student with ID {StudentId}.", id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while updating student with ID {StudentId}.", id);
-                return StatusCode(500, "Internal server error.");
-            }
-        }
+        //    _logger.LogInformation("Updating student with ID {StudentId}.", id);
+        //    try
+        //    {
+        //        await _studentService.UpdateStudentAsync(student);
+        //        _logger.LogInformation("Successfully updated student with ID {StudentId}.", id);
+        //        return NoContent();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "An error occurred while updating student with ID {StudentId}.", id);
+        //        return StatusCode(500, "Internal server error.");
+        //    }
+        //}
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudent(int id)

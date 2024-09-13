@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,22 +13,22 @@ namespace SchoolManagementSystem.Domain.Entities
         public int AssignmentId { get; set; }
 
         [ForeignKey("Class")]
-        public int ClassId { get; set; }
+        public int? ClassId { get; set; }
 
         [ForeignKey("Section")]
-        public int SectionId { get; set; }
+        public int? SectionId { get; set; }
 
         [ForeignKey("Classroom")]
-        public int ClassroomId { get; set; }
+        public int? ClassroomId { get; set; }
+
+        [ForeignKey("Campus")]
+        public int? CampusId { get; set; }
 
         [Required]
-        public int Capacity { get; set; }
-
-        [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("CreatedUser")]
-        public int CreatedBy { get; set; }
+        public int? CreatedBy { get; set; } = 2;
 
         public DateTime? UpdatedAt { get; set; }
 
@@ -43,6 +42,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public Class Class { get; set; }
         public Section Section { get; set; }
         public Classroom Classroom { get; set; }
+        public Campus Campus { get; set; }
         public User CreatedUser { get; set; }
         public User UpdatedUser { get; set; }
     }
