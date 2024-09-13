@@ -1,12 +1,17 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SchoolManagementSystem.API.Middleware;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Application.Services;
+using SchoolManagementSystem.Domain.Entities;
 using SchoolManagementSystem.Domain.Interfaces;
 using SchoolManagementSystem.Infrastructure.Data;
 using SchoolManagementSystem.Infrastructure.Repositories;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +25,7 @@ builder.Services.AddCors(options =>
                .AllowCredentials();
     });
 });
+
 // Configure logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole(); // Logs to console
@@ -31,6 +37,10 @@ builder.Services.AddDbContext<SchoolContext>(options =>
 
 // Register the generic repository
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+builder.Services.AddScoped<IUserAccount, UserAccountService>();
+builder.Services.AddScoped<UserMapper>();
+
 builder.Services.AddScoped<ICampuses, CampusService>();
 builder.Services.AddScoped<CampusMapper>();
 builder.Services.AddScoped<IClassroom, ClassroomService>();
@@ -71,6 +81,27 @@ builder.Services.AddScoped<SubjectTeacherAssignmentMapper>();
 
 // Add controllers
 builder.Services.AddControllers();
+
+// JWT Authention
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+
 builder.Services.AddEndpointsApiExplorer();  // Adds support for minimal APIs
 builder.Services.AddSwaggerGen(c =>
 {
@@ -93,7 +124,16 @@ builder.Services.AddCors(options =>
     });
 });
 
+
+
 var app = builder.Build();
+
+// Seed the database with default data
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<SchoolContext>();
+    SeedDefaultData(context);
+}
 
 // Configure middleware pipeline
 if (app.Environment.IsDevelopment())
@@ -112,6 +152,65 @@ app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseCors("AllowLocalhost3000");
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+//app.UseExceptionHandler("/Home/Error"); // For production
+app.UseDeveloperExceptionPage(); // Server Side Exception (For development)
 app.Run();
+
+
+//Method for Default Data
+void SeedDefaultData(SchoolContext context)
+{
+    // Seed default campus, roles and users
+    if(!context.Campuses.Any())
+    {
+        var defaultCampus = new Campus
+        {
+            CampusName = "Default Campus",
+            Address = "Karachi",
+            Country = "Pakistan",
+            State = "Sindh",
+            City = "Karachi",
+            PostalCode = "12345",
+            PhoneNumber = "021-1234567",
+            Email = "default@school.com"
+        };
+        context.Campuses.Add(defaultCampus);
+        context.SaveChanges();
+    }
+   
+    if (!context.UserRoles.Any())
+    {
+        var defaultRole = new UserRole
+        {
+            RoleName = "Admin",
+            RoleDescription = "Administrator role with full permissions",
+            CreatedAt = DateTime.Now,
+            IsActive = true
+        };
+        context.UserRoles.Add(defaultRole);
+        context.SaveChanges();
+    }
+
+    var campudId = context.Campuses.Select(c => c.CampusId).FirstOrDefault();
+
+    var adminRoleId = context.UserRoles
+        .Where(r => r.RoleName == "Admin")
+        .Select(r => r.RoleId)
+        .FirstOrDefault();
+
+    if (!context.Users.Any())
+    {
+        var defaultUser = new User
+        {
+            UserName = "Super Admin",
+            PasswordHash = "password", // Properly hash the password
+            RoleId = adminRoleId,
+            CampusId = Convert.ToInt32(campudId),
+        };
+        context.Users.Add(defaultUser);
+        context.SaveChanges();
+    }
+}
