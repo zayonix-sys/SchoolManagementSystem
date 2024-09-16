@@ -24,9 +24,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<ClassSubject> ClassSubjects { get; set; }
         public DbSet<ClassSectionAssignment> ClassSectionAssignments { get; set; }
         public DbSet<Subject> Subjects { get; set; }
-
         public DbSet<TimeTable> TimeTables { get; set; }
-
+        public DbSet<Period> Periods { get; set; }
         public DbSet<SubjectTeacherAssignment> SubjectTeachers { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
 
@@ -68,9 +67,13 @@ namespace SchoolManagementSystem.Infrastructure.Data
             modelBuilder.Entity<ApplicantApplicationView>()
                 .HasNoKey();
 
+            modelBuilder.Entity<TimeTableView>()
+                .HasNoKey();
+                
 
             // Map the entity to the SQL Server view
             modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
+            modelBuilder.Entity<TimeTableView>().ToView("TimeTableView");
 
             base.OnModelCreating(modelBuilder);
         }

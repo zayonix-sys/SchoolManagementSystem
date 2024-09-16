@@ -177,6 +177,7 @@ namespace SchoolManagementSystem.Application.Services
             {
                 var assignments = await _classSectionAssignmentRepository.GetAllAsync(
                     include: query => query
+                    .AsNoTracking()
                     .Include(a => a.Classroom)
                     .Include(a => a.Class)
                     .Include(a => a.Section)

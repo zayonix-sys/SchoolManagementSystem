@@ -9,6 +9,7 @@ export interface AssignClassData {
   classroomId: number; // Corresponds to ClassName in the entity
   sectionId: number; // Corresponds to ClassDescription in the entity
   isActive?: boolean;
+  campusName?: string;
 }
 
 const BASE_URL = "/ClassSectionAssignment";

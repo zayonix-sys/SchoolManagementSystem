@@ -47,6 +47,7 @@ builder.Services.AddScoped<IApplicant, ApplicantService>();
 builder.Services.AddScoped<ApplicantMapper>();
 builder.Services.AddScoped<ApplicationMapper>();
 builder.Services.AddScoped<ApplicantApplicationMapper>();
+builder.Services.AddScoped<TimeTableViewMapper>();
 
 builder.Services.AddScoped<IEmployee, EmployeeService>();
 builder.Services.AddScoped<EmployeeMapper>();
@@ -58,6 +59,8 @@ builder.Services.AddScoped<IClassSubject, ClassSubjectService>();
 builder.Services.AddScoped<ClassSubjectMapper>();
 builder.Services.AddScoped<ITimeTable, TimeTableService>();
 builder.Services.AddScoped<TimeTableMapper>();
+builder.Services.AddScoped<IPeriod, PeriodService>();
+builder.Services.AddScoped<PeriodMapper>();
 
 builder.Services.AddScoped<IStudent, StudentService>();
 builder.Services.AddScoped<ISubject, SubjectService>();

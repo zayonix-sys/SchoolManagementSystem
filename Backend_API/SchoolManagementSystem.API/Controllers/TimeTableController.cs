@@ -17,8 +17,27 @@ public class TimeTableController : ControllerBase
         _timeTableService = timeTableService;
     }
 
+    //[HttpGet("[action]")]
+    //public async Task<ActionResult<ApiResponse<IEnumerable<TimeTableDTO>>>> GetTimeTables()
+    //{
+    //    _logger.LogInformation("Fetching all TimeTable.");
+    //    try
+    //    {
+    //        var timeTables = await _timeTableService.GetAllTimeTablesAsync();
+    //        _logger.LogInformation("Successfully retrieved {Count} timeTables.", timeTables?.Count() ?? 0);
+
+    //        return Ok(ApiResponse<IEnumerable<TimeTableDTO>>.SuccessResponse(timeTables, "timeTables retrieved successfully"));
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError(ex, "An error occurred while fetching all TimeTables.");
+    //        return StatusCode(500, ApiResponse<IEnumerable<TimeTableDTO>>.ErrorResponse("Internal server error."));
+    //    }
+    //}
+
+
     [HttpGet("[action]")]
-    public async Task<ActionResult<ApiResponse<IEnumerable<TimeTableDTO>>>> GetTimeTables()
+    public async Task<ActionResult<ApiResponse<IEnumerable<TimeTableViewDTO>>>> GetTimeTables()
     {
         _logger.LogInformation("Fetching all TimeTable.");
         try
@@ -26,12 +45,12 @@ public class TimeTableController : ControllerBase
             var timeTables = await _timeTableService.GetAllTimeTablesAsync();
             _logger.LogInformation("Successfully retrieved {Count} timeTables.", timeTables?.Count() ?? 0);
 
-            return Ok(ApiResponse<IEnumerable<TimeTableDTO>>.SuccessResponse(timeTables, "timeTables retrieved successfully"));
+            return Ok(ApiResponse<IEnumerable<TimeTableViewDTO>>.SuccessResponse(timeTables, "timeTables retrieved successfully"));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while fetching all TimeTables.");
-            return StatusCode(500, ApiResponse<IEnumerable<TimeTableDTO>>.ErrorResponse("Internal server error."));
+            return StatusCode(500, ApiResponse<IEnumerable<TimeTableViewDTO>>.ErrorResponse("Internal server error."));
         }
     }
 
