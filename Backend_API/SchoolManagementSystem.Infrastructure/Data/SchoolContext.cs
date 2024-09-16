@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
 
@@ -9,6 +10,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         {
         }
 
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<Section> Sections { get; set; }
@@ -32,7 +35,6 @@ namespace SchoolManagementSystem.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and keys here
-
             modelBuilder.Entity<Student>()
                 .HasKey(s => s.StudentId);
 
