@@ -30,7 +30,6 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<TimeTable> TimeTables { get; set; }
         public DbSet<Period> Periods { get; set; }
         public DbSet<SubjectTeacherAssignment> SubjectTeachers { get; set; }
-        public DbSet<UserRole> UserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -18,7 +18,13 @@ import { Input } from "@/components/ui/input";
 import { deleteEmployee, EmployeesData } from "@/services/EmployeeService";
 import EditEmployee from "./edit-employee";
 import ConfirmationDialog from "../common/confirmation-dialog";
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface EmployeeListTableProps {
   employees: EmployeesData[];
@@ -30,12 +36,14 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
   const itemsPerPage = 20;
-  const [detailedEmployee, setDetailedEmployee] = useState<EmployeesData | null>(null); 
+  const [detailedEmployee, setDetailedEmployee] =
+    useState<EmployeesData | null>(null);
 
   // Apply search filter and pagination
-  const filteredSections = (employees as any[]).filter((employee) =>
-    employee?.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  employee?.lastName?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredSections = (employees as any[]).filter(
+    (employee) =>
+      employee?.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee?.lastName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -89,23 +97,23 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
     try {
       await deleteEmployee(id);
       toast.success("Employee deleted successfully");
-      fetchSection(); 
-      setEmployeeToDelete(null); 
+      fetchSection();
+      setEmployeeToDelete(null);
     } catch (error) {
       console.error("Error deleting Employee:", error);
       toast.error("Failed to delete Employee");
     }
   };
   const handleViewDetails = (employee: EmployeesData) => {
-    setDetailedEmployee(employee); 
+    setDetailedEmployee(employee);
   };
 
   const handleCloseDetails = () => {
-    setDetailedEmployee(null); 
+    setDetailedEmployee(null);
   };
   const formatDate = (dateString: string | Date): string => {
     const date = new Date(dateString);
-      return date.toLocaleDateString();
+    return date.toLocaleDateString();
   };
   return (
     <>
@@ -142,7 +150,10 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
               </TableCell>
               <TableCell className="p-2.5">{item.email}</TableCell>
               <TableCell className="p-2.5"> {item.departmentName}</TableCell>
-              <TableCell className="p-2.5"> {formatDate(item.hireDate)}</TableCell>
+              <TableCell className="p-2.5">
+                {" "}
+                {formatDate(item.hireDate)}
+              </TableCell>
 
               <TableCell className="p-2.5">
                 <Badge
@@ -155,16 +166,16 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                <Button
+                  <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
                     onClick={() => handleViewDetails(item)} // Show detailed view
                   >
-                      <Icon icon="heroicons:eye" className=" h-4 w-4" />
-                      </Button>
-                  <EditEmployee employeeData={item}/>
+                    <Icon icon="heroicons:eye" className=" h-4 w-4" />
+                  </Button>
+                  <EditEmployee employeeData={item} />
                   <Button
                     size="icon"
                     variant="outline"
@@ -192,69 +203,65 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
         </Button>
       </div>
 
-
       {/* Detailed Employee View in Dialog */}
       <Dialog open={!!detailedEmployee} onOpenChange={handleCloseDetails}>
-  <DialogContent className="max-w-screen-sm mx-auto">
-    <DialogHeader>
-      <DialogTitle className="text-xl font-medium">
-        Employee Details
-      </DialogTitle>
-      <DialogClose onClick={handleCloseDetails} />
-    </DialogHeader>
-    
-    {detailedEmployee && (
-      <div className="text-sm text-default-500">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex flex-col">
-            <span className="font-bold">Full Name: </span>
-            {detailedEmployee.firstName} {detailedEmployee.lastName}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold">Employee Role </span>
-            {detailedEmployee.employeeRoleName}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold">Campus: </span>
-            {detailedEmployee.campusName}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold">Department: </span>
-            {detailedEmployee.departmentName}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold">Hire Date: </span>
-            {detailedEmployee.hireDate}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold">Email: </span>
-            {detailedEmployee.email}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold">Qualifications: </span>
-            {detailedEmployee.qualifications}
-          </div>     
-          <div className="flex flex-col">
-            <span className="font-bold">Phone Number: </span>
-            {detailedEmployee.phoneNumber}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold">Emergency Contact: </span>
-            {detailedEmployee.emergencyContact}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold">Address: </span>
-            {detailedEmployee.address}
-          </div>
-         
-        </div>
-      </div>
-    )}
-  </DialogContent>
-</Dialog>
+        <DialogContent className="max-w-screen-sm mx-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-medium">
+              Employee Details
+            </DialogTitle>
+            <DialogClose onClick={handleCloseDetails} />
+          </DialogHeader>
 
+          {detailedEmployee && (
+            <div className="text-sm text-default-500">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col">
+                  <span className="font-bold">Full Name: </span>
+                  {detailedEmployee.firstName} {detailedEmployee.lastName}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Employee Role </span>
+                  {detailedEmployee.employeeRoleName}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Campus: </span>
+                  {detailedEmployee.campusName}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Department: </span>
+                  {detailedEmployee.departmentName}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Hire Date: </span>
+                  {detailedEmployee.hireDate}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Email: </span>
+                  {detailedEmployee.email}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Qualifications: </span>
+                  {detailedEmployee.qualifications}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Phone Number: </span>
+                  {detailedEmployee.phoneNumber}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Emergency Contact: </span>
+                  {detailedEmployee.emergencyContact}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Address: </span>
+                  {detailedEmployee.address}
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
-    
       {employeeToDelete !== null && (
         <ConfirmationDialog
           onDelete={() => handleDelete(employeeToDelete)}

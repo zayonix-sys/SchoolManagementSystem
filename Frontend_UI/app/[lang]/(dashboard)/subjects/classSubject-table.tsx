@@ -21,6 +21,8 @@ import {
 import { ClassData } from "@/services/ClassService";
 import { SubjectData } from "@/services/subjectService";
 import EditClassSubjectAssign from "./edit-classsubjectassignment";
+import { toast } from "sonner";
+import ConfirmationDialog from "../common/confirmation-dialog";
 
 interface SubjectAssignmentProps {
   classes: ClassData[];
@@ -36,6 +38,9 @@ const SubjectAssignTable = ({ classes, subject }: SubjectAssignmentProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [classSubjectToDelete, setClassSubjectToDelete] = useState<
+    number | null
+  >(null);
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -104,22 +109,22 @@ const SubjectAssignTable = ({ classes, subject }: SubjectAssignmentProps) => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
-  const handleDelete = async (id: number) => {
-    const isConfirmed = confirm(
-      "Are you sure you want to delete this Assigned Class Subject?"
-    );
+  const handleDeleteConfirmation = (id: number) => {
+    setClassSubjectToDelete(id);
+  };
 
-    if (isConfirmed) {
-      try {
-        await deleteClassSubjectAssignment(id);
-        alert("Assigned Subject/s deleted successfully");
-        fetchAssignSubject(); // Refresh the data after deletion
-      } catch (error) {
-        console.error("Error deleting assigned subject:", error);
-        alert("Failed to delete assigned subject");
-      }
-    } else {
-      alert("Deletion cancelled");
+  const handleCancelDelete = () => {
+    setClassSubjectToDelete(null);
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteClassSubjectAssignment(id);
+      toast.success("ClassSubject deleted successfully");
+      setClassSubjectToDelete(null);
+    } catch (error) {
+      console.error("Error deleting ClassSubject:", error);
+      toast.error("Failed to delete ClassSubject");
     }
   };
 
@@ -177,7 +182,7 @@ const SubjectAssignTable = ({ classes, subject }: SubjectAssignmentProps) => {
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDelete(item.classId!)}
+                    onClick={() => handleDeleteConfirmation(item.classId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -199,6 +204,12 @@ const SubjectAssignTable = ({ classes, subject }: SubjectAssignmentProps) => {
           Next
         </Button>
       </div>
+      {classSubjectToDelete !== null && (
+        <ConfirmationDialog
+          onDelete={() => handleDelete(classSubjectToDelete)}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </>
   );
 };
