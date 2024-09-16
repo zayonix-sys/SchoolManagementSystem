@@ -30,9 +30,9 @@ namespace SchoolManagementSystem.Domain.Entities
 
         // Navigation properties
 
-        public Class Class { get; set; }
-        public Subject Subject { get; set; }
-        public User CreatedUser { get; set; }
-        public User UpdatedUser { get; set; }
+        public Class? Class { get; set; }
+        public Subject? Subject { get; set; }
+        public User? CreatedUser { get; set; }
+        public User? UpdatedUser { get; set; }
     }
 }

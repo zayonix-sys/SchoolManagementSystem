@@ -15,27 +15,33 @@ namespace SchoolManagementSystem.Application.Mappers
                 CampusId = dto.CampusId,
                 ClassId = dto.ClassId,
                 SubjectId = dto.SubjectId,
+                PeriodId = dto.PeriodId,
                 DayOfWeek = dto.DayOfWeek,
-                StartTime = dto.StartTime,
-                EndTime = dto.EndTime,
                 CreatedAt = dto.CreatedAt,
                 CreatedBy = dto.CreatedBy,
             };
         }
         public TimeTableDTO MapToDto(TimeTable entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             return new TimeTableDTO
             {
                 TimetableId = entity.TimetableId,
                 CampusId = entity.CampusId,
                 ClassId = entity.ClassId,
                 SubjectId = entity.SubjectId,
+                PeriodId = entity.PeriodId,
                 DayOfWeek = entity.DayOfWeek,
-                StartTime = entity.StartTime,
-                EndTime = entity.EndTime,
                 CampusName = entity?.Campus?.CampusName,
                 ClassName = entity?.Class?.ClassName,
-                SubjectName = entity?.Subject?.SubjectName
+                SubjectName = entity?.Subject?.SubjectName,
+                PeriodName = entity?.Period.PeriodName,
+                StartTime = entity?.Period.StartTime,
+                EndTime = entity?.Period.EndTime
             };
         }
 

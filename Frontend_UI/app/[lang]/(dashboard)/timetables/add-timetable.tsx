@@ -1,0 +1,193 @@
+
+"use client";
+import { Icon } from '@iconify/react';
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { z } from 'zod';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ClassData } from '@/services/ClassService';
+import { CampusData } from '@/services/campusService';
+import { AssignSubjectData } from '@/services/assignSubjectService';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { addTimeTable } from '@/services/TimeTableService';
+import { PeriodsData } from '@/services/periodService';
+
+const addTimeTableSchema = z.object({
+  timetableId: z.coerce.number().optional(),
+  campusId: z.coerce.number().min(1, "Campus is required"),
+  classId: z.coerce.number().min(1, "Class is required"),
+  subjectId: z.coerce.number().min(1, "Subject is required"),
+  periodId: z.coerce.number().min(1, "Period is required"),
+  dayOfWeek: z.string().min(1, "Day is required"),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
+  periodName: z.string().optional(),
+  subjectName: z.string().optional()
+
+});
+
+type AddTimeTableFormValues = z.infer<typeof addTimeTableSchema>;
+
+interface TimeTableProps {
+  classes: ClassData[];
+  campus: CampusData[];
+  subject: AssignSubjectData[];
+  periods: PeriodsData[];
+}
+
+export default function AddTimeTable({ classes, campus, subject, periods }: TimeTableProps) {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<AddTimeTableFormValues>({
+    resolver: zodResolver(addTimeTableSchema),
+  });
+
+  const selectedClassId = watch("classId");
+
+  // Filter subjects by the selected class ID
+  const filteredClassSubjects = subject.filter(
+    (assignSubject) => assignSubject.classId === selectedClassId && assignSubject.isActive
+  );
+
+  const onSubmit: SubmitHandler<AddTimeTableFormValues> = async (data) => {
+    
+    try {
+      const response = await addTimeTable(data);
+
+      if (response.success) {
+        toast.success('Time Table added successfully!');
+        reset();
+      } else {
+        toast.error(response.message || "Something went wrong");
+      }
+    } catch (error) {
+      toast.error("Request Failed");
+    }
+  };
+
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button>
+          <Icon icon="heroicons:building-library-solid" className="w-6 h-6 mr-2" />
+          Add Time Table
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="right" className="max-w-[736px]">
+        <SheetHeader>
+          <SheetTitle>Add Time Table</SheetTitle>
+        </SheetHeader>
+
+        <div className="flex flex-col py-5">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-6 gap-4">
+              <div className="col-span-3">
+                <Label>Campus</Label>
+                <Select onValueChange={(value) => setValue("campusId", parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Campus" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {campus.map((campusData) => (
+                      <SelectItem key={campusData?.campusId ?? ''} value={campusData?.campusId?.toString() ?? ''}>
+                        {campusData.campusName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.campusId && <p className="text-destructive">{errors.campusId.message}</p>}
+              </div>
+
+              <div className="col-span-3">
+                <Label>Class</Label>
+                <Select onValueChange={(value) => setValue("classId", parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classes.map((classData) => (
+                      <SelectItem key={classData?.classId ?? ''} value={classData?.classId?.toString() ?? ''}>
+                        {classData.className}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.classId && <p className="text-destructive">{errors.classId.message}</p>}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-6 gap-4 mt-5">
+              <div className="col-span-2">
+                <Label>Day</Label>
+                <Select onValueChange={(value) => setValue("dayOfWeek", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Day" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Monday">Monday</SelectItem>
+                    <SelectItem value="Tuesday">Tuesday</SelectItem>
+                    <SelectItem value="Wednesday">Wednesday</SelectItem>
+                    <SelectItem value="Thursday">Thursday</SelectItem>
+                    <SelectItem value="Friday">Friday</SelectItem>
+                    <SelectItem value="Saturday">Saturday</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.dayOfWeek && <p className="text-destructive">{errors.dayOfWeek.message}</p>}
+              </div>
+
+              <div className="col-span-2">
+                <Label>Class Periods</Label>
+                <Select onValueChange={(value) => setValue("periodId", parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Periods" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {periods.map((periodData) => (
+                      <SelectItem key={periodData?.periodId ?? ''} value={periodData?.periodId?.toString() ?? ''}>
+                        {periodData.periodName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.periodId && <p className="text-destructive">{errors.periodId.message}</p>}
+              </div>
+
+              <div className="col-span-2">
+                <Label>Subject</Label>
+                <Select onValueChange={(value) => setValue("subjectId", parseInt(value))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredClassSubjects.map((subjectData) => (
+                      <SelectItem key={subjectData.subjectIds[0]} value={subjectData.subjectIds[0].toString()}>
+                        {subjectData.subjectName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.subjectId && <p className="text-destructive">{errors.subjectId.message}</p>}
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <Button type="submit">Submit</Button>
+            </div>
+          </form>
+        </div>
+        <SheetFooter>
+          <SheetClose asChild>Footer Content</SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+}

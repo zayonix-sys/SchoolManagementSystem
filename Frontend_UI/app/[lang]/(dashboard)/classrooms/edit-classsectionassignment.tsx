@@ -34,13 +34,14 @@ const classassignmentSchema = z.object({
 
 type ClassAssignFormValues = z.infer<typeof classassignmentSchema>;
 
-export default function EditClassSectionAssign({ classAssignmentData}: 
-  {
-    // classAssignment: AssignClassData[];
-    classAssignmentData: AssignClassData,
-  }) {
+interface ClassAssignmentProps {
+  assignmentData: AssignClassData[];
+}
 
-  const {classroomId, classId, sectionId, campusId, assignmentId} = classAssignmentData;
+
+const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({ assignmentData }) => {
+
+  const {classroomId, classId, sectionId, campusId, assignmentId} = assignmentData[0];
 
 
   const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<ClassAssignFormValues>({
@@ -139,7 +140,7 @@ export default function EditClassSectionAssign({ classAssignmentData}:
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {campus.map((campuses) => (
+                      {assignmentData.map((campuses) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={campuses.campusId}
@@ -261,3 +262,4 @@ export default function EditClassSectionAssign({ classAssignmentData}:
     </Sheet>
   );
 }
+export default EditClassSectionAssign;
