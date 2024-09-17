@@ -19,6 +19,7 @@ namespace SchoolManagementSystem.Application.DTOs
         public string PasswordHash { get; set; }
 
         public int RoleId { get; set; }
+        public string? RoleName { get; set; }
 
         public int CampusId { get; set; }
 

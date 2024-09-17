@@ -39,7 +39,7 @@ const AddSubject = () => {
 
   const onSubmit: SubmitHandler<SubjectFormValues> = async (data) => {
     try {
-      const response = await addSubject(data);  // Corrected function call
+      const response = await addSubject(data); // Corrected function call
 
       if (response.success) {
         toast.success(`Subject ${data.subjectName} added successfully!`);
@@ -92,7 +92,9 @@ const AddSubject = () => {
                     {...register("subjectName")}
                   />
                   {errors.subjectName && (
-                    <p className="text-destructive">{errors.subjectName.message}</p>
+                    <p className="text-destructive">
+                      {errors.subjectName.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2">
@@ -102,7 +104,9 @@ const AddSubject = () => {
                     {...register("subjectDescription")}
                   />
                   {errors.subjectDescription && (
-                    <p className="text-destructive">{errors.subjectDescription.message}</p>
+                    <p className="text-destructive">
+                      {errors.subjectDescription.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2">
@@ -118,5 +122,5 @@ const AddSubject = () => {
       </SheetContent>
     </Sheet>
   );
-}
+};
 export default AddSubject;

@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { deleteRole, getRoles, RoleData } from "@/services/employeeRoleService";
 import EditRoles from "./edit-roles";
+import { toast } from "sonner";
+import ConfirmationDialog from "../common/confirmation-dialog";
 
 const RoleListTable = () => {
   const [roles, setRoles] = useState<RoleData[]>([]);
@@ -22,6 +24,7 @@ const RoleListTable = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [roleToDelete, setRoleToDelete] = useState<number | null>(null);
   const itemsPerPage = 50;
 
   useEffect(() => {
@@ -59,7 +62,9 @@ const RoleListTable = () => {
       setSelectedRows([]);
     } else {
       setSelectedRows(
-        currentItems.map((row) => row.roleId!).filter((id) => id !== null && id !== undefined)
+        currentItems
+          .map((row) => row.roleId!)
+          .filter((id) => id !== null && id !== undefined)
       );
     }
   };
@@ -82,20 +87,22 @@ const RoleListTable = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
+  const handleDeleteConfirmation = (id: number) => {
+    setRoleToDelete(id);
+  };
+
+  const handleCancelDelete = () => {
+    setRoleToDelete(null);
+  };
+
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this role?");
-    
-    if (isConfirmed) {
-      try {
-        await deleteRole(id);
-        alert("role deleted successfully");
-        getRoles(); // Refresh the data after deletion
-      } catch (error) {
-        console.error("Error deleting role:", error);
-        alert("Failed to delete role");
-      }
-    } else {
-      alert("Deletion cancelled");
+    try {
+      await deleteRole(id);
+      toast.success("Role deleted successfully");
+      setRoleToDelete(null);
+    } catch (error) {
+      console.error("Error deleting Employee Role:", error);
+      toast.error("Failed to delete Employee Role");
     }
   };
 
@@ -148,7 +155,7 @@ const RoleListTable = () => {
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDelete(item.roleId!)}
+                    onClick={() => handleDeleteConfirmation(item.roleId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -169,7 +176,12 @@ const RoleListTable = () => {
           Next
         </Button>
       </div>
-      
+      {roleToDelete !== null && (
+        <ConfirmationDialog
+          onDelete={() => handleDelete(roleToDelete)}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </>
   );
 };

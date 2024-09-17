@@ -61,9 +61,10 @@ namespace SchoolManagementSystem.Application.Services
             }
         }
 
-        public Task<SectionDTO> GetSectionByIdAsync(int sectionId)
+        public async Task<SectionDTO> GetSectionByIdAsync(int sectionId)
         {
-            throw new NotImplementedException();
+            var response = await _sectionRepository.GetByIdAsync(sectionId);
+            return _mapper.MapToDto(response);
         }
 
         public async Task UpdateSectionAsync(SectionDTO sec)

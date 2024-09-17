@@ -15,19 +15,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SiteLogo } from "@/components/svg";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Login } from "@/services/userService";
-import { useAuthContext } from "@/provider/auth.provider";
 
 const userSchema = z.object({
   username: z.string({ message: "Your username is invalid." }),
   password: z.string().min(6),
 });
+type UserFormValues = z.infer<typeof userSchema>;
+
 const LogInForm = () => {
   const [isPending] = React.useTransition();
   const [passwordType, setPasswordType] = React.useState<string>("password");
   const isDesktop2xl = useMediaQuery("(max-width: 1530px)");
-  const { login } = useAuthContext();
-
-  type UserFormValues = z.infer<typeof userSchema>;
+  // const { login } = useAuthContext();
 
   const togglePasswordType = () => {
     if (passwordType === "text") {
@@ -51,21 +50,26 @@ const LogInForm = () => {
 
   const onSubmit: SubmitHandler<UserFormValues> = async (data) => {
     try {
-      const userData = { userName: data.username, password: data.password };
-      const response = await Login(userData); // Corrected function call
+      const userData = {
+        userName: data.username,
+        password: data.password,
+      };
+      const response = await Login(userData);
 
       if (response.success) {
-        const token = response.data.token; // Get the token from response
-        login(token); // Log the user in by storing the token
+        const token = response.data.token;
         toast.success(`${data.username} logged in successfully!`);
+        localStorage.setItem("authToken", token);
+        window.location.assign("/campuses");
+
         reset();
       } else {
         console.error("Error:", response);
         toast.error(`Error: ${response.message || "Something went wrong"}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Request Failed:", error);
-      toast.error("Request Failed");
+      toast.error(`Error: ${error.message || "Request Failed"}`);
     }
   };
 
