@@ -13,15 +13,11 @@ export interface EmployeesData {
   lastName?: string;
   email?: string;
   phoneNumber?: string;
-  hireDate?: string; // or Date if you want to use Date objects
+  hireDate?: string; 
   address?: string;
   emergencyContact?: string;
   qualifications?: string;
-  createdAt?: string; // or Date
-  createdBy?: string;
-  updatedAt?: string; // or Date
-  updatedBy?: string;
-  isActive?: boolean;
+   isActive?: boolean;
 }
 
 const BASE_URL = "/Employee";

@@ -18,8 +18,11 @@ import EditClassroom from "./edit-classroom";
 import { AssignClassData, assignClasses, deleteClassassignment } from "@/services/assignClassService";
 import { ClassData } from "@/services/ClassService";
 import { SectionData } from "@/services/SectionService";
-import EditClassSectionAssign from "./edit-classsectionassignment";
+// import EditClassSectionAssign from "./edit-classsectionassignment";
 import { CampusData } from "@/services/campusService";
+import EditClassSectionAssign from "./edit-classsectionassignment";
+import { toast } from "sonner";
+import ConfirmationDialog from "../common/confirmation-dialog";
 
 interface ClassAssignmentProps {
   classes: ClassData[];
@@ -30,6 +33,7 @@ interface ClassAssignmentProps {
 
 const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignmentProps) => {
   const [classassignment, setClassassignment] = useState<AssignClassData[]>([]);
+  const [classAssignmentToDelete, setClassAssignmentToDelete] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); 
@@ -102,20 +106,23 @@ const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignment
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
+  const handleDeleteConfirmation = (id: number) => {
+    setClassAssignmentToDelete(id);
+  };
+
+  const handleCancelDelete = () => {
+    setClassAssignmentToDelete(null);
+  };
+
   const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this Assigned Class?");
-    
-    if (isConfirmed) {
-      try {
-        await deleteClassassignment(id);
-        alert("Assigned Class deleted successfully");
-        assignClasses(); // Refresh the data after deletion
-      } catch (error) {
-        console.error("Error deleting assigned class:", error);
-        alert("Failed to delete assigned class");
-      }
-    } else {
-      alert("Deletion cancelled");
+    try {
+      await deleteClassassignment(id);
+      toast.success("Class Assignment deleted successfully");
+      // setTimeTable((prev) => prev.filter((entry) => entry.timetableId !== id));
+      setClassAssignmentToDelete(null); 
+    } catch (error) {
+      console.error("Error deleting class assignment:", error);
+      toast.error("Failed to delete class assignment");
     }
   };
 
@@ -169,14 +176,14 @@ const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignment
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                 <EditClassSectionAssign  classAssignmentData={item}/>
+                 <EditClassSectionAssign  assignmentData={[item]}/>
 
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDelete(item.assignmentId!)}
+                    onClick={() => handleDeleteConfirmation(item.assignmentId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -197,6 +204,12 @@ const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignment
           Next
         </Button>
       </div>
+      {classAssignmentToDelete !== null && (
+      <ConfirmationDialog
+        onDelete={() => handleDelete(classAssignmentToDelete)}
+        onCancel={handleCancelDelete}
+      />
+    )}
     </>
   );
 };

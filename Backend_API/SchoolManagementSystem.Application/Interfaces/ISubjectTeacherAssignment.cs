@@ -8,7 +8,7 @@ namespace SchoolManagementSystem.Application.Interfaces
         //Task<SubjectTeacherAssignmentDTO> GetSubjectTeacherByIdAsync(int subteachId);
         Task AddSubjectTeacherAsync(SubjectTeacherAssignmentDTO subteach);
         Task UpdateSubjectTeacherAsync(SubjectTeacherAssignmentDTO subteach);
-        Task DeleteSubjectTeacherAsync(int assignmentId);
+        Task DeleteSubjectTeacherAsync(int employeeId);
 
     }
 }

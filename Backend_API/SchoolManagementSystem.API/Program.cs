@@ -57,10 +57,11 @@ builder.Services.AddScoped<IApplicant, ApplicantService>();
 builder.Services.AddScoped<ApplicantMapper>();
 builder.Services.AddScoped<ApplicationMapper>();
 builder.Services.AddScoped<ApplicantApplicationMapper>();
+builder.Services.AddScoped<TimeTableViewMapper>();
 
 builder.Services.AddScoped<IEmployee, EmployeeService>();
 builder.Services.AddScoped<EmployeeMapper>();
-builder.Services.AddScoped<IEmployeeRoles, RolesService>();
+builder.Services.AddScoped<IEmployeeRoles, EmployeeRolesService>();
 builder.Services.AddScoped<RoleMapper>();
 builder.Services.AddScoped<IClassSectionAssignment, ClassSectionAssignmentService>();
 builder.Services.AddScoped<ClassSectionAssignmentMapper>();
@@ -68,12 +69,18 @@ builder.Services.AddScoped<IClassSubject, ClassSubjectService>();
 builder.Services.AddScoped<ClassSubjectMapper>();
 builder.Services.AddScoped<ITimeTable, TimeTableService>();
 builder.Services.AddScoped<TimeTableMapper>();
+builder.Services.AddScoped<IPeriod, PeriodService>();
+builder.Services.AddScoped<PeriodMapper>();
 
 builder.Services.AddScoped<IStudent, StudentService>();
 builder.Services.AddScoped<ISubject, SubjectService>();
 builder.Services.AddScoped<SubjectMapper>();
 builder.Services.AddScoped<ISubjectTeacherAssignment, SubjectTeacherAssignmentService>();
 builder.Services.AddScoped<SubjectTeacherAssignmentMapper>();
+//builder.Services.AddScoped<IUserRoles, UserRolesService>();
+//builder.Services.AddScoped<UserRoleMapper>();
+
+
 
 // Add controllers
 builder.Services.AddControllers();

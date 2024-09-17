@@ -5,13 +5,13 @@ using SchoolManagementSystem.Domain.Interfaces;
 
 namespace SchoolManagementSystem.Application.Services
 {
-    public class RolesService : IEmployeeRoles
+    public class EmployeeRolesService : IEmployeeRoles
     {
         private readonly IGenericRepository<EmployeeRole> _rolesRepository;
         private readonly RoleMapper _mapper;
 
 
-        public RolesService(IGenericRepository<EmployeeRole> genericRepository, RoleMapper roleMapper)
+        public EmployeeRolesService(IGenericRepository<EmployeeRole> genericRepository, RoleMapper roleMapper)
         {
             _rolesRepository = genericRepository;
             _mapper = roleMapper;

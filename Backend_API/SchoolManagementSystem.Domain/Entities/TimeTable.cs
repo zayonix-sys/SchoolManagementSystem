@@ -9,19 +9,18 @@ namespace SchoolManagementSystem.Domain.Entities
         public int? TimetableId { get; set; }
 
         [ForeignKey("Campus")]
-        public int? CampusId { get; set; }
+        public int CampusId { get; set; }
 
         [ForeignKey("Class")]
-        public int? ClassId { get; set; }
+        public int ClassId { get; set; }
 
         [ForeignKey("Subject")]
-        public int? SubjectId { get; set; }
+        public int SubjectId { get; set; }
+
+        [ForeignKey("Period")]
+        public int PeriodId { get; set; }
 
         public string? DayOfWeek { get; set; }
-
-        public TimeSpan? StartTime { get; set; }
-
-        public TimeSpan? EndTime { get; set; }
 
         [Required]
         public DateTime? CreatedAt { get; set; }
@@ -43,5 +42,6 @@ namespace SchoolManagementSystem.Domain.Entities
         public Campus? Campus { get; set; }
         public Class? Class { get; set; }
         public Subject? Subject { get; set; }
+        public Period? Period { get; set; }
     }
 }

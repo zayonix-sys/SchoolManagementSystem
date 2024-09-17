@@ -12,7 +12,7 @@ namespace SchoolManagementSystem.Application.DTOs
         public int ClassCapacity { get; set; }
         public int? SectionCapacity { get; set; }
         public DateTime? CreatedAt { get; set; }
-        public int? CreatedBy { get; set; } = 2;
+        public int? CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
         public bool IsActive { get; set; } = true;

@@ -26,11 +26,12 @@ import { useEffect, useState } from "react";
 import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
 import { addSubjectTeacher } from "@/services/subjectTeacherService";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const assignSubjectTeacherSchema = z.object({
   subjectTeacherId: z.coerce.number().optional(),
   employeeId: z.coerce.number(),
-  subjectId: z.number().min(1, "Subject is Required"),
+  subjectIds: z.array(z.number().min(1, "Subject is Required")),
 });
 
 type AssignSubjectFormValues = z.infer<typeof assignSubjectTeacherSchema>;
@@ -47,6 +48,7 @@ export default function AssignSubjectTeacher({
     handleSubmit,
     setValue,
     reset,
+    watch,
     formState: { errors },
   } = useForm<AssignSubjectFormValues>({
     resolver: zodResolver(assignSubjectTeacherSchema),
@@ -63,11 +65,11 @@ export default function AssignSubjectTeacher({
         toast.success("Subject Teacher Assigned successfully!");
         reset();
       } else {
-        console.error("Error:", response);
+        // console.error("Error:", response);
         toast.error(`Error: ${response.message || "Something went wrong"}`);
       }
     } catch (error) {
-      console.error("Request Failed:", error);
+      // console.error("Request Failed:", error);
       toast.error("Request Failed");
     }
   };
@@ -75,6 +77,18 @@ export default function AssignSubjectTeacher({
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
       toast.error("Please correct the errors in the form.");
+    }
+  };
+  const handleCheckboxChange = (subjectId: number, isChecked: boolean) => {
+    const currentSubjects = watch("subjectIds") ?? [];
+
+    if (isChecked) {
+      setValue("subjectIds", [...currentSubjects, subjectId]);
+    } else {
+      setValue(
+        "subjectIds",
+        currentSubjects.filter((id: number) => id !== subjectId)
+      );
     }
   };
 
@@ -131,33 +145,41 @@ export default function AssignSubjectTeacher({
                   )}
                 </div>
 
-                <div className="col-span-3">
-                  <Select
-                    onValueChange={(value) =>
-                      setValue("subjectId", parseInt(value))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a Subject" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {subject?.map((sub) => (
-                        <SelectItem
-                          className="hover:bg-default-300"
-                          key={sub.subjectId}
-                          value={sub.subjectId?.toString() ?? ""}
+                <div className="col-span-6">
+                  <label className="block mb-2">Select Subjects</label>
+                  <div className="grid grid-cols-1 gap-4">
+                    {subject.map((sub) => (
+                      <div
+                        key={sub.subjectId !== undefined ? sub.subjectId : 0}
+                        className="flex items-center"
+                      >
+                        <Checkbox
+                          variant="filled"
+                          id={`subject-${sub.subjectId ?? 0}`} // Simplified ternary check
+                          checked={watch("subjectIds")?.includes(
+                            sub.subjectId ?? 0
+                          )} // Controlled checkbox state
+                          onCheckedChange={
+                            (isChecked) =>
+                              handleCheckboxChange(
+                                sub.subjectId ?? 0,
+                                Boolean(isChecked)
+                              ) // Ensure isChecked is a boolean
+                          }
+                          className="mr-2"
                         >
                           {sub.subjectName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.subjectId && (
+                        </Checkbox>
+                      </div>
+                    ))}
+                  </div>
+                  {errors.subjectIds && (
                     <p className="text-destructive">
-                      {errors.subjectId.message}
+                      {errors.subjectIds.message}
                     </p>
                   )}
                 </div>
+
 
                 <div className="col-span-2">
                   <Button type="submit">Submit Form</Button>

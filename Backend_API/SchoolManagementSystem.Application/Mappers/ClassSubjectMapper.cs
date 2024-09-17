@@ -27,6 +27,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 entities.Add(new ClassSubject
                 {
                     ClassSubjectId = dto.ClassSubjectId,
+                    
                     ClassId = dto.ClassId,
                     SubjectId = subjectId, 
                     IsActive = dto.IsActive
@@ -42,6 +43,7 @@ namespace SchoolManagementSystem.Application.Mappers
             {
                 ClassSubjectId = entity.ClassSubjectId,
                 ClassId = entity.ClassId,
+                SubjectName = entity?.Subject?.SubjectName,
                 SubjectIds = entity.SubjectId.HasValue ? new List<int> { entity.SubjectId.Value } : new List<int>(),
                 IsActive = entity.IsActive
             };

@@ -6,6 +6,9 @@ export interface UserData {
   userId?: number;
   userName: string;
   password: string;
+  roleId?: number;
+  roleName?: string;
+  campusId?: number;
 }
 
 const BASE_URL = "/UserAccount";

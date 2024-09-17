@@ -12,11 +12,11 @@ import SubjectReportCard from "./reports";
 import AddSubject from "./add-subject";
 import AddAssignSubject from "./add-assignsubject";
 import SubjectAssignTable from "./classSubject-table";
-import AssignSubjectTeacher from "./assign-subject-teacher";
-import SubjectTeacherTable from "./veiw-subject-teacher";
 import { ClassData, fetchClasses } from "@/services/ClassService";
 import { fetchSubject, SubjectData } from "@/services/subjectService";
 import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
+import ViewSubjectTeacher from "./veiw-subject-teacher";
+import AssignSubjectTeacher from "./assign-subject-teacher";
 
 const Subjects = () => {
   const [classes, setClasses] = useState<ClassData[]>([]);
@@ -50,6 +50,7 @@ const Subjects = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
+    // fetchEmployeeAndSubjectData();
 
   return (
     <div>
@@ -76,7 +77,7 @@ const Subjects = () => {
           <AccordionContent>
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5">
-                <SubjectReportCard />
+                <SubjectReportCard/>
                 <Table />
               </div>
             </div>
@@ -99,8 +100,6 @@ const Subjects = () => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-
-      <SubjectTeacherTable employee={employees} subject={subjects} />
     </div>
   );
 };
