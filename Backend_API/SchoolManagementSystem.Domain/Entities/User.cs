@@ -15,7 +15,7 @@ namespace SchoolManagementSystem.Domain.Entities
 
         [Required]
         [StringLength(50)]
-        public string Username { get; set; }
+        public string UserName { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -28,10 +28,10 @@ namespace SchoolManagementSystem.Domain.Entities
         public int CampusId { get; set; }
 
         [Required]
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; }
 
         [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime? CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 

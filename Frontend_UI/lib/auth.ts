@@ -5,6 +5,7 @@ import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 
 import avatar3 from "@/public/images/avatar/avatar-3.jpg";
+import { user } from "@/app/[lang]/auth/data";
 
 
 export const authOptions = {
@@ -29,23 +30,23 @@ export const authOptions = {
           password: string,
         };
           
-        // const foundUser = user.find((u) => u.email === email)
+        const foundUser = user.find((u) => u.email === email)
 
-        // if (!foundUser) {
-        //   return null;
-        // }
+        if (!foundUser) {
+          return null;
+        }
 
-        // const valid = password === foundUser.password  
+        const valid = password === foundUser.password  
 
-        // if (!valid) {
+        if (!valid) {
           
-        //   return null;
-        // }
+          return null;
+        }
 
-        // if (foundUser) {
-        //   return foundUser as any
+        if (foundUser) {
+          return foundUser as any
           
-        // }
+        }
         return null;
       }
       

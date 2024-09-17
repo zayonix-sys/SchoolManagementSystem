@@ -130,7 +130,11 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task<List<ClassSubjectAssignmentDTO>> GetAllClassSubjectAsync()
         {
-            var classAssignment = await _classSubjectRepository.GetAllAsync();
+            var classAssignment = await _classSubjectRepository.GetAllAsync(
+                include: query => query
+                .Include(s => s.Subject)
+                .Include(s => s.Class)
+                );
             var activeClasssubjects = classAssignment.Where(c => c.IsActive);
 
             // Map the entities to DTOs

@@ -91,6 +91,7 @@
     "framer-motion": "^10.16.3",
     "google-map-react": "^2.2.1",
     "html-to-image": "^1.11.11",
+    "jwt-decode": "^4.0.0",
     "leaflet": "^1.9.4",
     "lucide": "^0.270.0",
     "lucide-react": "^0.269.0",
@@ -142,6 +143,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.2.0",
     "@svgr/webpack": "^8.1.0",
+    "@types/jwt-decode": "^3.1.0",
     "@types/next": "^9.0.0",
     "@types/node": "^20.10.0",
     "@types/react": "^18.2.38",

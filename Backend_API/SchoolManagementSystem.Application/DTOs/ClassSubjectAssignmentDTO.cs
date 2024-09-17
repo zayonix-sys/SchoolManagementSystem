@@ -7,6 +7,7 @@ namespace SchoolManagementSystem.Application.DTOs
         public int? ClassId { get; set; }
         //public int? SubjectId { get; set; }
         public List<int>? SubjectIds { get; set; } = new List<int>();
+        public string? SubjectName { get; set; }
         public DateTime? CreatedAt { get; set; }
         public int? CreatedBy { get; set; } = 1;
         public DateTime? UpdatedAt { get; set; }
