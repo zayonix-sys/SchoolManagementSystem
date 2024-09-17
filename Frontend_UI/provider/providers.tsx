@@ -34,9 +34,10 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <body
       className={cn("dash-tail-app ", inter.className, "theme-" + theme)}
-      style={{
-        "--radius": `${radius}rem`,
-      } as React.CSSProperties
+      style={
+        {
+          "--radius": `${radius}rem`,
+        } as React.CSSProperties
       }
     >
       <ThemeProvider

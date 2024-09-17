@@ -26,7 +26,8 @@ namespace SchoolManagementSystem.Application.Mappers
                 IsActive = entity.IsActive,
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
-                UserId = entity.UserId
+                UserId = entity.UserId,
+                RoleName = entity?.UserRole?.RoleName
             };
         }
 
