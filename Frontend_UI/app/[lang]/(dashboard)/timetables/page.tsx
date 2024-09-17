@@ -1,11 +1,19 @@
-"use client"
+"use client";
 import { Breadcrumbs, BreadcrumbItem } from "@/components/ui/breadcrumbs";
 import { ClassData, deleteClass, fetchClasses } from "@/services/ClassService";
 import { useEffect, useState } from "react";
 import { CampusData, getCampuses } from "@/services/campusService";
 import AddTimeTable from "./add-timetable";
-import { AssignSubjectData, fetchAssignSubject } from "@/services/assignSubjectService";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  AssignSubjectData,
+  fetchAssignSubject,
+} from "@/services/assignSubjectService";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import AddPeriods from "./add-periods";
 import { fetchPeriods, PeriodsData } from "@/services/periodService";
 import ViewTimeTable from "./view-timetable";
@@ -20,18 +28,18 @@ const TimeTables = () => {
   const [periods, setPeriods] = useState<PeriodsData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [classData, subjectData, campusesData, periodsData] = await Promise.all([
-          fetchClasses(),
-          fetchAssignSubject(),
-          getCampuses(),
-          fetchPeriods(),
-        ]);
+        const [classData, subjectData, campusesData, periodsData] =
+          await Promise.all([
+            fetchClasses(),
+            fetchAssignSubject(),
+            getCampuses(),
+            fetchPeriods(),
+          ]);
 
         setClasses(classData.data as ClassData[]);
         setSubjects(subjectData.data as AssignSubjectData[]);
@@ -45,10 +53,10 @@ const TimeTables = () => {
     };
 
     fetchData();
-  }, []);
+  }, []);
   const handleDelete = async (id: number) => {
     const isConfirmed = confirm("Are you sure you want to delete this campus?");
-    
+
     if (isConfirmed) {
       try {
         await deleteClass(id);
@@ -64,14 +72,18 @@ const TimeTables = () => {
 
   return (
     <div>
-      <div> 
+      <div>
         <Breadcrumbs>
           <BreadcrumbItem>Administration</BreadcrumbItem>
           <BreadcrumbItem className="text-primary">Time Tables</BreadcrumbItem>
         </Breadcrumbs>
         <div className="flex justify-end space-x-4">
-          <AddPeriods/>
-          <AddTimeTable classes={classes} subject={subjects} campus={campuses} periods={periods}/>
+          <AddTimeTable
+            classes={classes}
+            subject={subjects}
+            campus={campuses}
+            periods={periods}
+          />
         </div>
       </div>
 
@@ -86,7 +98,7 @@ const TimeTables = () => {
           <AccordionContent>
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5">
-                <PeriodsReports Periods={periods}/>
+                <PeriodsReports Periods={periods} />
               </div>
             </div>
           </AccordionContent>
@@ -98,19 +110,28 @@ const TimeTables = () => {
           type="single"
           collapsible
           className="w-full border rounded-md divide-y mt-5"
-          defaultValue={`item-${classes[0].classId}`} 
+          defaultValue={`item-${classes[0].classId}`}
         >
           {classes.map((classItem) => (
-            <AccordionItem key={classItem.classId} value={`item-${classItem.classId}`} className="shadow-none rounded-none open">
-              <AccordionTrigger>{classItem.className} TimeTable</AccordionTrigger>
+            <AccordionItem
+              key={classItem.classId}
+              value={`item-${classItem.classId}`}
+              className="shadow-none rounded-none open"
+            >
+              <AccordionTrigger>
+                {classItem.className} TimeTable
+              </AccordionTrigger>
               <AccordionContent>
-                <ViewTimeTable className={classItem.className} subjectData={subjects} periodsData={periods}/>
+                <ViewTimeTable
+                  className={classItem.className}
+                  subjectData={subjects}
+                  periodsData={periods}
+                />
               </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
-      )}  
-  
+      )}
     </div>
   );
 };

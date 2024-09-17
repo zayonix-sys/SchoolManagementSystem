@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { PeriodsData } from "@/services/periodService";
 import PeriodsListTable from "./periods-table";
+import AddPeriods from "./add-periods";
 
 const formatTime = (time: string) => {
   const [hour, minute] = time.split(":"); // Split the time to extract hour and minute
@@ -44,10 +45,11 @@ export default function ViewPeriod({
         <SheetHeader>
           <SheetTitle>Class Periods</SheetTitle>
         </SheetHeader>
-        <div>
-          <div className="py-6">
-            <PeriodsListTable Periods={periods ?? []}/>
-          </div>
+        <div className="flex flex-row-reverse">
+          <AddPeriods />
+        </div>
+        <div className="py-6">
+          <PeriodsListTable Periods={periods ?? []} />
         </div>
         <SheetFooter>
           <SheetClose asChild>footer content</SheetClose>

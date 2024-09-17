@@ -7,7 +7,7 @@ import "simplebar-react/dist/simplebar.min.css";
 import TanstackProvider from "@/provider/providers.client";
 import "flatpickr/dist/themes/light.css";
 import DirectionProvider from "@/provider/direction.provider";
-import { AuthProvider } from "@/provider/auth.provider";
+import AuthProvider from "@/provider/auth.provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {

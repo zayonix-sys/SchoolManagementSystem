@@ -1,4 +1,5 @@
-﻿using SchoolManagementSystem.Application.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
@@ -29,7 +30,10 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task<UserDTO> ValidUser(LoginDTO dto)
         {
-            var user = (await _userRepository.GetAllAsync())
+            var user = (await _userRepository.GetAllAsync(
+                include: query => query
+                .Include(r => r.UserRole)
+                ))
                 .FirstOrDefault(x => x.UserName == dto.UserName && x.PasswordHash == dto.Password);
 
             return _mapper.MapToDto(user);
