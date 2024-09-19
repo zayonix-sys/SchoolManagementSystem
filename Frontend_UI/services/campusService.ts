@@ -20,7 +20,17 @@ const BASE_URL = "/campuses";
 
 export const getCampuses = async (): Promise<ApiResponse> => {
   try {
-    const response = await api.get<ApiResponse>(BASE_URL + "/GetCampuses");
+    const authToken = localStorage.getItem("authToken");
+
+    if (!authToken) {
+      throw new Error("No authentication token found. Please log in.");
+    }
+    const response = await api.get<ApiResponse>(BASE_URL + "/GetCampuses"
+      , {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },}
+  );
     return response.data;
   } catch (error: any) {
     console.error("Error fetching campuses:", error);
@@ -32,9 +42,18 @@ export const addCampus = async (
   campusData: CampusData
 ): Promise<ApiResponse> => {
   try {
+    const authToken = localStorage.getItem("authToken");
+
+    if (!authToken) {
+      throw new Error("No authentication token found. Please log in.");
+    }
     const response = await api.post<ApiResponse>(
       BASE_URL + "/AddCampus",
-      campusData
+      campusData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
     );
     return response.data;
   } catch (error: any) {

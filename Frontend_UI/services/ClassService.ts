@@ -18,7 +18,18 @@ const BASE_URL = "/Class";
 
 export const fetchClasses = async (): Promise<ApiResponse> => {
   try {
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetClass`);
+    const authToken = localStorage.getItem("authToken");
+
+    if (!authToken) {
+      throw new Error("No authentication token found. Please log in.");
+    }
+    const response = await api.get<ApiResponse>(`${BASE_URL}/GetClass`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to fetch classes:", error);

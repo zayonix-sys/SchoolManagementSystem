@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.API.Models;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
@@ -19,6 +20,7 @@ namespace SchoolManagementSystem.API.Controllers
             _employeeService = emp;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<ApiResponse<IEnumerable<EmployeeDTO>>>> GetEmployees()
         {
