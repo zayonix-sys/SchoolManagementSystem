@@ -4,11 +4,17 @@ import { ApiResponse } from "./apiResponse";
 
 export interface SponsorData {
   sponsorId?: number;
-  sponsorName: string;
-  email: string;
-  phoneNumber: string;
-  sponsorAddress: string;
-  isActive?: string;                    
+  sponsorName?: string;
+  email?: string;
+  gender?:string;
+  phoneNumber?: string;
+  country?:string;
+  state?: string;
+  city?:string;
+  occupation?:string;
+  postalCode?: number;
+  address?: string;
+  isActive?: boolean;                    
 }
 
 const BASE_URL = "/Sponsors";
