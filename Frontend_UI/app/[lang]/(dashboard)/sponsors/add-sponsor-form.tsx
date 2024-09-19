@@ -26,6 +26,7 @@ import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { addSponsor } from "@/services/sponsorService";
 
 const sponsorSchema = z.object({
   sponsorName: z.string().min(1, "Full Name is required"),
@@ -39,7 +40,7 @@ const sponsorSchema = z.object({
   country: z.string().min(1, "Country is required"),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
-  postalCode: z.string().min(3, "Postal Code is required"),
+  postalCode: z.number().min(3, "Postal Code is required"),
   address: z.string().min(1, "Address is required"),
 });
 
@@ -57,15 +58,13 @@ const AddSponsorForm = () => {
   });
 
   const onSubmit: SubmitHandler<SponsorFormValues> = async (data) => {
-    // Add your submit logic here
-    // Example:
-    // const response = await addEmployee(data);
-    // if (response.success) {
-    //   toast.success(`Sponsor ${data.sponsorName} added successfully!`);
-    //   reset();
-    // } else {
-    //   toast.error(`Error: ${response.message || "Something went wrong"}`);
-    // }
+    const response = await addSponsor(data);
+    if (response.success) {
+      toast.success(`Sponsor ${data.sponsorName} added successfully!`);
+      reset();
+    } else {
+      toast.error(`Error: ${response.message || "Something went wrong"}`);
+    }
   };
 
   const handleError = () => {
@@ -201,6 +200,7 @@ const AddSponsorForm = () => {
                   <SelectItem value="turkey">Turkey</SelectItem>
                   <SelectItem value="hungry">Hungary</SelectItem>
                   <SelectItem value="ireland">Ireland</SelectItem>
+                  <SelectItem value="ireland">Other</SelectItem>
                 </SelectContent>
               </Select>
               {errors.country && (
@@ -219,6 +219,7 @@ const AddSponsorForm = () => {
                   <SelectItem value="manitoba">Manitoba</SelectItem>
                   <SelectItem value="brunswick">New Brunswick</SelectItem>
                   <SelectItem value="ontario">Ontario</SelectItem>
+                  <SelectItem value="ontario">Other</SelectItem>
                 </SelectContent>
               </Select>
               {errors.state && (
@@ -235,6 +236,7 @@ const AddSponsorForm = () => {
                   <SelectItem value="karachi">Karachi</SelectItem>
                   <SelectItem value="lahore">Lahore</SelectItem>
                   <SelectItem value="islamabad">Islamabad</SelectItem>
+                  <SelectItem value="islamabad">Other</SelectItem>
                 </SelectContent>
               </Select>
               {errors.city && (
@@ -248,10 +250,10 @@ const AddSponsorForm = () => {
                   <Icon icon="ic:baseline-mail" />
                 </InputGroupText>
                 <Input
-                  type="text"
+                  type="number"
                   placeholder="Type Postal Code"
                   id="postalCode"
-                  {...register("postalCode")}
+                  {...register("postalCode", {valueAsNumber: true})}
                   />
                   </InputGroup>
                 {errors.postalCode && (
@@ -270,7 +272,9 @@ const AddSponsorForm = () => {
                   type="text"
                   placeholder="Type Address"
                   id="address"
-                  {...register("address")}
+                  {...register("address")
+                    
+                  }
                 />
                   </InputGroup>
                 {errors.address && (
