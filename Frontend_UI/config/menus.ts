@@ -43,6 +43,11 @@ const menuItems: MenuItemProps[] = [
         href: "/subjects",
         icon: Book,
       },
+      {
+        title: "Manage Sponsor",
+        href: "/sponsors",
+        icon: User,
+      },
     ],
   },
   {

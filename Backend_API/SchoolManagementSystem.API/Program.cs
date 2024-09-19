@@ -77,6 +77,8 @@ builder.Services.AddScoped<ISubject, SubjectService>();
 builder.Services.AddScoped<SubjectMapper>();
 builder.Services.AddScoped<ISubjectTeacherAssignment, SubjectTeacherAssignmentService>();
 builder.Services.AddScoped<SubjectTeacherAssignmentMapper>();
+builder.Services.AddScoped<ISponsor, SponsorService>();
+builder.Services.AddScoped<SponsorMapper>();
 //builder.Services.AddScoped<IUserRoles, UserRolesService>();
 //builder.Services.AddScoped<UserRoleMapper>();
 
