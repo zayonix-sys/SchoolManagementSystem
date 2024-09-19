@@ -159,7 +159,8 @@ const ModuleSidebar = ({ trans }: { trans: any }) => {
         >
           <div className=" pt-4 ">
             <Link href="/dashboard">
-              <SiteLogo className=" mx-auto text-primary h-8 w-8" />
+
+              <SiteLogo className=" mx-auto text-primary h-15 w-14" />
             </Link>
           </div>
           {/* end logo */}
