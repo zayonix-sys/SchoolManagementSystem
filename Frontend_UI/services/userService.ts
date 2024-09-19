@@ -32,6 +32,7 @@ export const Login = async (userData: UserData): Promise<ApiResponse> => {
       `${BASE_URL}/Login`,
       userData
     );
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Failed to login:", error);
