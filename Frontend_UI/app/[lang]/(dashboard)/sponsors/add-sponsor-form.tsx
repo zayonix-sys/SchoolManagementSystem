@@ -105,13 +105,13 @@ const AddSponsorForm = () => {
                   placeholder="Your Full Name"
                   id="viFullName3"
                   {...register("sponsorName")}
-                  />
+                />
               </InputGroup>
-                  {errors.sponsorName && (
-                    <p className="text-destructive">
-                      {errors.sponsorName.message}
-                    </p>
-                  )}
+              {errors.sponsorName && (
+                <p className="text-destructive">
+                  {errors.sponsorName.message}
+                </p>
+              )}
             </div>
             <div className="col-span-2 lg:col-span-1 flex flex-col gap-2">
               <Label htmlFor="viEmail3">Email Address</Label>
@@ -126,9 +126,9 @@ const AddSponsorForm = () => {
                   {...register("email")}
                 />
               </InputGroup>
-                {errors.email && (
-                  <p className="text-destructive">{errors.email.message}</p>
-                )}
+              {errors.email && (
+                <p className="text-destructive">{errors.email.message}</p>
+              )}
             </div>
             <div className="col-span-2 lg:col-span-1 flex flex-col gap-2">
               <Label htmlFor="Gender">Gender</Label>
@@ -140,11 +140,11 @@ const AddSponsorForm = () => {
                 <SelectContent>
                   <div className="flex items-center space-x-2">
                     <Icon icon="fa:male" />
-                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="Male">Male</SelectItem>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Icon icon="fa:female" />
-                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
                   </div>
                 </SelectContent>
               </Select>
@@ -160,9 +160,9 @@ const AddSponsorForm = () => {
                   <SelectValue placeholder="Select Occupation" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="own-business">Own Business</SelectItem>
-                  <SelectItem value="govt-job">Government Job</SelectItem>
-                  <SelectItem value="pvt-job">Private Job</SelectItem>
+                  <SelectItem value="Own-Business">Own Business</SelectItem>
+                  <SelectItem value="Govt-Job">Government Job</SelectItem>
+                  <SelectItem value="Pvt-Job">Private Job</SelectItem>
                 </SelectContent>
               </Select>
               {errors.occupation && (
@@ -195,12 +195,11 @@ const AddSponsorForm = () => {
                   <SelectValue placeholder="Select Country" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pakistan">Pakistan</SelectItem>
-                  <SelectItem value="india">India</SelectItem>
-                  <SelectItem value="turkey">Turkey</SelectItem>
-                  <SelectItem value="hungry">Hungary</SelectItem>
-                  <SelectItem value="ireland">Ireland</SelectItem>
-                  <SelectItem value="ireland">Other</SelectItem>
+                  <SelectItem value="Pakistan">Pakistan</SelectItem>
+                  <SelectItem value="India">India</SelectItem>
+                  <SelectItem value="USA">USA</SelectItem>
+                  <SelectItem value="UK">UK</SelectItem>
+                  <SelectItem value="UAE">UAE</SelectItem>
                 </SelectContent>
               </Select>
               {errors.country && (
@@ -214,12 +213,25 @@ const AddSponsorForm = () => {
                   <SelectValue placeholder="Select State" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="alberta">Alberta</SelectItem>
-                  <SelectItem value="british">British Columbia</SelectItem>
-                  <SelectItem value="manitoba">Manitoba</SelectItem>
-                  <SelectItem value="brunswick">New Brunswick</SelectItem>
-                  <SelectItem value="ontario">Ontario</SelectItem>
-                  <SelectItem value="ontario">Other</SelectItem>
+                  <SelectItem value="Sindh">Sindh</SelectItem>
+                  <SelectItem value="Punjab">Punjab</SelectItem>
+                  <SelectItem value="Balochistan">Balochistan</SelectItem>
+                  <SelectItem value="KPK">Khyber Pakhtunkhua</SelectItem>
+                  <SelectItem value="GB">Gilgit Baltistan</SelectItem>
+                  <SelectItem value="UP">Uttar Pardesh</SelectItem>
+                  <SelectItem value="MP">Maharashtra</SelectItem>
+                  <SelectItem value="Bihar">Bihar</SelectItem>
+                  <SelectItem value="Dubai">Dubai</SelectItem>
+                  <SelectItem value="Abu Dhabi">Abu Dhabi</SelectItem>
+                  <SelectItem value="Sharjah">Sharjah</SelectItem>
+                  <SelectItem value="England">England</SelectItem>
+                  <SelectItem value="Scotland">Scotland</SelectItem>
+                  <SelectItem value="Irelands">Northern Irelands</SelectItem>
+                  <SelectItem value="Chicago">Chicago</SelectItem>
+                  <SelectItem value="Los Angeles">Los Angeles</SelectItem>
+                  <SelectItem value="Miami">Miami</SelectItem>
+                  <SelectItem value="Texas">Texas</SelectItem>
+                  <SelectItem value="Virginia">Virginia</SelectItem>
                 </SelectContent>
               </Select>
               {errors.state && (
@@ -233,10 +245,20 @@ const AddSponsorForm = () => {
                   <SelectValue placeholder="Select City" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="karachi">Karachi</SelectItem>
-                  <SelectItem value="lahore">Lahore</SelectItem>
-                  <SelectItem value="islamabad">Islamabad</SelectItem>
-                  <SelectItem value="islamabad">Other</SelectItem>
+                  <SelectItem value="Karachi">Karachi</SelectItem>
+                  <SelectItem value="Lahore">Lahore</SelectItem>
+                  <SelectItem value="Islamabad">Islamabad</SelectItem>
+                  <SelectItem value="Hyderabad">Hyderabad</SelectItem>
+                  <SelectItem value="Mumbai">Mumbai</SelectItem>
+                  <SelectItem value="Delhi">Delhi</SelectItem>
+                  <SelectItem value="Goa">Goa</SelectItem>
+                  <SelectItem value="London">London</SelectItem>
+                  <SelectItem value="Manchester">Manchester</SelectItem>
+                  <SelectItem value="New York">New York</SelectItem>
+                  <SelectItem value="Los Angeles">Los Angeles</SelectItem>
+                  <SelectItem value="Miami">Miami</SelectItem>
+                  <SelectItem value="Texas">Texas</SelectItem>
+                  <SelectItem value="Virginia">Virginia</SelectItem>
                 </SelectContent>
               </Select>
               {errors.city && (
@@ -276,10 +298,10 @@ const AddSponsorForm = () => {
                     
                   }
                 />
-                  </InputGroup>
-                {errors.address && (
-                  <p className="text-destructive">{errors.address.message}</p>
-                )}
+              </InputGroup>
+              {errors.address && (
+                <p className="text-destructive">{errors.address.message}</p>
+              )}
             </div>
             <div className="col-span-2">
               <Button type="submit">Submit Form</Button>
