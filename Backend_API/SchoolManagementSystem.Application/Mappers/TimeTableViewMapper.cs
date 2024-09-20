@@ -1,5 +1,4 @@
-﻿using SchoolManagementSystem.Application.DTOs;
-using SchoolManagementSystem.Domain.Entities;
+﻿using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
