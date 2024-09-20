@@ -11,6 +11,7 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             return new Subject
             {
+                SubjectId = dto.SubjectId,
                 SubjectName = dto.SubjectName,
                 SubjectDescription = dto.SubjectDescription,
                 CreatedBy = dto.CreatedBy,

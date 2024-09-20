@@ -116,7 +116,7 @@ const LogInForm = () => {
               "border-destructive": errors.username,
             })}
             size={!isDesktop2xl ? "xl" : "lg"}
-            placeholder=""
+            placeholder="Username"
           />
         </div>
         {errors.username && (
@@ -141,7 +141,7 @@ const LogInForm = () => {
               id="password"
               className="peer "
               size={!isDesktop2xl ? "xl" : "lg"}
-              placeholder=" "
+              placeholder="Password"
             />
 
             <div
