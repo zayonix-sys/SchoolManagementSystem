@@ -16,7 +16,18 @@ const BASE_URL = "/ClassSectionAssignment";
 
 export const assignClasses = async (): Promise<ApiResponse> => {
   try {
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetAllClassAssignments`);
+    const authToken = localStorage.getItem("authToken");
+
+    if (!authToken) {
+      throw new Error("No authentication token found. Please log in.");
+    }
+    const response = await api.get<ApiResponse>(`${BASE_URL}/GetAllClassAssignments`,
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to fetch class assignments:", error);

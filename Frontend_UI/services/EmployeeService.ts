@@ -24,7 +24,16 @@ const BASE_URL = "/Employee";
 
 export const fetchEmployees = async (): Promise<ApiResponse> => {
   try {
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetEmployees`);
+    const authToken = localStorage.getItem("authToken");
+
+    if (!authToken) {
+      throw new Error("No authentication token found. Please log in.");
+    }
+    const response = await api.get<ApiResponse>(`${BASE_URL}/GetEmployees`,
+      {headers: {
+        Authorization: `Bearer ${authToken}`,
+      },}
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to fetch Employees:", error);
