@@ -41,10 +41,19 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             return entity.GetType().GetProperty(entity.GetType().Name + "Id")?.GetValue(entity);
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<object> UpdateAsync(T entity)
         {
-            _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            var key = entity.GetType().GetProperty(entity.GetType().Name + "Id")?.GetValue(entity);
+            if (key == null)
+            {
+                throw new ArgumentException("Entity key is not set.");
+            }
+
+            _dbSet.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
+            _context.SaveChangesAsync().Wait();
+
+            return key;
         }
 
         public async Task DeleteAsync(int id)

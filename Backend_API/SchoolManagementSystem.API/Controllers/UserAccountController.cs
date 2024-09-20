@@ -49,7 +49,7 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<ApiResponse<LoginDTO>>> Login([FromBody] LoginDTO dto)
+        public async Task<ActionResult<ApiResponse<UserDTO>>> Login([FromBody] LoginDTO dto)
         {
             _logger.LogInformation("Login with username {username}.", dto.UserName);
             try
@@ -57,10 +57,10 @@ namespace SchoolManagementSystem.API.Controllers
                 var user = await _userAccountService.ValidUser(dto);
                 if (user != null)
                 {
-                    var token = GenerateJwtToken(user.UserName);
-                    dto.Token = token;
+                    var token = GenerateJwtToken(user);
+                    user.Token = token;
                     _logger.LogInformation("Successfully Login with {username}.", dto.UserName);
-                    return Ok(ApiResponse<LoginDTO>.SuccessResponse(dto, "Login successfully"));
+                    return Ok(ApiResponse<UserDTO>.SuccessResponse(user, "Login successfully"));
 
                 }
             }
@@ -73,14 +73,16 @@ namespace SchoolManagementSystem.API.Controllers
             return Unauthorized();
         }
 
-        private string GenerateJwtToken(string username)
+        private string GenerateJwtToken(UserDTO user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-            new Claim(JwtRegisteredClaimNames.Sub, username),
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Role, user.RoleName),
+            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

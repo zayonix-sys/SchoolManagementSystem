@@ -17,6 +17,7 @@ namespace SchoolManagementSystem.Application.DTOs
         public string UserName { get; set; }
 
         public string PasswordHash { get; set; }
+        public string Token { get; set; }
 
         public int RoleId { get; set; }
         public string? RoleName { get; set; }
