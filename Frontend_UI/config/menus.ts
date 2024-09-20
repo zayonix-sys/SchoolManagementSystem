@@ -1,4 +1,4 @@
-import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck } from "@/components/svg";
+import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User } from "@/components/svg";
 
 export interface MenuItemProps {
   title: string;
