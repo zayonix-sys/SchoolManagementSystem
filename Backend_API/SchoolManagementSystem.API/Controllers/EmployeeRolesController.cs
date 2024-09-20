@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.API.Models;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Domain.Entities;
@@ -17,6 +18,7 @@ namespace SchoolManagementSystem.API.Controllers
             _roleService = role;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<RolesDTO>>> GetRoles()
         {

@@ -81,7 +81,16 @@ const BASE_URL = "/Applicant";
 
 export const getApplicants = async (): Promise<ApiResponse> => {
   try {
-    const response = await api.get<ApiResponse>(BASE_URL + "/GetAllApplicants");
+    const authToken = localStorage.getItem("authToken");
+
+    if (!authToken) {
+      throw new Error("No authentication token found. Please log in.");
+    }
+    const response = await api.get<ApiResponse>(BASE_URL + "/GetAllApplicants",
+      {headers: {
+        Authorization: `Bearer ${authToken}`,
+      },}
+    );
     return response.data;
   } catch (error: any) {
     console.error("Error fetching Applicants:", error);

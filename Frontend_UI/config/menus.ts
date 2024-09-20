@@ -1,4 +1,4 @@
-import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck } from "@/components/svg";
+import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User } from "@/components/svg";
 
 export interface MenuItemProps {
   title: string;
@@ -42,6 +42,11 @@ const menuItems: MenuItemProps[] = [
         title: "Manage Subjects",
         href: "/subjects",
         icon: Book,
+      },
+      {
+        title: "Manage Sponsor",
+        href: "/sponsors",
+        icon: User,
       },
     ],
   },

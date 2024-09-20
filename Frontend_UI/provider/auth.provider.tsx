@@ -1,18 +1,23 @@
 "use client";
 
 import useAuth from "@/hooks/use-auth";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, isAdmin, isTeacher } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const restrictedPaths = ["/en/employees", "/en/applicant"];
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push("/auth/login");
     }
-  }, [isAuthenticated, isLoading, router]);
+    if (isTeacher && restrictedPaths.includes(pathname)) {
+      router.push("/notAuthorize"); // Redirect to a "not authorized" page or any other page
+    }
+  }, [isAuthenticated, isLoading, isTeacher, pathname, router]);
 
   return <>{children}</>;
 };

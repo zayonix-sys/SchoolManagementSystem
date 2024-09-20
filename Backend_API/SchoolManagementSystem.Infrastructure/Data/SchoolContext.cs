@@ -31,6 +31,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Period> Periods { get; set; }
         public DbSet<SubjectTeacherAssignment> SubjectTeachers { get; set; }
 
+        public DbSet<Sponsor> Sponsors { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and keys here
