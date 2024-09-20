@@ -20,7 +20,7 @@ namespace SchoolManagementSystem.API.Controllers
             _employeeService = emp;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("[action]")]
         public async Task<ActionResult<ApiResponse<IEnumerable<EmployeeDTO>>>> GetEmployees()
         {
