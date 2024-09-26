@@ -1,31 +1,25 @@
 import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
-export interface ApplicantData {
-  applicantId?:number;
-  firstName: string;
-  lastName: string;
-  formBNumber: string;
-  dateOfBirth: string;
-  gender: string;
-  email: string;
-  applicantAddress: string;
-  nationality?: string;
-  lastClassId?: number;
-  admissionClassId?: number;
-  campusId?: number;
-  campusName?: string;
+export interface ApplicantApplicationDetail {
+  // Application Details
+  applicationId: number;
+  applicantId: number;
+  applicationStatus: string;
+  campusId: number;
+  campusName: string;
   admissionDecisionDate?: string; // DateOnly in C#, use string or Date in TypeScript
   remarks?: string;
 
   // Applied Class Details
-  appliedClassId?: number;
-  appliedClassName?: string;
-}
-export interface ApplicantAdmissionDTO {
-  // Applicant Details
-  lastClassId?: number;
-  admissionClassId?: number;
+  appliedClassId: number;
+  appliedClassName: string;
+
+  // Last Attended Class Details
+  lastClassId: number;
+  lastAttendedClassName: string;
+
+  // Applicant Personal Details
   firstName: string;
   lastName: string;
   formBNumber: string;
@@ -137,3 +131,19 @@ export const deleteApplicant = async (id: number): Promise<ApiResponse> => {
     throw new Error(`Failed to delete applicant`);
   }
 };
+
+export const applicationStatus = async (id: number, status: string): Promise<ApiResponse> => {
+  try {
+    const app = {
+      applicationId: id,
+      applicationStatus: status
+    }
+    const response = await api.put<ApiResponse>(
+      `${BASE_URL}/ApplicationStatus`,
+      app
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error(`Failed to Update Application Status`);
+  }
+}

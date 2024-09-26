@@ -20,7 +20,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public string LastName { get; set; }
 
         [Required]
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
 
         [Required]
         [MaxLength(10)]
@@ -35,22 +35,29 @@ namespace SchoolManagementSystem.Domain.Entities
         public string PhoneNumber { get; set; }
 
         [Required]
-        public DateTime EnrollmentDate { get; set; }
+        public DateTime? EnrollmentDate { get; set; }
 
         [MaxLength(255)]
-        public string ProfileImage { get; set; }
+        public string? ProfileImage { get; set; }
 
         [Required]
-        public int ClassId { get; set; }
+        public int? ClassId { get; set; }
 
         [Required]
-        public int SectionId { get; set; }
+        public int? CampusId { get; set; }
+
+        [Required]
+        public bool IsActive { get; set; }
+
+        [Required]
+        public int CreatedBy { get; set; }
 
         // Navigation Properties
         [ForeignKey("ClassId")]
-        public virtual Class Class { get; set; }
+        public virtual Class? Class { get; set; }
 
-        [ForeignKey("SectionId")]
-        public virtual Section Section { get; set; }
+        [ForeignKey("CampusId")]
+        public virtual Campus? Campus { get; set; }
+
     }
 }

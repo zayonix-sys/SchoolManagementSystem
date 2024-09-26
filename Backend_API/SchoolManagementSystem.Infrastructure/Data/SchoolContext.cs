@@ -46,7 +46,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
                 .HasOne(a => a.Student);
 
             modelBuilder.Entity<AdmissionApplication>()
-                .HasIndex(a => a.ApplicantId);
+                .HasIndex(a => a.ApplicationId);
 
             modelBuilder.Entity<AdmissionTest>()
                 .HasIndex(at => at.ApplicationId);

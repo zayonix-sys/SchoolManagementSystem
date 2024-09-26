@@ -12,6 +12,7 @@ namespace SchoolManagementSystem.Application.Interfaces
         Task UpdateApplicantAsync(ApplicantDTO dto);
         Task UpdateApplicationAsync(ApplicationDTO dto);
         Task DeleteApplicantAsync(int appId);
+        Task ApplicationStatus(ApplicationUpdateStatusDTO dto);
 
     }
 }
