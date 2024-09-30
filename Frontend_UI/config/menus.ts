@@ -1,4 +1,5 @@
-import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User } from "@/components/svg";
+import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation } from "@/components/svg";
+import useAuth from "@/hooks/use-auth";
 
 export interface MenuItemProps {
   title: string;
@@ -48,6 +49,11 @@ const menuItems: MenuItemProps[] = [
         href: "/sponsors",
         icon: User,
       },
+      {
+        title: "Manage Sponsorship",
+        href: "/sponsorship",
+        icon: Donation,
+      },
     ],
   },
   {
@@ -58,6 +64,11 @@ const menuItems: MenuItemProps[] = [
         title: "Applicants",
         href: "/applicant",
         icon: Graph,
+      },
+      {
+        title: "Students",
+        href: "/students",
+        icon: Users,
       }
     ],
   },
@@ -91,3 +102,4 @@ export const menusConfig = generateMenus(menuItems);
 export type ModernNavType = (typeof menusConfig.sidebarNav.modern)[number];
 export type ClassicNavType = (typeof menusConfig.sidebarNav.classic)[number];
 export type MainNavType = (typeof menusConfig.mainNav)[number];
+
