@@ -121,6 +121,7 @@ namespace SchoolManagementSystem.API.Controllers
         //    }
         //}
 
+
         [HttpDelete("[action]")]
         public async Task<IActionResult> DeleteStudent(int id)
         {
@@ -139,5 +140,27 @@ namespace SchoolManagementSystem.API.Controllers
 
             }
         }
+
+
+
+
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateStudentData([FromBody] StudentDTO std)
+        {
+            _logger.LogInformation("Updating Student with ID {StudentId}.", std.StudentId);
+            try
+            {
+                await _studentService.UpdateStudentDataAsync(std);
+                _logger.LogInformation("Successfully updated Student with ID {StudentId}.", std.StudentId);
+                return Ok(ApiResponse<StudentDTO>.SuccessResponse(std, "Student updated successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating Student with ID {StudentId}.", std.StudentId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
+            }
+        }
+
+
     }
 }

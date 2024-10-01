@@ -47,35 +47,47 @@ namespace SchoolManagementSystem.Application.Services
             return (await _studentRepository.GetAllAsync()).ToList();
         }
 
-        public async Task<List<StudentDTO>> GetAllStudentClassWiseAsync(int classId)
+        public async Task<List<StudentDTO>> GetAllStudentClassWiseAsync(int? classId)
         {
             try
             {
                 var result = await _studentRepository.GetAllAsync(
-                    include: query => query
-                    .Include(c => c.Class)
-                    );
-                var students = result.Where(x => x.ClassId == classId).ToList();
-                var studentData = students.Select(c => _mapper.MapToDto(c)).ToList();
-                return studentData;
+                    include: query => query.Include(c => c.Class)
+                );
+
+                if (!classId.HasValue || classId == 0)
+                {
+                    return result.Select(c => _mapper.MapToDto(c)).ToList();
+                }
+
+                var filteredStudents = result.Where(x => x.ClassId == classId.Value).ToList();
+                return filteredStudents.Select(c => _mapper.MapToDto(c)).ToList();
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
-
-        //public async Task<Student> GetStudentByIdAsync(int stdId)
-        //{
-        //    return await _studentRepository.GetByIdAsync(stdId);
-        //}
 
         public async Task UpdateStudentAsync(Student std)
         {
             await _studentRepository.UpdateAsync(std);
         }
 
+        public async Task UpdateStudentDataAsync(StudentDTO std)
+        {
+            try
+            {
+                var model = _mapper.MapToEntity(std);
+                await _studentRepository.UpdateAsync(model);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
         Task<StudentDTO> IStudent.GetStudentByIdAsync(int stdId)
         {
             throw new NotImplementedException();

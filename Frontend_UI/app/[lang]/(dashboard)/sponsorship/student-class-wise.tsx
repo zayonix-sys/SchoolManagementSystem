@@ -39,10 +39,10 @@ const ClassStudentListTable:React.FC<StudentListTableProps> = ({classId, onStude
   const [studentToDelete, setStudentToDelete] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchStudentByClass = async (id: number) => {
+    const fetchStudentByClass = async (id: number | null) => {
       setLoading(true);
       try {
-        const studentData = await getStudentByClassWise(id);
+        const studentData = await getStudentByClassWise(id ?? null);
         setStudent(studentData?.data as StudentData[]);
         
         
@@ -123,11 +123,11 @@ const ClassStudentListTable:React.FC<StudentListTableProps> = ({classId, onStude
               <TableCell className="font-medium  text-card-foreground/80 sticky left-0 bg-background drop-shadow-md">
                 <Avatar className="rounded-full">
                   <AvatarImage src={item.profileImage} />
-                  <AvatarFallback>SK</AvatarFallback>
+                  <AvatarFallback>SK
+                    <Icon icon="simple-line-icons:user" className="h-4 w-4" />
+                  </AvatarFallback>
                 </Avatar>
-              </TableCell>
-
-              
+              </TableCell> 
               <TableCell>{item.grNo}</TableCell>
                <TableCell>{item.firstName}{" "}{item.lastName}</TableCell>
               <TableCell>{item.email}</TableCell>
@@ -148,7 +148,6 @@ const ClassStudentListTable:React.FC<StudentListTableProps> = ({classId, onStude
               <TableCell className="flex gap-3 justify-end bg-background drop-shadow-md">
                  <Button
                   size="icon"
-                  variant="outline"
                   color="secondary"
                   className=" h-7 w-7"
                   type="submit"
@@ -156,7 +155,7 @@ const ClassStudentListTable:React.FC<StudentListTableProps> = ({classId, onStude
                   disabled={sponsorship.some(s => s.studentId === item.studentId)} 
                 >
                    
-                   <Icon icon="entypo:plus" className="h-4 w-4" />
+                   {sponsorship.some(s => s.studentId === item.studentId) ? <small>Sponsored</small> : <Icon icon="entypo:plus" className="h-4 w-4" />} 
                 </Button> 
               </TableCell>
             </TableRow>

@@ -20,6 +20,7 @@ import { deleteStudent, getStudentByClassWise, StudentData } from "@/services/st
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
+import EditStudent from "./edit-student";
 
 
 interface StudentListTableProps {
@@ -155,14 +156,15 @@ const StudentList:React.FC<StudentListTableProps> = ({classId}) => {
                 </Badge>
               </TableCell>
               <TableCell className="flex gap-3 justify-end bg-background drop-shadow-md">
-                 <Button
+                 {/* <Button
                   size="icon"
                   variant="outline"
                   color="secondary"
                   className=" h-7 w-7"
                 >
                   <Icon icon="heroicons:pencil" className=" h-4 w-4  " />
-                </Button> 
+                </Button>  */}
+                <EditStudent studentData={item}/>
                 <Button
                   size="icon"
                   variant="outline"

@@ -16,7 +16,7 @@ const Page = () => {
   const [classId, setClassId] = useState<number | null>(null);
   const [classes, setClasses] = useState<ClassData[]>([]); 
 
-  // Fetch classes from API
+  
   useEffect(() => {
     const fetchClassData = async () => {
       setLoading(true);
@@ -33,7 +33,7 @@ const Page = () => {
     fetchClassData();
   }, []);
 
-  // Fetch students based on classId
+  
   useEffect(() => {
     const fetchStudentByClass = async (id: number) => {
       setLoading(true);

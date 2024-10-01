@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
 
@@ -32,6 +31,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<SubjectTeacherAssignment> SubjectTeachers { get; set; }
 
         public DbSet<Sponsor> Sponsors { get; set; }
+        public DbSet<Sponsorship> Sponsorships { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -72,7 +72,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
             modelBuilder.Entity<TimeTableView>()
                 .HasNoKey();
-                
+
 
             // Map the entity to the SQL Server view
             modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
