@@ -43,20 +43,20 @@ export const addSponsorship = async (SponsorshipData: SponsorshipData): Promise<
   }
 };
 
-// export const updateSponsor = async (
-//   SponsorData: SponsorData
-// ): Promise<ApiResponse> => {
-//   try {
-//     const response = await api.put<ApiResponse>(
-//       `${BASE_URL}/UpdateSponsor`,
-//       SponsorData
-//     );
-//     return response.data;
-//   } catch (error: any) {
-//     console.error(`Failed to update Sponsor`, error);
-//     throw new Error(`Failed to update Sponsor`);
-//   }
-// };
+export const updateSponsorship = async (
+  SponsorshipData: SponsorshipData
+): Promise<ApiResponse> => {
+  try {
+    const response = await api.put<ApiResponse>(
+      `${BASE_URL}/UpdateSponsorship`,
+      SponsorshipData
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to update Sponsorship`, error);
+    throw new Error(`Failed to update Sponsorship`);
+  }
+};
 
 export const deleteSponsorship = async (id: number): Promise<ApiResponse> => {
   try {

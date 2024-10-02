@@ -1,6 +1,5 @@
 "use client"
 
-import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -59,11 +58,13 @@ const ClassStudentListTable:React.FC<StudentListTableProps> = ({classId, onStude
   }, [classId]);
 
   const itemsPerPage = 20;
-  const filteredStudents = (students as any[])?.filter(
-    (students) =>
-      students.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    students.lastName.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredStudents = (students as StudentData[]).filter(
+    (student) =>
+      (student.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        student.lastName?.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      !sponsorship.some((s) => s.studentId === student.studentId) 
   );
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredStudents?.slice(
@@ -122,7 +123,7 @@ const ClassStudentListTable:React.FC<StudentListTableProps> = ({classId, onStude
             <TableRow key={item.email} className="hover:bg-muted">
               <TableCell className="font-medium  text-card-foreground/80 sticky left-0 bg-background drop-shadow-md">
                 <Avatar className="rounded-full">
-                  <AvatarImage src={item.profileImage} />
+                  <AvatarImage src={item?.profileImage} />
                   <AvatarFallback>SK
                     <Icon icon="simple-line-icons:user" className="h-4 w-4" />
                   </AvatarFallback>
@@ -152,10 +153,10 @@ const ClassStudentListTable:React.FC<StudentListTableProps> = ({classId, onStude
                   className=" h-7 w-7"
                   type="submit"
                   onClick={() => handleSelectStudent(item.studentId)}
-                  disabled={sponsorship.some(s => s.studentId === item.studentId)} 
+                  
                 >
                    
-                   {sponsorship.some(s => s.studentId === item.studentId) ? <small>Sponsored</small> : <Icon icon="entypo:plus" className="h-4 w-4" />} 
+                   <Icon icon="entypo:plus" className="h-4 w-4" />
                 </Button> 
               </TableCell>
             </TableRow>

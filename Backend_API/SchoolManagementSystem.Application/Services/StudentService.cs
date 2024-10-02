@@ -55,18 +55,22 @@ namespace SchoolManagementSystem.Application.Services
                     include: query => query.Include(c => c.Class)
                 );
 
+
+                var activeStudents = result.Where(c => c.IsActive);
+
                 if (!classId.HasValue || classId == 0)
                 {
-                    return result.Select(c => _mapper.MapToDto(c)).ToList();
+                    return activeStudents.Select(c => _mapper.MapToDto(c)).ToList();
                 }
 
-                var filteredStudents = result.Where(x => x.ClassId == classId.Value).ToList();
+                var filteredStudents = activeStudents.Where(x => x.ClassId == classId.Value).ToList();
                 return filteredStudents.Select(c => _mapper.MapToDto(c)).ToList();
             }
             catch (Exception)
             {
                 throw;
             }
+
         }
 
         public async Task UpdateStudentAsync(Student std)

@@ -35,18 +35,6 @@ export const getStudentByClassWise = async (
   }
 };
 
-// export const addSponsor = async (SponsorData: SponsorData): Promise<ApiResponse> => {
-//   try {
-//     const response = await api.post<ApiResponse>(
-//       `${BASE_URL}/AddSponsor`,
-//       SponsorData
-//     );
-//     return response.data;
-//   } catch (error) {
-//     console.error("Failed to add Sponsor:", error);
-//     throw new Error("Failed to add Sponsor");
-//   }
-// };
 
 export const updateStudent = async (StudentData: StudentData): Promise<ApiResponse> => {
   try {

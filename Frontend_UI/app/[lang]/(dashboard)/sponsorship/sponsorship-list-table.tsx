@@ -24,6 +24,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { deleteSponsorship, fetchSponsorship, SponsorshipData } from "@/services/sponsorshipService";
+import EditSponsorshipForm from "./edit-sponsorship";
 
 interface SponsorshipListTableProps {
   sponsorship: SponsorshipData[];
@@ -50,7 +51,7 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
     indexOfFirstItem,
     indexOfLastItem
   );
-console.log(currentItems,"current Items");
+
 
   const totalPages = Math.ceil(filteredSponsorshp.length / itemsPerPage);
 // console.log(filteredSponsorshp,"filterend Sponosorship");
@@ -174,7 +175,7 @@ console.log(currentItems,"current Items");
                   >
                     <Icon icon="heroicons:eye" className=" h-4 w-4" />
                   </Button>
-                  {/* <EditSponsorship sponsorshipData={item} /> */}
+                  <EditSponsorshipForm existingSponsorship={item} studentName={item.studentName} />
                   <Button
                     size="icon"
                     variant="outline"

@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 import { ClassData, fetchClasses } from "@/services/ClassService";
 import ClassStudentListTable from "./student-class-wise";
 import { addSponsorship, SponsorshipData } from "@/services/sponsorshipService";
+import { fetchSponsor, SponsorData } from "@/services/sponsorService";
 
 const sponsorshipSchema = z.object({
   amount: z.string().min(1, "Please Enter Correct Amount").optional(),
@@ -47,7 +48,9 @@ interface SponsorshipListTableProps {
 
 const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({ sponsorship }) =>{
   const [classes, setClasses] = useState<ClassData[]>([]); 
+  const [sponsors, setSponsors] = useState<SponsorData[]>([]); 
   const [classId, setClassId] = useState<number | null>(null);
+  const [sponsorId, setSponsorId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [studentId, setStudentId] = useState<number | null>(null);
@@ -63,11 +66,15 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({ sponsorship }
   });
 
   useEffect(() => {
-    const fetchClassData = async () => {
+    const fetchClassSponsorData = async () => {
       setLoading(true);
       try {
-        const response = await fetchClasses(); 
-        setClasses(response.data as ClassData[]);
+        const classResponse = await fetchClasses(); 
+        setClasses(classResponse.data as ClassData[]);
+        const sponsorResponse = await fetchSponsor();
+        setSponsors(sponsorResponse.data as SponsorData[]); 
+          console.log(sponsorResponse,"sponsor Response");
+          
       } catch (err) {
         setError(err as any);
       } finally {
@@ -75,7 +82,7 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({ sponsorship }
       }
     };
 
-    fetchClassData();
+    fetchClassSponsorData();
   }, []);
 
   const onSubmit: SubmitHandler<SponsorshipFormValues> = async (data) => { 
@@ -83,13 +90,14 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({ sponsorship }
       sponsorshipId: 0, 
       studentId: studentId ?? 0, 
       classId: classId ?? 0,
+      sponsorId: sponsorId ?? 0, 
       amount: data.amount, 
       startDate: data.startDate, 
       frequency: data.frequency, 
-      sponsorId: 1, 
     };
+console.log(combinedData,"combine Data");
 
-    const response = await addSponsorship(combinedData); // Send combined data to the API
+    const response = await addSponsorship(combinedData); 
   
     if (response.success) {
       toast.success(`Sponsorship added successfully!`);
@@ -140,6 +148,21 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({ sponsorship }
                   {classes?.map((cd) => (
                     <SelectItem key={cd.classId} value={cd.classId.toString()}>
                       {cd.className}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+        <div className="flex flex-col gap-2 col-span-1">
+              <Label>Select Sponsor</Label>
+              <Select onValueChange={(value) => setSponsorId(parseInt(value))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Sponsor" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sponsors?.map((cd) => (
+                    <SelectItem key={cd.sponsorId} value={cd.sponsorId.toString()}>
+                      {cd.sponsorName}
                     </SelectItem>
                   ))}
                 </SelectContent>
