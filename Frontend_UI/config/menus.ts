@@ -30,19 +30,9 @@ const menuItems: MenuItemProps[] = [
         icon: ClipBoard2,
       },
       {
-        title: "Time Tables",
-        href: "/timetables",
-        icon: CalenderCheck,
-      },
-      {
         title: "Manage Employees",
         href: "/employees",
         icon: Users,
-      },
-      {
-        title: "Manage Subjects",
-        href: "/subjects",
-        icon: Book,
       },
       {
         title: "Manage Sponsor",
@@ -69,7 +59,23 @@ const menuItems: MenuItemProps[] = [
         title: "Students",
         href: "/students",
         icon: Users,
-      }
+      },
+      {
+        title: "Time Tables",
+        href: "/timetables",
+        icon: CalenderCheck,
+      },
+      {
+        title: "Manage Subjects",
+        href: "/subjects",
+        icon: Book,
+      },
+      {
+        title: "Manage Exams",
+        href: "/examPaper",
+        icon: Book,
+      },
+      
     ],
   },
   // Add more menu items here
