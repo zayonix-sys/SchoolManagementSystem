@@ -2,12 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using SchoolManagementSystem.Domain.Interfaces;
 using SchoolManagementSystem.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace SchoolManagementSystem.Infrastructure.Repositories
 {
@@ -36,25 +32,47 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
         {
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
-            
+
             // Use reflection to get the ID property value
             return entity.GetType().GetProperty(entity.GetType().Name + "Id")?.GetValue(entity);
         }
 
         public async Task<object> UpdateAsync(T entity)
         {
-            var key = entity.GetType().GetProperty(entity.GetType().Name + "Id")?.GetValue(entity);
+            var entityType = entity.GetType();
+
+            PropertyInfo keyProperty;
+            if (entityType.Name == "AdmissionApplication")
+            {
+                keyProperty = entityType.GetProperty("ApplicationId");
+            }
+
+            else if (entityType.Name == "EmployeeRole")
+            {
+                keyProperty = entityType.GetProperty("RoleId");
+            }
+            else
+            {
+                // Use default convention: ClassName + "Id"
+                keyProperty = entityType.GetProperty(entityType.Name + "Id");
+            }
+
+            // Get the value of the primary key
+            var key = keyProperty?.GetValue(entity);
+
             if (key == null)
             {
                 throw new ArgumentException("Entity key is not set.");
             }
 
+            // Attach and update the entity
             _dbSet.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
-            _context.SaveChangesAsync().Wait();
+            await _context.SaveChangesAsync();
 
             return key;
         }
+
 
         public async Task DeleteAsync(int id)
         {

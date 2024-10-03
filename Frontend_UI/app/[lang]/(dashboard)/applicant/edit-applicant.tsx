@@ -129,7 +129,10 @@ export default function EditApplicant({
 
   const onSubmit: SubmitHandler<ApplicantFormValues> = async (data) => {
     try {
-      const updatedApplicant = { ...data, applicationId };
+      const updatedApplicant = { 
+        ...data, 
+        applicationId: applicationId 
+      };
       const response = await updateApplicant(updatedApplicant);
 
       if (response.success) {
@@ -170,14 +173,14 @@ export default function EditApplicant({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
+        {/* <Button
           size="icon"
           variant="outline"
           className="h-7 w-7"
           color="secondary"
         >
           <Icon icon="heroicons:pencil" className="h-4 w-4" />
-        </Button>
+        </Button> */}
       </SheetTrigger>
       <SheetContent className="max-w-[736px]">
         <SheetHeader>

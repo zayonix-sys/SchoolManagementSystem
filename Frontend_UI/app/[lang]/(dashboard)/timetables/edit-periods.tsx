@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sheet";
 import { fetchPeriods, PeriodsData, updatePeriod } from "@/services/periodService";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 // Define Zod schema for class form validation
 const periodSchema = z.object({
@@ -153,6 +154,7 @@ export default function EditPeriods({ PeriodsData }: PeriodsProps ) {
                 </div>  
 
                 <div className="col-span-3">
+                  <Label>Start Time</Label>
                   <Select
                     value={startTime?.toString() ?? ""}
                     onValueChange={(value) =>
@@ -165,7 +167,7 @@ export default function EditPeriods({ PeriodsData }: PeriodsProps ) {
                     <SelectContent>
                       {periods
                       .map((per) => per.startTime)
-                      .filter((value, index, self) => self.indexOf(value) === index) // Filter duplicates
+                      .filter((value, index, self) => self.indexOf(value) === index)
                       .map((startTime) => (
                         <SelectItem
                           className="hover:bg-default-300"
@@ -187,6 +189,7 @@ export default function EditPeriods({ PeriodsData }: PeriodsProps ) {
                 
                 
                 <div className="col-span-3">
+                <Label>End Time</Label>
                   <Select
                     defaultValue={endTime?.toString() ?? ""}
                     onValueChange={(value) =>

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
@@ -9,7 +9,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public int SponsorId { get; set; }
 
         [Required]
-        public string SponsorName { get; set; }
+        public string? SponsorName { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -17,27 +17,27 @@ namespace SchoolManagementSystem.Domain.Entities
 
         [Required]
         [MaxLength(20)]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [Required]
         [MaxLength(10)]
-        public string Gender { get; set; }
+        public string? Gender { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string Occupation { get; set; }
+        public string? Occupation { get; set; }
 
         [Required]
         [MaxLength(30)]
-        public string Country { get; set; }
+        public string? Country { get; set; }
 
         [Required]
         [MaxLength(30)]
-        public string State { get; set; }
+        public string? State { get; set; }
 
         [Required]
         [MaxLength(30)]
-        public string City { get; set; }
+        public string? City { get; set; }
 
         [Required]
         [MaxLength(20)]
@@ -45,7 +45,7 @@ namespace SchoolManagementSystem.Domain.Entities
 
         [Required]
         [MaxLength(255)]
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;

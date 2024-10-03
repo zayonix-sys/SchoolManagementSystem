@@ -19,6 +19,13 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task AddPeriodAsync(PeriodDTO dto)
         {
+            var existingPeriod = await _genericRepository.GetAllAsync(
+                x => x.PeriodName == dto.PeriodName && x.IsActive || x.StartTime == dto.StartTime && x.IsActive
+                );
+            if (existingPeriod.Any() ) 
+            {
+                throw new InvalidOperationException("Period with the Same StartTime or EndTime has already been assigned.");
+            }
             var model = _periodMapper.MapToEntity(dto);
             await _genericRepository.AddAsync(model);
         }

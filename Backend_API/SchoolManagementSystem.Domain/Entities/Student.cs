@@ -20,37 +20,55 @@ namespace SchoolManagementSystem.Domain.Entities
         public string LastName { get; set; }
 
         [Required]
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
 
         [Required]
         [MaxLength(10)]
-        public string Gender { get; set; }
+        public string? Gender { get; set; }
 
         [EmailAddress]
         [MaxLength(100)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Phone]
         [MaxLength(15)]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [Required]
-        public DateTime EnrollmentDate { get; set; }
+        public DateTime? EnrollmentDate { get; set; }
 
         [MaxLength(255)]
-        public string ProfileImage { get; set; }
+        public string? ProfileImage { get; set; }
 
         [Required]
-        public int ClassId { get; set; }
+        public int? ClassId { get; set; }
 
         [Required]
-        public int SectionId { get; set; }
+        public int? CampusId { get; set; }
+
+        [Required]
+        public bool IsActive { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [ForeignKey("CreatedUser")]
+        public int? CreatedBy { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [ForeignKey("UpdatedUser")]
+        public int? UpdatedBy { get; set; }
+
 
         // Navigation Properties
         [ForeignKey("ClassId")]
-        public virtual Class Class { get; set; }
+        public virtual Class? Class { get; set; }
 
-        [ForeignKey("SectionId")]
-        public virtual Section Section { get; set; }
+        [ForeignKey("CampusId")]
+        public virtual Campus? Campus { get; set; }
+        public User? CreatedUser { get; set; }
+        public User? UpdatedUser { get; set; }
+
     }
 }
