@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -83,8 +81,8 @@ builder.Services.AddScoped<ISubjectTeacherAssignment, SubjectTeacherAssignmentSe
 builder.Services.AddScoped<SubjectTeacherAssignmentMapper>();
 builder.Services.AddScoped<ISponsor, SponsorService>();
 builder.Services.AddScoped<SponsorMapper>();
-builder.Services.AddScoped<IExamPaper, ExamPaperService>();
-builder.Services.AddScoped<ExamPaperMapper>();
+//builder.Services.AddScoped<IExamPaper, ExamPaperService>();
+//builder.Services.AddScoped<ExamPaperMapper>();
 builder.Services.AddScoped<ISponsorship, SponsorshipService>();
 builder.Services.AddScoped<SponsorshipMapper>();
 //builder.Services.AddScoped<IUserRoles, UserRolesService>();

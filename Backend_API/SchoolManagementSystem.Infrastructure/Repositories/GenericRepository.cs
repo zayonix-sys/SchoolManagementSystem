@@ -2,13 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using SchoolManagementSystem.Domain.Interfaces;
 using SchoolManagementSystem.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Infrastructure.Repositories
 {
@@ -37,7 +32,7 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
         {
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
-            
+
             // Use reflection to get the ID property value
             return entity.GetType().GetProperty(entity.GetType().Name + "Id")?.GetValue(entity);
         }
@@ -50,6 +45,11 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             if (entityType.Name == "AdmissionApplication")
             {
                 keyProperty = entityType.GetProperty("ApplicationId");
+            }
+
+            else if (entityType.Name == "EmployeeRole")
+            {
+                keyProperty = entityType.GetProperty("RoleId");
             }
             else
             {
