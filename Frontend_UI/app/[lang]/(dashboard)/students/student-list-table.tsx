@@ -156,23 +156,16 @@ const StudentList:React.FC<StudentListTableProps> = ({classId}) => {
                 </Badge>
               </TableCell>
               <TableCell className="flex gap-3 justify-end bg-background drop-shadow-md">
-                 {/* <Button
-                  size="icon"
-                  variant="outline"
-                  color="secondary"
-                  className=" h-7 w-7"
-                >
-                  <Icon icon="heroicons:pencil" className=" h-4 w-4  " />
-                </Button>  */}
+           
                 <EditStudent studentData={item}/>
-                <Button
+                {/* <Button
                   size="icon"
                   variant="outline"
                   className=" h-7 w-7"
                   color="secondary"
                 >
                   <Icon icon="heroicons:eye" className=" h-4 w-4  " />
-                </Button> 
+                </Button>  */}
                 <Button
                   size="icon"
                   variant="outline"
