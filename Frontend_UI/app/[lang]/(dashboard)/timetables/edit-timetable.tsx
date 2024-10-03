@@ -1,5 +1,5 @@
 "use client"; 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,14 +15,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { TimeTableData, updateTimeTable } from "@/services/TimeTableService";
+import { fetchTimeTable, TimeTableData, updateTimeTable } from "@/services/TimeTableService";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ClassData } from "@/services/ClassService";
-import { PeriodsData } from "@/services/periodService";
-import { SubjectData } from "@/services/subjectService";
-import { CampusData } from "@/services/campusService";
 import { AssignSubjectData } from "@/services/assignSubjectService";
-import { Label } from "@/components/ui/label";
 
 const timetableSchema = z.object({
   timetableId: z.coerce.number().optional(),
@@ -45,6 +40,9 @@ interface EditTimeTableProps {
   useSubjectData: AssignSubjectData[];
 }
 const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubjectData }) => {
+  const [timeTable, setTimeTable] = useState<TimeTableData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { campusId, classId, subjectId, periodId, dayOfWeek } = timetableData[0];
 
   const { setValue, handleSubmit, reset, formState: { errors } } = useForm<TimeTableFormValues>({
@@ -58,12 +56,38 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
     },
   });
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try{
+      const [timetableResponse ] = await Promise.all([
+        fetchTimeTable(),
+        
+      ]);
+        setTimeTable(timetableResponse.data as TimeTableData[]);
+        
+      } catch (err) {
+        setError(err as any);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchData();
+  }, []);
+
   const onSubmit: SubmitHandler<TimeTableFormValues> = async (data) => {
     try {
       const updatedTimeTable = { ...data, timetableId: timetableData[0].timetableId };
       const response = await updateTimeTable(updatedTimeTable);
 
       if (response.success) {
+        setTimeTable((prevTimeTable) =>
+          prevTimeTable.map((per) =>
+            per.subjectId === updatedTimeTable.subjectId ? updatedTimeTable : per
+          )
+        );
+
         toast.success(`TimeTable Updated Successfully!`);
         reset();
       } else {
@@ -163,7 +187,7 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
                 
                 <div className="col-span-3">
                   <Select
-                    defaultValue={subjectId?.toString() ?? ""}
+                    value={subjectId?.toString() ?? ""}
                     onValueChange={(value) =>
                       setValue("subjectId", parseInt(value))
                     }
@@ -172,11 +196,18 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
                       <SelectValue placeholder="Select Subject" />
                     </SelectTrigger>
                     <SelectContent>
-                      {useSubjectData.map((subject) => (
+                      {timeTable
+                      .map((tt) => ({ subjectName: tt.subjectName, subjectId: tt.subjectId }))
+                      .filter((value, index, self) => self.findIndex(v => v.subjectId === value.subjectId) === index) // Filter duplicates
+                      .map((subject) => (
+                      
+                      // {useSubjectData.map((subject) => (
                         <SelectItem
                           className="hover:bg-default-300"
-                          key={subject.subjectIds.join(',')}
-                          value={subject.subjectIds?.toString() ?? ""}
+                          // key={subject.subjectIds.join(',')}
+                          key={subject.subjectId}
+                          // value={subject.subjectIds?.toString() ?? ""}
+                          value={subject.subjectId?.toString() ?? ""}
                         >
                           {subject.subjectName}
                           

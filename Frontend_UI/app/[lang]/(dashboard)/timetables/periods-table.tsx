@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
 import { toast } from "sonner";
 import { deletePeriod, PeriodsData } from "@/services/periodService";
-import EditPeriods from "./edit-periods";
 
 interface PeriodsProps {
   Periods: PeriodsData[];
@@ -51,6 +50,20 @@ const PeriodsListTable: React.FC<PeriodsProps> = ({Periods}) => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = Periods.slice(indexOfFirstItem, indexOfLastItem);
 
+  const sortedPeriods = [...Periods].sort((a, b) => {
+    // Extract the number from the periodName (e.g., "1st Period" -> 1, "2nd Period" -> 2)
+    const getNumberFromPeriod = (periodName: string) => {
+      const match = periodName.match(/(\d+)/); // Extract digits from the period name
+      return match ? parseInt(match[0], 10) : Infinity; // If no number is found, return Infinity to place it at the end
+    };
+  
+    const indexA = getNumberFromPeriod(a.periodName);
+    const indexB = getNumberFromPeriod(b.periodName);
+  
+    // Sort based on the extracted numbers
+    return indexA - indexB;
+  });
+
   const totalPages = Math.ceil(Periods.length / itemsPerPage);
 
   const handlePreviousPage = () => {
@@ -72,7 +85,7 @@ const PeriodsListTable: React.FC<PeriodsProps> = ({Periods}) => {
     try {
       await deletePeriod(id);
       toast.success("Period deleted successfully");
-      setPeriodsToDelete(null); // Close dialog after successful deletion
+      setPeriodsToDelete(null); 
     } catch (error) {
       console.error("Error deleting a Period:", error);
       toast.error("Failed to delete a Period");
@@ -102,7 +115,7 @@ const PeriodsListTable: React.FC<PeriodsProps> = ({Periods}) => {
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item) => (
+          {sortedPeriods.map((item) => (
             <TableRow
               key={item.periodId}
               className="hover:bg-default-200"
@@ -123,7 +136,7 @@ const PeriodsListTable: React.FC<PeriodsProps> = ({Periods}) => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditPeriods PeriodsData={[item]} />
+                  {/* <EditPeriods PeriodsData={[item]} /> */}
 
                   <Button
                     size="icon"

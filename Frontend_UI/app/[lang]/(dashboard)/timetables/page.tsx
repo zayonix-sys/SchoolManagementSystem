@@ -74,7 +74,7 @@ const TimeTables = () => {
     <div>
       <div>
         <Breadcrumbs>
-          <BreadcrumbItem>Administration</BreadcrumbItem>
+          <BreadcrumbItem>Academic</BreadcrumbItem>
           <BreadcrumbItem className="text-primary">Time Tables</BreadcrumbItem>
         </Breadcrumbs>
         <div className="flex justify-end space-x-4">

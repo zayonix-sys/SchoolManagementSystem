@@ -2,17 +2,21 @@
 
 import { Docs } from "@/components/svg";
 import { Card } from "@/components/ui/card";
-import React, { Fragment } from "react";
-import { PeriodsData } from "@/services/periodService";
-import ViewPeriod from "./view-period";
+import React, { Fragment, useEffect, useState } from "react";
+import { QuestionsData } from "@/services/QBankService";
+import ViewQuestions from "./view-questions";
+import { ClassData } from "@/services/ClassService";
+import { SubjectData } from "@/services/subjectService";
+import { AssignSubjectData } from "@/services/assignSubjectService";
 
-interface PeriodsProps {
-  Periods: PeriodsData[];
-}
-
-export default function PeriodsReports({ Periods }: PeriodsProps) {
+interface QuestionProps {
+  Questions: QuestionsData[];
+  classData: ClassData[];
+  subjectData: AssignSubjectData[];
+} 
+const QuestionsReport = ({Questions, classData, subjectData}: QuestionProps) => {
   
-  const periodCount = Periods.length.toString();
+  const questionBank = Questions.length.toString();
 
   interface ReportItem {
     id: number;
@@ -26,13 +30,12 @@ export default function PeriodsReports({ Periods }: PeriodsProps) {
   const reports: ReportItem[] = [
     {
       id: 1,
-      name: "No. of Periods`",
-      count: (periodCount ? periodCount : 0).toString(),
+      name: "No. of Questions",
+      count: (questionBank ? questionBank : 0).toString(),
       rate: "8.2",
       icon: <Docs className="w-6 h-6 text-destructive" />,
       color: "destructive"
-    },
-
+    }
 
   ]
   return (
@@ -50,7 +53,7 @@ export default function PeriodsReports({ Periods }: PeriodsProps) {
                <div className={"text-3xl font-semibold text-${item.color} mt-1"}>
               {item.count}
             </div>
-            {item.id === 1 && <ViewPeriod periods={Periods} />}
+            {item.id === 1 && <ViewQuestions Questions={Questions} />}
             </div>
           </Card>
         ))
@@ -58,6 +61,8 @@ export default function PeriodsReports({ Periods }: PeriodsProps) {
     </Fragment>
   );
 };
+
+export default QuestionsReport;
 
 function setLoading(arg0: boolean) {
   throw new Error("Function not implemented.");

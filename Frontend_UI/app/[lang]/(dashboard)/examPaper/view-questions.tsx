@@ -3,22 +3,20 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { PeriodsData } from "@/services/periodService";
-import PeriodsListTable from "./periods-table";
-import AddPeriods from "./add-periods";
+import QuestionsTable from "./questions-table";
+import { QuestionsData } from "@/services/QBankService";
 
 
-export default function ViewPeriod({
-  periods,
-}: {
-  periods: PeriodsData[] | null;
-}) {
+interface QuestionProps {
+  Questions: QuestionsData[];
+} 
+
+const ViewQuestions = ({Questions}: QuestionProps) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -32,13 +30,12 @@ export default function ViewPeriod({
       </SheetTrigger>
       <SheetContent side="top">
         <SheetHeader>
-          <SheetTitle>Class Periods</SheetTitle>
+          <SheetTitle>Subject</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-row-reverse">
-          <AddPeriods />
-        </div>
-        <div className="py-6">
-          <PeriodsListTable Periods={periods ?? []} />
+        <div>
+          <div className="py-6">
+            <QuestionsTable Questions={Questions} />
+          </div>
         </div>
         <SheetFooter>
           <SheetClose asChild>footer content</SheetClose>
@@ -47,3 +44,5 @@ export default function ViewPeriod({
     </Sheet>
   );
 }
+
+export default ViewQuestions;

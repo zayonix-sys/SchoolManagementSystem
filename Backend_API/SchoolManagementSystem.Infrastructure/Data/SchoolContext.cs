@@ -29,8 +29,9 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<TimeTable> TimeTables { get; set; }
         public DbSet<Period> Periods { get; set; }
         public DbSet<SubjectTeacherAssignment> SubjectTeachers { get; set; }
-
         public DbSet<Sponsor> Sponsors { get; set; }
+        public DbSet<QuestionBank> QuestionsBank { get; set; }
+        public DbSet<ExamPaper> ExamPaper { get; set; }
         public DbSet<Sponsorship> Sponsorships { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
