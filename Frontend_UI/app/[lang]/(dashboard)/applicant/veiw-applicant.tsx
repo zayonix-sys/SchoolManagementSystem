@@ -27,7 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import DashboardDropdown from "@/components/dashboard-dropdown";
+import ApplicationDropdown from "./application-dropdown";
 
 interface ApplicantListTableProps {
   applicants: ApplicantApplicationDetail[];
@@ -180,7 +180,7 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
               <TableCell className="p-2.5">{item.appliedClassName}</TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3 justify-center">
-                  <DashboardDropdown />
+                  <ApplicationDropdown applicationId={item.applicationId} />
                   <Button
                     size="icon"
                     variant="outline"

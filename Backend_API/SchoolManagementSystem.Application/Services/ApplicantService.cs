@@ -12,6 +12,7 @@ namespace SchoolManagementSystem.Application.Services
     {
         private readonly IGenericRepository<Applicant> _applicantRepository;
         private readonly IGenericRepository<AdmissionApplication> _applicationRepository;
+        private readonly IStudent _studentRepository;
         private readonly IGenericRepository<ApplicantApplicationView> _applicationApplicationRepository;
         private readonly ApplicantMapper _mapper;
         private readonly ApplicationMapper _mapperApplication;
@@ -20,6 +21,7 @@ namespace SchoolManagementSystem.Application.Services
         public ApplicantService(IGenericRepository<Applicant> genericRepository, 
             IGenericRepository<AdmissionApplication> applicationRepository, 
             IGenericRepository<ApplicantApplicationView> applicantApplicationRepository,
+            IStudent studentRepository,
             ApplicantMapper applicantMapper, ApplicationMapper mapperApplication, ApplicantApplicationMapper applicantApplicationMapper)
         {
             _applicantRepository = genericRepository;
@@ -28,6 +30,7 @@ namespace SchoolManagementSystem.Application.Services
             _mapper = applicantMapper;
             _mapperApplication = mapperApplication;
             _mapperApplicantApplication = applicantApplicationMapper;
+            _studentRepository = studentRepository;
         }
 
         public async Task<int> AddApplicantAsync(ApplicantDTO dto)
@@ -83,6 +86,64 @@ namespace SchoolManagementSystem.Application.Services
             var model = _mapperApplication.MapToEntity(dto);
             await _applicationRepository.UpdateAsync(model);
         }
+
+        public async Task ApplicationStatus(ApplicationUpdateStatusDTO dto)
+        {
+            var app = await _applicationRepository.GetByIdAsync(dto.ApplicationId);
+
+            var applicantEntities = await _applicationApplicationRepository.GetAllAsync();
+            var applicationData = applicantEntities.FirstOrDefault(x => x.ApplicationId == dto.ApplicationId);
+
+            if (app != null)
+            {
+                app.ApplicationStatus = dto.ApplicationStatus;
+                await _applicationRepository.UpdateAsync(app);
+            }
+
+            if (applicationData != null)
+            {
+                var students = await _studentRepository.GetAllStudentAsync();
+                var studentData = students.FirstOrDefault(x => x.GrNo == dto.ApplicationId);
+
+                if (studentData == null)
+                {
+                    if (dto.ApplicationStatus == "Approved")
+                    {
+                        Student newStudent = new Student
+                        {
+                            GrNo = applicationData.ApplicationId,
+                            FirstName = applicationData.FirstName,
+                            LastName = applicationData.LastName,
+                            DateOfBirth = applicationData.DateOfBirth,
+                            Gender = applicationData.Gender,
+                            Email = applicationData.Email,
+                            PhoneNumber = applicationData.PhoneNumber,
+                            EnrollmentDate = DateTime.Now,
+                            ClassId = applicationData.AppliedClassId,
+                            CampusId = applicationData.CampusId,
+                            IsActive = true,
+                            CreatedBy = 1,
+                        };
+
+                        await _studentRepository.AddStudentAsync(newStudent);
+                    }
+                }
+                else 
+                {
+                    if (dto.ApplicationStatus == "Rejected")
+                    {
+                        studentData.IsActive = false;
+                        await _studentRepository.UpdateStudentAsync(studentData);
+                    }
+                    else if (dto.ApplicationStatus == "Approved")
+                    {
+                        studentData.IsActive = true;
+                        await _studentRepository.UpdateStudentAsync(studentData);
+                    }
+                }
+            }
+        }
+
 
     }
 }

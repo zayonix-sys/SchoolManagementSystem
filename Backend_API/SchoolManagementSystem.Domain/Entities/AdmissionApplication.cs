@@ -20,7 +20,7 @@ namespace SchoolManagementSystem.Domain.Entities
         [ForeignKey(nameof(ClassId))]
 
         [MaxLength(50)]
-        public string? ApplicationStatus { get; set; } = "Pending";
+        public string? ApplicationStatus { get; set; }
 
         public DateOnly? AdmissionDecisionDate { get; set; }
 
