@@ -2,10 +2,7 @@
 
 import { Docs } from "@/components/svg";
 import { Card } from "@/components/ui/card";
-import { fetchSubject, SubjectData } from "@/services/subjectService";
-import React, { Fragment, useEffect, useState } from "react";
-import { getSubjectTeacher, SubjectTeacherData } from "@/services/subjectTeacherService";
-import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
+import React, { Fragment } from "react";
 import { PeriodsData } from "@/services/periodService";
 import ViewPeriod from "./view-period";
 
@@ -14,49 +11,7 @@ interface PeriodsProps {
 }
 
 export default function PeriodsReports({ Periods }: PeriodsProps) {
-  // const [subject, setSubject] = useState<SubjectData[]>([]);
-  // const [subjectTeacher, setSubjectTeacher] = useState<SubjectTeacherData[]>([]);
-  // const [employee, setEmployees] = useState<EmployeesData[]>([]);
-
-  // const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchSubjectData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const subjectData = await fetchSubject();
-  //       setSubject(subjectData.data as SubjectData[]);
-  //     } catch (err) {
-  //       setError(err as any); 
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchSubjectData();
-  // }, []);
-
-
-  // useEffect(() => {
-  //   const fetchEmployeeAndSubjectData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const employeeSubjectResponse = await getSubjectTeacher();
-  //       const employeeResponse = await fetchEmployees();
-  //       const subjectResponse = await fetchSubject();
-  //       setSubjectTeacher(employeeSubjectResponse.data as SubjectTeacherData[]);
-  //       setSubject(subjectResponse.data as SubjectData[]);
-  //       setEmployees(employeeResponse.data as EmployeesData[]);
-  //     } catch (err) {
-  //       setError(err as any);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchEmployeeAndSubjectData();
-  // }, []);
+  
   const periodCount = Periods.length.toString();
 
   interface ReportItem {

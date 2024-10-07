@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -58,6 +57,8 @@ builder.Services.AddScoped<ApplicantMapper>();
 builder.Services.AddScoped<ApplicationMapper>();
 builder.Services.AddScoped<ApplicantApplicationMapper>();
 builder.Services.AddScoped<TimeTableViewMapper>();
+builder.Services.AddScoped<IQuestionBank, QuestionBankService>();
+builder.Services.AddScoped<QuestionBankMapper>();
 
 builder.Services.AddScoped<IEmployee, EmployeeService>();
 builder.Services.AddScoped<EmployeeMapper>();
@@ -73,12 +74,19 @@ builder.Services.AddScoped<IPeriod, PeriodService>();
 builder.Services.AddScoped<PeriodMapper>();
 
 builder.Services.AddScoped<IStudent, StudentService>();
+builder.Services.AddScoped<StudentMapper>();
 builder.Services.AddScoped<ISubject, SubjectService>();
 builder.Services.AddScoped<SubjectMapper>();
 builder.Services.AddScoped<ISubjectTeacherAssignment, SubjectTeacherAssignmentService>();
 builder.Services.AddScoped<SubjectTeacherAssignmentMapper>();
 builder.Services.AddScoped<ISponsor, SponsorService>();
 builder.Services.AddScoped<SponsorMapper>();
+builder.Services.AddScoped<IExamPaper, ExamPaperService>();
+builder.Services.AddScoped<ExamPaperMapper>();
+builder.Services.AddScoped<ISponsorship, SponsorshipService>();
+builder.Services.AddScoped<SponsorshipMapper>();
+builder.Services.AddScoped<IExamPaperPDF, ExamPaperPdfService>();
+
 //builder.Services.AddScoped<IUserRoles, UserRolesService>();
 //builder.Services.AddScoped<UserRoleMapper>();
 
@@ -169,7 +177,7 @@ app.Run();
 void SeedDefaultData(SchoolContext context)
 {
     // Seed default campus, roles and users
-    if(!context.Campuses.Any())
+    if (!context.Campuses.Any())
     {
         var defaultCampus = new Campus
         {
@@ -185,7 +193,7 @@ void SeedDefaultData(SchoolContext context)
         context.Campuses.Add(defaultCampus);
         context.SaveChanges();
     }
-   
+
     if (!context.UserRoles.Any())
     {
         var defaultRole = new UserRole
@@ -219,3 +227,4 @@ void SeedDefaultData(SchoolContext context)
         context.SaveChanges();
     }
 }
+

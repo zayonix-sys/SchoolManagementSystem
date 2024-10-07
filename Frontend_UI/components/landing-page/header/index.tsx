@@ -31,7 +31,7 @@ const Header = () => {
             <Link href="/" className="flex items-center gap-1">
               <SiteLogo className="h-8 w-8  text-primary" />
               <span className="text-primary-500 font-medium text-xl">
-                DashTail
+                TBA_SMS
               </span>
             </Link>
 

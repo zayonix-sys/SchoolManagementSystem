@@ -81,23 +81,6 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
-        //[HttpPut("[action]")]
-        //public async Task<IActionResult> UpdateApplicationStatus(int applicationId, string status)
-        //{
-        //    _logger.LogInformation("Updating applicant with ID {ApplicantId}.", applicationId);
-        //    try
-        //    {
-        //        await _applicantService.UpdateApplicantAsync(app);
-        //        _logger.LogInformation("Successfully updated Applicant with ID {ApplicantId}.", app.ApplicantId);
-        //        return Ok(ApiResponse<ApplicantAdmissionDTO>.SuccessResponse(app, "Applicant updated successfully"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "An error occurred while updating Applicant with ID {ApplicantId}.", app.ApplicantId);
-        //        return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
-        //    }
-        //}
-
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateApplicant(ApplicantAdmissionDTO dto)
         {
@@ -129,6 +112,23 @@ namespace SchoolManagementSystem.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while deleting applicant with ID {ApplicantId}.", appId);
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+        [HttpPut("[action]")]
+        public async Task<IActionResult> ApplicationStatus(ApplicationUpdateStatusDTO dto)
+        {
+            _logger.LogInformation("Updating Application Status with ID {ApplicationId}.", dto.ApplicationId);
+            try
+            {
+                await _applicantService.ApplicationStatus(dto);
+                _logger.LogInformation("Successfully updated Application status with ID {ApplicationId}.", dto.ApplicationId);
+                return Ok(ApiResponse<object>.SuccessResponse(dto.ApplicationId, "Application Status updated successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while Updating application status with ID {ApplicationId}.", dto.ApplicationId);
                 return StatusCode(500, "Internal server error.");
             }
         }

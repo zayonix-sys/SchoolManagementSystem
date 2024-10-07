@@ -11,7 +11,7 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             return new TimeTable
             {
-                TimetableId = dto.TimetableId,
+                TimeTableId = dto.TimetableId,
                 CampusId = dto.CampusId,
                 ClassId = dto.ClassId,
                 SubjectId = dto.SubjectId,
@@ -30,7 +30,7 @@ namespace SchoolManagementSystem.Application.Mappers
 
             return new TimeTableDTO
             {
-                TimetableId = entity.TimetableId,
+                TimetableId = entity.TimeTableId,
                 CampusId = entity.CampusId,
                 ClassId = entity.ClassId,
                 SubjectId = entity.SubjectId,

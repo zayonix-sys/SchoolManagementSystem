@@ -13,17 +13,6 @@ import { PeriodsData } from "@/services/periodService";
 import PeriodsListTable from "./periods-table";
 import AddPeriods from "./add-periods";
 
-const formatTime = (time: string) => {
-  const [hour, minute] = time.split(":"); // Split the time to extract hour and minute
-  const parsedTime = new Date();
-  parsedTime.setHours(parseInt(hour, 10), parseInt(minute, 10));
-
-  return parsedTime.toLocaleString("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true, // For AM/PM formatting
-  });
-};
 
 export default function ViewPeriod({
   periods,

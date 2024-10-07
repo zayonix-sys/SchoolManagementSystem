@@ -86,10 +86,16 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task UpdateTimeTableAsync(TimeTableDTO dto)
         {
-            var model = _timeTableMapper.MapToEntity(dto);
-            await _genericRepository.UpdateAsync(model);
-        }
+            try
+            {
+                var model = _timeTableMapper.MapToEntity(dto);
+                await _genericRepository.UpdateAsync(model);
 
-        
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating TimeTable.", ex);
+            }
+        }
     }
 }

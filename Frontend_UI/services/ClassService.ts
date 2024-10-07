@@ -3,7 +3,7 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
 export interface ClassData {
-  classId?: number; // Corresponds to ClassId in the entity
+  classId: number; // Corresponds to ClassId in the entity
   className: string; // Corresponds to ClassName in the entity
   classDescription?: string; // Corresponds to ClassDescription in the entity
   capacity: number; // Corresponds to Capacity in the entity

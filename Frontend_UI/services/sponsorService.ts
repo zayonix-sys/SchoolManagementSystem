@@ -3,7 +3,7 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
 export interface SponsorData {
-  sponsorId?: number;
+  sponsorId: number;
   sponsorName?: string;
   email?: string;
   gender?:string;
@@ -14,7 +14,7 @@ export interface SponsorData {
   occupation?:string;
   postalCode?: number;
   address?: string;
-  isActive?: boolean;                    
+  isActive?: boolean;      
 }
 
 const BASE_URL = "/Sponsors";
