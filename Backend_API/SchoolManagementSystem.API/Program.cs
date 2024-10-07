@@ -81,8 +81,8 @@ builder.Services.AddScoped<ISubjectTeacherAssignment, SubjectTeacherAssignmentSe
 builder.Services.AddScoped<SubjectTeacherAssignmentMapper>();
 builder.Services.AddScoped<ISponsor, SponsorService>();
 builder.Services.AddScoped<SponsorMapper>();
-//builder.Services.AddScoped<IExamPaper, ExamPaperService>();
-//builder.Services.AddScoped<ExamPaperMapper>();
+builder.Services.AddScoped<IExamPaper, ExamPaperService>();
+builder.Services.AddScoped<ExamPaperMapper>();
 builder.Services.AddScoped<ISponsorship, SponsorshipService>();
 builder.Services.AddScoped<SponsorshipMapper>();
 builder.Services.AddScoped<IExamPaperPDF, ExamPaperPdfService>();
