@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolManagementSystem.API.Models;
+using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Domain.Entities;
 
@@ -17,7 +19,7 @@ namespace SchoolManagementSystem.API.Controllers
             _studentService = student;
         }
 
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
         {
             _logger.LogInformation("Fetching all students.");
@@ -26,7 +28,28 @@ namespace SchoolManagementSystem.API.Controllers
                 var students = await _studentService.GetAllStudentAsync();
                 _logger.LogInformation("Successfully retrieved {Count} students.", students?.Count() ?? 0);
 
-                return Ok(students);
+                return Ok(ApiResponse<IEnumerable<Student>>.SuccessResponse(students, "students retrieved successfully"));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching all students.");
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+        [HttpGet("[action]")]
+
+        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetStudentsClassWise(int classId)
+        {
+            _logger.LogInformation("Fetching all students.");
+            try
+            {
+                var students = await _studentService.GetAllStudentClassWiseAsync(classId);
+                _logger.LogInformation("Successfully retrieved {Count} students.", students?.Count() ?? 0);
+                return Ok(ApiResponse<IEnumerable<StudentDTO>>.SuccessResponse(students, "student with class retrieved successfully"));
+
+
             }
             catch (Exception ex)
             {
@@ -36,7 +59,7 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> GetStudent(int id)
+        public async Task<ActionResult<StudentDTO>> GetStudent(int id)
         {
             _logger.LogInformation("Fetching student with ID {StudentId}.", id);
             try
@@ -78,11 +101,11 @@ namespace SchoolManagementSystem.API.Controllers
         //[HttpPut("{id}")]
         //public async Task<IActionResult> UpdateStudent(Student student)
         //{
-            
-            
+
+
         //        _logger.LogWarning("Student ID mismatch: {Id} does not match {StudentId}.", student.StudentId);
         //        return BadRequest("Student ID mismatch.");
-            
+
 
         //    _logger.LogInformation("Updating student with ID {StudentId}.", id);
         //    try
@@ -98,7 +121,8 @@ namespace SchoolManagementSystem.API.Controllers
         //    }
         //}
 
-        [HttpDelete("{id}")]
+
+        [HttpDelete("[action]")]
         public async Task<IActionResult> DeleteStudent(int id)
         {
             _logger.LogInformation("Deleting student with ID {StudentId}.", id);
@@ -106,13 +130,37 @@ namespace SchoolManagementSystem.API.Controllers
             {
                 await _studentService.DeleteStudentAsync(id);
                 _logger.LogInformation("Successfully deleted student with ID {StudentId}.", id);
-                return NoContent();
+                return Ok(ApiResponse<object>.SuccessResponse(null, "Student deleted successfully"));
+
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while deleting student with ID {StudentId}.", id);
-                return StatusCode(500, "Internal server error.");
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
+
             }
         }
+
+
+
+
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateStudentData([FromBody] StudentDTO std)
+        {
+            _logger.LogInformation("Updating Student with ID {StudentId}.", std.StudentId);
+            try
+            {
+                await _studentService.UpdateStudentDataAsync(std);
+                _logger.LogInformation("Successfully updated Student with ID {StudentId}.", std.StudentId);
+                return Ok(ApiResponse<StudentDTO>.SuccessResponse(std, "Student updated successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating Student with ID {StudentId}.", std.StudentId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
+            }
+        }
+
+
     }
 }

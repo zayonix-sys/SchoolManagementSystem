@@ -1,21 +1,21 @@
-﻿using SchoolManagementSystem.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolManagementSystem.Application.DTOs;
+using SchoolManagementSystem.Application.Interfaces;
+using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
 using SchoolManagementSystem.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Services
 {
     public class StudentService : IStudent
     {
         private readonly IGenericRepository<Student> _studentRepository;
+        private readonly StudentMapper _mapper;
 
-        public StudentService(IGenericRepository<Student> genericRepository)
+        public StudentService(IGenericRepository<Student> genericRepository, StudentMapper mapper)
         {
             _studentRepository = genericRepository;
+            _mapper = mapper;
         }
 
         public async Task AddStudentAsync(Student std)
@@ -25,7 +25,21 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task DeleteStudentAsync(int stdId)
         {
-            await _studentRepository.DeleteAsync(stdId);
+            try
+            {
+                var students = await _studentRepository.GetByIdAsync(stdId);
+                if (students != null)
+                {
+                    students.IsActive = false;
+                    await _studentRepository.UpdateAsync(students);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
 
         public async Task<List<Student>> GetAllStudentAsync()
@@ -33,14 +47,54 @@ namespace SchoolManagementSystem.Application.Services
             return (await _studentRepository.GetAllAsync()).ToList();
         }
 
-        public async Task<Student> GetStudentByIdAsync(int stdId)
+        public async Task<List<StudentDTO>> GetAllStudentClassWiseAsync(int? classId)
         {
-            return await _studentRepository.GetByIdAsync(stdId);
+            try
+            {
+                var result = await _studentRepository.GetAllAsync(
+                    include: query => query.Include(c => c.Class)
+                );
+
+
+                var activeStudents = result.Where(c => c.IsActive);
+
+                if (!classId.HasValue || classId == 0)
+                {
+                    return activeStudents.Select(c => _mapper.MapToDto(c)).ToList();
+                }
+
+                var filteredStudents = activeStudents.Where(x => x.ClassId == classId.Value).ToList();
+                return filteredStudents.Select(c => _mapper.MapToDto(c)).ToList();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
 
         public async Task UpdateStudentAsync(Student std)
         {
             await _studentRepository.UpdateAsync(std);
+        }
+
+        public async Task UpdateStudentDataAsync(StudentDTO std)
+        {
+            try
+            {
+                var model = _mapper.MapToEntity(std);
+                await _studentRepository.UpdateAsync(model);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+        Task<StudentDTO> IStudent.GetStudentByIdAsync(int stdId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

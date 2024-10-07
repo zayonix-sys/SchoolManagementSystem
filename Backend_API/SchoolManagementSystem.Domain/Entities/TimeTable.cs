@@ -6,7 +6,7 @@ namespace SchoolManagementSystem.Domain.Entities
     public class TimeTable
     {
         [Key]
-        public int? TimetableId { get; set; }
+        public int? TimeTableId { get; set; }
 
         [ForeignKey("Campus")]
         public int CampusId { get; set; }

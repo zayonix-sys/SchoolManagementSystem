@@ -30,7 +30,6 @@ export default function AddPeriods() {
     register,
     handleSubmit,
     setValue,
-    watch,
     reset,
     formState: { errors },
   } = useForm<AddPeriodFormValues>({

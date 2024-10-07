@@ -18,7 +18,33 @@ import Image from "next/image";
 import Link from "next/link";
 import avatar5 from "@/public/images/avatar/avatar-5.jpg";
 import { useRouter } from "next/navigation";
+import { fetchSponsor, SponsorData } from "@/services/sponsorService";
+import { useEffect, useState } from "react";
 const ProfileInfo = () => {
+  const [sponsorData, setSponsorData] = useState<SponsorData | null>(null); 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  
+  useEffect(() => {
+    const fetchSponsorData = async () => {
+      setLoading(true);
+      try {
+        const sponsorResponse = await fetchSponsor();
+        if (sponsorResponse.data && sponsorResponse.data.length > 0) {
+          setSponsorData(sponsorResponse.data[0] as SponsorData); 
+        }
+      } catch (error) {
+        setError(error as any);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSponsorData();
+  }, []);
+
+
   const router = useRouter();
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -49,13 +75,13 @@ const ProfileInfo = () => {
           />
           <div>
             <div className="text-sm font-medium text-default-800 capitalize ">
-              {"Mcc Callem"}
+              {sponsorData?.sponsorName}
             </div>
             <Link
               href="/dashboard"
               className="text-xs text-default-600 hover:text-primary"
             >
-              @uxuidesigner
+              {sponsorData?.occupation}
             </Link>
           </div>
         </DropdownMenuLabel>
@@ -74,7 +100,8 @@ const ProfileInfo = () => {
             {
               name: "Settings",
               icon: "heroicons:paper-airplane",
-              href: "/dashboard",
+              href: "/user-profile/settings",
+
             },
             {
               name: "Keyboard shortcuts",

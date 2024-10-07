@@ -24,15 +24,15 @@ namespace SchoolManagementSystem.Domain.Entities
 
         [Required]
         [MaxLength(10)]
-        public string Gender { get; set; }
+        public string? Gender { get; set; }
 
         [EmailAddress]
         [MaxLength(100)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Phone]
         [MaxLength(15)]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [Required]
         public DateTime? EnrollmentDate { get; set; }
@@ -50,7 +50,16 @@ namespace SchoolManagementSystem.Domain.Entities
         public bool IsActive { get; set; }
 
         [Required]
-        public int CreatedBy { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [ForeignKey("CreatedUser")]
+        public int? CreatedBy { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [ForeignKey("UpdatedUser")]
+        public int? UpdatedBy { get; set; }
+
 
         // Navigation Properties
         [ForeignKey("ClassId")]
@@ -58,6 +67,8 @@ namespace SchoolManagementSystem.Domain.Entities
 
         [ForeignKey("CampusId")]
         public virtual Campus? Campus { get; set; }
+        public User? CreatedUser { get; set; }
+        public User? UpdatedUser { get; set; }
 
     }
 }
