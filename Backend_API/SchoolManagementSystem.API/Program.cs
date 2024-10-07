@@ -87,6 +87,8 @@ builder.Services.AddScoped<IExamPaper, ExamPaperService>();
 builder.Services.AddScoped<ExamPaperMapper>();
 builder.Services.AddScoped<ISponsorship, SponsorshipService>();
 builder.Services.AddScoped<SponsorshipMapper>();
+builder.Services.AddScoped<IExamPaperPDF, ExamPaperPdfService>();
+
 //builder.Services.AddScoped<IUserRoles, UserRolesService>();
 //builder.Services.AddScoped<UserRoleMapper>();
 
@@ -227,3 +229,4 @@ void SeedDefaultData(SchoolContext context)
         context.SaveChanges();
     }
 }
+

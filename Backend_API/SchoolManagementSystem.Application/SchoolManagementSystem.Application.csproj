@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.67" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SchoolManagementSystem.Domain\SchoolManagementSystem.Domain.csproj" />
   </ItemGroup>
 

@@ -45,9 +45,10 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
   const [error, setError] = useState(null);
   const { campusId, classId, subjectId, periodId, dayOfWeek } = timetableData[0];
 
-  const { setValue, handleSubmit, reset, formState: { errors } } = useForm<TimeTableFormValues>({
+  const { setValue, handleSubmit, watch, reset, formState: { errors } } = useForm<TimeTableFormValues>({
     resolver: zodResolver(timetableSchema),
     defaultValues: {
+      timetableId: timetableData[0].timetableId,
       campusId,
       classId,
       subjectId,
@@ -55,6 +56,9 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
       dayOfWeek,
     },
   });
+
+  const subjectIdWatch = watch("subjectId");
+ console.log("Current Subject ID:", subjectIdWatch); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,8 +81,11 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
   }, []);
 
   const onSubmit: SubmitHandler<TimeTableFormValues> = async (data) => {
+    console.log("Timetable Data:", data);
     try {
-      const updatedTimeTable = { ...data, timetableId: timetableData[0].timetableId };
+      // const updatedTimeTable = { ...data, timetableId: timetableData[0].timetableId };
+      const updatedTimeTable = { ...data };
+
       const response = await updateTimeTable(updatedTimeTable);
 
       if (response.success) {
@@ -187,10 +194,11 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
                 
                 <div className="col-span-3">
                   <Select
-                    value={subjectId?.toString() ?? ""}
-                    onValueChange={(value) =>
+                    value={watch("subjectId")?.toString() ?? ""}
+                    onValueChange={(value) => {
+                      console.log("Selected Subject ID:", value);
                       setValue("subjectId", parseInt(value))
-                    }
+                    }}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Subject" />
