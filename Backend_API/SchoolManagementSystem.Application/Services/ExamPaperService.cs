@@ -11,11 +11,13 @@ namespace SchoolManagementSystem.Application.Services
     {
         private readonly IGenericRepository<ExamPaper> _examPaperRepository;
         private readonly ExamPaperMapper _examPaperMapper;
+        private readonly ExamPaperUpdateMapper _examPaperUpdateMapper;
 
-        public ExamPaperService(IGenericRepository<ExamPaper> genericRepository, ExamPaperMapper examPaperMapper)
+        public ExamPaperService(IGenericRepository<ExamPaper> genericRepository, ExamPaperMapper examPaperMapper, ExamPaperUpdateMapper examPaperUpdateMapper)
         {
             _examPaperRepository = genericRepository;
             _examPaperMapper = examPaperMapper;
+            _examPaperUpdateMapper = examPaperUpdateMapper;
 
         }
         public async Task AddExamPaperAsync(ExamPaperDTO examPaper)
@@ -43,18 +45,12 @@ namespace SchoolManagementSystem.Application.Services
             }
         }
 
-        public async Task UpdateExamPaperAsync(ExamPaperDTO examPaper)
+        public async Task UpdateExamPaperAsync(ExamPaperUpdateDTO examPaper)
         {
             try
             {
-                //var existingEntities = await _examPaperRepository.GetAllAsync(cs => cs.ExamPaperId == examPaper.ExamPaperId);
 
-                //foreach (var existingEntity in existingEntities)
-                //{
-                //    await _examPaperRepository.DeleteAsync(existingEntity);
-                //}
-
-                var entities = _examPaperMapper.MapToEntities(examPaper);
+                var entities = _examPaperUpdateMapper.MapToEntities(examPaper);
                 foreach (var entity in entities)
                 {
                     await _examPaperRepository.UpdateAsync(entity);

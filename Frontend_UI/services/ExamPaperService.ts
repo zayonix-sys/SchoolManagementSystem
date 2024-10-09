@@ -4,9 +4,11 @@ import { ApiResponse } from "./apiResponse";
 
 export interface ExamData {
   examPaperId?: number;
+  examPaperIds?: number[];
   classId: number;
   subjectId: number;
   questionIds: number[];
+  questions?: string;
   subjectName?: string;
   className?: string;
   totalMarks: number;
@@ -48,7 +50,7 @@ export const updateExamPaper = async (
 ): Promise<ApiResponse> => {
   try {
     const response = await api.put<ApiResponse>(
-      `${BASE_URL}/UpdateQuestion`,
+      `${BASE_URL}/UpdateExamPaper`,
       ExamData
     );
     return response.data;
