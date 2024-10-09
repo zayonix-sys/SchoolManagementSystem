@@ -4,9 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SchoolManagementSystem.Application.DTOs
 {
-    public class ExamPaperDTO
+    public class ExamPaperUpdateDTO
     {
         public int? ExamPaperId { get; set; }
+        public List<int>? ExamPaperIds { get; set; } = new List<int>();
         public int? ClassId { get; set; }
         public int? SubjectId { get; set; }
         public List<int>? QuestionIds { get; set; } = new List<int>();

@@ -55,14 +55,14 @@ public class ExamPaperController : ControllerBase
     }
 
     [HttpPut("[action]")]
-    public async Task<IActionResult> UpdateExamPaper([FromBody] ExamPaperDTO dto)
+    public async Task<IActionResult> UpdateExamPaper([FromBody] ExamPaperUpdateDTO dto)
     {
         _logger.LogInformation("Updating Exam Paper with ID {ExamPaperId}.", dto.ExamPaperId);
         try
         {
             await _examPaperService.UpdateExamPaperAsync(dto);
             _logger.LogInformation("Successfully updated ExamPaper with ID {ExamPaperId}.", dto.ExamPaperId);
-            return Ok(ApiResponse<ExamPaperDTO>.SuccessResponse(dto, "ExamPaper updated successfully"));
+            return Ok(ApiResponse<ExamPaperUpdateDTO>.SuccessResponse(dto, "ExamPaper updated successfully"));
         }
         catch (Exception ex)
         {

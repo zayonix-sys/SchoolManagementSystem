@@ -7,7 +7,7 @@ namespace SchoolManagementSystem.Application.Interfaces
     {
         Task<List<ExamPaperDTO>> GetAllExamPapersAsync();
         Task AddExamPaperAsync(ExamPaperDTO examPaper);
-        Task UpdateExamPaperAsync(ExamPaperDTO examPaper);
+        Task UpdateExamPaperAsync(ExamPaperUpdateDTO examPaper);
         Task DeleteExamPaperAsync(int exampaperId);
 
     }
