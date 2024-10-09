@@ -18,8 +18,14 @@ import ConfirmationDialog from "../common/confirmation-dialog";
 import { deleteExamPaper, ExamData, fetchExamPapers } from "@/services/ExamPaperService";
 import { ExamPDFData, fetchExamPaperPDF } from "@/services/ExamPaperPDFService";
 import EditExamPaper from "./edit-exampaper";
+import { QuestionsData } from "@/services/QBankService";
 
-const ExamPaperTable = () => {
+interface QuestionProps{
+  questionBank: QuestionsData[]
+}
+
+const ExamPaperTable: React.FC<QuestionProps> = ({ questionBank }) => {
+
   const [examPaper, setExamPaper] = useState<ExamData[]>([]);
   const [examPaperPDF, setExamPaperPDF] = useState<ExamPDFData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -71,24 +77,9 @@ const ExamPaperTable = () => {
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
-  // const handleDeleteConfirmation = (id: number) => {
-  //   setExamPaperToDelete(id);
-  // };
-
   const handleCancelDelete = () => {
     setExamPaperToDelete(null);
   };
-
-  // const handleDelete = async (id: number) => {
-  //   try {
-  //     await deleteExamPaper(id);
-  //     toast.success("ExamPaper deleted successfully");
-  //     setExamPaperToDelete(null);
-  //   } catch (error) {
-  //     console.error("Error deleting ExamPaper:", error);
-  //     toast.error("Failed to delete ExamPaper");
-  //   }
-  // };
 
   const handleDeleteConfirmation = (params: { classId: number; subjectId: number }) => {
     setExamPaperToDelete(params);
@@ -96,23 +87,20 @@ const ExamPaperTable = () => {
   
   const handleDelete = async (params: { classId: number; subjectId: number }) => {
     try {
-      // Filter out all exam papers that match the given classId and subjectId
       const itemsToDelete = examPaper.filter(
         (item) => item.classId === params.classId && item.subjectId === params.subjectId
       );
   
       if (itemsToDelete.length > 0) {
-        // Delete each matching exam paper
         for (const item of itemsToDelete) {
          if (item.examPaperId !== null)
           {
             await deleteExamPaper(item.examPaperId!);
-          }; // Assuming you have a delete API for individual exam papers
+          }; 
         }
   
         toast.success("ExamPaper deleted successfully");
   
-        // After deletion, update the local state to reflect the removed items
         setExamPaper((prevExamPapers) =>
           prevExamPapers.filter(
             (item) =>
@@ -199,9 +187,6 @@ const ExamPaperTable = () => {
                   >
                     <Icon icon="icons8:download" className=" h-4 w-8" />
                  </Button>
-                {/* <p
-                style={{fontSize: "10px"}}
-                >View ExamPaper</p> */}
               </TableCell>
               <TableCell className="p-2.5">
                 <Badge
@@ -214,7 +199,7 @@ const ExamPaperTable = () => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  {/* <EditExamPaper examData={item} /> */}
+                  <EditExamPaper examData={examPaper} examItem={[item]} questionData={questionBank}/>
                   <Button
                     size="icon"
                     variant="outline"

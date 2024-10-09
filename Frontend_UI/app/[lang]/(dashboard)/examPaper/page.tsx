@@ -89,7 +89,7 @@ const QuestionBank = () => {
           <AccordionTrigger>View Exam Papers</AccordionTrigger>
           <AccordionContent>
             <div className="col-span-12 md:col-span-8">
-              <ExamPaperTable  />
+              <ExamPaperTable  questionBank={questions}/>
             </div>
           </AccordionContent>
         </AccordionItem>
