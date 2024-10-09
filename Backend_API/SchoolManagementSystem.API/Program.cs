@@ -83,6 +83,7 @@ builder.Services.AddScoped<ISponsor, SponsorService>();
 builder.Services.AddScoped<SponsorMapper>();
 builder.Services.AddScoped<IExamPaper, ExamPaperService>();
 builder.Services.AddScoped<ExamPaperMapper>();
+builder.Services.AddScoped<ExamPaperUpdateMapper>();
 builder.Services.AddScoped<ISponsorship, SponsorshipService>();
 builder.Services.AddScoped<SponsorshipMapper>();
 builder.Services.AddScoped<IExamPaperPDF, ExamPaperPdfService>();
