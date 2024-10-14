@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import dynamic from "next/dynamic";
-import { ExamData, updateExamPaper } from "@/services/ExamPaperService";
+import { deleteExamPaper, ExamData, updateExamPaper } from "@/services/ExamPaperService";
 import { Label } from "@/components/ui/label";
 import { QuestionsData } from "@/services/QBankService";
 
@@ -75,8 +75,8 @@ export default function EditExamPaper({ examData, examItem, questionData }: Exam
     },
   });
     
-  const [rows, setRows] = useState<{ questionId: number | null; question: string; marks: number | null }[]>([
-    { questionId: null, question: "", marks: null }
+  const [rows, setRows] = useState<{ questionId: number | null; question: string; marks: number | null; examPaperId: number | null}[]>([
+    { questionId: null, question: "", marks: null, examPaperId: null }
   ]);
 
   const selectedClassId = watch("classId");
@@ -104,6 +104,7 @@ export default function EditExamPaper({ examData, examItem, questionData }: Exam
             questionId: question.questionIds[0],
             question: questionData.find((qd) => qd.questionBankId === question.questionIds[0])?.questions || "",
             marks: questionData.find((qd) => qd.questionBankId === question.questionIds[0])?.marks || 0,
+            examPaperId: question.examPaperId || null,
           };
         });
   
@@ -124,6 +125,7 @@ export default function EditExamPaper({ examData, examItem, questionData }: Exam
       questionId,
       question: question?.questions || "",
       marks: question?.marks || 0,
+      examPaperId: null,
     };
 
     setRows(updatedRows);
@@ -133,15 +135,43 @@ export default function EditExamPaper({ examData, examItem, questionData }: Exam
   };
   
   const addRow = () => {
-    setRows((prev) => [...prev, { questionId: null, question: "", marks: null }]);
+    setRows((prev) => [...prev, { questionId: null, question: "", marks: null, examPaperId: null }]);
   };
 
-  const removeRow = (index: number) => {
-    const updatedRows = rows.filter((_, i) => i !== index);
-    setRows(updatedRows);
+//   const removeRow = (index: number) => {
+//     const updatedRows = rows.filter((_, i) => i !== index);
+//     setRows(updatedRows);
 
-    const updatedQuestionIds = updatedRows.map((row) => row.questionId).filter((id) => id !== null);;
-    setValue("questionIds", updatedQuestionIds);  
+//     const updatedQuestionIds = updatedRows.map((row) => row.questionId).filter((id) => id !== null);;
+//     setValue("questionIds", updatedQuestionIds);  
+// };
+
+const removeRow = async (index: number) => {
+  const examPaperIdToRemove = rows[index].examPaperId;
+
+  if (examPaperIdToRemove !== null) {
+    console.log("Exam paper ID to remove:", examPaperIdToRemove);
+    try {
+      const response = await deleteExamPaper(examPaperIdToRemove);
+
+      if (response.success) {
+        const updatedRows = rows.filter((_, i) => i !== index);
+        setRows(updatedRows);
+
+        const updatedQuestionIds = updatedRows.map((row) => row.questionId).filter((id) => id !== null);
+        setValue("questionIds", updatedQuestionIds);
+        
+        toast.success("Exam paper record removed successfully!");
+      } else {
+        toast.error("Failed to remove the exam paper record.");
+      }
+    } catch (error) {
+      console.error("Error removing exam paper record:", error);
+      toast.error("An error occurred while removing the exam paper record.");
+    }
+  } else {
+    toast.error("No exam paper ID found to remove.");
+  }
 };
 
   useEffect(() => {
