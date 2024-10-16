@@ -88,6 +88,8 @@ builder.Services.AddScoped<ISponsorship, SponsorshipService>();
 builder.Services.AddScoped<SponsorshipMapper>();
 builder.Services.AddScoped<IExamPaperPDF, ExamPaperPdfService>();
 
+builder.Services.AddScoped<IPayment, PaymentService>();
+builder.Services.AddScoped<PaymentMapper>();
 //builder.Services.AddScoped<IUserRoles, UserRolesService>();
 //builder.Services.AddScoped<UserRoleMapper>();
 
@@ -119,7 +121,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddEndpointsApiExplorer();  // Adds support for minimal APIs
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "School Mamagement System", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "School Management System", Version = "v1" });
 });
 
 // Add other services and middleware configurations if needed
