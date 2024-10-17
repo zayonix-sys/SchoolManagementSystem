@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import ConfirmationDialog from "../common/confirmation-dialog";
+import ConfirmationDialog from "../../common/confirmation-dialog";
 import { deleteExamPaper, ExamData, fetchExamPapers } from "@/services/ExamPaperService";
 import { ExamPDFData, fetchExamPaperPDF } from "@/services/ExamPaperPDFService";
 import EditExamPaper from "./edit-exampaper";

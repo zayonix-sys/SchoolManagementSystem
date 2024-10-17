@@ -18,21 +18,20 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             var entities = new List<ExamPaper>();
 
-            // If both ExamPaperIds and QuestionIds are provided and have the same length
             if (dto.QuestionIds != null && dto.QuestionIds.Any())
             {
                 for (int i = 0; i < dto.QuestionIds.Count; i++)
                 {
                     var examPaperId = dto.ExamPaperIds != null && i < dto.ExamPaperIds.Count
                         ? dto.ExamPaperIds[i]
-                        : (int?)null; // Assign null if there's no corresponding ExamPaperId
+                        : (int?)null; 
 
                     entities.Add(new ExamPaper
                     {
-                        ExamPaperId = examPaperId, // Map each ExamPaperId if it exists
+                        ExamPaperId = examPaperId, 
                         ClassId = dto.ClassId,
                         SubjectId = dto.SubjectId,
-                        QuestionId = dto.QuestionIds[i], // Map each QuestionId
+                        QuestionId = dto.QuestionIds[i],
                         TermName = dto.TermName,
                         TotalMarks = dto.TotalMarks,
                         DictationMarks = dto.DictationMarks,

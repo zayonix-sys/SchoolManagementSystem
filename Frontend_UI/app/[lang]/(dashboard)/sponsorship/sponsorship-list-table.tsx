@@ -42,7 +42,8 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
   const filteredSponsorshp = (sponsorship as any[]).filter(
     (sponsorship) =>
       sponsorship?.sponsorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    sponsorship?.studentName?.toLowerCase().includes(searchQuery.toLowerCase())
+    sponsorship?.studentName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    sponsorship?.amount?.toString().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;

@@ -9,7 +9,7 @@ export interface SponsorshipData {
   classId:number;
   className?:string;
   studentName?:string;
-  sponsorName?:string;
+  sponsorName?:string ;
   gender?:string;
   phoneNumber?: string;
   amount?:string;
@@ -67,5 +67,16 @@ export const deleteSponsorship = async (id: number): Promise<ApiResponse> => {
   } catch (error: any) {
     console.error(`Failed to delete Sponsorship`, error);
     throw new Error(`Failed to delete Sponsorship`);
+  }
+};
+export const fetchStudentBySponsorId = async (id: number): Promise<ApiResponse> => {
+  try {
+    const response = await api.get<ApiResponse>(
+      `${BASE_URL}/GetAllStudentBySponsorId?sponsorId=${id}`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error(`Failed to Retrived Student By Sponsor`, error);
+    throw new Error(`Failed to Retrived Student By Sponsor`);
   }
 };

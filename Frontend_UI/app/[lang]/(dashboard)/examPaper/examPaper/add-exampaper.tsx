@@ -78,15 +78,6 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
     resolver: zodResolver(exampaperSchema),
   });
 
-  // useEffect(() => {
-  //   const totalMarks = rows.reduce((acc, row) => {
-  //     return acc + (row.marks ? row.marks : 0); 
-  //   }, 0);
-
-  //   setWrittenMarks(totalMarks); 
-  //   setValue("writtenMarks", totalMarks); 
-  // }, [rows, setValue]);
-
   const selectedClassId = watch("classId");
   const selectedSubjectId = watch("subjectId");
 
