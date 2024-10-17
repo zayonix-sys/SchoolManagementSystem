@@ -4,8 +4,8 @@ import { getUserRoles, UserRoleData } from "@/services/userRoleService";
 import { UserData } from "@/services/userService";
 import { useEffect, useState } from "react";
 import ViewUserRole from "./veiw-user-role";
-import UserListTable from "./user-table";
-import AddUser from "./add-user";
+// import UserListTable from "./user-table";
+// import AddUser from "./add-user";
 import { CampusData } from "@/services/campusService";
 
 ;
@@ -43,10 +43,10 @@ const Page = () => {
         <BreadcrumbItem className="text-primary">Users</BreadcrumbItem>
       </Breadcrumbs>
       <div className="flex justify-end space-x-4 m-2">
-        <AddUser users={users} userRole={userRole} campuses={campuses}/>        
+        {/* <AddUser users={users} userRole={userRole} campuses={campuses}/>         */}
         <ViewUserRole selectedRole={null}/>
       </div>
-      <UserListTable users={users}/>
+      {/* <UserListTable users={users}/> */}
       
     </div>
   );
