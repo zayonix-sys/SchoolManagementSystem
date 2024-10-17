@@ -1,13 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-
 namespace SchoolManagementSystem.Domain.Entities
 {
-    public class ExamPaper
+    public class Exam
     {
         [Key]
-        public int? ExamPaperId { get; set; }
+        public int? ExamId { get; set; }
+
+        [ForeignKey("Campus")]
+        public int? CampusId { get; set; }
 
         [ForeignKey("Class")]
         public int? ClassId { get; set; }
@@ -15,22 +17,20 @@ namespace SchoolManagementSystem.Domain.Entities
         [ForeignKey("Subject")]
         public int? SubjectId { get; set; }
 
-        [ForeignKey("QuestionsBank")]
-        public int? QuestionId { get; set; }
+        [ForeignKey("ExamPaper")]
+        public int? ExamPaperId { get; set; }
 
         [Required]
-        public string? TermName { get; set; }
+        public DateOnly? ExamDate { get; set; }
 
         [Required]
-        public int? TotalMarks { get; set; }
+        public TimeSpan? StartTime { get; set; }
 
-        public int? DictationMarks {  get; set; }
+        [Required]
+        public TimeSpan? EndTime { get; set; }
 
-        public int? OralMarks {  get; set; }
-
-        public int? WrittenMarks { get; set; }
-
-        public int? CopyMarks { get; set; }
+        [Required]
+        public int? PassingMarks { get; set; }
 
         [ForeignKey("CreatedUser")]
         public int? CreatedBy { get; set; }
@@ -45,9 +45,10 @@ namespace SchoolManagementSystem.Domain.Entities
 
         // Navigation properties
 
+        public Campus? Campus { get; set; }
         public Class? Class { get; set; }
-        public Subject Subject { get; set; }
-        public QuestionBank QuestionsBank { get; set; }
+        public Subject? Subject { get; set; }
+        public ExamPaper? ExamPaper { get; set; }
         public User? CreatedUser { get; set; }
         public User? UpdatedUser { get; set; }
 
