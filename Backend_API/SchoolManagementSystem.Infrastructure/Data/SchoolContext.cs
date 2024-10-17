@@ -34,7 +34,9 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<ExamPaper> ExamPaper { get; set; }
         public DbSet<Exam> Exams { get; set; }
         public DbSet<Sponsorship> Sponsorships { get; set; }
+        public DbSet<Payment> SponsorPayments { get; set; }
         public DbSet<ExamResult> ExamResults { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and keys here
