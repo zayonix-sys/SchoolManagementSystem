@@ -35,6 +35,25 @@ public class SponsorshipController : ControllerBase
         }
     }
 
+    [HttpGet("[action]")]
+    public async Task<ActionResult<ApiResponse<IEnumerable<SponsorshipDTO>>>> GetAllStudentBySponsorId(int sponsorId)
+    {
+        _logger.LogInformation("Fetching all sponsor student.");
+        try
+        {
+            var sponsorStudent = await _sponsorshipService.GetAllStudentBySponsorIdAsync(sponsorId);
+            _logger.LogInformation("Successfully retrieved {Count} sponsors student.", sponsorStudent?.Count() ?? 0);
+
+            return Ok(ApiResponse<IEnumerable<SponsorshipDTO>>.SuccessResponse(sponsorStudent, "sponsor student retrieved successfully"));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while fetching all sponsor student.");
+            return StatusCode(500, ApiResponse<IEnumerable<SponsorshipDTO>>.ErrorResponse("Internal server error."));
+        }
+    }
+
+
     [HttpPost("[action]")]
     public async Task<ActionResult<ApiResponse<SponsorshipDTO>>> AddSponsorship([FromBody] SponsorshipDTO dto)
     {

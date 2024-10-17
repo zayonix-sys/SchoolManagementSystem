@@ -4,6 +4,7 @@ using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
 using SchoolManagementSystem.Domain.Interfaces;
+using System.Linq;
 
 namespace SchoolManagementSystem.Application.Services
 {
@@ -49,12 +50,22 @@ namespace SchoolManagementSystem.Application.Services
         {
             try
             {
-
                 var entities = _examPaperUpdateMapper.MapToEntities(examPaper);
-                foreach (var entity in entities)
+                if(entities != null)
                 {
-                    await _examPaperRepository.UpdateAsync(entity);
+                    foreach (var entity in entities)
+                    {
+                        if (entity.ExamPaperId != null)
+                        {
+                            await _examPaperRepository.UpdateAsync(entity);
+                        }
+                        else
+                        {
+                            await _examPaperRepository.AddAsync(entity);
+                        }
+                    }               
                 }
+
             }
             catch (Exception ex)
             {

@@ -8,9 +8,6 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ClassData } from '@/services/ClassService';
-import { CampusData } from '@/services/campusService';
-import { AssignSubjectData } from '@/services/assignSubjectService';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { addPeriod } from '@/services/periodService';
@@ -44,7 +41,6 @@ export default function AddPeriods() {
       ...data,
       startTime: formattedStartTime,
       endTime: formattedEndTime,
-    
     };
     
     try {

@@ -1,5 +1,6 @@
 import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation } from "@/components/svg";
 import useAuth from "@/hooks/use-auth";
+import { Coins, CoinsIcon } from "lucide-react";
 
 export interface MenuItemProps {
   title: string;
@@ -19,6 +20,11 @@ const menuItems: MenuItemProps[] = [
     title: "Administration",
     icon: DashBoard,
     child: [
+      {
+        title: "Manage User",
+        href: "/users",
+        icon: User,
+      },
       {
         title: "Manage Campus",
         href: "/campuses",
@@ -44,11 +50,12 @@ const menuItems: MenuItemProps[] = [
         href: "/sponsorship",
         icon: Donation,
       },
+     
     ],
   },
   {
     title: "Academic",
-    icon: DashBoard,
+    icon: Book,
     child: [
       {
         title: "Applicants",
@@ -78,7 +85,18 @@ const menuItems: MenuItemProps[] = [
       
     ],
   },
-  // Add more menu items here
+  {
+    title: "Account",
+    icon: CoinsIcon,
+    child: [
+      {
+        title: "Manage Payments",
+        href: "/payments",
+        icon: Coins,
+      },
+
+    ]
+  }
 ];
 
 // Utility function to generate specific menu styles
