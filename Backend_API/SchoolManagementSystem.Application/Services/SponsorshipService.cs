@@ -65,11 +65,41 @@ namespace SchoolManagementSystem.Application.Services
                 throw;
             }
         }
-
-        public Task<SponsorshipDTO> GetSponsorshipByIdAsync(int sponsorshipId)
+        public async Task<SponsorshipDTO> GetSponsorshipByIdAsync(int sponsorshipId)
         {
             throw new NotImplementedException();
         }
+        public async Task<List<SponsorshipDTO>> GetAllStudentBySponsorIdAsync(int sponsorId)
+        {
+
+            try
+            {
+                var sponsorStudent = await _sponsorshipRepository.GetAllAsync(
+                    include: query => query
+                    .Include(s => s.Student)
+                    .Include(sp => sp.Sponsor)
+                    .Include(c => c.Class)
+                    );
+                var studentSponsorships = sponsorStudent.Where(s => s.SponsorId == sponsorId).ToList();
+                var activeSponsorStudent = studentSponsorships.Where(a => a.IsActive);
+                var studentSponsorshipDtos = activeSponsorStudent.Select(c => _mapper.MapToDto(c)).ToList();
+                return studentSponsorshipDtos;
+
+
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+
+
 
         public async Task UpdateSponsorshipAsync(SponsorshipDTO dto)
         {

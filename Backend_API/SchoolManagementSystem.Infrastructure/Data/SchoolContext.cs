@@ -33,6 +33,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<QuestionBank> QuestionsBank { get; set; }
         public DbSet<ExamPaper> ExamPaper { get; set; }
         public DbSet<Sponsorship> Sponsorships { get; set; }
+        public DbSet<Payment> SponsorPayments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -10,5 +10,7 @@ namespace SchoolManagementSystem.Application.Interfaces
         Task UpdateSponsorshipAsync(SponsorshipDTO dto);
         Task DeleteSponsorshipAsync(int sponsorshipId);
 
+        Task<List<SponsorshipDTO>> GetAllStudentBySponsorIdAsync(int sponsorId);
+
     }
 }
