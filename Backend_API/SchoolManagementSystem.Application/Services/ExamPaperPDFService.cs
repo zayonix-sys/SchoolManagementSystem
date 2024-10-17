@@ -1,16 +1,10 @@
 ﻿using HtmlAgilityPack;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
-using QuestPDF.Drawing;  // For drawing-related classes
-using QuestPDF.Elements; // For layout-related classes including Column
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using QuestPDF.Previewer;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
-using SchoolManagementSystem.Domain.Entities;
 
 
 public class ExamPaperPdfService : IExamPaperPDF

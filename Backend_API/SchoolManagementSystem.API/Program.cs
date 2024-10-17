@@ -87,6 +87,11 @@ builder.Services.AddScoped<ExamPaperUpdateMapper>();
 builder.Services.AddScoped<ISponsorship, SponsorshipService>();
 builder.Services.AddScoped<SponsorshipMapper>();
 builder.Services.AddScoped<IExamPaperPDF, ExamPaperPdfService>();
+builder.Services.AddScoped<IExam, ExamService>();
+builder.Services.AddScoped<ExamMapper>();
+builder.Services.AddScoped<IExamResult, ExamResultService>();
+builder.Services.AddScoped<ExamResultMapper>();
+
 
 //builder.Services.AddScoped<IUserRoles, UserRolesService>();
 //builder.Services.AddScoped<UserRoleMapper>();

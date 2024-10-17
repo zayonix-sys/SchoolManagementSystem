@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import ConfirmationDialog from "../common/confirmation-dialog";
+import ConfirmationDialog from "../../common/confirmation-dialog";
 import { deleteQuestion, QuestionsData } from "@/services/QBankService";
 import EditQuestions from "./edit-question";
 import dynamic from "next/dynamic";

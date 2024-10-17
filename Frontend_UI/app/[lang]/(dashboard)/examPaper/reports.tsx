@@ -4,10 +4,10 @@ import { Docs } from "@/components/svg";
 import { Card } from "@/components/ui/card";
 import React, { Fragment, useEffect, useState } from "react";
 import { QuestionsData } from "@/services/QBankService";
-import ViewQuestions from "./view-questions";
 import { ClassData } from "@/services/ClassService";
 import { SubjectData } from "@/services/subjectService";
 import { AssignSubjectData } from "@/services/assignSubjectService";
+import ViewQuestions from "./question/view-questions";
 
 interface QuestionProps {
   Questions: QuestionsData[];
