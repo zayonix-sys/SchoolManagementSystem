@@ -47,7 +47,7 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
                 keyProperty = entityType.GetProperty("ApplicationId");
             }
 
-            else if (entityType.Name == "EmployeeRole")
+            else if (entityType.Name == "EmployeeRole" || entityType.Name == "UserRole")
             {
                 keyProperty = entityType.GetProperty("RoleId");
             }

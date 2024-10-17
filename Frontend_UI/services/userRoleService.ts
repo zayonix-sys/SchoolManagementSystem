@@ -2,7 +2,7 @@
 import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
-export interface RoleData {
+export interface UserRoleData {
   roleId?: number; 
   roleName: string;
   roleDescription?: string;
@@ -13,20 +13,20 @@ export interface RoleData {
   isActive?: boolean; 
 }
 
-const BASE_URL = "/EmployeeRoles";
+const BASE_URL = "/UserRoles";
 
-export const getRoles = async (): Promise<ApiResponse> => {
+export const getUserRoles = async (): Promise<ApiResponse> => {
   try {
-    const authToken = localStorage.getItem("authToken");
+    // const authToken = localStorage.getItem("authToken");
 
-    if (!authToken) {
-      throw new Error("No authentication token found. Please log in.");
-    }
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetRoles`,
-      {headers: {
-        Authorization: `Bearer ${authToken}`,
-      },}
-    );
+    // if (!authToken) {
+    //   throw new Error("No authentication token found. Please log in.");
+    // }
+    const response = await api.get<ApiResponse>(`${BASE_URL}/GetUserRoles`);
+    //   {headers: {
+    //     Authorization: `Bearer ${authToken}`,
+    //   },}
+    // );
     return response.data;
   } catch (error) {
     console.error("Failed to fetch Roles:", error);
@@ -34,9 +34,9 @@ export const getRoles = async (): Promise<ApiResponse> => {
   }
 };
 
-export const getRoleById = async (id: number): Promise<RoleData> => {
+export const getUserRoleById = async (id: number): Promise<UserRoleData> => {
   try {
-    const response = await api.get<RoleData>(`${BASE_URL}/GetRoleById/${id}`);
+    const response = await api.get<UserRoleData>(`${BASE_URL}/GetRoleById/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Failed to fetch role with ID ${id}:`, error);
@@ -44,11 +44,11 @@ export const getRoleById = async (id: number): Promise<RoleData> => {
   }
 };
 
-export const addRole = async (roleData: RoleData): Promise<ApiResponse> => {
+export const addUserRole = async (userRoleData: UserRoleData): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
-      `${BASE_URL}/AddRole`,
-      roleData
+      `${BASE_URL}/AddUserRole`,
+      userRoleData
     );
     return response.data;
   } catch (error) {
@@ -57,13 +57,13 @@ export const addRole = async (roleData: RoleData): Promise<ApiResponse> => {
   }
 };
 
-export const updateRole = async (
-  roleData: RoleData
+export const updateUserRole = async (
+  userRoleData: UserRoleData
 ): Promise<ApiResponse> => {
   try {
     const response = await api.put<ApiResponse>(
-      `${BASE_URL}/UpdateRoles`,
-      roleData
+      `${BASE_URL}/UpdateUserRoles`,
+      userRoleData
     );
     return response.data;
   } catch (error: any) {
@@ -72,10 +72,10 @@ export const updateRole = async (
   }
 };
 
-export const deleteRole = async (id: number): Promise<ApiResponse> => {
+export const deleteUserRole = async (id: number): Promise<ApiResponse> => {
   try {
     const response = await api.delete<ApiResponse>(
-      `${BASE_URL}/DeleteRole?roleId=${id}`
+      `${BASE_URL}/DeleteUserRole?roleId=${id}`
     );
     return response.data;
   } catch (error: any) {
