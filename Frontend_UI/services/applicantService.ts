@@ -55,6 +55,7 @@ const mapFormDataToDto = (data: any) => {
   const applicationData = {
     campusId: data.campusId,
     admissionClassId: data.admissionClassId,
+    applicationId: data.applicationId,
     applicationStatus: data.applicationStatus,
     admissionDecisionDate: data.admissionDecisionDate,
     remarks: data.remarks,

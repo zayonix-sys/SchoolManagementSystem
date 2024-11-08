@@ -92,9 +92,21 @@ namespace SchoolManagementSystem.Application.Services
             }
 
         }
-        Task<StudentDTO> IStudent.GetStudentByIdAsync(int stdId)
+
+        public Task<StudentDTO> GetStudentByIdAsync(int stdId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<StudentDTO>> GetAllStudentsAsync()
+        {
+            var result = await _studentRepository.GetAllAsync(
+                 include: query => query.Include(c => c.Class)
+                );
+            var activeStudents = result.Where(c => c.IsActive);
+            var studentDtos = activeStudents.Select(c => _mapper.MapToDto(c)).ToList();
+            return studentDtos;
+
         }
     }
 }

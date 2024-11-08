@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
@@ -11,38 +12,59 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
-import { deleteSponsor, SponsorData } from "@/services/sponsorService";
-import EditSponsor from "./edit-sponsor";
+import { deleteUser, fetchAllUser, UserData } from "@/services/userService";
+import EditUser from "./edit-user";
+import { toast } from "sonner";
 
-interface SponsorListTableProps {
-  Sponsor: SponsorData[];
+interface UserListTableProps {
+  users: UserData[];
 }
 
-const SponsorListTable: React.FC<SponsorListTableProps> = ({Sponsor}) => {
+const UserListTable: React.FC<UserListTableProps> = ({ users }) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sponsorToDelete, setSponsorToDelete] = useState<number | null>(null);
+  const [userToDelete, setUserToDelete] = useState<number | null>(null);
   const itemsPerPage = 20;
-  // const [detailedSponsor, setDetailedSponsor] = useState<SponsorData | null>(null); 
-  
-  const filteredSponsors = (Sponsor as any[]).filter((sponsor) =>
-    sponsor?.sponsorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    sponsor?.email?.toLowerCase().includes(searchQuery.toLowerCase())
+
+  // Apply search filter and pagination
+  const filteredUsers = (users as any[]).filter(
+    (user) =>
+      user?.userName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSponsors.slice(
+  const currentItems = filteredUsers.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
 
-  const totalPages = Math.ceil(filteredSponsors.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
+  const handleSelectAll = () => {
+    if (selectedRows.length === currentItems.length) {
+      setSelectedRows([]);
+    } else {
+      setSelectedRows(
+        currentItems
+          .map((row) => row.userId!)
+          .filter((id) => id !== null && id !== undefined)
+      );
+    }
+  };
+
+  const handleRowSelect = (id: number) => {
+    const updatedSelectedRows = [...selectedRows];
+    if (selectedRows.includes(id)) {
+      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
+    } else {
+      updatedSelectedRows.push(id);
+    }
+    setSelectedRows(updatedSelectedRows);
+  };
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -53,30 +75,34 @@ const SponsorListTable: React.FC<SponsorListTableProps> = ({Sponsor}) => {
   };
 
   const handleDeleteConfirmation = (id: number) => {
-    setSponsorToDelete(id);
+    setUserToDelete(id);
   };
 
   const handleCancelDelete = () => {
-    setSponsorToDelete(null);
+    setUserToDelete(null);
   };
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteSponsor(id);
-      toast.success("Sponsor deleted successfully");
-      setSponsorToDelete(null); 
+      await deleteUser(id);
+      toast.success("User deleted successfully");
+      fetchAllUser();
+      setUserToDelete(null);
     } catch (error) {
-      console.error("Error deleting Sponsor:", error);
-      toast.error("Failed to delete Sponsor");
+      console.error("Error deleting User:", error);
+      toast.error("Failed to delete User");
     }
   };
-
+  const formatDate = (dateString: string | Date): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
   return (
     <>
       <div className="mb-4 flex justify-between items-center">
         <Input
           type="text"
-          placeholder="Search by Sponsor Name..."
+          placeholder="Search by User Name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border p-2 rounded m-2"
@@ -85,42 +111,32 @@ const SponsorListTable: React.FC<SponsorListTableProps> = ({Sponsor}) => {
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-          <TableHead className="h-10 p-2.5">S.No:</TableHead>
-            <TableHead className="h-10 p-2.5">Full Name</TableHead>
-            <TableHead className="h-10 p-2.5">Gender</TableHead>
-            <TableHead className="h-10 p-2.5">Occupation</TableHead>
-            <TableHead className="h-10 p-2.5">Country</TableHead>
-            <TableHead className="h-10 p-2.5">State</TableHead>
-            <TableHead className="h-10 p-2.5">City</TableHead>
-            <TableHead className="h-10 p-2.5">Email</TableHead>            
-            <TableHead className="h-10 p-2.5">Phone Number</TableHead>
-            <TableHead className="h-10 p-2.5">Postal Code</TableHead>
-            <TableHead className="h-10 p-2.5">Address</TableHead>
-            <TableHead className="h-10 p-2.5">Status</TableHead>
+            <TableHead className="h-10 p-2.5">User Name</TableHead>
+            <TableHead className="h-10 p-2.5">User Role</TableHead>
+            <TableHead className="h-10 p-2.5">Campus Name</TableHead>
+            <TableHead className="h-10 p-2.5">Created Date</TableHead>
+            <TableHead className="h-10 p-2.5">status</TableHead>
             <TableHead className="h-10 p-2.5 text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item, index) => (
+          {currentItems.map((item) => (
             <TableRow
-              key={item.sponsorId}
+              key={item.userId}
               className="hover:bg-default-200"
-              data-state={selectedRows.includes(item.sponsorId!) && "selected"}
+              data-state={selectedRows.includes(item.userId!) && "selected"}
             >
-              <TableCell className="p-2.5">{index + 1}</TableCell>
               <TableCell className="p-2.5">
-               {item.sponsorName}
+                {item.userName}
               </TableCell>
-              <TableCell className="p-2.5"> {item.gender}</TableCell>
-              <TableCell className="p-2.5"> {item.occupation}</TableCell>
-              <TableCell className="p-2.5"> {item.country}</TableCell>
-              <TableCell className="p-2.5"> {item.state}</TableCell>
-              <TableCell className="p-2.5"> {item.city}</TableCell>
-              <TableCell className="p-2.5">{item.email}</TableCell>
-              <TableCell className="p-2.5"> {item.phoneNumber}</TableCell>
-              <TableCell className="p-2.5"> {item.postalCode}</TableCell>
-              <TableCell className="p-2.5"> {item.address}</TableCell>
+              <TableCell className="p-2.5">{item.roleName}</TableCell>
+              <TableCell className="p-2.5"> {item.campusName}</TableCell>
+              <TableCell className="p-2.5">
+                {" "}
+                {formatDate(item.createdAt)}
+              </TableCell>
+
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
@@ -132,13 +148,13 @@ const SponsorListTable: React.FC<SponsorListTableProps> = ({Sponsor}) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditSponsor sponsorData={item}/>
+                  <EditUser userData={item} />
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDeleteConfirmation(item.sponsorId!)}
+                    onClick={() => handleDeleteConfirmation(item.userId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -159,16 +175,14 @@ const SponsorListTable: React.FC<SponsorListTableProps> = ({Sponsor}) => {
           Next
         </Button>
       </div>
-
-      {sponsorToDelete !== null && (
+      {userToDelete !== null && (
         <ConfirmationDialog
-          onDelete={() => handleDelete(sponsorToDelete)}
+          onDelete={() => handleDelete(userToDelete)}
           onCancel={handleCancelDelete}
         />
       )}
     </>
+  );
+};
 
-  )}
-
-
-export default SponsorListTable;
+export default UserListTable;

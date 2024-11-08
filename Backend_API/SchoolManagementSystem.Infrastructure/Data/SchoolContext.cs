@@ -11,6 +11,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<UserPermission> UserPermissions { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<Section> Sections { get; set; }
@@ -35,8 +36,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Exam> Exams { get; set; }
         public DbSet<Sponsorship> Sponsorships { get; set; }
         public DbSet<Payment> SponsorPayments { get; set; }
-        public DbSet<ExamResult> ExamResults { get; set; }
-        
+        //public DbSet<ExamResult> ExamResults { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and keys here

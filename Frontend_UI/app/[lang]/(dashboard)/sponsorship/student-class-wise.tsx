@@ -1,4 +1,5 @@
-"use client"
+// ClassStudentListTable.tsx
+"use client";
 
 import {
   Table,
@@ -8,175 +9,150 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Icon } from "@iconify/react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useState } from "react";
-import { deleteStudent, getStudentByClassWise, StudentData } from "@/services/studentService";
-import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import ConfirmationDialog from "../common/confirmation-dialog";
+import { Card } from "@/components/ui/card";
+import { StudentData, fetchStudents } from "@/services/studentService";
 import { SponsorshipData } from "@/services/sponsorshipService";
-
+import { useEffect, useState } from "react";
 
 interface StudentListTableProps {
-  // students: StudentData[];
-  classId: number | null,
-  onStudentIdChange: (id: number) => void;
+  onStudentSelectionChange: (selectedStudents: number[]) => void;
   sponsorship: SponsorshipData[];
-
 }
-const ClassStudentListTable:React.FC<StudentListTableProps> = ({classId, onStudentIdChange, sponsorship}) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [studentId, setStudentId] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+
+const ClassStudentListTable: React.FC<StudentListTableProps> = ({
+  onStudentSelectionChange,
+  sponsorship,
+}) => {
+  const [students, setStudents] = useState<StudentData[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [students, setStudent] = useState<StudentData[]>([]);
-  const [studentToDelete, setStudentToDelete] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
-    const fetchStudentByClass = async (id: number | null) => {
-      setLoading(true);
-      try {
-        const studentData = await getStudentByClassWise(id ?? null);
-        setStudent(studentData?.data as StudentData[]);
-        
-        
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
+    const fetchData = async () => {
+      const data = await fetchStudents();
+      setStudents(data?.data || []);
     };
+    fetchData();
+  }, []);
 
-    if (classId) {
-      fetchStudentByClass(classId);
-    }
-  }, [classId]);
+  const handleCheckboxChange = (student: StudentData) => {
+    const updatedSelection = selectedStudents.some(
+      (s) => s.studentId === student.studentId
+    )
+      ? selectedStudents.filter((s) => s.studentId !== student.studentId)
+      : [
+          ...selectedStudents,
+          { studentId: student.studentId, classId: student.classId },
+        ];
 
-  const itemsPerPage = 20;
-  const filteredStudents = (students as StudentData[]).filter(
+    setSelectedStudents(updatedSelection);
+    onStudentSelectionChange(updatedSelection); // Pass array of objects to parent
+  };
+
+  const filteredStudents = students.filter(
     (student) =>
       (student.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         student.lastName?.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      !sponsorship.some((s) => s.studentId === student.studentId) 
+      !sponsorship.some((s) => s.studentId === student.studentId)
   );
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredStudents?.slice(
-    indexOfFirstItem,
-    indexOfLastItem
+  const paginatedStudents = filteredStudents.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
-
-  const totalPages = Math.ceil(filteredStudents?.length / itemsPerPage);
-
-  const handlePreviousPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  };
-  
-  const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  };
-
-
-  const handleSelectStudent = (id: number) => {
-    setStudentId(id);
-    onStudentIdChange(id); // Call the callback function with the selected studentId
-  };
+  console.log(paginatedStudents, "paginatedStudent Data");
+  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
 
   return (
-    <>
-    <div className="mb-4 flex justify-between items-center">
-        <Input
-          type="text"
-          placeholder="Search by Student Name..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="border p-2 rounded m-2"
-        />
-      </div>
-    <Card className="overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="font-semibold sticky left-0 bg-background drop-shadow-md"> Profile Image</TableHead>
-            <TableHead className="font-semibold">Gr No</TableHead>
-            <TableHead className="font-semibold">Full Name</TableHead>
-            <TableHead className="font-semibold">Email</TableHead>
-            <TableHead className="font-semibold">Phone Number</TableHead>
-            <TableHead className="font-semibold">Gender</TableHead>
-            <TableHead className="font-semibold">Class Name</TableHead>
-            <TableHead className="font-semibold">Date of Birth</TableHead>
-            <TableHead className="font-semibold">Enrollment Date</TableHead>
-            <TableHead className="font-semibold">Status</TableHead>
-            <TableHead className="text-center sticky right-0 bg-background drop-shadow-md">
-              Action
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {currentItems?.map((item) => (
-            <TableRow key={item.email} className="hover:bg-muted">
-              <TableCell className="font-medium  text-card-foreground/80 sticky left-0 bg-background drop-shadow-md">
-                <Avatar className="rounded-full">
-                  <AvatarImage src={item?.profileImage} />
-                  <AvatarFallback>SK
-                    <Icon icon="simple-line-icons:user" className="h-4 w-4" />
-                  </AvatarFallback>
-                </Avatar>
-              </TableCell> 
-              <TableCell>{item.grNo}</TableCell>
-               <TableCell>{item.firstName}{" "}{item.lastName}</TableCell>
-              <TableCell>{item.email}</TableCell>
-              <TableCell>{item.phoneNumber}</TableCell>
-              <TableCell>{item.gender}</TableCell>
-              <TableCell>{item.className}</TableCell>
-              <TableCell>{item.dateOfBirth}</TableCell>
-              <TableCell>{item.enrollmentDate}</TableCell>
-              <TableCell>
-              <Badge
-                  variant="outline"
-                  color={item.isActive ? "success" : "destructive"}
-                  className="capitalize"
-                >
-                  {item.isActive ? "Active" : "Inactive"}
-                </Badge>
-              </TableCell>
-              <TableCell className="flex gap-3 justify-end bg-background drop-shadow-md">
-                 <Button
-                  size="icon"
-                  color="secondary"
-                  className=" h-7 w-7"
-                  type="submit"
-                  onClick={() => handleSelectStudent(item.studentId)}
-                  
-                >
-                   
-                   <Icon icon="entypo:plus" className="h-4 w-4" />
-                </Button> 
-              </TableCell>
+    <div>
+      <Input
+        placeholder="Search by Student Name..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="border p-2 rounded mb-4"
+      />
+      <Card className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Profile</TableHead>
+              <TableHead>Gr No</TableHead>
+              <TableHead>Full Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead>Gender</TableHead>
+              <TableHead>Class</TableHead>
+              <TableHead>DOB</TableHead>
+              <TableHead>Enrollment</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Select</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
-    <div className="flex justify-between items-center mt-4">
-        <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
+          </TableHeader>
+          <TableBody>
+            {paginatedStudents.map((student) => (
+              <TableRow key={student.studentId}>
+                <TableCell>
+                  <Avatar>
+                    <AvatarFallback>SK</AvatarFallback>
+                  </Avatar>
+                </TableCell>
+                <TableCell>{student.grNo}</TableCell>
+                <TableCell>
+                  {student.firstName} {student.lastName}
+                </TableCell>
+                <TableCell>{student.email}</TableCell>
+                <TableCell>{student.phoneNumber}</TableCell>
+                <TableCell>{student.gender}</TableCell>
+                <TableCell>{student.className}</TableCell>
+                <TableCell>{student.dateOfBirth}</TableCell>
+                <TableCell>{student.enrollmentDate}</TableCell>
+                <TableCell>
+                  <Badge
+                    variant="outline"
+                    color={student.isActive ? "success" : "destructive"}
+                  >
+                    {student.isActive ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-center">
+                  <input
+                    type="checkbox"
+                    checked={selectedStudents.some(
+                      (s) => s.studentId === student.studentId
+                    )}
+                    onChange={() => handleCheckboxChange(student)}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
           Previous
-        </Button>
+        </button>
         <span>
           Page {currentPage} of {totalPages}
         </span>
-        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+        >
           Next
-        </Button>
+        </button>
       </div>
-     
-    </>
+    </div>
   );
 };
 

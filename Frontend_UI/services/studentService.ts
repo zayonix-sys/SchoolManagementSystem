@@ -14,7 +14,7 @@ export interface StudentData {
   dateOfBirth: string | Date;
   enrollmentDate: Date;
   className?: string;
-  classId?: number;
+  classId?: number | null;
   campusId?: number;
   isActive: boolean;
 }
@@ -60,3 +60,13 @@ export const deleteStudent = async (id: number): Promise<ApiResponse> => {
     throw new Error(`Failed to delete Student`);
   }
 };
+
+export const fetchStudents = async (): Promise<ApiResponse> => {
+  try {
+    const response = await api.get<ApiResponse>(`${BASE_URL}/GetAllStudents`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch Students:", error);
+    throw new Error("Failed to fetch Students");
+  }
+}

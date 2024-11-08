@@ -2,16 +2,16 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
 export interface SectionData {
-  sectionId?: number; // Corresponds to SectionId in the entity
-  sectionName: string; // Corresponds to Section Name in the entity
-  capacity: number; // Corresponds to Capacity in the entity
-  classId?: number; // Corresponds to ClassId in the entity
-  className?: string; // Corresponds to ClassName in the entity
-  createdAt?: Date; // Corresponds to CreatedAt in the entity
-  createdBy?: number; // Corresponds to CreatedBy in the entity
-  updatedBy?: number; // Corresponds to UpdatedBy in the entity
-  updatedAt?: Date; // Corresponds to UpdatedAt in the entity
-  isActive?: boolean; // Corrected typo from 'isActice' to 'isActive'
+  sectionId?: number;
+  sectionName: string;
+  capacity: number; 
+  classId?: number; 
+  className?: string;
+  createdAt?: Date; 
+  createdBy?: number;
+  updatedBy?: number;
+  updatedAt?: Date; 
+  isActive?: boolean;
 }
 
 const BASE_URL = "/Section";

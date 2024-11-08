@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
@@ -28,7 +23,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public int CampusId { get; set; }
 
         [Required]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
         [Required]
         public DateTime? CreatedAt { get; set; }
@@ -36,7 +31,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public DateTime? UpdatedAt { get; set; }
 
         // Navigation properties
-        public UserRole UserRole { get; set; }
-        public Campus Campus { get; set; }
+        public UserRole? UserRole { get; set; }
+        public Campus? Campus { get; set; }
     }
 }
