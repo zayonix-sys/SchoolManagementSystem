@@ -1,10 +1,5 @@
 ﻿using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
@@ -22,12 +17,13 @@ namespace SchoolManagementSystem.Application.Mappers
                 RoleId = entity.RoleId,
                 CampusId = entity.CampusId,
                 UserName = entity.UserName,
-                PasswordHash = entity.PasswordHash,
+                //PasswordHash = entity.PasswordHash,
                 IsActive = entity.IsActive,
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt,
                 UserId = entity.UserId,
-                RoleName = entity?.UserRole?.RoleName
+                RoleName = entity?.UserRole?.RoleName,
+                CampusName = entity.Campus?.CampusName
             };
         }
 
@@ -52,7 +48,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 CampusId = dto.CampusId,
                 RoleId = dto.RoleId,
                 CreatedAt = dto.CreatedAt,
-                UpdatedAt= dto.UpdatedAt
+                UpdatedAt = dto.UpdatedAt
             };
         }
     }

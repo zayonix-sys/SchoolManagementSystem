@@ -3,15 +3,15 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
 export interface ClassData {
-  classId: number; // Corresponds to ClassId in the entity
-  className: string; // Corresponds to ClassName in the entity
-  classDescription?: string; // Corresponds to ClassDescription in the entity
-  capacity: number; // Corresponds to Capacity in the entity
-  createdAt?: Date; // Corresponds to CreatedAt in the entity
-  createdBy?: number; // Corresponds to CreatedBy in the entity
-  updatedBy?: number; // Corresponds to UpdatedBy in the entity
-  updatedAt?: Date; // Corresponds to UpdatedAt in the entity
-  isActive?: boolean; // Corrected typo from 'isActice' to 'isActive'
+  classId: number; 
+  className: string;
+  classDescription?: string;
+  capacity: number;
+  createdAt?: Date; 
+  createdBy?: number;
+  updatedBy?: number;
+  updatedAt?: Date; 
+  isActive?: boolean;
 }
 
 const BASE_URL = "/Class";

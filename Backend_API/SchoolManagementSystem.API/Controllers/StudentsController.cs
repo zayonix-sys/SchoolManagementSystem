@@ -98,28 +98,25 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> UpdateStudent(Student student)
-        //{
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<StudentDTO>>> GetAllStudents()
+        {
+            _logger.LogInformation("Fetching all students.");
+            try
+            {
+                var students = await _studentService.GetAllStudentsAsync();
+                _logger.LogInformation("Successfully retrieved {Count} students.", students?.Count() ?? 0);
 
+                return Ok(ApiResponse<IEnumerable<StudentDTO>>.SuccessResponse(students, "students retrieved successfully"));
 
-        //        _logger.LogWarning("Student ID mismatch: {Id} does not match {StudentId}.", student.StudentId);
-        //        return BadRequest("Student ID mismatch.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching all students.");
+                return StatusCode(500, "Internal server error.");
+            }
+        }
 
-
-        //    _logger.LogInformation("Updating student with ID {StudentId}.", id);
-        //    try
-        //    {
-        //        await _studentService.UpdateStudentAsync(student);
-        //        _logger.LogInformation("Successfully updated student with ID {StudentId}.", id);
-        //        return NoContent();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "An error occurred while updating student with ID {StudentId}.", id);
-        //        return StatusCode(500, "Internal server error.");
-        //    }
-        //}
 
 
         [HttpDelete("[action]")]

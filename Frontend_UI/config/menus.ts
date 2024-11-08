@@ -15,18 +15,23 @@ export interface MenuItemProps {
 }
 
 // Centralized menu configuration
-const menuItems: MenuItemProps[] = [
+export const menuItems: MenuItemProps[] = [
   {
     title: "Administration",
     icon: DashBoard,
     child: [
       {
-        title: "Manage User",
+        title: "DashBoard",
+        href: "/",
+        icon: DashBoard,
+      },
+      {
+        title: "Manage Users",
         href: "/users",
         icon: User,
       },
       {
-        title: "Manage Campus",
+        title: "Manage Campuses",
         href: "/campuses",
         icon: Campus,
       },
@@ -41,12 +46,12 @@ const menuItems: MenuItemProps[] = [
         icon: Users,
       },
       {
-        title: "Manage Sponsor",
+        title: "Manage Sponsors",
         href: "/sponsors",
         icon: User,
       },
       {
-        title: "Manage Sponsorship",
+        title: "Manage Sponsorships",
         href: "/sponsorship",
         icon: Donation,
       },
@@ -105,6 +110,7 @@ const generateMenus = (menuItems: MenuItemProps[]) => {
     mainNav: menuItems.map(item => ({
       ...item,
     })),
+    
     sidebarNav: {
       modern: menuItems.map(item => ({
         ...item,

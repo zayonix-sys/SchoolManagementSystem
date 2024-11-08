@@ -95,6 +95,8 @@ const StudentList:React.FC<StudentListTableProps> = ({classId}) => {
       toast.error("Failed to delete Student");
     }
   };
+  // console.log("student-list",currentItems);
+  
  
   return (
     <>

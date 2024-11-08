@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SchoolManagementSystem.API.Models;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
-using SchoolManagementSystem.Application.Services;
-using SchoolManagementSystem.Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -28,23 +24,42 @@ namespace SchoolManagementSystem.API.Controllers
             _userAccountService = userAccountService;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] UserDTO dto)
         {
-            _logger.LogInformation("Adding a new User with name {UserName}.", dto.UserName);
+            _logger.LogInformation("Adding a new User with name {userName}.", dto.UserName);
             try
             {
                 await _userAccountService.AddUser(dto);
-                _logger.LogInformation("Successfully added user with ID {UserId}.", dto.UserId);
-                //return Ok(ApiResponse<ApplicantAdmissionDTO>.SuccessResponse(dto, "Applicant added successfully"));
-                return Ok();
+                _logger.LogInformation("Successfully added user with ID {userId}.", dto.UserId);
+                return Ok(ApiResponse<UserDTO>.SuccessResponse(dto, "User {userName} added successfully"));
+                //return Ok();
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while adding a new user.");
                 return StatusCode(500, ApiResponse<UserDTO>.ErrorResponse("Internal server error."));
+            }
+        }
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetAllUsers()
+        {
+            _logger.LogInformation("Fetcing All Users");
+            try
+            {
+                var users = await _userAccountService.GetUsersAsync();
+                _logger.LogInformation("Successfully retrieved {Count} users .", users?.Count() ?? 0);
+                return Ok(ApiResponse<IEnumerable<UserDTO>>.SuccessResponse(users, "users retrieved successfully"));
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError(ex, "An error occurred while fetching all user .");
+                return StatusCode(500, ApiResponse<IEnumerable<UserDTO>>.ErrorResponse("Internal server error."));
             }
         }
 
@@ -73,6 +88,44 @@ namespace SchoolManagementSystem.API.Controllers
             return Unauthorized();
         }
 
+
+
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateUser(UserDTO dto)
+        {
+            _logger.LogInformation("Adding a new user  with name {userName}.", dto.UserName);
+            try
+            {
+                await _userAccountService.UpdateUserAsync(dto);
+                _logger.LogInformation("Adding a new user  with name {UserName}.", dto.UserName);
+                return Ok(ApiResponse<UserDTO>.SuccessResponse(dto, "user  Added successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating user  with ID {userId}.", dto.UserName);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
+            }
+        }
+
+        [HttpDelete("[action]")]
+        public async Task<IActionResult> DeleteUser(int userId)
+        {
+
+            _logger.LogInformation("Deleting user  with ID {userId}.", userId);
+            try
+            {
+                await _userAccountService.DeleteUserAsync(userId);
+                _logger.LogInformation("Successfully deleted User  with ID {userId}.", userId);
+                return Ok(ApiResponse<object>.SuccessResponse(null, "User  deleted successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting User Role with ID {userId}.", userId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
+            }
+
+        }
+
         private string GenerateJwtToken(UserDTO user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -96,4 +149,7 @@ namespace SchoolManagementSystem.API.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
+
+
+
 }

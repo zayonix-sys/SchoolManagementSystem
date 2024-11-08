@@ -12,8 +12,8 @@ export interface SponsorshipData {
   sponsorName?:string ;
   gender?:string;
   phoneNumber?: string;
-  amount?:string;
-  frequency?:string;
+  amount:number;
+  frequency?:number;
   startDate?: string;
   isActive?: boolean;      
 }
