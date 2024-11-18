@@ -10,7 +10,7 @@ import { CampusData, getCampuses } from "@/services/campusService";
 import ViewUserPermission from "./view-user-permission";
 
 
-;
+
 
 const Page = () => {
   const [users, setUsers] = useState<UserData[]>([]);
@@ -46,13 +46,22 @@ const Page = () => {
         <BreadcrumbItem className="text-primary">Users</BreadcrumbItem>
       </Breadcrumbs>
       <div className="flex justify-end space-x-4 m-2">
-        <AddUser users={users} userRole={userRole} campuses={campuses}/>  
+
+    
         <ViewUserPermission selectedPermission={null} />  
+
+        {/* <AddUser users={users} userRole={userRole} campuses={campuses}/>         */}
+
         <ViewUserRole selectedRole={null}/>
         
       </div>
+
       <UserListTable users={users}/>
  
+
+      {/* <UserListTable users={users}/> */}
+      
+
     </div>
   );
 };
