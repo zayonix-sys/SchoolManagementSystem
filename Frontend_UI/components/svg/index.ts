@@ -90,5 +90,6 @@ export { default as Moon } from "./duel-tone/moon.svg";
 export { default as Device } from "./duel-tone/device.svg";
 export { default as Donation } from "./duel-tone/donation.svg";
 
+
 // sidebar icon
 export { default as FolderTree } from "./home/foldertree.svg";

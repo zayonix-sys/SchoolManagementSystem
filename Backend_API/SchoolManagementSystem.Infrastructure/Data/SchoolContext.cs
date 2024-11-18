@@ -36,6 +36,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Exam> Exams { get; set; }
         public DbSet<Sponsorship> Sponsorships { get; set; }
         public DbSet<Payment> SponsorPayments { get; set; }
+
+        public DbSet<StudentAttendance> StudentAttendance { get; set; }
         //public DbSet<ExamResult> ExamResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -78,10 +80,14 @@ namespace SchoolManagementSystem.Infrastructure.Data
             modelBuilder.Entity<TimeTableView>()
                 .HasNoKey();
 
+            modelBuilder.Entity<DashboardCountView>()
+                          .HasNoKey();
+
 
             // Map the entity to the SQL Server view
             modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
             modelBuilder.Entity<TimeTableView>().ToView("TimeTableView");
+            modelBuilder.Entity<DashboardCountView>().ToView("DashboardCountViews");
 
             base.OnModelCreating(modelBuilder);
         }
