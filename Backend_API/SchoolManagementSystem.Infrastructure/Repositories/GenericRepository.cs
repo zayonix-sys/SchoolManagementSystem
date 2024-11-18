@@ -51,6 +51,10 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             {
                 keyProperty = entityType.GetProperty("RoleId");
             }
+            else if (entityType.Name == "StudentAttendance")
+            {
+                keyProperty = entityType.GetProperty("AttendanceId");
+            }
             else if (entityType.Name == "UserPermission")
             {
                 keyProperty = entityType.GetProperty("PermissionId");
