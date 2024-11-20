@@ -48,7 +48,7 @@ const RoleListTable = () => {
 
   useEffect(() => {
     const filtered = roles.filter((role) =>
-      role.roleName.toLowerCase().includes(searchQuery.toLowerCase())
+      role.roleName?.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredRoles(filtered);
   }, [searchQuery, roles]);

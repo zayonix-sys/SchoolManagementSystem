@@ -12,7 +12,7 @@ export interface StudentData {
   gender?: string;
   phoneNumber?: string;
   dateOfBirth: string | Date;
-  enrollmentDate: Date;
+  enrollmentDate: Date | string;
   className?: string;
   classId?: number | null;
   campusId?: number;

@@ -3,7 +3,7 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apis/apiResponse";
 
 export interface UserRoleData {
-  roleId: number;
+  roleId?: number; 
   roleName?: string;
   roleDescription?: string;
   createdAt?: Date;

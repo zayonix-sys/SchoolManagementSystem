@@ -35,7 +35,11 @@ import { fetchSponsor, SponsorData } from "@/services/sponsorService";
 
 const sponsorshipSchema = z.object({
   amount: z.number().optional(),
-  startDate: z.string().optional(),
+  startDate: z.union([z.string(), z.date()]).optional(),
+  frequency: z.number().optional(),
+  classId: z.number().optional(),
+  studentId: z.number().optional(),
+  sponsorId: z.number().optional(),
 });
 
 type SponsorshipFormValues = z.infer<typeof sponsorshipSchema>;
@@ -149,12 +153,12 @@ const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({
                 </SelectTrigger>
                 <SelectContent>
                   {classes.map((cd) => (
-                    <SelectItem key={cd.classId} value={cd.classId.toString()}>
-                      {cd.className}
-                    </SelectItem>
+                  <SelectItem key={cd.classId} value={cd.classId?.toString() || ""}>
+                  {cd.className}
+                  </SelectItem>
                   ))}
-                </SelectContent>
-              </Select>
+                  </SelectContent>
+                </Select>
             </div>
 
             <div className="flex flex-col gap-2 col-span-1">
@@ -170,7 +174,7 @@ const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({
                   {sponsors.map((s) => (
                     <SelectItem
                       key={s.sponsorId}
-                      value={s.sponsorId.toString()}
+                      value={s.sponsorId?.toString() || ''}
                     >
                       {s.sponsorName}
                     </SelectItem>

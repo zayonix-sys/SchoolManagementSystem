@@ -3,14 +3,14 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apis/apiResponse";
 
 export interface ClassData {
-  classId: number;
-  className: string;
+  classId?: number; 
+  className?: string;
   classDescription?: string;
   capacity: number;
-  createdAt?: Date;
+  createdAt?: Date; 
   createdBy?: number;
   updatedBy?: number;
-  updatedAt?: Date;
+  updatedAt?: Date; 
   isActive?: boolean;
 }
 

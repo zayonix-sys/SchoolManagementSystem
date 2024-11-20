@@ -3,23 +3,20 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apis/apiResponse";
 
 export interface UserData {
-  userId: number;
-  userName: string;
+  userId?: number;
+  userName?: string;
   passwordHash?: string;
   roleId?: number;
   roleName?: string;
   campusId?: number;
-  createdAt: Date;
+  createdAt?: Date;
 }
 
 const BASE_URL = "/UserAccount";
 
 export const addUser = async (userData: UserData): Promise<ApiResponse> => {
   try {
-    const response = await api.post<ApiResponse>(
-      `${BASE_URL}/Register`,
-      userData
-    );
+    const response = await api.post<ApiResponse>(`${BASE_URL}/Register`, userData);
     return response.data;
   } catch (error) {
     console.error("Failed to Register:", error);

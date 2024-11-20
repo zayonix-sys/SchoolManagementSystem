@@ -3,7 +3,7 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apis/apiResponse";
 
 export interface SponsorData {
-  sponsorId: number;
+  sponsorId?: number;
   sponsorName?: string;
   email?: string;
   gender?: string;

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import auth3Light from "@/public/images/auth/auth3-light.png"
 import auth3Dark from "@/public/images/auth/auth3-dark.png"
-import VerfiyForm from "@/components/auth/verify-form";
+// import VerfiyForm from "@/components/auth/verify-form";
 
 const VerifyPage = () => {
 
@@ -18,7 +18,7 @@ const VerifyPage = () => {
         alt="background image"
         className="absolute top-0 left-0 w-full h-full dark:hidden" />
       <div className="w-full bg-card   py-5 max-w-xl  rounded-xl relative z-10 2xl:p-16 xl:p-12 p-6 m-4 ">
-        <VerfiyForm />
+        {/* <VerfiyForm /> */}
       </div>
     </div>
   );

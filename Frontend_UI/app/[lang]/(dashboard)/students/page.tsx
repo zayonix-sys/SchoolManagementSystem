@@ -67,7 +67,7 @@ const Page = () => {
           </SelectTrigger>
           <SelectContent>
             {classes?.map((cd) => (
-              <SelectItem key={cd.classId} value={cd.classId.toString()}>
+              <SelectItem key={cd.classId} value={cd.classId?.toString() || ''}>
                 {cd.className}
               </SelectItem>
             ))}

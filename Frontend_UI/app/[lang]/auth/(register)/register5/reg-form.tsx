@@ -10,7 +10,6 @@ import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { addUser } from "@/action/auth-action";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -21,6 +20,7 @@ import apple from "@/public/images/auth/apple.png";
 import twitter from "@/public/images/auth/twitter.png";
 import { SiteLogo } from "@/components/svg";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { addUser } from "@/services/userService";
 
 const schema = z.object({
   name: z.string().min(3, { message: "Name must be at least 3 characters." }),
@@ -56,7 +56,7 @@ const RegForm = () => {
   const onSubmit = (data: any) => {
     startTransition(async () => {
       let response = await addUser(data);
-      if (response?.status === "success") {
+      if (response?.success) {
         toast.success(response?.message);
         reset();
         router.push("/");

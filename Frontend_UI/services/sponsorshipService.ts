@@ -3,19 +3,19 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apis/apiResponse";
 
 export interface SponsorshipData {
-  sponsorshipId: number;
-  sponsorId: number;
-  studentId: number;
-  classId: number;
-  className?: string;
-  studentName?: string;
-  sponsorName?: string;
-  gender?: string;
+  sponsorshipId?: number;
+  sponsorId?:number;
+  studentId?:number;
+  classId?:number | null;
+  className?:string;
+  studentName?:string;
+  sponsorName?:string ;
+  gender?:string;
   phoneNumber?: string;
-  amount: number;
-  frequency?: number;
-  startDate?: string;
-  isActive?: boolean;
+  amount?:number;
+  frequency?:number;
+  startDate?: string | Date;
+  isActive?: boolean;      
 }
 
 const BASE_URL = "/Sponsorship";

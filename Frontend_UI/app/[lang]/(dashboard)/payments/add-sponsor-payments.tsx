@@ -128,27 +128,35 @@ const AddPaymentForm: React.FC = () => {
       toast.error("Please select at least one sponsorship.");
       return;
     }
-
+  
+    // Convert amountPaid to a number
+    const numericAmountPaid = parseFloat(data.amountPaid);
+  
+    if (isNaN(numericAmountPaid)) {
+      toast.error("Invalid amount. Please enter a valid number.");
+      return;
+    }
+  
     // Loop through each selected sponsorship ID and submit a payment
     for (const sponsorshipId of selectedSponsorshipIds) {
       const response = await addSponsorPayment({
         ...data,
+        amountPaid: numericAmountPaid, // Convert to number
         sponsorshipId, // Submit each sponsorship ID separately
       });
-
+  
       if (response.success) {
         toast.success(`Payment added successfully`);
       } else {
         toast.error(
-          `Error for Adding Payment ${
-            response.message || "Something went wrong"
-          }`
+          `Error adding payment: ${response.message || "Something went wrong"}`
         );
       }
     }
-
+  
     reset();
   };
+  
 
   return (
     <Sheet>
@@ -182,7 +190,7 @@ const AddPaymentForm: React.FC = () => {
                   {sponsorship.map((item) => (
                     <SelectItem
                       key={item.sponsorId}
-                      value={item.sponsorId.toString() ?? ""}
+                      value={item?.sponsorId?.toString() ?? ""}
                     >
                       {item.sponsorName}
                     </SelectItem>

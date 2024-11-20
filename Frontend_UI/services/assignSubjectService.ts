@@ -4,8 +4,8 @@ import { ApiResponse } from "./apis/apiResponse";
 
 export interface AssignSubjectData {
   classSubjectId?: number;
-  classId: number;
-  subjectIds: number[];
+  classId?: number;
+  subjectIds?: number[]; 
   isActive?: boolean;
   subjectName?: string;
   subjects?: string[];

@@ -60,15 +60,16 @@ const PaymentListTable: React.FC<PaymentListTableProps> = ({ payment }) => {
       setSelectedRows(
         currentItems
           .map((row) => row.paymentId)
-          .filter((id) => id !== null && id !== undefined)
+          .filter((id): id is number => id !== undefined) // Ensure only valid IDs are selected
       );
     }
   };
 
-  const handleRowSelect = (id: number) => {
+  const handleRowSelect = (id: number | undefined) => {
+    if (id === undefined) return; // Ignore undefined IDs
     const updatedSelectedRows = [...selectedRows];
     if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
+      updatedSelectedRows.splice(updatedSelectedRows.indexOf(id), 1);
     } else {
       updatedSelectedRows.push(id);
     }
@@ -95,7 +96,7 @@ const PaymentListTable: React.FC<PaymentListTableProps> = ({ payment }) => {
     try {
       await deleteSponsorPayment(id);
       toast.success("Payment deleted successfully");
-      const updatedPayments = payments.filter(payment => payment.paymentId !== id);
+      const updatedPayments = payments.filter((payment) => payment.paymentId !== id);
       setPayments(updatedPayments);
       setPaymentToDelete(null);
     } catch (error) {
@@ -127,8 +128,6 @@ const PaymentListTable: React.FC<PaymentListTableProps> = ({ payment }) => {
             <TableHead className="h-10 p-2.5">Student Name</TableHead>
             <TableHead className="h-10 p-2.5">Payment Date</TableHead>
             <TableHead className="h-10 p-2.5">Amount Paid</TableHead>
-            {/* <TableHead className="h-10 p-2.5">SponsorshipAmount</TableHead>
-            <TableHead className="h-10 p-2.5">RemainingAmount</TableHead> */}
             <TableHead className="h-10 p-2.5">Payment Method</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
             <TableHead className="h-10 p-2.5 text-center">Action</TableHead>
@@ -140,16 +139,19 @@ const PaymentListTable: React.FC<PaymentListTableProps> = ({ payment }) => {
             <TableRow
               key={item.paymentId}
               className="hover:bg-default-200"
-              data-state={selectedRows.includes(item.paymentId) && "selected"}
+              data-state={
+                item.paymentId !== undefined && selectedRows.includes(item.paymentId)
+                  ? "selected"
+                  : undefined
+              }
             >
               <TableCell className="p-2.5">{item.sponsorName}</TableCell>
-              <TableCell className="p-2.5">{item.firstName}{" "}{item.lastName}</TableCell>
-              <TableCell className="p-2.5">{item.paymentDate}</TableCell>
+              <TableCell className="p-2.5">
+                {item.firstName} {item.lastName}
+              </TableCell>
+              <TableCell className="p-2.5">{formatDate(item.paymentDate || "")}</TableCell>
               <TableCell className="p-2.5">{item.amountPaid}</TableCell>
-              {/* <TableCell className="p-2.5">{item.sponsorshipAmount}</TableCell>
-              <TableCell className="p-2.5"> {item.sponsorshipAmount - item.amountPaid}</TableCell> */}
               <TableCell className="p-2.5">{item.paymentMethod}</TableCell>
-
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
@@ -161,13 +163,13 @@ const PaymentListTable: React.FC<PaymentListTableProps> = ({ payment }) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditPaymentForm payment={item}  />
+                  <EditPaymentForm payment={item} />
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDeleteConfirmation(item.paymentId)}
+                    onClick={() => handleDeleteConfirmation(item.paymentId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>

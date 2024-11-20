@@ -1,22 +1,36 @@
 "use client";
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { AssignSubjectData } from '@/services/assignSubjectService';
-import { ClassData } from '@/services/ClassService';
-import { addExamPaper } from '@/services/ExamPaperService';
-import { QuestionsData } from '@/services/QBankService';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Icon } from '@iconify/react';
-import React, { useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { AssignSubjectData } from "@/services/assignSubjectService";
+import { ClassData } from "@/services/ClassService";
+import { addExamPaper } from "@/services/ExamPaperService";
+import { QuestionsData } from "@/services/QBankService";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Icon } from "@iconify/react";
+import React, { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 import dynamic from "next/dynamic";
 
-const ReactQuill = dynamic(() => import('react-quill'), {
+const ReactQuill = dynamic(() => import("react-quill"), {
   ssr: false,
 });
 
@@ -42,7 +56,11 @@ interface ExamProps {
   subjectData: AssignSubjectData[];
   classData: ClassData[];
 }
-export default function ExamPaperTemplate({ questionData, subjectData, classData }: ExamProps) {
+export default function ExamPaperTemplate({
+  questionData,
+  subjectData,
+  classData,
+}: ExamProps) {
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<number[]>([]); // State to hold selected question ID
   const [selectedQuestion, setSelectedQuestion] = useState<string[]>([]); // State to hold selected question content
   const [selectedMarks, setSelectedMarks] = useState<number[]>([]);
@@ -50,12 +68,15 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
   const [totalMarks, setTotalMarks] = useState(0);
   const [isValidTotal, setIsValidTotal] = useState(true);
 
-  const [rows, setRows] = useState<{ questionId: number | null; question: string; marks: number | null }[]>([
-    { questionId: null, question: "", marks: null }
-  ]);
+  const [rows, setRows] = useState<
+    { questionId: number | null; question: string; marks: number | null }[]
+  >([{ questionId: null, question: "", marks: null }]);
 
   const addRow = () => {
-    setRows((prev) => [...prev, { questionId: null, question: "", marks: null }]);
+    setRows((prev) => [
+      ...prev,
+      { questionId: null, question: "", marks: null },
+    ]);
   };
 
   const removeRow = (index: number) => {
@@ -63,7 +84,10 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
 
     setValue(
       "questionIds",
-      rows.filter((_, i) => i !== index).map((row) => row.questionId).filter((id) => id !== null)
+      rows
+        .filter((_, i) => i !== index)
+        .map((row) => row.questionId)
+        .filter((id) => id !== null)
     );
   };
 
@@ -82,10 +106,15 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
   const selectedSubjectId = watch("subjectId");
 
   const filteredClassSubjects = subjectData.filter(
-    (subjects) => subjects.classId === selectedClassId && subjects.isActive);
+    (subjects) => subjects.classId === selectedClassId && subjects.isActive
+  );
 
   const filteredQuestions = questionData.filter(
-    (questions) => questions.classId === selectedClassId && questions.subjectId === selectedSubjectId && questions.isActive);
+    (questions) =>
+      questions.classId === selectedClassId &&
+      questions.subjectId === selectedSubjectId &&
+      questions.isActive
+  );
 
   const handleQuestionSelection = (questionId: number, index: number) => {
     const question = questionData.find((q) => q.questionBankId === questionId);
@@ -102,11 +131,12 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
 
       setValue(
         "questionIds",
-        rows.map((row, i) => (i === index ? questionId : row.questionId)).filter((id) => id !== null)
+        rows
+          .map((row, i) => (i === index ? questionId : row.questionId))
+          .filter((id) => id !== null)
       );
     }
   };
-
 
   const onSubmit: SubmitHandler<ExamFormValues> = async (data) => {
     console.log("Data Submitted", data);
@@ -158,8 +188,13 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
 
     setTotalMarks(total);
     setValue("totalMarks", total);
-  }, [rows, watch("oralMarks"), watch("dictationMarks"), watch("copyMarks"), setValue]);
-
+  }, [
+    rows,
+    watch("oralMarks"),
+    watch("dictationMarks"),
+    watch("copyMarks"),
+    setValue,
+  ]);
 
   return (
     <Sheet>
@@ -175,8 +210,8 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
         </Button>
       </SheetTrigger>
       <SheetContent className="max-h-[500px] overflow-y-auto" side="top">
-        <SheetHeader className='text-base'>
-          <SheetTitle >Design Your Exam Paper</SheetTitle>
+        <SheetHeader className="text-base">
+          <SheetTitle>Design Your Exam Paper</SheetTitle>
         </SheetHeader>
 
         <div
@@ -185,50 +220,72 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
         >
           <div className="py-2">
             <hr />
-            <SheetHeader className='col-span-12 mt-6 mb-3 '>
-                  <SheetTitle className='text-blue-600'><i> Select Class/Subject/Term</i></SheetTitle>
-                </SheetHeader>
-                <hr className='mb-6'/>  
-            <form onSubmit={handleSubmit((onSubmit))}>
+            <SheetHeader className="col-span-12 mt-6 mb-3 ">
+              <SheetTitle className="text-blue-600">
+                <i> Select Class/Subject/Term</i>
+              </SheetTitle>
+            </SheetHeader>
+            <hr className="mb-6" />
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="grid grid-cols-12 mt-3 gap-4">
-
                 <div className="col-span-4">
                   <Label>Select Class</Label>
-                  <Select onValueChange={(value) => setValue("classId", parseInt(value))}>
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("classId", parseInt(value))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
                     <SelectContent>
                       {classData.map((cd) => (
-                        <SelectItem key={cd?.classId ?? ''} value={cd?.classId?.toString() ?? ''}>
+                        <SelectItem
+                          key={cd?.classId ?? ""}
+                          value={cd?.classId?.toString() ?? ""}
+                        >
                           {cd.className}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  {errors.classId && <p className="text-destructive">{errors.classId.message}</p>}
+                  {errors.classId && (
+                    <p className="text-destructive">{errors.classId.message}</p>
+                  )}
                 </div>
 
                 <div className="col-span-4">
                   <Label>Select Subject</Label>
-                  <Select onValueChange={(value) => setValue("subjectId", parseInt(value))}>
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("subjectId", parseInt(value))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Subject" />
                     </SelectTrigger>
                     <SelectContent>
                       {filteredClassSubjects.map((subjectData) => (
-                        <SelectItem key={subjectData.subjectIds[0]} value={subjectData.subjectIds[0].toString()}>
+                        <SelectItem key={subjectData?.subjectName} value={subjectData.subjectIds?.toString() || ''}>
+
                           {subjectData.subjectName}
                         </SelectItem>
+
                       ))}
                     </SelectContent>
                   </Select>
-                  {errors.subjectId && <p className="text-destructive">{errors.subjectId.message}</p>}
+                  {errors.subjectId && (
+                    <p className="text-destructive">
+                      {errors.subjectId.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="col-span-4">
                   <Label>Term Name</Label>
-                  <Select onValueChange={(value) => setValue("termName", value)}>
+                  <Select
+                    onValueChange={(value) => setValue("termName", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Term Name" />
                     </SelectTrigger>
@@ -238,39 +295,66 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
                       <SelectItem value="FinalTerm">Final Term</SelectItem>
                     </SelectContent>
                   </Select>
-                  {errors.termName && <p className="text-destructive">{errors.termName.message}</p>}
+                  {errors.termName && (
+                    <p className="text-destructive">
+                      {errors.termName.message}
+                    </p>
+                  )}
                 </div>
 
-                <SheetHeader className='col-span-12 mt-5'>
-                  <SheetTitle className='text-blue-600'><i>Add Questions</i></SheetTitle>
+                <SheetHeader className="col-span-12 mt-5">
+                  <SheetTitle className="text-blue-600">
+                    <i>Add Questions</i>
+                  </SheetTitle>
                 </SheetHeader>
-                <hr className='col-span-12 mb-3'/>
+                <hr className="col-span-12 mb-3" />
                 <div className="col-span-12 ">
                   {rows.map((row, index) => (
-                    <div key={index} className="flex items-center gap-4 border-2 border-amber-300 ps-5 pe-5 pt-5 pb-5 mb-3">
+                    <div
+                      key={index}
+                      className="flex items-center gap-4 border-2 border-amber-300 ps-5 pe-5 pt-5 pb-5 mb-3"
+                    >
                       <div className="grid grid-cols-12 gap-6">
                         <div className="col-span-4">
                           <Label>Select Question</Label>
                           <Select
-                            onValueChange={(value) => handleQuestionSelection(parseInt(value), index)}
+                            onValueChange={(value) =>
+                              handleQuestionSelection(parseInt(value), index)
+                            }
                           >
-                            <SelectTrigger className='h-20'>
-                              <SelectValue placeholder={row.questionId ? "Question Selected" : "Select Question"} />
+                            <SelectTrigger className="h-20">
+                              <SelectValue
+                                placeholder={
+                                  row.questionId
+                                    ? "Question Selected"
+                                    : "Select Question"
+                                }
+                              />
                             </SelectTrigger>
                             <SelectContent>
                               {filteredQuestions.map((q) => (
-                                <SelectItem key={q.questionBankId} value={q.questionBankId?.toString() ?? ""}>
+                                <SelectItem
+                                  key={q.questionBankId}
+                                  value={q.questionBankId?.toString() ?? ""}
+                                >
                                   <div
                                     dangerouslySetInnerHTML={{
-                                      __html: (q.questions !== undefined && q.questions.length > 50 ? q.questions.slice(0, 25) + "..." : q.questions) ?? "",
+                                      __html:
+                                        (q.questions !== undefined &&
+                                        q.questions.length > 50
+                                          ? q.questions.slice(0, 25) + "..."
+                                          : q.questions) ?? "",
                                     }}
-
                                   />
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                          {errors.questionIds && <p className="text-destructive">{errors.questionIds.message}</p>}
+                          {errors.questionIds && (
+                            <p className="text-destructive">
+                              {errors.questionIds.message}
+                            </p>
+                          )}
                         </div>
 
                         <div className="col-span-5">
@@ -285,14 +369,22 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
                         <div className="col-span-2 font-bold">
                           <Label>Question Marks</Label>
                           <ReactQuill
-                            value={row.marks !== null ? row.marks.toString() : "No Marks Available"}
+                            value={
+                              row.marks !== null
+                                ? row.marks.toString()
+                                : "No Marks Available"
+                            }
                             readOnly={true}
                             modules={{ toolbar: false }}
                           />
                         </div>
 
                         <div className="col-span-1 mt-5 ">
-                          <Button type="button" onClick={() => removeRow(index)} className='bg-red-400'>
+                          <Button
+                            type="button"
+                            onClick={() => removeRow(index)}
+                            className="bg-red-400"
+                          >
                             Remove
                           </Button>
                         </div>
@@ -301,16 +393,22 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
                   ))}
 
                   <div className="col-span-12 mt-4">
-                    <Button type="button" onClick={addRow} className='bg-green-400'>
+                    <Button
+                      type="button"
+                      onClick={addRow}
+                      className="bg-green-400"
+                    >
                       Add Row
                     </Button>
                   </div>
                 </div>
 
-                <SheetHeader className='col-span-12 mt-5'>
-                  <SheetTitle className='text-blue-600'><i>Add Marks</i></SheetTitle>
+                <SheetHeader className="col-span-12 mt-5">
+                  <SheetTitle className="text-blue-600">
+                    <i>Add Marks</i>
+                  </SheetTitle>
                 </SheetHeader>
-                <hr className='col-span-12 mb-3'/>
+                <hr className="col-span-12 mb-3" />
 
                 <div className="col-span-2 font-bold">
                   <Label>Written Marks</Label>
@@ -320,8 +418,12 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
                     {...register("writtenMarks", { valueAsNumber: true })}
                     value={writtenMarks}
                   />
-                  {errors.writtenMarks && (<p className="text-destructive"> {errors.writtenMarks.message}
-                  </p>)}
+                  {errors.writtenMarks && (
+                    <p className="text-destructive">
+                      {" "}
+                      {errors.writtenMarks.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="col-span-2 font-bold">
@@ -332,8 +434,11 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
                     {...register("oralMarks", { valueAsNumber: true })}
                     defaultValue={0}
                   />
-                  {errors.oralMarks && (<p className="text-destructive"> {errors.oralMarks.message}
-                  </p>
+                  {errors.oralMarks && (
+                    <p className="text-destructive">
+                      {" "}
+                      {errors.oralMarks.message}
+                    </p>
                   )}
                 </div>
 
@@ -345,8 +450,11 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
                     {...register("dictationMarks", { valueAsNumber: true })}
                     defaultValue={0}
                   />
-                  {errors.dictationMarks && (<p className="text-destructive"> {errors.dictationMarks.message}
-                  </p>
+                  {errors.dictationMarks && (
+                    <p className="text-destructive">
+                      {" "}
+                      {errors.dictationMarks.message}
+                    </p>
                   )}
                 </div>
 
@@ -358,8 +466,11 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
                     {...register("copyMarks", { valueAsNumber: true })}
                     defaultValue={0}
                   />
-                  {errors.copyMarks && (<p className="text-destructive"> {errors.copyMarks.message}
-                  </p>
+                  {errors.copyMarks && (
+                    <p className="text-destructive">
+                      {" "}
+                      {errors.copyMarks.message}
+                    </p>
                   )}
                 </div>
 
@@ -371,10 +482,13 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
                     {...register("totalMarks", { valueAsNumber: true })}
                     value={totalMarks}
                     readOnly
-                    className='text-lg'
+                    className="text-lg"
                   />
-                  {errors.totalMarks && (<p className="text-destructive"> {errors.totalMarks.message}
-                  </p>
+                  {errors.totalMarks && (
+                    <p className="text-destructive">
+                      {" "}
+                      {errors.totalMarks.message}
+                    </p>
                   )}
                 </div>
 
@@ -391,4 +505,4 @@ export default function ExamPaperTemplate({ questionData, subjectData, classData
       </SheetContent>
     </Sheet>
   );
-};
+}
