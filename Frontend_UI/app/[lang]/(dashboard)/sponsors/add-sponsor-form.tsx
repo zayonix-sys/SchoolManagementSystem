@@ -134,7 +134,7 @@ const AddSponsorForm = () => {
               <Label htmlFor="Gender">Gender</Label>
               <Select onValueChange={(value) => setValue("gender", value)}>
                 <SelectTrigger>
-                  <Icon icon="foundation:male-female" />
+                <Icon icon="icons8:gender" />
                   <SelectValue placeholder="Select Gender" />
                 </SelectTrigger>
                 <SelectContent>

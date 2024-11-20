@@ -1,11 +1,11 @@
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface SubjectData {
-  subjectId?: number; 
-  subjectName: string; 
-  subjectDescription?: string; 
-  isActive?: boolean; 
+  subjectId?: number;
+  subjectName: string;
+  subjectDescription?: string;
+  isActive?: boolean;
 }
 
 const BASE_URL = "/Subject";
@@ -22,7 +22,9 @@ export const fetchSubject = async (): Promise<ApiResponse> => {
 
 export const fetchSubjectById = async (id: number): Promise<SubjectData> => {
   try {
-    const response = await api.get<SubjectData>(`${BASE_URL}/GetSubjectById/${id}`);
+    const response = await api.get<SubjectData>(
+      `${BASE_URL}/GetSubjectById/${id}`
+    );
     return response.data;
   } catch (error) {
     console.error(`Failed to fetch Subject with ID ${id}:`, error);
@@ -30,7 +32,9 @@ export const fetchSubjectById = async (id: number): Promise<SubjectData> => {
   }
 };
 
-export const addSubject = async (subjectData: SubjectData): Promise<ApiResponse> => {
+export const addSubject = async (
+  subjectData: SubjectData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddSubject`,
@@ -69,4 +73,3 @@ export const deleteSubject = async (id: number): Promise<ApiResponse> => {
     throw new Error(`Failed to delete Subject`);
   }
 };
-

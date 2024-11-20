@@ -1,6 +1,6 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface StudentData {
   studentId: number;
@@ -12,9 +12,9 @@ export interface StudentData {
   gender?: string;
   phoneNumber?: string;
   dateOfBirth: string | Date;
-  enrollmentDate: Date;
+  enrollmentDate: Date | string;
   className?: string;
-  classId?: number;
+  classId?: number | null;
   campusId?: number;
   isActive: boolean;
 }
@@ -35,8 +35,9 @@ export const getStudentByClassWise = async (
   }
 };
 
-
-export const updateStudent = async (StudentData: StudentData): Promise<ApiResponse> => {
+export const updateStudent = async (
+  StudentData: StudentData
+): Promise<ApiResponse> => {
   try {
     const response = await api.put<ApiResponse>(
       `${BASE_URL}/UpdateStudentData`,
@@ -58,5 +59,15 @@ export const deleteStudent = async (id: number): Promise<ApiResponse> => {
   } catch (error: any) {
     console.error(`Failed to delete Student`, error);
     throw new Error(`Failed to delete Student`);
+  }
+};
+
+export const fetchStudents = async (): Promise<ApiResponse> => {
+  try {
+    const response = await api.get<ApiResponse>(`${BASE_URL}/GetAllStudents`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch Students:", error);
+    throw new Error("Failed to fetch Students");
   }
 };

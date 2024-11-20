@@ -1,6 +1,6 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface AssignClassData {
   assignmentId?: number;
@@ -21,7 +21,8 @@ export const assignClasses = async (): Promise<ApiResponse> => {
     if (!authToken) {
       throw new Error("No authentication token found. Please log in.");
     }
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetAllClassAssignments`,
+    const response = await api.get<ApiResponse>(
+      `${BASE_URL}/GetAllClassAssignments`,
       {
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -35,7 +36,9 @@ export const assignClasses = async (): Promise<ApiResponse> => {
   }
 };
 
-export const addClassSectionAssignment = async (AssignClassData: AssignClassData): Promise<ApiResponse> => {
+export const addClassSectionAssignment = async (
+  AssignClassData: AssignClassData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddClassSectionAssignment`,
@@ -63,7 +66,9 @@ export const updateClassAssignment = async (
   }
 };
 
-export const deleteClassassignment = async (id: number): Promise<ApiResponse> => {
+export const deleteClassassignment = async (
+  id: number
+): Promise<ApiResponse> => {
   try {
     const response = await api.delete<ApiResponse>(
       `${BASE_URL}/DeleteClassSectionAssignment?assignmentId=${id}`

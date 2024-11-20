@@ -1,12 +1,12 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface PeriodsData {
   periodId?: number;
   periodName: string;
-  startTime: string; 
-  endTime: string;  
+  startTime: string;
+  endTime: string;
   isActive?: boolean;
 }
 
@@ -22,7 +22,9 @@ export const fetchPeriods = async (): Promise<ApiResponse> => {
   }
 };
 
-export const addPeriod = async (PeriodsData: PeriodsData): Promise<ApiResponse> => {
+export const addPeriod = async (
+  PeriodsData: PeriodsData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddPeriod`,

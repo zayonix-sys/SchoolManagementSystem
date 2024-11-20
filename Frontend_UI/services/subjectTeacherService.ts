@@ -1,21 +1,23 @@
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface SubjectTeacherData {
-  subjectTeacherId?: number | undefined; 
+  subjectTeacherId?: number | undefined;
   employeeId: number;
-  employeeRoleName?:string;
-  employeeName?:string;
-  subjectIds: number[]; 
+  employeeRoleName?: string;
+  employeeName?: string;
+  subjectIds: number[];
   subjects?: string[];
-  isActive?: boolean; 
+  isActive?: boolean;
 }
 
 const BASE_URL = "/SubjectTeacherAssignment";
 
 export const getSubjectTeacher = async (): Promise<ApiResponse> => {
   try {
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetAllSubjectTeacher`);
+    const response = await api.get<ApiResponse>(
+      `${BASE_URL}/GetAllSubjectTeacher`
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to fetch Subject Teacher:", error);
@@ -33,7 +35,9 @@ export const getSubjectTeacher = async (): Promise<ApiResponse> => {
 //   }
 // };
 
-export const addSubjectTeacher = async (subjectTeacherData: SubjectTeacherData): Promise<ApiResponse> => {
+export const addSubjectTeacher = async (
+  subjectTeacherData: SubjectTeacherData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddSubjectTeacher`,
@@ -61,7 +65,9 @@ export const updateSubjectTeacher = async (
   }
 };
 
-export const deleteSubjectTeacher = async (id: number): Promise<ApiResponse> => {
+export const deleteSubjectTeacher = async (
+  id: number
+): Promise<ApiResponse> => {
   try {
     const response = await api.delete<ApiResponse>(
       `${BASE_URL}/DeleteSubjectTeacher?employeeId=${id}`
@@ -72,4 +78,3 @@ export const deleteSubjectTeacher = async (id: number): Promise<ApiResponse> => 
     throw new Error(`Failed to delete Subject Teacher`);
   }
 };
-

@@ -6,7 +6,7 @@ namespace SchoolManagementSystem.Domain.Entities
     public class Sponsorship
     {
         [Key]
-        public int SponsorshipId { get; set; }
+        public int? SponsorshipId { get; set; }
 
         [Required]
         public decimal Amount { get; set; }
@@ -15,7 +15,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public DateOnly StartDate { get; set; }
 
         [Required]
-        public string Frequency { get; set; }
+        public int Frequency { get; set; }
 
         [ForeignKey("Class")]
         public int ClassId { get; set; }

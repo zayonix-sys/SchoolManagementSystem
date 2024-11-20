@@ -1,6 +1,6 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface QuestionsData {
   questionBankId?: number;
@@ -26,7 +26,9 @@ export const fetchQuestions = async (): Promise<ApiResponse> => {
   }
 };
 
-export const addQuestions = async (QuestionsData: QuestionsData): Promise<ApiResponse> => {
+export const addQuestions = async (
+  QuestionsData: QuestionsData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddQuestions`,

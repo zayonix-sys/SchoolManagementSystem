@@ -235,7 +235,7 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
                 </div> */}
                 <div className="flex flex-col">
                   <span className="font-bold">Sponsorship Start Date </span>
-                  {detailedsponsorship.startDate}
+                  {detailedsponsorship?.startDate?.toString()}
                 </div>
                 <div className="flex flex-col">
                   <span className="font-bold">Amount: </span>

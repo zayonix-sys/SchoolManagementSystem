@@ -10,6 +10,7 @@ import Image from "next/image";
 import { User, Phone, Location, Calender, CalenderCheck, Users } from "@/components/svg";
 import { fetchSponsor, SponsorData } from "@/services/sponsorService";
 import { Hammer, Home, Link, Mail } from "lucide-react";
+import PersonalDetails from "./settings/edit-personal-details";
 
 interface UserInfoItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -34,14 +35,7 @@ const UserMeta = () => {
       try {
         const sponsorResponse = await fetchSponsor();
         if (sponsorResponse.data && sponsorResponse.data.length > 0) {
-          setSponsorData(sponsorResponse.data[0] as SponsorData); 
-          // let modifiedSponserData = Object.keys(sponsorResponse?.data)?.map((key) => ({
-          //   label: key,
-          //   value: sponsorResponse?.data[key],
-          // }))
-          // console.log( modifiedSponserData);
-          
-          // setSponsorData(modifiedSponserData)
+          setSponsorData(sponsorResponse.data[0] as SponsorData);
         }
       } catch (error) {
         setError(error as any);
@@ -111,16 +105,10 @@ const UserMeta = () => {
 
   return (
    <>
-   <Button asChild className=" bottom-0  absolute  rounded px-5 mb-12 hidden lg:flex" size="sm">
-              <Link href="/user-profile/settings">
-                <Icon className="w-4 h-4 ltr:mr-1 rtl:ml-1" icon="heroicons:pencil-square" />
-                Edit
-              </Link>
-            </Button>
    
-   <Card>
+   <Card className="my-5">
     
-      <CardContent className="py-3 mx-8 flex flex-col items-center">
+      <CardContent className="py-8-3 mx-8 flex flex-col items-center">
 
       <CardHeader className="border-none mb-0 px-6">
         <CardTitle className="text-xl font-semibold text-default-800">Personal Information</CardTitle>
@@ -140,10 +128,10 @@ const UserMeta = () => {
 
 
       <CardContent className="p-10 flex flex-col items-center">
-        <ul className="mt-6 grid grid-cols-2 gap-4">
+        <ul className="mt-6 grid grid-cols-3 gap-6">
           {userInfo.map((item, index) => (
             <li key={`user-info-${index}`} className="flex items-center">
-              <div className="flex-none flex items-center gap-1.5">
+              <div className="flex-none flex items-center gap-1.5 ">
                 <span>{<item.icon className="w-5 h-5 text-primary" />}</span>
                 <span className="text-base font-medium text-default-800">{item.label}:</span>
               </div>
@@ -151,7 +139,10 @@ const UserMeta = () => {
             </li>
           ))}
         </ul>
+        
      </CardContent>
+  <CardContent>
+  </CardContent>
     </Card>
 </>  
 );
