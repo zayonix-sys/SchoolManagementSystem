@@ -41,9 +41,11 @@ namespace SchoolManagementSystem.Domain.Entities
         public string? ProfileImage { get; set; }
 
         [Required]
+        [ForeignKey("ClassId")]
         public int? ClassId { get; set; }
 
         [Required]
+        [ForeignKey("CampusId")]
         public int? CampusId { get; set; }
 
         [Required]
@@ -62,11 +64,10 @@ namespace SchoolManagementSystem.Domain.Entities
 
 
         // Navigation Properties
-        [ForeignKey("ClassId")]
-        public virtual Class? Class { get; set; }
 
-        [ForeignKey("CampusId")]
-        public virtual Campus? Campus { get; set; }
+        public Class? Class { get; set; }
+
+        public Campus? Campus { get; set; }
         public User? CreatedUser { get; set; }
         public User? UpdatedUser { get; set; }
 

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
@@ -14,8 +9,12 @@ namespace SchoolManagementSystem.Domain.Entities
         public int PermissionId { get; set; }
 
         [ForeignKey("UserRole")]
-        public int RoleId { get; set; }
+        [Required]
+        public int? RoleId { get; set; }
 
+        [ForeignKey("Users")]
+        [Required]
+        public int UserId { get; set; }
         [Required]
         [StringLength(50)]
         public string Entity { get; set; }
@@ -36,7 +35,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("CreatedUser")]
-        public int CreatedBy { get; set; }
+        public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
@@ -47,8 +46,9 @@ namespace SchoolManagementSystem.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         // Navigation properties
-        public UserRole UserRole { get; set; }
-        public User CreatedUser { get; set; }
-        public User UpdatedUser { get; set; }
+        public UserRole? UserRole { get; set; }
+        public User? Users { get; set; }
+        public User? CreatedUser { get; set; }
+        public User? UpdatedUser { get; set; }
     }
 }

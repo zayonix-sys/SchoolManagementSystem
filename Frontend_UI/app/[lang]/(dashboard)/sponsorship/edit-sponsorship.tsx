@@ -27,13 +27,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { ClassData, fetchClasses } from "@/services/ClassService";
-import { updateSponsorship, SponsorshipData } from "@/services/sponsorshipService";
+import {
+  updateSponsorship,
+  SponsorshipData,
+} from "@/services/sponsorshipService";
 import { fetchSponsor, SponsorData } from "@/services/sponsorService";
 
 const sponsorshipSchema = z.object({
-  amount: z.string().min(1, "Please Enter Correct Amount").optional(),
-  startDate: z.string().optional(),
-  frequency: z.string().min(1, "Frequency is required").optional(),
+  amount: z.number().optional(),
+  startDate: z.union([z.string(), z.date()]).optional(),
+  frequency: z.number().optional(),
   classId: z.number().optional(),
   studentId: z.number().optional(),
   sponsorId: z.number().optional(),
@@ -43,15 +46,27 @@ type SponsorshipFormValues = z.infer<typeof sponsorshipSchema>;
 
 interface EditSponsorshipFormProps {
   existingSponsorship: SponsorshipData;
-  studentName: string; 
+  studentName: string;
 }
 
-const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({ existingSponsorship, studentName }) => {
+const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({
+  existingSponsorship,
+  studentName,
+}) => {
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [sponsors, setSponsors] = useState<SponsorData[]>([]);
-  const [classId, setClassId] = useState<number | null>(existingSponsorship.classId || null);
-  const [sponsorId, setSponsorId] = useState<number | null>(existingSponsorship.sponsorId || null);
-  const [studentId] = useState<number | null>(existingSponsorship.studentId || null);
+  const [classId, setClassId] = useState<number | null>(
+    existingSponsorship.classId || null
+  );
+  const [sponsorId, setSponsorId] = useState<number | null>(
+    existingSponsorship.sponsorId || null
+  );
+  const [studentId] = useState<number | null>(
+    existingSponsorship.studentId || null
+  );
+  const [frequency, setFrequency] = useState<number | undefined>(
+    existingSponsorship.frequency || undefined
+  );
 
   const {
     register,
@@ -61,9 +76,9 @@ const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({ existingSpons
   } = useForm<SponsorshipFormValues>({
     resolver: zodResolver(sponsorshipSchema),
     defaultValues: {
-      amount: existingSponsorship.amount || "",
+      amount: existingSponsorship.amount,
       startDate: existingSponsorship.startDate || "",
-      frequency: existingSponsorship.frequency || "",
+      frequency: existingSponsorship.frequency || undefined,
       classId: existingSponsorship.classId || undefined,
       studentId: existingSponsorship.studentId || undefined,
       sponsorId: existingSponsorship.sponsorId || undefined,
@@ -86,27 +101,27 @@ const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({ existingSpons
   }, []);
 
   useEffect(() => {
-    
-    setValue("amount", existingSponsorship.amount || "");
+    setValue("amount", existingSponsorship.amount);
     setValue("startDate", existingSponsorship.startDate || "");
-    setValue("frequency", existingSponsorship.frequency || "");
+    setFrequency(existingSponsorship.frequency);
     setClassId(existingSponsorship.classId || null);
     setSponsorId(existingSponsorship.sponsorId || null);
   }, [existingSponsorship, setValue]);
 
+  const handleFrequencyChange = (value: number) => setFrequency(value);
+
   const onSubmit: SubmitHandler<SponsorshipFormValues> = async (data) => {
     const updatedData: SponsorshipData = {
-      sponsorshipId: existingSponsorship.sponsorshipId, // Keep sponsorship ID
-      studentId: studentId ?? 0, // Keep the same student ID
+      ...data,
+      sponsorshipId: existingSponsorship.sponsorshipId,
+      studentId: studentId ?? 0,
       classId: classId ?? 0,
       sponsorId: sponsorId ?? 0,
-      amount: data.amount,
-      startDate: data.startDate,
-      frequency: data.frequency,
+      frequency: frequency,
     };
 
     const response = await updateSponsorship(updatedData);
-
+    console.log("Form data:", updatedData);
     if (response.success) {
       toast.success("Sponsorship updated successfully!");
     } else {
@@ -129,29 +144,38 @@ const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({ existingSpons
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-2 col-span-1">
               <Label>Select Class</Label>
-              <Select onValueChange={(value) => setClassId(parseInt(value))} defaultValue={classId?.toString()}>
+              <Select
+                onValueChange={(value) => setClassId(parseInt(value))}
+                defaultValue={classId?.toString()}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Class" />
                 </SelectTrigger>
                 <SelectContent>
                   {classes.map((cd) => (
-                    <SelectItem key={cd.classId} value={cd.classId.toString()}>
-                      {cd.className}
-                    </SelectItem>
+                  <SelectItem key={cd.classId} value={cd.classId?.toString() || ""}>
+                  {cd.className}
+                  </SelectItem>
                   ))}
-                </SelectContent>
-              </Select>
+                  </SelectContent>
+                </Select>
             </div>
 
             <div className="flex flex-col gap-2 col-span-1">
               <Label>Select Sponsor</Label>
-              <Select onValueChange={(value) => setSponsorId(parseInt(value))} defaultValue={sponsorId?.toString()}>
+              <Select
+                onValueChange={(value) => setSponsorId(parseInt(value))}
+                defaultValue={sponsorId?.toString()}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Sponsor" />
                 </SelectTrigger>
                 <SelectContent>
                   {sponsors.map((s) => (
-                    <SelectItem key={s.sponsorId} value={s.sponsorId.toString()}>
+                    <SelectItem
+                      key={s.sponsorId}
+                      value={s.sponsorId?.toString() || ''}
+                    >
                       {s.sponsorName}
                     </SelectItem>
                   ))}
@@ -166,44 +190,48 @@ const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({ existingSpons
                   <Icon icon="mdi:money" />
                 </InputGroupText>
                 <Input
-                  type="text"
+                  type="number"
                   placeholder="Enter Your Amount"
                   id="amount"
-                  {...register("amount")}
+                  {...register("amount", { valueAsNumber: true })}
                 />
               </InputGroup>
-              {errors.amount && <p className="text-destructive">{errors.amount.message}</p>}
+              {errors.amount && (
+                <p className="text-destructive">{errors.amount.message}</p>
+              )}
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="frequency">Frequency of Sponsorship</Label>
-              <Select onValueChange={(value) => setValue("frequency", value)} defaultValue={existingSponsorship.frequency || ""}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select frequency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Monthly">Monthly</SelectItem>
-                  <SelectItem value="Quarterly">Quarterly</SelectItem>
-                  <SelectItem value="Bi-Annually">Bi-Annually</SelectItem>
-                  <SelectItem value="Annually">Annually</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.frequency && <p className="text-destructive">{errors.frequency.message}</p>}
-            </div>
+            <Select
+              onValueChange={(value) => setFrequency(parseInt(value))} // parse the value as an integer
+              defaultValue={existingSponsorship.frequency?.toString() || "1"} // ensure defaultValue is a string
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select frequency" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">1 Month</SelectItem>
+                <SelectItem value="3">3 Months</SelectItem>
+                <SelectItem value="6">6 Months</SelectItem>
+                <SelectItem value="12">12 Months</SelectItem>
+              </SelectContent>
+            </Select>
 
             <div className="flex flex-col gap-2">
               <Label>Sponsored Student</Label>
-              
               <InputGroup>
                 <InputGroupText>
                   <Icon icon="mdi:account" />
                 </InputGroupText>
-                <Input value={studentName} disabled className="text-dark text-base"/>
+                <Input
+                  value={studentName}
+                  disabled
+                  className="text-dark text-base"
+                />
               </InputGroup>
             </div>
 
-            <div className="col-span-2">
-              <Button type="submit">Submit Form</Button>
+            <div className="col-span-2 flex justify-end">
+              <Button type="submit">Submit Sponsorship</Button>
             </div>
           </div>
         </form>

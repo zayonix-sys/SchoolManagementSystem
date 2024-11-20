@@ -132,7 +132,7 @@ export default function AddQuestions({ subject, classes }: QuestionProps) {
                     </SelectTrigger>
                     <SelectContent>
                       {filteredClassSubjects.map((subjectData) => (
-                        <SelectItem key={subjectData.subjectIds[0]} value={subjectData.subjectIds[0].toString()}>
+                        <SelectItem key={subjectData.subjectName} value={subjectData.subjectIds?.toString() || ''}>
                           {subjectData.subjectName}
                         </SelectItem>
                       ))}

@@ -169,7 +169,7 @@ export default function AddTimeTable({ classes, campus, subject, periods }: Time
                   </SelectTrigger>
                   <SelectContent>
                     {filteredClassSubjects.map((subjectData) => (
-                      <SelectItem key={subjectData.subjectIds[0]} value={subjectData.subjectIds[0].toString()}>
+                      <SelectItem key={subjectData?.classSubjectId} value={subjectData.subjectIds?.toString() || ''}>
                         {subjectData.subjectName}
                       </SelectItem>
                     ))}

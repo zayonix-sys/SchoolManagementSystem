@@ -1,16 +1,16 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface RoleData {
-  roleId?: number; 
+  roleId?: number;
   roleName: string;
   roleDescription?: string;
-  createdAt?: Date; 
+  createdAt?: Date;
   createdBy?: number;
   updatedBy?: number;
-  updatedAt?: Date; 
-  isActive?: boolean; 
+  updatedAt?: Date;
+  isActive?: boolean;
 }
 
 const BASE_URL = "/EmployeeRoles";
@@ -22,11 +22,11 @@ export const getRoles = async (): Promise<ApiResponse> => {
     if (!authToken) {
       throw new Error("No authentication token found. Please log in.");
     }
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetRoles`,
-      {headers: {
+    const response = await api.get<ApiResponse>(`${BASE_URL}/GetRoles`, {
+      headers: {
         Authorization: `Bearer ${authToken}`,
-      },}
-    );
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Failed to fetch Roles:", error);
@@ -57,9 +57,7 @@ export const addRole = async (roleData: RoleData): Promise<ApiResponse> => {
   }
 };
 
-export const updateRole = async (
-  roleData: RoleData
-): Promise<ApiResponse> => {
+export const updateRole = async (roleData: RoleData): Promise<ApiResponse> => {
   try {
     const response = await api.put<ApiResponse>(
       `${BASE_URL}/UpdateRoles`,

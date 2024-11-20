@@ -1,14 +1,16 @@
 "use client";
 import { BreadcrumbItem, Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { getUserRoles, UserRoleData } from "@/services/userRoleService";
-import { UserData } from "@/services/userService";
+import { fetchAllUser, UserData } from "@/services/userService";
 import { useEffect, useState } from "react";
 import ViewUserRole from "./veiw-user-role";
-// import UserListTable from "./user-table";
-// import AddUser from "./add-user";
-import { CampusData } from "@/services/campusService";
+import UserListTable from "./user-table";
+import AddUser from "./add-user";
+import { CampusData, getCampuses } from "@/services/campusService";
+import ViewUserPermission from "./view-user-permission";
 
-;
+
+
 
 const Page = () => {
   const [users, setUsers] = useState<UserData[]>([]);
@@ -21,12 +23,13 @@ const Page = () => {
     const fetchUserAndRoles = async () => {
       setLoading(true);
       try {
-        // const userResponse = await getUser();
-      
-        // const userRoleResponse = await getUserRoles();
-        // setUsers(userResponse.data as UserData[]);
-      
-        // setUserRole(userRoleResponse.data as UserRoleData[]);
+        const userResponse = await fetchAllUser();
+        const campusResponse = await getCampuses();
+        const userRoleResponse = await getUserRoles();
+        setUsers(userResponse.data as UserData[]);      
+        setUserRole(userRoleResponse.data as UserRoleData[]);
+        setCampuses(campusResponse.data as CampusData[]);
+
       } catch (err) {
         setError(err as any);
       } finally {
@@ -43,11 +46,22 @@ const Page = () => {
         <BreadcrumbItem className="text-primary">Users</BreadcrumbItem>
       </Breadcrumbs>
       <div className="flex justify-end space-x-4 m-2">
+
+    
+        <ViewUserPermission selectedPermission={null} />  
+
         {/* <AddUser users={users} userRole={userRole} campuses={campuses}/>         */}
+
         <ViewUserRole selectedRole={null}/>
+        
       </div>
+
+      <UserListTable users={users}/>
+ 
+
       {/* <UserListTable users={users}/> */}
       
+
     </div>
   );
 };

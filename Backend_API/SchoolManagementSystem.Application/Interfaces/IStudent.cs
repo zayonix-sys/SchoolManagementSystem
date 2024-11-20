@@ -6,6 +6,7 @@ namespace SchoolManagementSystem.Application.Interfaces
     public interface IStudent
     {
         Task<List<Student>> GetAllStudentAsync();
+        Task<List<StudentDTO>> GetAllStudentsAsync();
         Task<List<StudentDTO>> GetAllStudentClassWiseAsync(int? classId);
         Task<StudentDTO> GetStudentByIdAsync(int stdId);
         Task AddStudentAsync(Student std);

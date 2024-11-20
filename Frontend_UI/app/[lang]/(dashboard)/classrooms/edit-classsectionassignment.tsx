@@ -17,11 +17,27 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ClassroomData, fetchClassrooms, updateClassroom } from "@/services/classroomService";
+import {
+  ClassroomData,
+  useFetchClassroomsQuery,
+  useUpdateClassroomMutation,
+} from "@/services/apis/classroomService";
 import { ClassData, fetchClasses } from "@/services/ClassService";
-import { fetchSection, SectionData } from "@/services/SectionService";
-import { AssignClassData, updateClassAssignment } from "@/services/assignClassService";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  SectionData,
+  useFetchSectionQuery,
+} from "@/services/apis/sectionService";
+import {
+  AssignClassData,
+  updateClassAssignment,
+} from "@/services/assignClassService";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { CampusData, getCampuses } from "@/services/campusService";
 
 // Define Zod schema for class form validation
@@ -38,13 +54,19 @@ interface ClassAssignmentProps {
   assignmentData: AssignClassData[];
 }
 
+const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({
+  assignmentData,
+}) => {
+  const { classroomId, classId, sectionId, campusId, assignmentId } =
+    assignmentData[0];
 
-const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({ assignmentData }) => {
-
-  const {classroomId, classId, sectionId, campusId, assignmentId} = assignmentData[0];
-
-
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<ClassAssignFormValues>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<ClassAssignFormValues>({
     resolver: zodResolver(classassignmentSchema),
     defaultValues: {
       classroomId,
@@ -64,25 +86,29 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({ assignmentData
   useEffect(() => {
     const fetchClassroomsAndClassesAndSectionsData = async () => {
       setLoading(true);
-      try{
-      const [classResponse, sectionResponse, classroomResponse, campusResponse] = await Promise.all([
-        fetchClasses(),
-        fetchSection(),
-        fetchClassrooms(),
-        getCampuses(),
-      ]);
+      try {
+        const [
+          classResponse,
+          sectionResponse,
+          //classroomResponse,
+          //campusResponse,
+        ] = await Promise.all([
+          fetchClasses(),
+          //fetchSection(),
+          //fetchClassrooms(),
+          getCampuses(),
+        ]);
         setClasses(classResponse.data as ClassData[]);
         setSections(sectionResponse.data as SectionData[]);
-        setClassrooms(classroomResponse.data as ClassroomData[]);
-        setCampus(campusResponse.data as CampusData[]);
-        
+        //setClassrooms(classroomResponse.data as ClassroomData[]);
+        //setCampus(campusResponse.data as CampusData[]);
       } catch (err) {
         setError(err as any);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchClassroomsAndClassesAndSectionsData();
   }, []);
 
@@ -92,7 +118,7 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({ assignmentData
       const response = await updateClassAssignment(updatedClassAssignment);
 
       if (response.success) {
-        toast.success( "Class Assignment Updated successfully!");
+        toast.success("Class Assignment Updated successfully!");
         reset();
       } else {
         toast.error("Failed to update the class assignment");
@@ -112,11 +138,7 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({ assignmentData
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          className="h-7 w-7"
-        >
+        <Button size="icon" variant="outline" className="h-7 w-7">
           <Icon icon="heroicons:pencil" className="h-4 w-4" />
         </Button>
       </SheetTrigger>
@@ -124,14 +146,17 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({ assignmentData
         <SheetHeader>
           <SheetTitle>Edit Class Assignment</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-between" style={{ height: "calc(100vh - 80px)" }}>
+        <div
+          className="flex flex-col justify-between"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
           <div className="py-5">
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
               <div className="grid grid-cols-6 gap-4 mt-5">
-              <div className="col-span-3">
+                <div className="col-span-3">
                   <Select
-                    defaultValue={campusId?.toString() ?? ""}
+                    defaultValue={campusId?.toString() ?? ""}
                     onValueChange={(value) =>
                       setValue("campusId", parseInt(value))
                     }
@@ -157,11 +182,11 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({ assignmentData
                       {errors.campusId.message}
                     </p>
                   )}
-                </div>  
+                </div>
 
-              <div className="col-span-3">
+                <div className="col-span-3">
                   <Select
-                    defaultValue={classroomId?.toString() ?? ""}
+                    defaultValue={classroomId?.toString() ?? ""}
                     onValueChange={(value) =>
                       setValue("classroomId", parseInt(value))
                     }
@@ -189,7 +214,7 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({ assignmentData
                   )}
                 </div>
                 <div className="col-span-3 ">
-                <Select
+                  <Select
                     defaultValue={classId?.toString() ?? ""}
                     onValueChange={(value) =>
                       setValue("classId", parseInt(value))
@@ -212,13 +237,11 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({ assignmentData
                   </Select>
 
                   {errors.classId && (
-                    <p className="text-destructive">
-                      {errors.classId.message}
-                    </p>
+                    <p className="text-destructive">{errors.classId.message}</p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-3">
-                <Select
+                  <Select
                     defaultValue={sectionId?.toString() ?? ""}
                     onValueChange={(value) =>
                       setValue("sectionId", parseInt(value))
@@ -261,5 +284,5 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({ assignmentData
       </SheetContent>
     </Sheet>
   );
-}
+};
 export default EditClassSectionAssign;

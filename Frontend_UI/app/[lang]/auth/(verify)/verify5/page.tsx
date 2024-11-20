@@ -1,5 +1,5 @@
 "use client";
-import VerfiyForm from "@/components/auth/verify-form";
+// import VerfiyForm from "@/components/auth/verify-form";
 import { Icon } from "@iconify/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -24,7 +24,7 @@ const VerifyPage = () => {
           <div className="flex flex-col xl:flex-row items-center w-full gap-y-12">
             <div className="basis-full xl:basis-1/2 w-full">
               <div className="w-full  xl:w-[480px]  relative z-20">
-                <VerfiyForm />
+                {/* <VerfiyForm /> */}
               </div>
             </div>
             <div className="basis-full xl:basis-1/2 hidden xl:block relative w-[500px] ">

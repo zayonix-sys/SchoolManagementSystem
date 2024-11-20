@@ -1,16 +1,16 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface UserRoleData {
   roleId?: number; 
-  roleName: string;
+  roleName?: string;
   roleDescription?: string;
-  createdAt?: Date; 
+  createdAt?: Date;
   createdBy?: number;
   updatedBy?: number;
-  updatedAt?: Date; 
-  isActive?: boolean; 
+  updatedAt?: Date;
+  isActive?: boolean;
 }
 
 const BASE_URL = "/UserRoles";
@@ -36,7 +36,9 @@ export const getUserRoles = async (): Promise<ApiResponse> => {
 
 export const getUserRoleById = async (id: number): Promise<UserRoleData> => {
   try {
-    const response = await api.get<UserRoleData>(`${BASE_URL}/GetRoleById/${id}`);
+    const response = await api.get<UserRoleData>(
+      `${BASE_URL}/GetRoleById/${id}`
+    );
     return response.data;
   } catch (error) {
     console.error(`Failed to fetch role with ID ${id}:`, error);
@@ -44,7 +46,9 @@ export const getUserRoleById = async (id: number): Promise<UserRoleData> => {
   }
 };
 
-export const addUserRole = async (userRoleData: UserRoleData): Promise<ApiResponse> => {
+export const addUserRole = async (
+  userRoleData: UserRoleData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddUserRole`,

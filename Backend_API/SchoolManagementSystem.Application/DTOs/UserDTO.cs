@@ -1,11 +1,4 @@
-﻿using SchoolManagementSystem.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SchoolManagementSystem.Application.DTOs
 {
@@ -14,17 +7,19 @@ namespace SchoolManagementSystem.Application.DTOs
         [Key]
         public int UserId { get; set; }
 
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
 
-        public string PasswordHash { get; set; }
-        public string Token { get; set; }
+        public string? PasswordHash { get; set; }
+        public string? Token { get; set; }
 
         public int RoleId { get; set; }
         public string? RoleName { get; set; }
 
         public int CampusId { get; set; }
 
-        public bool IsActive { get; set; }
+        public string? CampusName { get; set; }
+
+        public bool IsActive { get; set; } = true;
 
         public DateTime? CreatedAt { get; set; }
 

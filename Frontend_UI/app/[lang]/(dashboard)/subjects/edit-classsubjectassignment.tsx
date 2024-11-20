@@ -21,7 +21,7 @@ import {
   ClassroomData,
   fetchClassrooms,
   updateClassroom,
-} from "@/services/classroomService";
+} from "@/services/apis/_classroomService";
 import { ClassData, fetchClasses } from "@/services/ClassService";
 import { fetchSection, SectionData } from "@/services/SectionService";
 import {
@@ -60,7 +60,7 @@ export default function EditClassSubjectAssign({
   subjectAssignmentData: AssignSubjectData;
   subject: SubjectData[];
 }) {
-  const { classId, subjectIds, classSubjectId } = subjectAssignmentData;
+  const { classId, subjectIds = [], classSubjectId } = subjectAssignmentData; // Default empty array if missing
 
   const {
     register,
@@ -73,7 +73,7 @@ export default function EditClassSubjectAssign({
     resolver: zodResolver(subjectAssignmentSchema),
     defaultValues: {
       classId,
-      subjectIds,
+      subjectIds, // This ensures the form has a valid subjectIds array
     },
   });
 
@@ -161,7 +161,7 @@ export default function EditClassSubjectAssign({
               <div className="grid grid-cols-6 gap-4 mt-5">
                 <div className="col-span-3">
                   <Select
-                    defaultValue={classId.toString() ?? ""}
+                    defaultValue={classId?.toString() ?? ""}
                     onValueChange={(value) =>
                       setValue("classId", parseInt(value))
                     }
@@ -204,12 +204,13 @@ export default function EditClassSubjectAssign({
                           checked={watch("subjectIds")?.includes(
                             sub.subjectId ?? 0
                           )} // Controlled checkbox state
-                          onCheckedChange={
-                            (isChecked) =>
-                              handleCheckboxChange(
-                                sub.subjectId ?? 0,
-                                Boolean(isChecked)
-                              ) // Ensure isChecked is a boolean
+                          onCheckedChange={(
+                            isChecked
+                          ) =>
+                            handleCheckboxChange(
+                              sub.subjectId ?? 0,
+                              Boolean(isChecked)
+                            ) // Ensure isChecked is a boolean
                           }
                           className="mr-2"
                         >
@@ -241,3 +242,4 @@ export default function EditClassSubjectAssign({
     </Sheet>
   );
 }
+

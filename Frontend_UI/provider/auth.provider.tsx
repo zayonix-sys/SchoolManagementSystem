@@ -8,14 +8,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading, isAdmin, isTeacher } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const restrictedPaths = ["/en/employees", "/en/applicant"];
+  const restrictedPaths = ["/en/employees", "/en/applicant","/en/campuses", "/en/classrooms","/en/sponsors", "/en/sponsorship", "/en/payments", "/en/subjects"];
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push("/auth/login");
     }
     if (isTeacher && restrictedPaths.includes(pathname)) {
-      router.push("/notAuthorize"); // Redirect to a "not authorized" page or any other page
+      router.push("/notAuthorize"); 
     }
   }, [isAuthenticated, isLoading, isTeacher, pathname, router]);
 

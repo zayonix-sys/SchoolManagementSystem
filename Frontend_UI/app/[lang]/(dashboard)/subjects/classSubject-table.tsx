@@ -65,12 +65,12 @@ const SubjectAssignTable = ({ classes, subject }: SubjectAssignmentProps) => {
       (cls) => cls.classId === assignment.classId
     );
     const associatedSubjects = subject.filter((sub) =>
-      assignment.subjectIds.includes(sub.subjectId ?? 0)
+      assignment.subjectIds?.includes(sub.subjectId ?? 0)
     );
 
     if (associatedClass) {
-      if (!acc[assignment.classId]) {
-        acc[assignment.classId] = {
+      if (!acc[assignment.classId ?? 0]) {
+        acc[assignment.classId ?? 0] = {
           classSubjectId: assignment.classSubjectId,
           classId: assignment.classId,
           className: associatedClass.className,
@@ -78,7 +78,7 @@ const SubjectAssignTable = ({ classes, subject }: SubjectAssignmentProps) => {
           isActive: assignment.isActive ?? false,
         };
       }
-      acc[assignment.classId].subjects.push(
+      acc[assignment.classId ?? 0].subjects.push(
         ...associatedSubjects.map((sub) => sub.subjectName)
       );
     }

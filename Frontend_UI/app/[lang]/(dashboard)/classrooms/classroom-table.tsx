@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,55 +12,56 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ClassroomData, deleteClassroom, fetchClassrooms } from "@/services/classroomService";
 import { Input } from "@/components/ui/input";
 import EditClassroom from "./edit-classroom";
 import ConfirmationDialog from "../common/confirmation-dialog";
 import { toast } from "sonner";
+import {
+  ClassroomData,
+  useDeleteClassroomMutation,
+  useFetchClassroomsQuery,
+} from "@/services/apis/classroomService";
 
 const ClassroomListTable = () => {
-  const [classroom, setClassroom] = useState<ClassroomData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
-  const [classroomToDelete, setClassroomToDelete] = useState<number | null>(null);
+  const [classroomToDelete, setClassroomToDelete] = useState<number | null>(
+    null
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  
-  // Function to fetch class data
-  useEffect(() => {
-    const fetchClassroomData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchClassrooms(); // assuming fetchClasses is a function that fetches the data
-        setClassroom(response.data as ClassroomData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchClassroomData();
-  }, []);
-  
-  const filteredClassrooms = classroom.filter((classroom) =>
+
+  const { data, isLoading, refetch } = useFetchClassroomsQuery();
+  const classroomsData = data?.data as ClassroomData[];
+  const [deleteClassroom] = useDeleteClassroomMutation();
+
+  const handleRefetch = () => {
+    refetch();
+  };
+
+  const filteredClassrooms = classroomsData.filter((classroom) =>
     classroom.roomNumber.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredClassrooms.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredClassrooms.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const totalPages = Math.ceil(filteredClassrooms.length / itemsPerPage);
 
   const handleSelectAll = () => {
-    if (selectedRows.length === currentItems.length) {
+    if (selectedRows?.length === currentItems.length) {
       setSelectedRows([]);
     } else {
       setSelectedRows(
-        currentItems.map((row) => row.classroomId!).filter((id) => id !== null && id !== undefined)
+        currentItems
+          .map((row) => row.classroomId!)
+          .filter((id) => id !== null && id !== undefined)
       );
     }
   };
@@ -95,15 +96,12 @@ const ClassroomListTable = () => {
       await deleteClassroom(id);
       toast.success("Classroom deleted successfully");
       setClassroomToDelete(null); // Close dialog after successful deletion
+      handleRefetch();
     } catch (error) {
       console.error("Error deleting Classroom:", error);
       toast.error("Failed to delete Classroom");
     }
   };
-
-
-  
-
 
   return (
     <>
@@ -128,7 +126,7 @@ const ClassroomListTable = () => {
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item) => (
+          {currentItems?.map((item) => (
             <TableRow
               key={item.classroomId}
               className="hover:bg-default-200"
@@ -151,14 +149,14 @@ const ClassroomListTable = () => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                <EditClassroom classroomData={item}/>
+                  <EditClassroom classroomData={item} refetch={handleRefetch} />
 
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() =>  handleDeleteConfirmation(item.classroomId!)}
+                    onClick={() => handleDeleteConfirmation(item.classroomId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>

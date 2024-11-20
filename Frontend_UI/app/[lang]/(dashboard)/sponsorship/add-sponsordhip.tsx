@@ -1,4 +1,12 @@
+// AddSponsorshipForm.tsx
 "use client";
+
+import { useEffect, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { Icon } from "@iconify/react";
+import { z } from "zod";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -11,7 +19,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupText } from "@/components/ui/input-group";
-import { Icon } from "@iconify/react";
 import {
   Sheet,
   SheetClose,
@@ -21,99 +28,134 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { z } from "zod";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { useEffect, useState } from "react";
-import { ClassData, fetchClasses } from "@/services/ClassService";
-import ClassStudentListTable from "./student-class-wise";
-import { addSponsorship, SponsorshipData } from "@/services/sponsorshipService";
+
+import {
+  SponsorshipData,
+  addSponsorship,
+  fetchSponsorship,
+} from "@/services/sponsorshipService";
 import { fetchSponsor, SponsorData } from "@/services/sponsorService";
+import ClassStudentListTable from "./student-class-wise";
+import { fetchStudents, StudentData } from "@/services/studentService";
+import ClassStudentListTable from "./student-class-wise";
+import { ClassData } from "@/services/ClassService";
+
 
 const sponsorshipSchema = z.object({
   amount: z.string().min(1, "Please Enter Correct Amount").optional(),
-  startDate: z.string().date().optional(),
+  startDate: z
+    .string()
+    .transform((val) => new Date(val))
+    .optional(),
   frequency: z.string().min(1, "Frequency is required").optional(),
   classId: z.number().optional(),
   studentId: z.number().optional(),
   sponsorId: z.number().optional(),
 });
-
 type SponsorshipFormValues = z.infer<typeof sponsorshipSchema>;
+
 interface SponsorshipListTableProps {
   sponsorship: SponsorshipData[];
 }
 
-
-const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({ sponsorship }) =>{
-  const [classes, setClasses] = useState<ClassData[]>([]); 
-  const [sponsors, setSponsors] = useState<SponsorData[]>([]); 
-  const [classId, setClassId] = useState<number | null>(null);
+const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
+  sponsorship,
+}) => {
+  const [students, setStudents] = useState<StudentData[]>([]);
+  const [sponsors, setSponsors] = useState<SponsorData[]>([]);
   const [sponsorId, setSponsorId] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [studentId, setStudentId] = useState<number | null>(null);
+  const [frequency, setFrequency] = useState<number>(1);
+  const [selectedStudents, setSelectedStudents] = useState<{ studentId: number; classId: number | null }[]>([]);
+
+  const fixedAmountPerStudent = 1500;
+
+  const totalExpense =
+    selectedStudents.length * fixedAmountPerStudent * frequency;
 
   const {
     register,
     handleSubmit,
-    reset,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<SponsorshipFormValues>({
     resolver: zodResolver(sponsorshipSchema),
   });
 
   useEffect(() => {
-    const fetchClassSponsorData = async () => {
-      setLoading(true);
+    const fetchData = async () => {
       try {
-        const classResponse = await fetchClasses(); 
-        setClasses(classResponse.data as ClassData[]);
         const sponsorResponse = await fetchSponsor();
-        setSponsors(sponsorResponse.data as SponsorData[]); 
-          console.log(sponsorResponse,"sponsor Response");
-          
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
+        setSponsors(sponsorResponse.data as SponsorData[]);
+        const sponsorshipResponse = await fetchSponsorship();
+        const sponsoredStudentIds = sponsorshipResponse.data.map(
+          (s: SponsorshipData) => s.studentId
+        );
+        setStudents(
+          (await fetchStudents()).data.filter(
+            (student) => !sponsoredStudentIds.includes(student.studentId)
+
+        const studentResponse = await fetchStudents();
+        setStudents(
+          studentResponse.data.filter(
+            (student: StudentData) =>
+              !sponsoredStudentIds.includes(student.studentId)
+          )
+        );
+      } catch (error) {
+        toast.error("Error fetching data");
       }
     };
 
-    fetchClassSponsorData();
+    fetchData();
   }, []);
 
-  const onSubmit: SubmitHandler<SponsorshipFormValues> = async (data) => { 
-    const combinedData: SponsorshipData = {
-      sponsorshipId: 0, 
-      studentId: studentId ?? 0, 
-      classId: classId ?? 0,
-      sponsorId: sponsorId ?? 0, 
-      amount: data.amount, 
-      startDate: data.startDate, 
-      frequency: data.frequency, 
-    };
-console.log(combinedData,"combine Data");
+  const handleFrequencyChange = (value: string) => setFrequency(Number(value));
 
-    const response = await addSponsorship(combinedData); 
-  
-    if (response.success) {
-      toast.success(`Sponsorship added successfully!`);
-      reset();
-    } else {
-      toast.error(`Error: ${response.message || "Something went wrong"}`);
+  const handleStudentSelectionChange = (selectedStudents: { studentId: number; classId: number | null }[]) => {
+    setSelectedStudents(selectedStudents);
+    console.log("Selected Students:", selectedStudents);
+  };
+
+  const onSubmit: SubmitHandler<SponsorshipFormValues> = async (data) => {
+    if (!sponsorId) {
+      toast.error("Please select a sponsor");
+      return;
     }
-  };
 
-  const handleStudentIdChange = (id: number) => {
-    setStudentId(id);
-  };
+    const combinedData = selectedStudents
+      .map((selectedStudent) => {
+        const student = students.find((s) => s.studentId === selectedStudent.studentId);
 
-  const handleError = () => {
-    if (Object.keys(errors).length > 0) {
-      toast.error("Please correct the errors in the form.");
+        if (!student) {
+          toast.error(`Student with ID ${selectedStudent.studentId} not found`);
+          return null;
+        }
+
+        return {
+          sponsorshipId: 0,
+          sponsorId,
+          classId: student.classId ?? 0,
+          studentId: selectedStudent.studentId,
+          amount: fixedAmountPerStudent * frequency,
+          startDate: data.startDate,
+          frequency,
+        };
+      })
+      .filter(Boolean);
+
+    try {
+      for (const sponsorship of combinedData) {
+        const response = await addSponsorship(sponsorship!); // `!` since we filtered `null` earlier
+        if (response.success) {
+          toast.success(`Sponsorship for student added successfully!`);
+        } else {
+          toast.error(`Error: ${response.message || "Something went wrong"}`);
+        }
+      }
+      reset();
+    } catch (error) {
+      toast.error("Error submitting sponsorships");
     }
   };
 
@@ -122,47 +164,33 @@ console.log(combinedData,"combine Data");
       <SheetTrigger asChild>
         <div className="flex justify-end space-x-4 m-2">
           <Button>
-            <span className="text-xl mr-1">
-              <Icon
-                icon="heroicons:building-library-solid"
-                className="w-6 h-6 mr-2"
-              />
-            </span>
+            <Icon
+              icon="heroicons:building-library-solid"
+              className="w-6 h-6 mr-2"
+            />
             Add Sponsorship
           </Button>
         </div>
       </SheetTrigger>
-      <SheetContent className="" side='top'>
+      <SheetContent side="top">
         <SheetHeader>
           <SheetTitle>Add New Sponsorship</SheetTitle>
         </SheetHeader>
-        <form onSubmit={handleSubmit(onSubmit, handleError)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="flex flex-col gap-2 col-span-1">
-              <Label>Select Class</Label>
-              <Select onValueChange={(value) => setClassId(parseInt(value))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Class" />
-                </SelectTrigger>
-                <SelectContent>
-                  {classes?.map((cd) => (
-                    <SelectItem key={cd.classId} value={cd.classId.toString()}>
-                      {cd.className}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-        <div className="flex flex-col gap-2 col-span-1">
+            <div className="flex flex-col gap-2">
               <Label>Select Sponsor</Label>
               <Select onValueChange={(value) => setSponsorId(parseInt(value))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Sponsor" />
                 </SelectTrigger>
                 <SelectContent>
-                  {sponsors?.map((cd) => (
-                    <SelectItem key={cd.sponsorId} value={cd.sponsorId.toString()}>
-                      {cd.sponsorName}
+                  {sponsors.map((sponsor) => (
+                    <SelectItem
+                      key={sponsor.sponsorId}
+                      value={sponsor.sponsorId?.toString() ?? ""}
+                    >
+                      {sponsor.sponsorName}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -170,69 +198,50 @@ console.log(combinedData,"combine Data");
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="amount">Enter Amount</Label>
+              <Label>Total Amount</Label>
               <InputGroup merged>
                 <InputGroupText>
-                  <Icon icon="mdi:money" />
+                  <Icon icon="mdi:currency-usd" />
                 </InputGroupText>
-                <Input
-                  type="text"
-                  placeholder="Enter Your Amount"
-                  id="amount"
-                  {...register("amount")}
-                />
+                <Input type="text" value={totalExpense} readOnly />
               </InputGroup>
-              {errors.amount && (
-                <p className="text-destructive">{errors.amount.message}</p>
-              )}
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="frequency">Frequency of Sponsorship</Label>
-              <Select onValueChange={(value) => setValue("frequency", value)}>
+              <Label>Frequency of Sponsorship</Label>
+              <Select onValueChange={handleFrequencyChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Monthly">Monthly</SelectItem>
-                  <SelectItem value="Quarterly">Quarterly</SelectItem>
-                  <SelectItem value="Bi-Annually">Bi-Annually</SelectItem>
-                  <SelectItem value="Annually">Annually</SelectItem>
+                  <SelectItem value="1">1 Month</SelectItem>
+                  <SelectItem value="3">3 Months</SelectItem>
+                  <SelectItem value="6">6 Months</SelectItem>
+                  <SelectItem value="12">12 Months</SelectItem>
                 </SelectContent>
               </Select>
-              {errors.frequency && (
-                <p className="text-destructive">{errors.frequency.message}</p>
-              )}
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="startDate">Select Start Date</Label>
-              <InputGroup merged className="flex">
-                <InputGroupText>
-                  <Icon icon="material-symbols:calendar-today" />
-                </InputGroupText>
-                <Input
-                  type="date"
-                  id="startDate"
-                  {...register("startDate")}
-                />
-              </InputGroup>
+              <Label>Select Start Date</Label>
+              <Input type="date" {...register("startDate")} />
               {errors.startDate && (
-                <p className="text-destructive">{errors.startDate.message}</p>
+                <p className="text-red-500">{errors.startDate.message}</p>
               )}
-            </div>
-            <div className="col-span-2">
-              <ClassStudentListTable sponsorship={sponsorship} classId={classId} onStudentIdChange={handleStudentIdChange} />
             </div>
 
             <div className="col-span-2">
-              {/* <Button type="submit">Submit Form</Button> */}
+              <ClassStudentListTable
+                sponsorship={sponsorship}
+                onStudentSelectionChange={handleStudentSelectionChange}
+              />
+            </div>
+
+            <div className="col-span-2 flex justify-end">
+              <Button type="submit">Submit Sponsorship</Button>
             </div>
           </div>
         </form>
-        <SheetFooter>
-          <SheetClose asChild>footer content</SheetClose>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

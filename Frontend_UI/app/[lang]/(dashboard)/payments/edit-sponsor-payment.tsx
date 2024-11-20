@@ -109,7 +109,7 @@ export default function EditPaymentForm({ payment }: { payment: PaymentData }) {
                   <Input
                     id="amountPaid"
                     type="text"
-                    {...register("amountPaid")}
+                    {...register("amountPaid",{valueAsNumber: true})}
                     className={`${errors.amountPaid ? "border-red-500" : ""}`}
                     placeholder="Amount Paid"
                   />

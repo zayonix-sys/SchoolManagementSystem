@@ -1,5 +1,5 @@
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface EmployeesData {
   employeeId?: number;
@@ -13,11 +13,11 @@ export interface EmployeesData {
   lastName?: string;
   email?: string;
   phoneNumber?: string;
-  hireDate?: string; 
+  hireDate?: string;
   address?: string;
   emergencyContact?: string;
   qualifications?: string;
-   isActive?: boolean;
+  isActive?: boolean;
 }
 
 const BASE_URL = "/Employee";
@@ -29,11 +29,11 @@ export const fetchEmployees = async (): Promise<ApiResponse> => {
     if (!authToken) {
       throw new Error("No authentication token found. Please log in.");
     }
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetEmployees`,
-      {headers: {
+    const response = await api.get<ApiResponse>(`${BASE_URL}/GetEmployees`, {
+      headers: {
         Authorization: `Bearer ${authToken}`,
-      },}
-    );
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Failed to fetch Employees:", error);

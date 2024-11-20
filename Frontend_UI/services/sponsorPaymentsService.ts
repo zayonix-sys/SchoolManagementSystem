@@ -1,18 +1,18 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface PaymentData {
   paymentId?: number;
   sponsorshipId?: number;
   sponsorName?: string;
-  firstName?:string;
-  lastName?:string;
-  sponsorshipAmount?:number;
-  paymentDate?: string ;
-  amountPaid?:number;
+  firstName?: string;
+  lastName?: string;
+  sponsorshipAmount?: number;
+  paymentDate?: string;
+  amountPaid?: number;
   paymentMethod?: string;
-  isActive?: boolean;      
+  isActive?: boolean;
 }
 
 const BASE_URL = "/Payment";
@@ -27,7 +27,9 @@ export const fetchSponsorPayment = async (): Promise<ApiResponse> => {
   }
 };
 
-export const addSponsorPayment = async (PaymentData: PaymentData): Promise<ApiResponse> => {
+export const addSponsorPayment = async (
+  PaymentData: PaymentData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddPayment`,
@@ -55,7 +57,9 @@ export const updateSponsorPayment = async (
   }
 };
 
-export const deleteSponsorPayment = async (id: number): Promise<ApiResponse> => {
+export const deleteSponsorPayment = async (
+  id: number
+): Promise<ApiResponse> => {
   try {
     const response = await api.delete<ApiResponse>(
       `${BASE_URL}/DeletePayment?paymentId=${id}`

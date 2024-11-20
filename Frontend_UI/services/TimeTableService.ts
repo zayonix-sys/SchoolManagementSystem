@@ -1,6 +1,6 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface TimeTableData {
   timetableId?: number;
@@ -14,7 +14,7 @@ export interface TimeTableData {
   endTime?: string;
   subjectName?: string;
   campusName?: string;
-  className?: string;                    
+  className?: string;
 }
 
 const BASE_URL = "/TimeTable";
@@ -29,7 +29,9 @@ export const fetchTimeTable = async (): Promise<ApiResponse> => {
   }
 };
 
-export const addTimeTable = async (TimeTableData: TimeTableData): Promise<ApiResponse> => {
+export const addTimeTable = async (
+  TimeTableData: TimeTableData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddTimeTable`,

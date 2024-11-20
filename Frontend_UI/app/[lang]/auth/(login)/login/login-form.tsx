@@ -18,7 +18,7 @@ import { Login } from "@/services/userService";
 
 const userSchema = z.object({
   username: z.string({ message: "Your username is invalid." }),
-  password: z.string().min(6),
+  password: z.string().min(6,"Please enter your correct password."),
   roleName: z.string().optional(),
 });
 type UserFormValues = z.infer<typeof userSchema>;
@@ -61,15 +61,19 @@ const LogInForm = () => {
       if (response.success) {
         const token = response.data.token;
         const role = response.data.roleName;
-        const sessionTimeout = 15 * 60 * 1000; // 15 minutes
+        const userId = response.data.userId;
+        const userName = response.data.userName;
+        // const sessionTimeout = 15 * 60 * 1000; // 15 minutes
         toast.success(`${data.username} logged in successfully!`);
-        const expiryTime = new Date(
-          new Date().getTime() + sessionTimeout
-        ).toISOString();
+        // const expiryTime = new Date(
+        //   new Date().getTime() + sessionTimeout
+        // ).toISOString();
         localStorage.setItem("authToken", token);
-        localStorage.setItem("authTokenExpiry", expiryTime);
+        localStorage.setItem("userId", userId);
+        localStorage.setItem("userName", userName);
+        // localStorage.setItem("authTokenExpiry", expiryTime);
         localStorage.setItem("role", role);
-        window.location.assign("/campuses");
+        window.location.assign("/");
 
         reset();
       } else {

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import VerfiyForm from "@/components/auth/verify-form";
+// import VerfiyForm from "@/components/auth/verify-form";
 
 const VerifyPage = () => {
   const [openVideo, setOpenVideo] = useState<boolean>(false);
@@ -54,7 +54,7 @@ const VerifyPage = () => {
 
           <div className="min-h-screen basis-full md:basis-1/2 w-full px-4 flex justify-center items-center">
             <div className="lg:w-[480px]">
-              <VerfiyForm />
+              {/* <VerfiyForm /> */}
             </div>
           </div>
         </div>
