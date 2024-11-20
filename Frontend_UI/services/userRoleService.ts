@@ -4,7 +4,7 @@ import { ApiResponse } from "./apiResponse";
 
 export interface UserRoleData {
   roleId?: number; 
-  roleName: string;
+  roleName?: string;
   roleDescription?: string;
   createdAt?: Date; 
   createdBy?: number;

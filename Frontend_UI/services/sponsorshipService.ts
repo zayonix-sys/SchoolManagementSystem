@@ -3,18 +3,18 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apiResponse";
 
 export interface SponsorshipData {
-  sponsorshipId: number;
-  sponsorId:number;
-  studentId:number;
-  classId:number;
+  sponsorshipId?: number;
+  sponsorId?:number;
+  studentId?:number;
+  classId?:number | null;
   className?:string;
   studentName?:string;
   sponsorName?:string ;
   gender?:string;
   phoneNumber?: string;
-  amount?:string;
-  frequency?:string;
-  startDate?: string;
+  amount?:number;
+  frequency?:number;
+  startDate?: string | Date;
   isActive?: boolean;      
 }
 

@@ -10,7 +10,6 @@ import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { addUser } from "@/action/auth-action";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -53,16 +52,16 @@ const RegForm = () => {
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   const onSubmit = (data: any) => {
-    startTransition(async () => {
-      let response = await addUser(data);
-      if (response?.status === "success") {
-        toast.success(response?.message);
-        reset();
-        router.push("/");
-      } else {
-        toast.error(response?.message);
-      }
-    });
+    // startTransition(async () => {
+    //   let response = await addUser(data);
+    //   if (response?.status === "success") {
+    //     toast.success(response?.message);
+    //     reset();
+    //     router.push("/");
+    //   } else {
+    //     toast.error(response?.message);
+    //   }
+    // });
   };
   return (
     <div className="w-full">
