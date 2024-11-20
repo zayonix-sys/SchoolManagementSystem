@@ -29,9 +29,9 @@ import { addUserPermission } from "@/services/userPermissionService";
 import { Toast } from "@/components/ui/toast";
 
 const userPermissionSchema = z.object({
-  // roleId: z.number().min(1, "Role is required"),
-  // userId: z.number().int().positive("Role is required"),
   entities: z.array(z.string()).min(1, "At least one entity must be selected"),
+  roleId: z.number().optional(),
+  userId: z.number().optional(),
   canCreate: z.boolean(),
   canRead: z.boolean(),
   canUpdate: z.boolean(),
@@ -44,8 +44,8 @@ export default function AddUserPermission() {
   const [roles, setRoles] = useState<UserRoleData[]>([]);
   const [allUsers, setAllUsers] = useState<UserData[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
-  const [roleId, setRoleId] = useState<number | null>(null);
-  const [userId, setUserId] = useState<number | null>(null);
+  const [roleId, setRoleId] = useState<number | undefined>();
+  const [userId, setUserId] = useState<number | undefined>();
   const [selectedEntities, setSelectedEntities] = useState<string[]>([]);
   const [loadingRoles, setLoadingRoles] = useState<boolean>(true);
   const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
@@ -106,7 +106,11 @@ export default function AddUserPermission() {
 
   const onSubmit: SubmitHandler<UserPermissionFormValues> = async (data) => {
     try {
-      const response = await addUserPermission({...data, userId, roleId} );
+      const response = await addUserPermission({
+        ...data,
+        userId,
+        roleId,
+      });
 
       if (response.success) {
         toast.success("User permission successfully!");
@@ -153,18 +157,13 @@ export default function AddUserPermission() {
                   </SelectTrigger>
                   <SelectContent>
                     {roles.map((role) => (
-                      <SelectItem
-                        key={role.roleId}
-                        value={role.roleId?.toString() ?? ""}
-                      >
+                      <SelectItem key={role.roleId} value={role.roleId?.toString() ?? ""}>
                         {role.roleName}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.roleId && (
-                  <p className="text-destructive">{errors.roleId.message}</p>
-                )}
+                {errors.roleId && <p className="text-destructive">{errors.roleId.message}</p>}
               </div>
 
               <div className="col-span-1">
@@ -172,25 +171,19 @@ export default function AddUserPermission() {
                   {...register("userId", { valueAsNumber: true })}
                   onValueChange={(value) => setUserId(Number(value))}
                   disabled={loadingUsers || !roleId}
-                  
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select User" />
                   </SelectTrigger>
                   <SelectContent>
                     {filteredUsers.map((user) => (
-                      <SelectItem
-                        key={user.userId}
-                        value={user.userId?.toString() ?? ""}
-                      >
+                      <SelectItem key={user.userId} value={user.userId?.toString() ?? ""}>
                         {user.userName}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.userId && (
-                  <p className="text-destructive">{errors.userId.message}</p>
-                )}
+                {errors.userId && <p className="text-destructive">{errors.userId.message}</p>}
               </div>
 
               <div className="col-span-2">
@@ -198,13 +191,9 @@ export default function AddUserPermission() {
                 <div className="grid grid-cols-2 gap-2">
                   {menuItems.map((menu) =>
                     menu.child?.map((entity) => (
-                      <div
-                        key={entity.title}
-                        className="flex items-center space-x-2"
-                      >
-                        <input 
-                        type="checkbox"
-                          // {...register("entities", { valueAsArray: true })}
+                      <div key={entity.title} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
                           checked={selectedEntities.includes(entity.title)}
                           onChange={() => handleEntityChange(entity.title)}
                         />
@@ -213,31 +202,24 @@ export default function AddUserPermission() {
                     ))
                   )}
                 </div>
-                {errors.entities && (
-                  <p className="text-destructive">{errors.entities.message}</p>
-                )}
+                {errors.entities && <p className="text-destructive">{errors.entities.message}</p>}
               </div>
 
               <div className="col-span-2 grid grid-cols-4 gap-2">
                 <div>
-                  <input
-                  type="checkbox"
-                  {...register("canCreate")} />
+                  <input type="checkbox" {...register("canCreate")} />
                   <Label>Can Create</Label>
                 </div>
                 <div>
-                <input
-                  type="checkbox" {...register("canRead")} />
+                  <input type="checkbox" {...register("canRead")} />
                   <Label>Can Read</Label>
                 </div>
                 <div>
-                <input
-                  type="checkbox" {...register("canUpdate")} />
+                  <input type="checkbox" {...register("canUpdate")} />
                   <Label>Can Update</Label>
                 </div>
                 <div>
-                <input
-                  type="checkbox" {...register("canDelete")} />
+                  <input type="checkbox" {...register("canDelete")} />
                   <Label>Can Delete</Label>
                 </div>
               </div>

@@ -1,15 +1,15 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface UserData {
-  userId: number;
-  userName: string;
+  userId?: number;
+  userName?: string;
   passwordHash?: string;
   roleId?: number;
   roleName?: string;
   campusId?: number;
-  createdAt: Date;
+  createdAt?: Date;
 }
 
 const BASE_URL = "/UserAccount";

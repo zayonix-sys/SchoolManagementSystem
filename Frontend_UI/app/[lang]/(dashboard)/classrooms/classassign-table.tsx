@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,10 +12,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ClassroomData, deleteClassroom, fetchClassrooms } from "@/services/classroomService";
+import {
+  ClassroomData,
+  deleteClassroom,
+  fetchClassrooms,
+} from "@/services/apis/_classroomService";
 import { Input } from "@/components/ui/input";
 import EditClassroom from "./edit-classroom";
-import { AssignClassData, assignClasses, deleteClassassignment } from "@/services/assignClassService";
+import {
+  AssignClassData,
+  assignClasses,
+  deleteClassassignment,
+} from "@/services/assignClassService";
 import { ClassData } from "@/services/ClassService";
 import { SectionData } from "@/services/SectionService";
 // import EditClassSectionAssign from "./edit-classsectionassignment";
@@ -31,21 +39,28 @@ interface ClassAssignmentProps {
   campus: CampusData[];
 }
 
-const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignmentProps) => {
+const ClassAssignTable = ({
+  classes,
+  classroom,
+  section,
+  campus,
+}: ClassAssignmentProps) => {
   const [classassignment, setClassassignment] = useState<AssignClassData[]>([]);
-  const [classAssignmentToDelete, setClassAssignmentToDelete] = useState<number | null>(null);
+  const [classAssignmentToDelete, setClassAssignmentToDelete] = useState<
+    number | null
+  >(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  
+
   useEffect(() => {
     const fetchClassAssignData = async () => {
       setLoading(true);
       try {
-        const response = await assignClasses(); 
+        const response = await assignClasses();
         setClassassignment(response.data as AssignClassData[]);
       } catch (err) {
         setError(err as any);
@@ -53,16 +68,23 @@ const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignment
         setLoading(false);
       }
     };
-  
+
     fetchClassAssignData();
   }, []);
-  
-    const combinedData = classassignment.map((assignment) => {
-    const associatedClass = classes.find((cls) => cls.classId === assignment.classId);
-    const associatedSection = section.find((sec) => sec.sectionId === assignment.sectionId);
-    const associatedClassroom = classroom.find((classroom => classroom.classroomId === assignment.classroomId))
-    const associatedCampusId = campus.find((campus => campus.campusId === assignment.campusId))
-  
+
+  const combinedData = classassignment.map((assignment) => {
+    const associatedClass = classes.find(
+      (cls) => cls.classId === assignment.classId
+    );
+    const associatedSection = section.find(
+      (sec) => sec.sectionId === assignment.sectionId
+    );
+    const associatedClassroom = classroom.find(
+      (classroom) => classroom.classroomId === assignment.classroomId
+    );
+    const associatedCampusId = campus.find(
+      (campus) => campus.campusId === assignment.campusId
+    );
 
     return {
       assignmentId: assignment.assignmentId,
@@ -74,27 +96,30 @@ const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignment
       classId: assignment.classId,
       classroomId: assignment.classroomId,
       sectionId: assignment.sectionId,
-      campusId: assignment.campusId
-      
+      campusId: assignment.campusId,
     };
   });
 
   const sortedData = combinedData.sort((a, b) => {
     if (a.roomNumber < b.roomNumber) return -1;
     if (a.roomNumber > b.roomNumber) return 1;
-  
+
     return 0;
   });
-  
-  const filteredClassassignments = sortedData.filter((item) =>
-    item.roomNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.className.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.sectionName.toLowerCase().includes(searchQuery.toLowerCase())
-);
+
+  const filteredClassassignments = sortedData.filter(
+    (item) =>
+      item.roomNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.className.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.sectionName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredClassassignments.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredClassassignments.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const totalPages = Math.ceil(filteredClassassignments.length / itemsPerPage);
 
@@ -119,14 +144,12 @@ const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignment
       await deleteClassassignment(id);
       toast.success("Class Assignment deleted successfully");
       // setTimeTable((prev) => prev.filter((entry) => entry.timetableId !== id));
-      setClassAssignmentToDelete(null); 
+      setClassAssignmentToDelete(null);
     } catch (error) {
       console.error("Error deleting class assignment:", error);
       toast.error("Failed to delete class assignment");
     }
   };
-
-
 
   return (
     <>
@@ -142,7 +165,7 @@ const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignment
       <Table className="text-left condensed">
         <TableHeader>
           <TableRow>
-          <TableHead className="h-10 p-2.5">Campus Name</TableHead>
+            <TableHead className="h-10 p-2.5">Campus Name</TableHead>
             <TableHead className="h-10 p-2.5">Classroom Number</TableHead>
             <TableHead className="h-10 p-2.5">Class Name</TableHead>
             <TableHead className="h-10 p-2.5">Section Name</TableHead>
@@ -159,7 +182,7 @@ const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignment
               data-state={
                 selectedRows.includes(item.assignmentId!) && "selected"
               }
-            > 
+            >
               <TableCell className="p-2.5">{item.campusName}</TableCell>
               <TableCell className="p-2.5">{item.roomNumber}</TableCell>
               <TableCell className="p-2.5">{item.className}</TableCell>
@@ -176,7 +199,7 @@ const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignment
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                 <EditClassSectionAssign  assignmentData={[item]}/>
+                  <EditClassSectionAssign assignmentData={[item]} />
 
                   <Button
                     size="icon"
@@ -205,11 +228,11 @@ const ClassAssignTable = ({classes, classroom, section, campus}: ClassAssignment
         </Button>
       </div>
       {classAssignmentToDelete !== null && (
-      <ConfirmationDialog
-        onDelete={() => handleDelete(classAssignmentToDelete)}
-        onCancel={handleCancelDelete}
-      />
-    )}
+        <ConfirmationDialog
+          onDelete={() => handleDelete(classAssignmentToDelete)}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </>
   );
 };

@@ -1,10 +1,10 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface ClassData {
-  classId: number; 
-  className: string;
+  classId?: number; 
+  className?: string;
   classDescription?: string;
   capacity: number;
   createdAt?: Date; 
@@ -23,13 +23,11 @@ export const fetchClasses = async (): Promise<ApiResponse> => {
     if (!authToken) {
       throw new Error("No authentication token found. Please log in.");
     }
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetClass`,
-      {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
-    );
+    const response = await api.get<ApiResponse>(`${BASE_URL}/GetClass`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Failed to fetch classes:", error);

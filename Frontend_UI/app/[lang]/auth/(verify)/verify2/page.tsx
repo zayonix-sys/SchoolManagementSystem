@@ -4,7 +4,7 @@ import bg from "@/public/images/auth/bg-2.jpg"
 import slider1 from "@/public/images/auth/slide-1.png"
 import slider2 from "@/public/images/auth/slide-2.png"
 import slider3 from "@/public/images/auth/slide-3.png"
-import VerfiyForm from "@/components/auth/verify-form";
+// import VerfiyForm from "@/components/auth/verify-form";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -64,7 +64,7 @@ const VerifyPage = () => {
         </div>
         <div className=" px-4 flex justify-center items-center">
           <div className="lg:w-[480px]">
-            <VerfiyForm />
+            {/* <VerfiyForm /> */}
           </div>
         </div>
       </div>

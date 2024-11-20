@@ -1,6 +1,17 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { SectionData } from "../types/sectionDataTypes";
-
+import { ApiResponse } from "./apiResponse";
+export interface SectionData {
+  sectionId?: number;
+  sectionName: string;
+  capacity: number;
+  classId?: number;
+  className?: string;
+  createdAt?: Date;
+  createdBy?: number;
+  updatedBy?: number;
+  updatedAt?: Date;
+  isActive?: boolean;
+}
 
 export const sectionApi = createApi({
   reducerPath: "sectionApi",
@@ -15,27 +26,27 @@ export const sectionApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    fetchSection: builder.query<SectionData[], void>({
+    fetchSection: builder.query<ApiResponse<SectionData[]>, void>({
       query: () => "GetSection",
     }),
-    fetchSectionById: builder.query<SectionData, number>({
+    fetchSectionById: builder.query<ApiResponse<SectionData>, number>({
       query: (id) => `GetSectionById/${id}`,
     }),
-    addSection: builder.mutation<void, SectionData>({
+    addSection: builder.mutation<ApiResponse<SectionData>, SectionData>({
       query: (sectionData) => ({
         url: "AddSection",
         method: "POST",
         body: sectionData,
       }),
     }),
-    updateSection: builder.mutation<void, SectionData>({
+    updateSection: builder.mutation<ApiResponse<void>, SectionData>({
       query: (sectionData) => ({
         url: "UpdateSection",
         method: "PUT",
         body: sectionData,
       }),
     }),
-    deleteSection: builder.mutation<void, number>({
+    deleteSection: builder.mutation<ApiResponse<void>, number>({
       query: (id) => ({
         url: `DeleteSection?sectionId=${id}`,
         method: "DELETE",

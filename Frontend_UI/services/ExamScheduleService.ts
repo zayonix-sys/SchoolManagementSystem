@@ -1,6 +1,6 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface ExamScheduleData {
   examId?: number;
@@ -31,7 +31,9 @@ export const fetchExamsSchedule = async (): Promise<ApiResponse> => {
   }
 };
 
-export const addExams = async (ExamsData: ExamScheduleData): Promise<ApiResponse> => {
+export const addExams = async (
+  ExamsData: ExamScheduleData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddExams`,

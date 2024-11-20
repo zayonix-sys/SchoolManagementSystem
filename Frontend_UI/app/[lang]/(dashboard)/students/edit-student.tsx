@@ -53,7 +53,7 @@ const studentSchema = z.object({
     })
     .transform((value) => format(new Date(value), "yyyy-MM-dd")),
   enrollmentDate: z.string().min(1, "Enrollment date is required"),
-  classId: z.number().int().positive("Class is required"),
+  classId: z.number().int().positive("Class is required").nullable(),
   isActive: z.boolean(),
 });
 
@@ -106,7 +106,7 @@ export default function EditStudent({ studentData }: StudentProps) {
       isActive,
     },
   });
-  console.log("default values", studentData);
+  // console.log("default values", studentData);
   useEffect(() => {
     const loadClasses = async () => {
       try {
@@ -308,7 +308,7 @@ export default function EditStudent({ studentData }: StudentProps) {
                       {classes?.map((cd) => (
                         <SelectItem
                           key={cd.classId}
-                          value={cd.classId.toString()}
+                          value={cd.classId?.toString() || ''}
                         >
                           {cd.className}
                         </SelectItem>

@@ -24,7 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { addSection } from "../../../../services/SectionService";
+import {
+  SectionData,
+  useAddSectionMutation,
+} from "@/services/apis/sectionService";
 
 // Zod schema definition
 const sectionSchema = z.object({
@@ -34,7 +37,9 @@ const sectionSchema = z.object({
 
 type SectionFormValues = z.infer<typeof sectionSchema>;
 
-export default function AddSection() {
+export default function AddSection({ refetch }: { refetch: () => void }) {
+  const [addSection] = useAddSectionMutation();
+
   const [classes, setClasses] = useState([]);
   const {
     register,
@@ -62,14 +67,20 @@ export default function AddSection() {
 
   const onSubmit: SubmitHandler<SectionFormValues> = async (data) => {
     try {
-      const response = await addSection(data);
+      //const response = await addSection(data);
+      const response = await addSection(data as SectionData);
 
-      if (response.success) {
-        toast.success(`${response.data.sectionName} Section Added successfully!`);
+      if (response.data?.success) {
+        toast.success(
+          `${response.data?.data.sectionName} Section Added successfully!`
+        );
         reset();
+        refetch();
       } else {
         console.error("Error:", response);
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error(
+          `Error: ${response.data?.message || "Something went wrong"}`
+        );
       }
     } catch (error) {
       console.error("Request Failed:", error);
@@ -88,7 +99,10 @@ export default function AddSection() {
       <SheetTrigger asChild>
         <Button>
           <span className="text-xl mr-1">
-            <Icon icon="heroicons:building-library-solid" className="w-6 h-6 mr-2" />
+            <Icon
+              icon="heroicons:building-library-solid"
+              className="w-6 h-6 mr-2"
+            />
           </span>
           Add Section
         </Button>
@@ -97,7 +111,10 @@ export default function AddSection() {
         <SheetHeader>
           <SheetTitle>Add New Section</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-between" style={{ height: "calc(100vh - 80px)" }}>
+        <div
+          className="flex flex-col justify-between"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
           <div className="py-5">
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
@@ -109,7 +126,9 @@ export default function AddSection() {
                     {...register("sectionName")}
                   />
                   {errors.sectionName && (
-                    <p className="text-destructive">{errors.sectionName.message}</p>
+                    <p className="text-destructive">
+                      {errors.sectionName.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2">
@@ -119,7 +138,9 @@ export default function AddSection() {
                     {...register("capacity", { valueAsNumber: true })}
                   />
                   {errors.capacity && (
-                    <p className="text-destructive">{errors.capacity.message}</p>
+                    <p className="text-destructive">
+                      {errors.capacity.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2">

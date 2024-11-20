@@ -1,22 +1,22 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface UserPermissionData {
-  permissionId: number;
-  roleId: number ;
-  roleName: string;
-  userId: number;
-  userName: string;
-  entity: string;
-  entities: any[];
+  permissionId?: number;
+  roleId?: number ;
+  roleName?: string;
+  userId?: number;
+  userName?: string;
+  entity?: string;
+  entities?: any[];
   canCreate: boolean;
   canRead: boolean;
   canUpdate: boolean;
   canDelete: boolean;
   createdBy?: number;
   updatedBy?: number;
-  isActive: boolean;
+  isActive?: boolean;
 }
 
 const BASE_URL = "/UserPermission";

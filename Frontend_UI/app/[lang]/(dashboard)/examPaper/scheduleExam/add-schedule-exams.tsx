@@ -193,7 +193,7 @@ export default function AddScheduleExams({ classes, subject }: DataProps) {
                     </SelectTrigger>
                     <SelectContent>
                       {filteredClassSubjects.map((e) => (
-                        <SelectItem key={e.subjectIds[0]} value={e.subjectIds[0].toString() ?? ''}>
+                        <SelectItem key={e.subjectName} value={e.subjectIds?.toString() || ''}>
                           {e.subjectName}
                         </SelectItem>
                       ))}

@@ -1,5 +1,5 @@
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 import { DepartmentData } from "./departmentService";
 
 export interface CampusData {
@@ -25,12 +25,11 @@ export const getCampuses = async (): Promise<ApiResponse> => {
     if (!authToken) {
       throw new Error("No authentication token found. Please log in.");
     }
-    const response = await api.get<ApiResponse>(BASE_URL + "/GetCampuses"
-      , {
+    const response = await api.get<ApiResponse>(BASE_URL + "/GetCampuses", {
       headers: {
         Authorization: `Bearer ${authToken}`,
-      },}
-  );
+      },
+    });
     return response.data;
   } catch (error: any) {
     console.error("Error fetching campuses:", error);
@@ -49,7 +48,8 @@ export const addCampus = async (
     }
     const response = await api.post<ApiResponse>(
       BASE_URL + "/AddCampus",
-      campusData, {
+      campusData,
+      {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -97,7 +97,9 @@ export const updateCampus = async (
 
 export const deleteCampus = async (id: number): Promise<ApiResponse> => {
   try {
-    const response = await api.delete<ApiResponse>(`${BASE_URL}/DeleteCampus/${id}`);
+    const response = await api.delete<ApiResponse>(
+      `${BASE_URL}/DeleteCampus/${id}`
+    );
     return response.data;
   } catch (error: any) {
     console.error("Error deleting campus:", error);

@@ -1,4 +1,3 @@
-// ClassStudentListTable.tsx
 "use client";
 
 import {
@@ -18,6 +17,7 @@ import { SponsorshipData } from "@/services/sponsorshipService";
 import { useEffect, useState } from "react";
 
 interface StudentListTableProps {
+  onStudentSelectionChange: (selectedStudents: { studentId: number; classId: number | null }[]) => void;
   onStudentSelectionChange: (selectedStudents: number[]) => void;
   sponsorship: SponsorshipData[];
 }
@@ -27,7 +27,7 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
   sponsorship,
 }) => {
   const [students, setStudents] = useState<StudentData[]>([]);
-  const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<{ studentId: number; classId: number | null }[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -54,6 +54,23 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
     onStudentSelectionChange(updatedSelection); // Pass array of objects to parent
   };
 
+
+  const handleCheckboxChange = (student: StudentData) => {
+    const isAlreadySelected = selectedStudents.some(
+      (s) => s.studentId === student.studentId
+    );
+    const updatedSelection = isAlreadySelected
+      ? selectedStudents.filter((s) => s.studentId !== student.studentId)
+      : [
+          ...selectedStudents,
+          { studentId: student.studentId, classId: student.classId ?? null },
+        ];
+
+    setSelectedStudents(updatedSelection);
+    onStudentSelectionChange(updatedSelection);
+  };
+  };
+
   const filteredStudents = students.filter(
     (student) =>
       (student.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -65,7 +82,7 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  console.log(paginatedStudents, "paginatedStudent Data");
+  
   const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
 
   return (
@@ -109,8 +126,10 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                 <TableCell>{student.phoneNumber}</TableCell>
                 <TableCell>{student.gender}</TableCell>
                 <TableCell>{student.className}</TableCell>
-                <TableCell>{student.dateOfBirth}</TableCell>
-                <TableCell>{student.enrollmentDate}</TableCell>
+
+                <TableCell>{new Date(student.dateOfBirth).toLocaleDateString()}</TableCell>
+                <TableCell>{new Date(student.enrollmentDate).toLocaleDateString()}</TableCell>
+
                 <TableCell>
                   <Badge
                     variant="outline"

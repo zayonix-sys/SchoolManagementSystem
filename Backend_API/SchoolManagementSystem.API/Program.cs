@@ -204,12 +204,13 @@ void SeedDefaultData(SchoolContext context)
 
     if (!context.UserRoles.Any())
     {
+
         var defaultRole = new UserRole
         {
             RoleName = "Admin",
             RoleDescription = "Administrator role with full permissions",
             CreatedAt = DateTime.Now,
-            IsActive = true
+            IsActive = true,
         };
         context.UserRoles.Add(defaultRole);
         context.SaveChanges();
@@ -230,6 +231,7 @@ void SeedDefaultData(SchoolContext context)
             PasswordHash = "password", // Properly hash the password
             RoleId = adminRoleId,
             CampusId = Convert.ToInt32(campudId),
+            CreatedAt = DateTime.Now,
         };
         context.Users.Add(defaultUser);
         context.SaveChanges();

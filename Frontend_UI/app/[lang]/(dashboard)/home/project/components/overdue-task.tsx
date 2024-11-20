@@ -40,18 +40,24 @@ const OverdueTask = () => {
         const sponsorshipData = response.data || [];
         
         // Group sponsorships by sponsorName
-        const grouped = sponsorshipData.reduce((acc, item) => {
-          if (!acc.has(item.sponsorName)) {
-            acc.set(item.sponsorName, []);
-          }
-          acc.get(item.sponsorName)?.push(item);
-          return acc;
-        }, new Map());
+        const grouped = sponsorshipData.reduce(
+          (acc: Map<string, SponsorshipData[]>, item: SponsorshipData) => {
+            const sponsorKey = item.sponsorName || "N/A"; // Ensure key is always a string
+            if (!acc.has(sponsorKey)) {
+              acc.set(sponsorKey, []);
+            }
+            acc.get(sponsorKey)?.push(item);
+            return acc;
+          },
+          new Map()
+        );
 
         setGroupedSponsorships(grouped);
         setSponsorships(sponsorshipData);
+        setError(null);
       } catch (error) {
         console.error("Failed to load sponsorship data:", error);
+        setError("Failed to load sponsorship data. Please try again later.");
       }
     };
 
@@ -62,6 +68,9 @@ const OverdueTask = () => {
     <Card>
       <CardHeader className="flex-row justify-between items-center mb-0">
         <CardTitle> Sponsors </CardTitle>
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
       </CardHeader>
       <CardContent className="px-0 pb-0 overflow-x-auto">
         <Table>
@@ -105,6 +114,7 @@ const OverdueTask = () => {
                 </TableCell>
               </TableRow>
             ))}
+
           </TableBody>
         </Table>
       </CardContent>

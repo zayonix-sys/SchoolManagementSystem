@@ -102,7 +102,7 @@ const UserPermissionListTable = () => {
                 <div className="flex gap-2">
                   {item.canCreate && <Badge variant="outline">Create</Badge>}
                   {item.canRead && <Badge variant="outline">Read</Badge>}
-                  {item.canEdit && <Badge variant="outline">Update</Badge>}
+                  {item.canUpdate && <Badge variant="outline">Update</Badge>}
                   {item.canDelete && <Badge variant="outline">Delete</Badge>}
                 </div>
               </TableCell>

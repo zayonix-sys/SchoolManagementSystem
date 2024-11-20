@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image";
 import background from "@/public/images/auth/mountain.png"
-import VerfiyForm from "@/components/auth/verify-form";
+// import VerfiyForm from "@/components/auth/verify-form";
 
 const LoginPage = () => {
 
@@ -11,7 +11,7 @@ const LoginPage = () => {
         <Image src={background} alt="image" className="absolute top-0 left-0 w-full h-full" priority={true} />
         <div className="basis-full lg:basis-1/2 w-full  flex justify-end items-center relative lg:pr-12 xl:pr-20 2xl:pr-[110px] px-5">
           <div className="w-fit bg-card p-14  rounded-xl relative z-10 mx-3">
-            <VerfiyForm />
+            {/* <VerfiyForm /> */}
           </div>
         </div>
       </div>
