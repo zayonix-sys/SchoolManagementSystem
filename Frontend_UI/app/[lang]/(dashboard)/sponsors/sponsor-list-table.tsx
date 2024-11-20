@@ -30,7 +30,8 @@ const SponsorListTable: React.FC<SponsorListTableProps> = ({Sponsor}) => {
   // const [detailedSponsor, setDetailedSponsor] = useState<SponsorData | null>(null); 
   
   const filteredSponsors = (Sponsor as any[]).filter((sponsor) =>
-    sponsor?.sponsorName?.toLowerCase().includes(searchQuery.toLowerCase()) 
+    sponsor?.sponsorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    sponsor?.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;

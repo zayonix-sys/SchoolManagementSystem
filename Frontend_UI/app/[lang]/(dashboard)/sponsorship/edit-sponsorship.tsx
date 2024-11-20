@@ -190,10 +190,10 @@ const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({
                   <Icon icon="mdi:money" />
                 </InputGroupText>
                 <Input
-                  type="text"
+                  type="number"
                   placeholder="Enter Your Amount"
                   id="amount"
-                  {...register("amount")}
+                  {...register("amount", { valueAsNumber: true })}
                 />
               </InputGroup>
               {errors.amount && (

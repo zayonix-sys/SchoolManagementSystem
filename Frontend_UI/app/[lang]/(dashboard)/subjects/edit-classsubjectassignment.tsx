@@ -21,7 +21,7 @@ import {
   ClassroomData,
   fetchClassrooms,
   updateClassroom,
-} from "@/services/classroomService";
+} from "@/services/apis/_classroomService";
 import { ClassData, fetchClasses } from "@/services/ClassService";
 import { fetchSection, SectionData } from "@/services/SectionService";
 import {

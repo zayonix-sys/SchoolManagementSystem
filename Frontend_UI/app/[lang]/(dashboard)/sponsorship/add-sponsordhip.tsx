@@ -1,3 +1,4 @@
+// AddSponsorshipForm.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -33,11 +34,11 @@ import {
   addSponsorship,
   fetchSponsorship,
 } from "@/services/sponsorshipService";
+import { fetchSponsor, SponsorData } from "@/services/sponsorService";
+import ClassStudentListTable from "./student-class-wise";
+import { fetchStudents, StudentData } from "@/services/studentService";
 import ClassStudentListTable from "./student-class-wise";
 import { ClassData } from "@/services/ClassService";
-import { fetchSponsor, SponsorData } from "@/services/sponsorService";
-import { StudentData } from "@/services/studentService";
-
 
 
 const sponsorshipSchema = z.object({
@@ -51,18 +52,17 @@ const sponsorshipSchema = z.object({
   studentId: z.number().optional(),
   sponsorId: z.number().optional(),
 });
-
 type SponsorshipFormValues = z.infer<typeof sponsorshipSchema>;
 
 interface SponsorshipListTableProps {
   sponsorship: SponsorshipData[];
 }
 
-
-const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({ sponsorship }) =>{
-  const [classes, setClasses] = useState<ClassData[]>([]); 
-  const [sponsors, setSponsors] = useState<SponsorData[]>([]); 
-  const [classId, setClassId] = useState<number | null>(null);
+const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
+  sponsorship,
+}) => {
+  const [students, setStudents] = useState<StudentData[]>([]);
+  const [sponsors, setSponsors] = useState<SponsorData[]>([]);
   const [sponsorId, setSponsorId] = useState<number | null>(null);
   const [frequency, setFrequency] = useState<number>(1);
   const [selectedStudents, setSelectedStudents] = useState<{ studentId: number; classId: number | null }[]>([]);
@@ -87,11 +87,13 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({ sponsorship }
       try {
         const sponsorResponse = await fetchSponsor();
         setSponsors(sponsorResponse.data as SponsorData[]);
-
         const sponsorshipResponse = await fetchSponsorship();
         const sponsoredStudentIds = sponsorshipResponse.data.map(
           (s: SponsorshipData) => s.studentId
         );
+        setStudents(
+          (await fetchStudents()).data.filter(
+            (student) => !sponsoredStudentIds.includes(student.studentId)
 
         const studentResponse = await fetchStudents();
         setStudents(
@@ -162,17 +164,15 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({ sponsorship }
       <SheetTrigger asChild>
         <div className="flex justify-end space-x-4 m-2">
           <Button>
-            <span className="text-xl mr-1">
-              <Icon
-                icon="heroicons:building-library-solid"
-                className="w-6 h-6 mr-2"
-              />
-            </span>
+            <Icon
+              icon="heroicons:building-library-solid"
+              className="w-6 h-6 mr-2"
+            />
             Add Sponsorship
           </Button>
         </div>
       </SheetTrigger>
-      <SheetContent className="" side='top'>
+      <SheetContent side="top">
         <SheetHeader>
           <SheetTitle>Add New Sponsorship</SheetTitle>
         </SheetHeader>
@@ -198,7 +198,7 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({ sponsorship }
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="amount">Enter Amount</Label>
+              <Label>Total Amount</Label>
               <InputGroup merged>
                 <InputGroupText>
                   <Icon icon="mdi:currency-usd" />
@@ -229,6 +229,7 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({ sponsorship }
                 <p className="text-red-500">{errors.startDate.message}</p>
               )}
             </div>
+
             <div className="col-span-2">
               <ClassStudentListTable
                 sponsorship={sponsorship}

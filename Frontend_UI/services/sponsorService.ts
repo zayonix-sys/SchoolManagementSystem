@@ -1,20 +1,20 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface SponsorData {
   sponsorId?: number;
   sponsorName?: string;
   email?: string;
-  gender?:string;
+  gender?: string;
   phoneNumber?: string;
-  country?:string;
+  country?: string;
   state?: string;
-  city?:string;
-  occupation?:string;
+  city?: string;
+  occupation?: string;
   postalCode?: number;
   address?: string;
-  isActive?: boolean;      
+  isActive?: boolean;
 }
 
 const BASE_URL = "/Sponsors";
@@ -29,7 +29,9 @@ export const fetchSponsor = async (): Promise<ApiResponse> => {
   }
 };
 
-export const addSponsor = async (SponsorData: SponsorData): Promise<ApiResponse> => {
+export const addSponsor = async (
+  SponsorData: SponsorData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddSponsor`,

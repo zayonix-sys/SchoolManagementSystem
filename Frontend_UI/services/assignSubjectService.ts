@@ -1,6 +1,6 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface AssignSubjectData {
   classSubjectId?: number;
@@ -15,7 +15,9 @@ const BASE_URL = "/ClassSubjectAssignment";
 
 export const fetchAssignSubject = async (): Promise<ApiResponse> => {
   try {
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetAllClassSubjectAssignment`);
+    const response = await api.get<ApiResponse>(
+      `${BASE_URL}/GetAllClassSubjectAssignment`
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to fetch class subject assignments:", error);
@@ -23,7 +25,9 @@ export const fetchAssignSubject = async (): Promise<ApiResponse> => {
   }
 };
 
-export const addClassSubjectAssignment = async (AssignSubjectData: AssignSubjectData): Promise<ApiResponse> => {
+export const addClassSubjectAssignment = async (
+  AssignSubjectData: AssignSubjectData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddClassSubjectAssignment`,
@@ -51,7 +55,9 @@ export const updateClassSubjectAssignment = async (
   }
 };
 
-export const deleteClassSubjectAssignment = async (id: number): Promise<ApiResponse> => {
+export const deleteClassSubjectAssignment = async (
+  id: number
+): Promise<ApiResponse> => {
   try {
     const response = await api.delete<ApiResponse>(
       `${BASE_URL}/DeleteClassSubjectAssignment?classId=${id}`

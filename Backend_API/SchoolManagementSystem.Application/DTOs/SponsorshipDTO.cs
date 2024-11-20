@@ -2,9 +2,9 @@
 {
     public class SponsorshipDTO
     {
-        public int SponsorshipId { get; set; }
+        public int? SponsorshipId { get; set; }
         public decimal Amount { get; set; }
-        public string? Frequency { get; set; }
+        public int Frequency { get; set; }
         public DateOnly StartDate { get; set; }
         public int ClassId { get; set; }
         public int StudentId { get; set; }

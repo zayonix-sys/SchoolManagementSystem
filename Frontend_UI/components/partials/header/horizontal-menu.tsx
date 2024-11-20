@@ -5,7 +5,7 @@ import { cn, translate } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import image from "@/public/images/all-img/man-with-laptop.png";
+import image from "@/public/images/all-img/admin.png";
 import Image from "next/image";
 export default function MainMenu({ trans }: { trans: any }) {
   const menus = menusConfig.mainNav || [];
@@ -173,6 +173,7 @@ const ListItem = React.forwardRef<HTMLAnchorElement, any>(
   ) => (
     <NavigationMenu.Link asChild>
       <Link
+        href={childItem.href}
         className={cn(
           " select-none   text-sm  text-default-700 rounded-md flex  items-center gap-2 mb-4 last:mb-0  leading-none no-underline outline-none transition-colors  hover:text-primary  focus:text-primary",
           className

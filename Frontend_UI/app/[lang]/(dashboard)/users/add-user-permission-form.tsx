@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { number, z } from "zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Sheet,
   SheetClose,
@@ -25,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { addUserPermission } from "@/services/userPermissionService";
+import { Toast } from "@/components/ui/toast";
 
 const userPermissionSchema = z.object({
   entities: z.array(z.string()).min(1, "At least one entity must be selected"),
@@ -93,7 +95,9 @@ export default function AddUserPermission() {
 
   useEffect(() => {
     if (roleId) {
-      const usersByRole = allUsers.filter((user) => user.roleId === roleId);
+      const usersByRole = allUsers.filter(
+        (user) => user.roleId === roleId
+      );
       setFilteredUsers(usersByRole);
     } else {
       setFilteredUsers([]);

@@ -1,6 +1,6 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface UserData {
   userId?: number;
@@ -56,5 +56,15 @@ export const Login = async (userData: UserData): Promise<ApiResponse> => {
   } catch (error) {
     console.error("Failed to login:", error);
     throw new Error("Failed to login");
+  }
+};
+
+export const fetchAllUser = async (): Promise<ApiResponse> => {
+  try {
+    const response = await api.get<ApiResponse>(`${BASE_URL}/GetAllUsers`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch Users:", error);
+    throw new Error("Failed to fetch Users");
   }
 };

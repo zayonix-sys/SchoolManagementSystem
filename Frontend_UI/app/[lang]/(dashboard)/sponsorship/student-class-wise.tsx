@@ -1,5 +1,4 @@
 "use client";
-"use client";
 
 import {
   Table,
@@ -17,10 +16,12 @@ import { StudentData, fetchStudents } from "@/services/studentService";
 import { SponsorshipData } from "@/services/sponsorshipService";
 import { useEffect, useState } from "react";
 
+interface StudentListTableProps {
   onStudentSelectionChange: (selectedStudents: { studentId: number; classId: number | null }[]) => void;
   onStudentSelectionChange: (selectedStudents: number[]) => void;
   sponsorship: SponsorshipData[];
 }
+
 const ClassStudentListTable: React.FC<StudentListTableProps> = ({
   onStudentSelectionChange,
   sponsorship,
@@ -28,16 +29,31 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
   const [students, setStudents] = useState<StudentData[]>([]);
   const [selectedStudents, setSelectedStudents] = useState<{ studentId: number; classId: number | null }[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  useEffect(() => {
     const fetchData = async () => {
       const data = await fetchStudents();
       setStudents(data?.data || []);
     };
     fetchData();
   }, []);
+
+  const handleCheckboxChange = (student: StudentData) => {
+    const updatedSelection = selectedStudents.some(
+      (s) => s.studentId === student.studentId
+    )
+      ? selectedStudents.filter((s) => s.studentId !== student.studentId)
+      : [
+          ...selectedStudents,
+          { studentId: student.studentId, classId: student.classId },
+        ];
+
+    setSelectedStudents(updatedSelection);
+    onStudentSelectionChange(updatedSelection); // Pass array of objects to parent
+  };
+
 
   const handleCheckboxChange = (student: StudentData) => {
     const isAlreadySelected = selectedStudents.some(
@@ -59,16 +75,17 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
     (student) =>
       (student.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         student.lastName?.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      !sponsorship.some((s) => s.studentId === student.studentId) 
+      !sponsorship.some((s) => s.studentId === student.studentId)
   );
 
   const paginatedStudents = filteredStudents.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
-
+  );
+  
   const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
-  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
 
+  return (
     <div>
       <Input
         placeholder="Search by Student Name..."
@@ -109,8 +126,10 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                 <TableCell>{student.phoneNumber}</TableCell>
                 <TableCell>{student.gender}</TableCell>
                 <TableCell>{student.className}</TableCell>
+
                 <TableCell>{new Date(student.dateOfBirth).toLocaleDateString()}</TableCell>
                 <TableCell>{new Date(student.enrollmentDate).toLocaleDateString()}</TableCell>
+
                 <TableCell>
                   <Badge
                     variant="outline"
@@ -137,7 +156,6 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-        >
         >
           Previous
         </button>

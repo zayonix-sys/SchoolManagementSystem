@@ -17,7 +17,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ClassroomData, updateClassroom } from "@/services/classroomService";
+import {
+  ClassroomData,
+  useUpdateClassroomMutation,
+} from "@/services/apis/classroomService";
 
 // Define Zod schema for class form validation
 const classroomSchema = z.object({
@@ -28,10 +31,22 @@ const classroomSchema = z.object({
 
 type ClassroomFormValues = z.infer<typeof classroomSchema>;
 
-export default function EditClassroom({ classroomData }: { classroomData: ClassroomData }) {
-  const { classroomId, campusId, roomNumber, building, capacity } = classroomData;
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ClassroomFormValues>({
+export default function EditClassroom({
+  classroomData,
+  refetch,
+}: {
+  classroomData: ClassroomData;
+  refetch: () => void;
+}) {
+  const { classroomId, campusId, roomNumber, building, capacity } =
+    classroomData;
+  const [updateClassroom] = useUpdateClassroomMutation();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ClassroomFormValues>({
     resolver: zodResolver(classroomSchema),
     defaultValues: {
       roomNumber,
@@ -45,9 +60,12 @@ export default function EditClassroom({ classroomData }: { classroomData: Classr
       const updatedClassroom = { ...data, classroomId, campusId };
       const response = await updateClassroom(updatedClassroom);
 
-      if (response.success) {
-        toast.success(`${updatedClassroom.roomNumber} Classroom Updated successfully!`);
+      if (response.data?.success) {
+        toast.success(
+          `${updatedClassroom.roomNumber} Classroom Updated successfully!`
+        );
         reset();
+        refetch();
       } else {
         toast.error("Failed to update the classroom");
       }
@@ -66,11 +84,7 @@ export default function EditClassroom({ classroomData }: { classroomData: Classr
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          className="h-7 w-7"
-        >
+        <Button size="icon" variant="outline" className="h-7 w-7">
           <Icon icon="heroicons:pencil" className="h-4 w-4" />
         </Button>
       </SheetTrigger>
@@ -78,7 +92,10 @@ export default function EditClassroom({ classroomData }: { classroomData: Classr
         <SheetHeader>
           <SheetTitle>Edit Classroom</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-between" style={{ height: "calc(100vh - 80px)" }}>
+        <div
+          className="flex flex-col justify-between"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
           <div className="py-5">
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
@@ -89,7 +106,11 @@ export default function EditClassroom({ classroomData }: { classroomData: Classr
                     placeholder="Room Number"
                     {...register("roomNumber")}
                   />
-                  {errors.roomNumber && <p className="text-destructive">{errors.roomNumber.message}</p>}
+                  {errors.roomNumber && (
+                    <p className="text-destructive">
+                      {errors.roomNumber.message}
+                    </p>
+                  )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
                   <Input
@@ -97,7 +118,11 @@ export default function EditClassroom({ classroomData }: { classroomData: Classr
                     placeholder="Capacity"
                     {...register("capacity", { valueAsNumber: true })}
                   />
-                  {errors.capacity && <p className="text-destructive">{errors.capacity.message}</p>}
+                  {errors.capacity && (
+                    <p className="text-destructive">
+                      {errors.capacity.message}
+                    </p>
+                  )}
                 </div>
                 <div className="col-span-2">
                   <Input
@@ -105,7 +130,11 @@ export default function EditClassroom({ classroomData }: { classroomData: Classr
                     placeholder="Building"
                     {...register("building")}
                   />
-                  {errors.building && <p className="text-destructive">{errors.building.message}</p>}
+                  {errors.building && (
+                    <p className="text-destructive">
+                      {errors.building.message}
+                    </p>
+                  )}
                 </div>
                 <div className="col-span-2">
                   <Button type="submit">Update</Button>

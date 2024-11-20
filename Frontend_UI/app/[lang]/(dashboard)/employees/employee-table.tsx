@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { fetchSection } from "@/services/SectionService";
+//import { fetchSection } from "@/services/SectionService";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { deleteEmployee, EmployeesData } from "@/services/EmployeeService";
@@ -97,7 +97,7 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
     try {
       await deleteEmployee(id);
       toast.success("Employee deleted successfully");
-      fetchSection();
+      //fetchSection();
       setEmployeeToDelete(null);
     } catch (error) {
       console.error("Error deleting Employee:", error);
