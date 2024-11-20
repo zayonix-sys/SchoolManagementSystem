@@ -1,10 +1,10 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface UserPermissionData {
   permissionId: number;
-  roleId: number ;
+  roleId: number;
   roleName: string;
   userId: number;
   userName: string;
@@ -21,9 +21,14 @@ export interface UserPermissionData {
 
 const BASE_URL = "/UserPermission";
 
-export const addUserPermission = async (userPermissionData: UserPermissionData): Promise<ApiResponse> => {
+export const addUserPermission = async (
+  userPermissionData: UserPermissionData
+): Promise<ApiResponse> => {
   try {
-    const response = await api.post<ApiResponse>(`${BASE_URL}/AddUserPermission`, userPermissionData);
+    const response = await api.post<ApiResponse>(
+      `${BASE_URL}/AddUserPermission`,
+      userPermissionData
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to Add User permission:", error);
@@ -38,7 +43,8 @@ export const getUserPermission = async (): Promise<ApiResponse> => {
     // if (!authToken) {
     //   throw new Error("No authentication token found. Please log in.");
     // }
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetUserPermissions`,
+    const response = await api.get<ApiResponse>(
+      `${BASE_URL}/GetUserPermissions`,
       {
         // headers: {
         //   Authorization: `Bearer ${authToken}`,
@@ -52,11 +58,13 @@ export const getUserPermission = async (): Promise<ApiResponse> => {
   }
 };
 
-export const fetchPermissionByUserId = async (id: number): Promise<ApiResponse> => {
+export const fetchPermissionByUserId = async (
+  id: number
+): Promise<ApiResponse> => {
   try {
     const response = await api.get<ApiResponse>(
       `${BASE_URL}/GetUserPermissionByUserId?userId=${id}`
-    );    
+    );
     return response.data;
   } catch (error: any) {
     console.error(`Failed to fetch user permission by userId`, error);

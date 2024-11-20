@@ -6,7 +6,7 @@ const BlankPage = () => {
   return (
     <>
       {/* <Campus /> */}
-      <ProjectPageView trans={{}}/>
+      <ProjectPageView trans={{}} />
     </>
   );
 };

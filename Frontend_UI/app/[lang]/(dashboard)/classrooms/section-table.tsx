@@ -12,70 +12,44 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { deleteSection, fetchSection, SectionData } from "@/services/SectionService";
 import EditSection from "./edit-section";
-import { ClassData } from "@/services/ClassService";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
+import {
+  SectionData,
+  useFetchSectionQuery,
+  useDeleteSectionMutation,
+} from "@/services/apis/sectionService";
 
 const SectionListTable = () => {
-  const [sections, setSections] = useState<SectionData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [sectionToDelete, setSectionToDelete] = useState<number | null>(null);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 10;
 
-  
-  useEffect(() => {
-    const fetchSectionsData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchSection();
-        setSections(response.data as SectionData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { data, isLoading, refetch } = useFetchSectionQuery();
+  const sectionsData = data?.data as SectionData[];
+  const [deleteSection] = useDeleteSectionMutation();
 
-    fetchSectionsData();
-  }, []);
+  const handleRefetch = () => {
+    refetch();
+  };
 
   // Apply search filter and pagination
-  const filteredSections = sections.filter((section) =>
+  const filteredSections = sectionsData?.filter((section) =>
     section.sectionName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSections.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredSections?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
-  const totalPages = Math.ceil(filteredSections.length / itemsPerPage);
-
-  const handleSelectAll = () => {
-    if (selectedRows.length === currentItems.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(
-        currentItems.map((row) => row.classId!).filter((id) => id !== null && id !== undefined)
-      );
-    }
-  };
-
-  const handleRowSelect = (id: number) => {
-    const updatedSelectedRows = [...selectedRows];
-    if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
-    } else {
-      updatedSelectedRows.push(id);
-    }
-    setSelectedRows(updatedSelectedRows);
-  };
+  const totalPages = Math.ceil(filteredSections?.length / itemsPerPage);
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -97,6 +71,7 @@ const SectionListTable = () => {
       await deleteSection(id);
       toast.success("Section deleted successfully");
       setSectionToDelete(null); // Close dialog after successful deletion
+      handleRefetch();
     } catch (error) {
       console.error("Error deleting Section:", error);
       toast.error("Failed to delete Section");
@@ -125,7 +100,7 @@ const SectionListTable = () => {
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item) => (
+          {currentItems?.map((item) => (
             <TableRow
               key={item.sectionId}
               className="hover:bg-default-200"
@@ -145,7 +120,7 @@ const SectionListTable = () => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditSection sectionData={item} />
+                  <EditSection sectionData={item} refetch={handleRefetch} />
                   <Button
                     size="icon"
                     variant="outline"

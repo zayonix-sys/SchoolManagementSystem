@@ -1,5 +1,5 @@
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface ApplicantApplicationDetail {
   // Application Details
@@ -81,10 +81,13 @@ export const getApplicants = async (): Promise<ApiResponse> => {
     if (!authToken) {
       throw new Error("No authentication token found. Please log in.");
     }
-    const response = await api.get<ApiResponse>(BASE_URL + "/GetAllApplicants",
-      {headers: {
-        Authorization: `Bearer ${authToken}`,
-      },}
+    const response = await api.get<ApiResponse>(
+      BASE_URL + "/GetAllApplicants",
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
     );
     return response.data;
   } catch (error: any) {
@@ -105,12 +108,10 @@ export const addApplicant = async (dto: any): Promise<ApiResponse> => {
     throw error;
   }
 };
-export const updateApplicant = async (
-  dto: any
-): Promise<ApiResponse> => {
+export const updateApplicant = async (dto: any): Promise<ApiResponse> => {
   try {
     console.log(dto);
-    
+
     const response = await api.put<ApiResponse>(
       `${BASE_URL}/UpdateApplicant`,
       mapFormDataToDto(dto)
@@ -133,12 +134,15 @@ export const deleteApplicant = async (id: number): Promise<ApiResponse> => {
   }
 };
 
-export const applicationStatus = async (id: number, status: string): Promise<ApiResponse> => {
+export const applicationStatus = async (
+  id: number,
+  status: string
+): Promise<ApiResponse> => {
   try {
     const app = {
       applicationId: id,
-      applicationStatus: status
-    }
+      applicationStatus: status,
+    };
     const response = await api.put<ApiResponse>(
       `${BASE_URL}/ApplicationStatus`,
       app
@@ -147,4 +151,4 @@ export const applicationStatus = async (id: number, status: string): Promise<Api
   } catch (error) {
     throw new Error(`Failed to Update Application Status`);
   }
-}
+};

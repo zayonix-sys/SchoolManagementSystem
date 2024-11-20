@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { ClassData } from "@/services/ClassService"; // Replace with actual service import
 import ClassListTable from "./class-table";
-import { ClassroomData } from "@/services/classroomService";
+import { ClassroomData } from "@/services/apis/_classroomService";
 import ClassroomListTable from "./classroom-table";
 
 // This component allows you to view class details in a sheet.

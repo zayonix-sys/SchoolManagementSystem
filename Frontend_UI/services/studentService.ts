@@ -1,6 +1,6 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface StudentData {
   studentId: number;
@@ -35,8 +35,9 @@ export const getStudentByClassWise = async (
   }
 };
 
-
-export const updateStudent = async (StudentData: StudentData): Promise<ApiResponse> => {
+export const updateStudent = async (
+  StudentData: StudentData
+): Promise<ApiResponse> => {
   try {
     const response = await api.put<ApiResponse>(
       `${BASE_URL}/UpdateStudentData`,
@@ -69,4 +70,4 @@ export const fetchStudents = async (): Promise<ApiResponse> => {
     console.error("Failed to fetch Students:", error);
     throw new Error("Failed to fetch Students");
   }
-}
+};

@@ -1,28 +1,30 @@
 "use client";
 import { api } from "@/config/axios.config";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface SponsorshipData {
   sponsorshipId: number;
-  sponsorId:number;
-  studentId:number;
-  classId:number;
-  className?:string;
-  studentName?:string;
-  sponsorName?:string ;
-  gender?:string;
+  sponsorId: number;
+  studentId: number;
+  classId: number;
+  className?: string;
+  studentName?: string;
+  sponsorName?: string;
+  gender?: string;
   phoneNumber?: string;
-  amount:number;
-  frequency?:number;
+  amount: number;
+  frequency?: number;
   startDate?: string;
-  isActive?: boolean;      
+  isActive?: boolean;
 }
 
 const BASE_URL = "/Sponsorship";
 
 export const fetchSponsorship = async (): Promise<ApiResponse> => {
   try {
-    const response = await api.get<ApiResponse>(`${BASE_URL}/GetAllSponsorships`);
+    const response = await api.get<ApiResponse>(
+      `${BASE_URL}/GetAllSponsorships`
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to fetch Sponsorships:", error);
@@ -30,7 +32,9 @@ export const fetchSponsorship = async (): Promise<ApiResponse> => {
   }
 };
 
-export const addSponsorship = async (SponsorshipData: SponsorshipData): Promise<ApiResponse> => {
+export const addSponsorship = async (
+  SponsorshipData: SponsorshipData
+): Promise<ApiResponse> => {
   try {
     const response = await api.post<ApiResponse>(
       `${BASE_URL}/AddSponsorship`,
@@ -69,7 +73,9 @@ export const deleteSponsorship = async (id: number): Promise<ApiResponse> => {
     throw new Error(`Failed to delete Sponsorship`);
   }
 };
-export const fetchStudentBySponsorId = async (id: number): Promise<ApiResponse> => {
+export const fetchStudentBySponsorId = async (
+  id: number
+): Promise<ApiResponse> => {
   try {
     const response = await api.get<ApiResponse>(
       `${BASE_URL}/GetAllStudentBySponsorId?sponsorId=${id}`

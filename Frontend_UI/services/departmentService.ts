@@ -1,6 +1,6 @@
 import { api } from "@/config/axios.config";
 import { CampusData } from "./campusService";
-import { ApiResponse } from "./apiResponse";
+import { ApiResponse } from "./apis/apiResponse";
 
 export interface DepartmentData {
   departmentId?: number | null;
@@ -71,7 +71,9 @@ export const getDepartmentById = async (id: number | undefined) => {
 
 export const deleteDepartment = async (id: number): Promise<ApiResponse> => {
   try {
-    const response = await api.delete<ApiResponse>(`${BASE_URL}/DeleteDepartment/${id}`);
+    const response = await api.delete<ApiResponse>(
+      `${BASE_URL}/DeleteDepartment/${id}`
+    );
     return response.data;
   } catch (error: any) {
     console.error("Error deleting department:", error);

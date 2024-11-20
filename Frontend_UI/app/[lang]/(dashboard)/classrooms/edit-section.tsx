@@ -17,7 +17,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { SectionData, updateSection } from "@/services/SectionService";
+import {
+  SectionData,
+  useUpdateSectionMutation,
+} from "@/services/apis/sectionService";
 
 const sectionSchema = z.object({
   sectionName: z.string().min(1, "Class Name is required"),
@@ -26,10 +29,22 @@ const sectionSchema = z.object({
 
 type ClassFormValues = z.infer<typeof sectionSchema>;
 
-export default function EditSection({ sectionData }: { sectionData: SectionData }) {
+export default function EditSection({
+  sectionData,
+  refetch,
+}: {
+  sectionData: SectionData;
+  refetch: () => void;
+}) {
   const { sectionId, capacity, sectionName } = sectionData;
+  const [editSection] = useUpdateSectionMutation();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ClassFormValues>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ClassFormValues>({
     resolver: zodResolver(sectionSchema),
     defaultValues: {
       sectionName,
@@ -39,12 +54,16 @@ export default function EditSection({ sectionData }: { sectionData: SectionData 
 
   const onSubmit: SubmitHandler<ClassFormValues> = async (data) => {
     try {
-      const updatedSection = { ...data, sectionId };
-      const response = await updateSection(updatedSection);
+      const updatedSection = { ...data, sectionId: sectionId ?? 0 };
+      //const response = await updateSection(updatedSection);
+      const response = await editSection(updatedSection);
 
-      if (response.success) {
-        toast.success(`${updatedSection.sectionName} Section Updated successfully!`);
+      if (response.data?.success) {
+        toast.success(
+          `${updatedSection.sectionName} Section Updated successfully!`
+        );
         reset();
+        refetch();
       } else {
         toast.error("Failed to update the Section");
       }
@@ -63,19 +82,18 @@ export default function EditSection({ sectionData }: { sectionData: SectionData 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          className="h-7 w-7"
-        >
+        <Button size="icon" variant="outline" className="h-7 w-7">
           <Icon icon="heroicons:pencil" className="h-4 w-4" />
         </Button>
       </SheetTrigger>
       <SheetContent className="max-w-[736px]">
         <SheetHeader>
-          <SheetTitle>Edit Class</SheetTitle>
+          <SheetTitle>Edit Section</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-between" style={{ height: "calc(100vh - 80px)" }}>
+        <div
+          className="flex flex-col justify-between"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
           <div className="py-5">
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
@@ -86,7 +104,11 @@ export default function EditSection({ sectionData }: { sectionData: SectionData 
                     placeholder="Section Name"
                     {...register("sectionName")}
                   />
-                  {errors.sectionName && <p className="text-destructive">{errors.sectionName.message}</p>}
+                  {errors.sectionName && (
+                    <p className="text-destructive">
+                      {errors.sectionName.message}
+                    </p>
+                  )}
                 </div>
                 <div className="col-span-2">
                   <Input
@@ -94,7 +116,11 @@ export default function EditSection({ sectionData }: { sectionData: SectionData 
                     placeholder="Capacity"
                     {...register("capacity", { valueAsNumber: true })}
                   />
-                  {errors.capacity && <p className="text-destructive">{errors.capacity.message}</p>}
+                  {errors.capacity && (
+                    <p className="text-destructive">
+                      {errors.capacity.message}
+                    </p>
+                  )}
                 </div>
                 <div className="col-span-2">
                   <Button type="submit">Update</Button>
