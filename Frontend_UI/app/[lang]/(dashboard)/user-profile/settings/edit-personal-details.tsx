@@ -12,7 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useState } from "react";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, Link } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -21,10 +21,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
+import { Icon } from "@iconify/react";
 const PersonalDetails = () => {
   const [date, setDate] = useState<Date | undefined>(undefined);
 
   return (
+    <Sheet>
+       <SheetTrigger asChild>
+        <Button size="icon" variant="outline" className="h-7 w-7">
+        {/* <Link href="/user-profile/settings"> */}
+          <Icon className="w-4 h-4 ltr:mr-1 rtl:ml-1" icon="heroicons:pencil-square" />
+                Edit
+              {/* </Link> */}
+        </Button>
+      </SheetTrigger>
     <Card className="rounded-t-none pt-6">
       <CardContent>
         <div className="grid grid-cols-12 md:gap-x-12 gap-y-5">
@@ -181,6 +192,7 @@ const PersonalDetails = () => {
         </div>
       </CardContent>
     </Card>
+    </Sheet>
   );
 };
 

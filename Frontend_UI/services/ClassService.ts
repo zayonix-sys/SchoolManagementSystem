@@ -6,7 +6,7 @@ export interface ClassData {
   classId?: number; 
   className?: string;
   classDescription?: string;
-  capacity: number;
+  capacity?: number;
   createdAt?: Date; 
   createdBy?: number;
   updatedBy?: number;

@@ -1,4 +1,3 @@
-// AddSponsorshipForm.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Icon } from "@iconify/react";
 import { z } from "zod";
-
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -31,15 +29,14 @@ import {
 
 import {
   SponsorshipData,
+  SponsorshipDataDetails,
   addSponsorship,
   fetchSponsorship,
 } from "@/services/sponsorshipService";
-import { fetchSponsor, SponsorData } from "@/services/sponsorService";
-import ClassStudentListTable from "./student-class-wise";
 import { fetchStudents, StudentData } from "@/services/studentService";
-import ClassStudentListTable from "./student-class-wise";
 import { ClassData } from "@/services/ClassService";
-
+import ClassStudentListTable from "./student-class-wise";
+import { SponsorData } from "@/services/apis/sponsorService";
 
 const sponsorshipSchema = z.object({
   amount: z.string().min(1, "Please Enter Correct Amount").optional(),
@@ -48,29 +45,30 @@ const sponsorshipSchema = z.object({
     .transform((val) => new Date(val))
     .optional(),
   frequency: z.string().min(1, "Frequency is required").optional(),
-  classId: z.number().optional(),
-  studentId: z.number().optional(),
   sponsorId: z.number().optional(),
 });
+
 type SponsorshipFormValues = z.infer<typeof sponsorshipSchema>;
 
 interface SponsorshipListTableProps {
   sponsorship: SponsorshipData[];
+  sponsor: SponsorData[];
+  refetch: () => void;
 }
 
 const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
-  sponsorship,
+  sponsorship,sponsor,refetch
 }) => {
   const [students, setStudents] = useState<StudentData[]>([]);
-  const [sponsors, setSponsors] = useState<SponsorData[]>([]);
   const [sponsorId, setSponsorId] = useState<number | null>(null);
   const [frequency, setFrequency] = useState<number>(1);
-  const [selectedStudents, setSelectedStudents] = useState<{ studentId: number; classId: number | null }[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<{
+    studentId: number;
+    classId: number | null;
+  }[]>([]);
 
   const fixedAmountPerStudent = 1500;
-
-  const totalExpense =
-    selectedStudents.length * fixedAmountPerStudent * frequency;
+  const totalExpense = selectedStudents.length * fixedAmountPerStudent * frequency;
 
   const {
     register,
@@ -85,15 +83,10 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sponsorResponse = await fetchSponsor();
-        setSponsors(sponsorResponse.data as SponsorData[]);
         const sponsorshipResponse = await fetchSponsorship();
         const sponsoredStudentIds = sponsorshipResponse.data.map(
-          (s: SponsorshipData) => s.studentId
+          (s: SponsorshipDataDetails) => s.studentId
         );
-        setStudents(
-          (await fetchStudents()).data.filter(
-            (student) => !sponsoredStudentIds.includes(student.studentId)
 
         const studentResponse = await fetchStudents();
         setStudents(
@@ -106,14 +99,15 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
         toast.error("Error fetching data");
       }
     };
-
     fetchData();
   }, []);
 
   const handleFrequencyChange = (value: string) => setFrequency(Number(value));
 
-  const handleStudentSelectionChange = (selectedStudents: { studentId: number; classId: number | null }[]) => {
-    setSelectedStudents(selectedStudents);
+  const handleStudentSelectionChange = (
+    selectedStudent: { studentId: number; classId: number }
+  ) => {
+    setSelectedStudents([...selectedStudents, selectedStudent]);
     console.log("Selected Students:", selectedStudents);
   };
 
@@ -123,37 +117,46 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
       return;
     }
 
-    const combinedData = selectedStudents
-      .map((selectedStudent) => {
-        const student = students.find((s) => s.studentId === selectedStudent.studentId);
+    let details = selectedStudents.map((selectedStudent) => {
+      const student = students.find(
+        (s) => s.studentId === selectedStudent.studentId
+      );
 
-        if (!student) {
-          toast.error(`Student with ID ${selectedStudent.studentId} not found`);
-          return null;
-        }
-
+      const perStudentAmount = fixedAmountPerStudent * frequency;
+      if(student){
         return {
-          sponsorshipId: 0,
-          sponsorId,
+          studentId: student.studentId,
           classId: student.classId ?? 0,
-          studentId: selectedStudent.studentId,
-          amount: fixedAmountPerStudent * frequency,
-          startDate: data.startDate,
-          frequency,
+          amount: perStudentAmount / selectedStudents.length,
         };
-      })
-      .filter(Boolean);
+      }
+
+      return null; // If student not found or classId is not provided
+    }).filter(Boolean);
+
+    let combineData = {
+      sponsorshipId: 0, // Assuming ID is auto-generated server-side
+      sponsorId,
+      amount: totalExpense, // Total amount for all students combined
+      startDate: data.startDate,
+      frequency,
+      details
+    }
+
+    console.log("Submitting data:", combineData);
+    if (combineData != null) {
+      return;
+    }
 
     try {
-      for (const sponsorship of combinedData) {
-        const response = await addSponsorship(sponsorship!); // `!` since we filtered `null` earlier
-        if (response.success) {
-          toast.success(`Sponsorship for student added successfully!`);
-        } else {
-          toast.error(`Error: ${response.message || "Something went wrong"}`);
-        }
+      const response = await addSponsorship(combineData);
+      if (response.success) {
+        toast.success("Sponsorship added successfully!");
+        reset();
+        setSelectedStudents([]); // Clear selected students state
+      } else {
+        toast.error(response.message || "Something went wrong");
       }
-      reset();
     } catch (error) {
       toast.error("Error submitting sponsorships");
     }
@@ -168,7 +171,7 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
               icon="heroicons:building-library-solid"
               className="w-6 h-6 mr-2"
             />
-            Add Sponsorship
+            Add Sponsorship (1500 per-student)
           </Button>
         </div>
       </SheetTrigger>
@@ -185,12 +188,12 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
                   <SelectValue placeholder="Select Sponsor" />
                 </SelectTrigger>
                 <SelectContent>
-                  {sponsors.map((sponsor) => (
+                  {sponsor && sponsor?.map((sponsor) => (
                     <SelectItem
                       key={sponsor.sponsorId}
                       value={sponsor.sponsorId?.toString() ?? ""}
                     >
-                      {sponsor.sponsorName}
+                      {sponsor?.sponsorName}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -232,8 +235,10 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
 
             <div className="col-span-2">
               <ClassStudentListTable
-                sponsorship={sponsorship}
-                onStudentSelectionChange={handleStudentSelectionChange}
+                students={students}
+                selectedStudents={selectedStudents}
+                sponsorshipDetail={sponsorship}
+                handleStudentSelectionChange={handleStudentSelectionChange}
               />
             </div>
 

@@ -12,12 +12,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-//import { fetchSection } from "@/services/SectionService";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { deleteEmployee, EmployeesData } from "@/services/EmployeeService";
+
 import EditEmployee from "./edit-employee";
-import ConfirmationDialog from "../common/confirmation-dialog";
 import {
   Dialog,
   DialogClose,
@@ -25,13 +23,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { EmployeesData, useDeleteEmployeeMutation } from "@/services/apis/employeeService";
+import { RoleData } from "@/services/apis/employeeRoleService";
+import ConfirmationDialog from "../../common/confirmation-dialog";
 
 interface EmployeeListTableProps {
   employees: EmployeesData[];
+  employeeRole: RoleData[];
+  refetch: () => void;
 }
 
-const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees, refetch , employeeRole}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
@@ -39,45 +41,26 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
   const [detailedEmployee, setDetailedEmployee] =
     useState<EmployeesData | null>(null);
 
+    const [deleteEmployee] = useDeleteEmployeeMutation();
+ 
   // Apply search filter and pagination
-  const filteredSections = (employees as any[]).filter(
+  const filteredEmployees = (employees ?? []).filter(
     (employee) =>
       employee?.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      employee?.lastName?.toLowerCase().includes(searchQuery.toLowerCase())
+      employee?.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee?.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSections.slice(
+  const currentItems = filteredEmployees.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
 
-  const totalPages = Math.ceil(filteredSections.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredEmployees?.length / itemsPerPage);
 
-  const handleSelectAll = () => {
-    if (selectedRows.length === currentItems.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(
-        currentItems
-          .map((row) => row.employeeId!)
-          .filter((id) => id !== null && id !== undefined)
-      );
-    }
-  };
-
-  const handleRowSelect = (id: number) => {
-    const updatedSelectedRows = [...selectedRows];
-    if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
-    } else {
-      updatedSelectedRows.push(id);
-    }
-    setSelectedRows(updatedSelectedRows);
-  };
-
-  const handlePreviousPage = () => {
+    const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
@@ -97,8 +80,8 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
     try {
       await deleteEmployee(id);
       toast.success("Employee deleted successfully");
-      //fetchSection();
       setEmployeeToDelete(null);
+      refetch();
     } catch (error) {
       console.error("Error deleting Employee:", error);
       toast.error("Failed to delete Employee");
@@ -120,7 +103,7 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
       <div className="mb-4 flex justify-between items-center">
         <Input
           type="text"
-          placeholder="Search by Employee Name..."
+          placeholder="Search by Employee Name/Email.."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border p-2 rounded m-2"
@@ -143,7 +126,7 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
             <TableRow
               key={item.employeeId}
               className="hover:bg-default-200"
-              data-state={selectedRows.includes(item.employeeId!) && "selected"}
+              // data-state={selectedRows.includes(item.employeeId!) && "selected"}
             >
               <TableCell className="p-2.5">
                 {item.firstName} {item.lastName}
@@ -151,10 +134,8 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
               <TableCell className="p-2.5">{item.email}</TableCell>
               <TableCell className="p-2.5"> {item.departmentName}</TableCell>
               <TableCell className="p-2.5">
-                {" "}
-                {formatDate(item.hireDate)}
+                {item?.hireDate ? formatDate(item.hireDate) : "No Hire Date"}
               </TableCell>
-
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
@@ -175,7 +156,7 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
                   >
                     <Icon icon="heroicons:eye" className=" h-4 w-4" />
                   </Button>
-                  <EditEmployee employeeData={item} />
+                  <EditEmployee employeeData={item} refetch={refetch} employeeRole={employeeRole}/>
                   <Button
                     size="icon"
                     variant="outline"

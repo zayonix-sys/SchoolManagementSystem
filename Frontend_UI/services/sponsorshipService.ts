@@ -5,17 +5,27 @@ import { ApiResponse } from "./apis/apiResponse";
 export interface SponsorshipData {
   sponsorshipId?: number;
   sponsorId?:number;
-  studentId?:number;
-  classId?:number | null;
-  className?:string;
-  studentName?:string;
   sponsorName?:string ;
   gender?:string;
   phoneNumber?: string;
   amount?:number;
   frequency?:number;
   startDate?: string | Date;
-  isActive?: boolean;      
+  isActive?: boolean;   
+  details?: SponsorshipDataDetails[]   
+}
+
+export interface SponsorshipDataDetails {
+  sponsorshipDetailId: number;
+  sponsorshipId?:number;
+  studentId?:number;
+  classId?:number | null;
+  className?:string;
+  studentName?:string;
+ amount?:number;
+  isActive?: boolean;
+
+
 }
 
 const BASE_URL = "/Sponsorship";

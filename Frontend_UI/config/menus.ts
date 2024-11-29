@@ -42,7 +42,7 @@ export const menuItems: MenuItemProps[] = [
       },
       {
         title: "Manage Employees",
-        href: "/employees",
+        href: "/manage-employees",
         icon: Users,
       },
       {

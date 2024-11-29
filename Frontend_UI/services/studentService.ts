@@ -3,7 +3,7 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apis/apiResponse";
 
 export interface StudentData {
-  studentId: number;
+  studentId?: number;
   grNo: number;
   firstName?: string;
   lastName?: string;

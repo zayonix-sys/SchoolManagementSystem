@@ -17,72 +17,65 @@ import { SponsorshipData } from "@/services/sponsorshipService";
 import { useEffect, useState } from "react";
 
 interface StudentListTableProps {
-  onStudentSelectionChange: (selectedStudents: { studentId: number; classId: number | null }[]) => void;
   onStudentSelectionChange: (selectedStudents: number[]) => void;
   sponsorship: SponsorshipData[];
+  students: StudentData[]
+  selectedStudents: { studentId: number; classId: number | null }[];
+  handleStudentSelectionChange: (selectedStudent: { studentId: number; classId: number } | null) => void;
 }
 
 const ClassStudentListTable: React.FC<StudentListTableProps> = ({
   onStudentSelectionChange,
   sponsorship,
+  students,
+  selectedStudents,
+  handleStudentSelectionChange
 }) => {
-  const [students, setStudents] = useState<StudentData[]>([]);
-  const [selectedStudents, setSelectedStudents] = useState<{ studentId: number; classId: number | null }[]>([]);
+  // const [students, setStudents] = useState<StudentData[]>([]);
+  // const [selectedStudents, setSelectedStudents] = useState<{ studentId: number; classId: number | null }[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 4;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchStudents();
-      setStudents(data?.data || []);
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const data = await fetchStudents();
+  //     setStudents(data?.data || []);
+  //   };
+  //   fetchData();
+  // }, []);
 
-  const handleCheckboxChange = (student: StudentData) => {
-    const updatedSelection = selectedStudents.some(
-      (s) => s.studentId === student.studentId
-    )
-      ? selectedStudents.filter((s) => s.studentId !== student.studentId)
-      : [
-          ...selectedStudents,
-          { studentId: student.studentId, classId: student.classId },
-        ];
+  // Handle checkbox change
+  // const handleCheckboxChange = (student: StudentData) => {
+  //   const isAlreadySelected = selectedStudents.some(
+  //     (s) => s.studentId === student.studentId
+  //   );
+  //   const updatedSelection = isAlreadySelected
+  //     ? selectedStudents.filter((s) => s.studentId !== student.studentId)
+  //     : [
+  //         ...selectedStudents,
+  //         { studentId: student.studentId, classId: student.classId ?? null },
+  //       ];
 
-    setSelectedStudents(updatedSelection);
-    onStudentSelectionChange(updatedSelection); // Pass array of objects to parent
-  };
+  //   setSelectedStudents(updatedSelection);
+  //   onStudentSelectionChange(updatedSelection.map(s => s.studentId)); // Only pass studentIds to parent
+  // };
 
-
-  const handleCheckboxChange = (student: StudentData) => {
-    const isAlreadySelected = selectedStudents.some(
-      (s) => s.studentId === student.studentId
-    );
-    const updatedSelection = isAlreadySelected
-      ? selectedStudents.filter((s) => s.studentId !== student.studentId)
-      : [
-          ...selectedStudents,
-          { studentId: student.studentId, classId: student.classId ?? null },
-        ];
-
-    setSelectedStudents(updatedSelection);
-    onStudentSelectionChange(updatedSelection);
-  };
-  };
-
+  // Filter students by search query and exclude those with existing sponsorship
   const filteredStudents = students.filter(
     (student) =>
       (student.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        student.lastName?.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      !sponsorship.some((s) => s.studentId === student.studentId)
+        student.lastName?.toLowerCase().includes(searchQuery.toLowerCase()))
+      //    &&
+      // !sponsorship?.some((s) => s?.studentId === student?.studentId)
   );
 
+  // Paginate students
   const paginatedStudents = filteredStudents.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  
+
   const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
 
   return (
@@ -126,10 +119,8 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                 <TableCell>{student.phoneNumber}</TableCell>
                 <TableCell>{student.gender}</TableCell>
                 <TableCell>{student.className}</TableCell>
-
                 <TableCell>{new Date(student.dateOfBirth).toLocaleDateString()}</TableCell>
                 <TableCell>{new Date(student.enrollmentDate).toLocaleDateString()}</TableCell>
-
                 <TableCell>
                   <Badge
                     variant="outline"
@@ -144,7 +135,14 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                     checked={selectedStudents.some(
                       (s) => s.studentId === student.studentId
                     )}
-                    onChange={() => handleCheckboxChange(student)}
+                    onChange={() => {
+                      let foundStudent = selectedStudents.map(s => ({studentId: s.studentId, classId: s.classId})).find((s) => s.studentId === student.studentId)
+                      if(!foundStudent){
+                        return
+                      }
+
+                      handleStudentSelectionChange(foundStudent)
+                    }}
                   />
                 </TableCell>
               </TableRow>

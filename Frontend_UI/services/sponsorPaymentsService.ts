@@ -3,8 +3,9 @@ import { api } from "@/config/axios.config";
 import { ApiResponse } from "./apis/apiResponse";
 
 export interface PaymentData {
-  paymentId?: number;
+  paymentId: number;
   sponsorshipId?: number;
+  sponsorId: number;
   sponsorName?: string;
   firstName?: string;
   lastName?: string;

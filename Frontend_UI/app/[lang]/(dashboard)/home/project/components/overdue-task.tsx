@@ -54,10 +54,10 @@ const OverdueTask = () => {
 
         setGroupedSponsorships(grouped);
         setSponsorships(sponsorshipData);
-        setError(null);
+   
       } catch (error) {
         console.error("Failed to load sponsorship data:", error);
-        setError("Failed to load sponsorship data. Please try again later.");
+        // setError("Failed to load sponsorship data. Please try again later.");
       }
     };
 
@@ -68,10 +68,7 @@ const OverdueTask = () => {
     <Card>
       <CardHeader className="flex-row justify-between items-center mb-0">
         <CardTitle> Sponsors </CardTitle>
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
-      </CardHeader>
+   </CardHeader>
       <CardContent className="px-0 pb-0 overflow-x-auto">
         <Table>
           <TableHeader className="bg-default-200">
@@ -110,7 +107,7 @@ const OverdueTask = () => {
                   </div>
                 </TableCell>
                 <TableCell className="text-sm font-medium text-default-600 py-1 whitespace-nowrap">
-                  {sponsorData[0]?.startDate || "N/A"} {/* Show start date of the first student */}
+                  {sponsorData[0]?.startDate || ""} {/* Show start date of the first student */}
                 </TableCell>
               </TableRow>
             ))}

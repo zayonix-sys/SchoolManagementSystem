@@ -16,15 +16,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"; // Adjusted service import
-import { addEmployee, EmployeesData } from "@/services/EmployeeService";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CampusData } from "@/services/campusService";
-import { RoleData } from "@/services/employeeRoleService";
+import { RoleData } from "@/services/apis/employeeRoleService";
+import { EmployeesData, useAddEmployeeMutation } from "@/services/apis/employeeService";
 
 interface EmployeeListTableProps {
-  employees: EmployeesData[];
   campuses: CampusData[];
   employeeRole: RoleData[];
+  refetch: () => void ;
 }
 // Define Zod schema
 const employeeSchema = z.object({
@@ -45,7 +45,8 @@ const employeeSchema = z.object({
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
-const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, employeeRole }) => {
+const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,refetch  }) => {
+  const [addEmployee] = useAddEmployeeMutation();
   const [selectedCampusId, setSelectedCampusId] = useState<number | null>(null);
   const {
     register,
@@ -58,12 +59,13 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
   });
 
   const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
+  
     try {
-      const response = await addEmployee(data);  // Corrected function call
-
+      const response = await addEmployee(data as EmployeesData).unwrap();   
       if (response.success) {
         toast.success(`Employee ${data.firstName} ${data.lastName} added successfully!`);
         reset();
+        refetch();
       } else {
         console.error("Error:", response);
         toast.error(`Error: ${response.message || "Something went wrong"}`);
@@ -73,7 +75,6 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
       toast.error("Request Failed");
     }
   };
-
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
       toast.error("Please correct the errors in the form.");
@@ -186,7 +187,7 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ employees, campuses, em
                       <SelectValue placeholder="Select Role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employeeRole.map((role) => (
+                      {employeeRole?.map((role) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={role.roleId}
