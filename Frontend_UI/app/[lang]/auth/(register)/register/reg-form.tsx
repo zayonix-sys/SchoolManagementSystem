@@ -20,7 +20,7 @@ import apple from "@/public/images/auth/apple.png";
 import twitter from "@/public/images/auth/twitter.png";
 import { SiteLogo } from "@/components/svg";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { addUser } from "@/services/userService";
+// import { addUser } from "@/services/userService";
 
 const schema = z.object({
   name: z.string().min(3, { message: "Name must be at least 3 characters." }),
@@ -54,14 +54,14 @@ const RegForm = () => {
 
   const onSubmit = (data: any) => {
     startTransition(async () => {
-      let response = await addUser(data);
-      if (response?.success) {
-        toast.success(response?.message);
-        reset();
-        router.push("/");
-      } else {
-        toast.error(response?.message);
-      }
+      // let response = await addUser(data);
+      // if (response?.success) {
+      //   toast.success(response?.message);
+      //   reset();
+      //   router.push("/");
+      // } else {
+      //   toast.error(response?.message);
+      // }
     });
   };
   return (
@@ -191,7 +191,12 @@ const RegForm = () => {
           variant="outline"
           className="rounded-full  border-default-300 hover:bg-transparent"
         >
-          <Image src={googleIcon} alt="google icon" className="w-6 h-6" priority={true} />
+          <Image
+            src={googleIcon}
+            alt="google icon"
+            className="w-6 h-6"
+            priority={true}
+          />
         </Button>
         <Button
           type="button"

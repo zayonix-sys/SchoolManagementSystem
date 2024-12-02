@@ -14,11 +14,11 @@ import { Icon } from "@iconify/react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SiteLogo } from "@/components/svg";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { Login } from "@/services/userService";
+import { useLoginMutation } from "@/services/apis/userService";
 
 const userSchema = z.object({
   username: z.string({ message: "Your username is invalid." }),
-  password: z.string().min(6,"Please enter your correct password."),
+  password: z.string().min(6, "Please enter your correct password."),
   roleName: z.string().optional(),
 });
 type UserFormValues = z.infer<typeof userSchema>;
@@ -27,6 +27,7 @@ const LogInForm = () => {
   const [isPending] = React.useTransition();
   const [passwordType, setPasswordType] = React.useState<string>("password");
   const isDesktop2xl = useMediaQuery("(max-width: 1530px)");
+  const [Login] = useLoginMutation();
   // const { login } = useAuthContext();
 
   const togglePasswordType = () => {
@@ -51,34 +52,37 @@ const LogInForm = () => {
 
   const onSubmit: SubmitHandler<UserFormValues> = async (data) => {
     try {
-      const userData = {
-        userName: data.username,
-        password: data.password,
-        roleName: data.roleName,
-      };
-      const response = await Login(userData);
+      // const userData = {
+      //   ...data,
+      //   userName: data.username,
+      //   password: data.password,
+      //   roleName: data.roleName,
+      // };
+      const response = await Login(data);
 
-      if (response.success) {
-        const token = response.data.token;
-        const role = response.data.roleName;
-        const userId = response.data.userId;
-        const userName = response.data.userName;
+      if (response?.data?.success) {
+        const token = response?.data?.data?.token;
+        const role = response?.data?.data?.roleId;
+        const userId = response?.data?.data?.userId;
+        const userName = response?.data?.data?.userName;
         // const sessionTimeout = 15 * 60 * 1000; // 15 minutes
         toast.success(`${data.username} logged in successfully!`);
         // const expiryTime = new Date(
         //   new Date().getTime() + sessionTimeout
         // ).toISOString();
-        localStorage.setItem("authToken", token);
-        localStorage.setItem("userId", userId);
-        localStorage.setItem("userName", userName);
+        localStorage.setItem("authToken", token ?? "");
+        localStorage.setItem("userId", `${userId ?? 0}`);
+        localStorage.setItem("userName", userName ?? "");
         // localStorage.setItem("authTokenExpiry", expiryTime);
-        localStorage.setItem("role", role);
+        localStorage.setItem("role", `${role ?? 0}`);
         window.location.assign("/");
 
         reset();
       } else {
         console.error("Error:", response);
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error(
+          `Error: ${response?.data?.message || "Something went wrong"}`
+        );
       }
     } catch (error: any) {
       console.error("Request Failed:", error);

@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { fetchSponsorship, SponsorshipData } from "@/services/sponsorshipService";
+import {
+  fetchSponsorship,
+  SponsorshipData,
+} from "@/services/sponsorshipService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -31,14 +34,16 @@ const columns = [
 
 const OverdueTask = () => {
   const [sponsorships, setSponsorships] = useState<SponsorshipData[]>([]);
-  const [groupedSponsorships, setGroupedSponsorships] = useState<Map<string, SponsorshipData[]>>(new Map());
+  const [groupedSponsorships, setGroupedSponsorships] = useState<
+    Map<string, SponsorshipData[]>
+  >(new Map());
 
   useEffect(() => {
     const loadSponsorships = async () => {
       try {
         const response = await fetchSponsorship();
         const sponsorshipData = response.data || [];
-        
+
         // Group sponsorships by sponsorName
         const grouped = sponsorshipData.reduce(
           (acc: Map<string, SponsorshipData[]>, item: SponsorshipData) => {
@@ -54,10 +59,10 @@ const OverdueTask = () => {
 
         setGroupedSponsorships(grouped);
         setSponsorships(sponsorshipData);
-        setError(null);
+        // setError(null);
       } catch (error) {
         console.error("Failed to load sponsorship data:", error);
-        setError("Failed to load sponsorship data. Please try again later.");
+        // setError("Failed to load sponsorship data. Please try again later.");
       }
     };
 
@@ -68,9 +73,10 @@ const OverdueTask = () => {
     <Card>
       <CardHeader className="flex-row justify-between items-center mb-0">
         <CardTitle> Sponsors </CardTitle>
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
+        if (error){" "}
+        {
+          // return <div className="text-red-500">{error}</div>;
+        }
       </CardHeader>
       <CardContent className="px-0 pb-0 overflow-x-auto">
         <Table>
@@ -88,33 +94,41 @@ const OverdueTask = () => {
           </TableHeader>
           <TableBody>
             {/* Render rows for each sponsor */}
-            {[...groupedSponsorships.entries()].map(([sponsorName, sponsorData], index) => (
-              <TableRow key={index} className="hover:bg-default-100">
-                <TableCell className="flex items-center gap-2 py-1">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={avatar2.src} alt={sponsorName || "Sponsor"} />
-                    <AvatarFallback>CD</AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium text-default-600 py-1 whitespace-nowrap">
-                    {sponsorName || "N/A"}
-                  </span>
-                </TableCell>
-                <TableCell className="text-sm font-medium text-default-600 py-1 overflow-hidden text-ellipsis whitespace-nowrap max-w-[181px]">
-                  <div className="flex flex-wrap gap-2">
-                    {/* Show a Badge for each student's name */}
-                    {sponsorData.map((item, index) => (
-                      <Badge key={index} variant="outline" color="success">
-                        {item.studentName || "N/A"}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell className="text-sm font-medium text-default-600 py-1 whitespace-nowrap">
-                  {sponsorData[0]?.startDate || "N/A"} {/* Show start date of the first student */}
-                </TableCell>
-              </TableRow>
-            ))}
-
+            {[...groupedSponsorships.entries()].map(
+              ([sponsorName, sponsorData], index) => (
+                <TableRow key={index} className="hover:bg-default-100">
+                  <TableCell className="flex items-center gap-2 py-1">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage
+                        src={avatar2.src}
+                        alt={sponsorName || "Sponsor"}
+                      />
+                      <AvatarFallback>CD</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium text-default-600 py-1 whitespace-nowrap">
+                      {sponsorName || "N/A"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-sm font-medium text-default-600 py-1 overflow-hidden text-ellipsis whitespace-nowrap max-w-[181px]">
+                    <div className="flex flex-wrap gap-2">
+                      {/* Show a Badge for each student's name */}
+                      {sponsorData.map((item, index) => (
+                        <Badge key={index} variant="outline" color="success">
+                          {item.studentName || "N/A"}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm font-medium text-default-600 py-1 whitespace-nowrap">
+                    {sponsorData[0]?.startDate
+                      ? typeof sponsorData[0].startDate === "object"
+                        ? sponsorData[0].startDate.toLocaleDateString()
+                        : sponsorData[0].startDate.toString()
+                      : "N/A"}
+                  </TableCell>
+                </TableRow>
+              )
+            )}
           </TableBody>
         </Table>
       </CardContent>

@@ -62,12 +62,12 @@ namespace SchoolManagementSystem.Application.Services
         {
             try
             {
-                //var result = _userRepository.GetByIdAsync(dto.UserId);
-                //dto = {
-                //    dto.UserName = result
-                //}
+                var user = await _userRepository.GetByIdAsync(dto.UserId);
                 var model = _mapper.MapToEntity(dto);
-                await _userRepository.UpdateAsync(model);
+                model.PasswordHash = user.PasswordHash;
+                model.CreatedAt = user.CreatedAt;
+                model.UpdatedAt = DateTime.Now;
+                await _userRepository.UpdateAsync(model, true);
             }
             catch (Exception)
             {

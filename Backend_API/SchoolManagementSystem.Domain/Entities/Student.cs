@@ -44,6 +44,9 @@ namespace SchoolManagementSystem.Domain.Entities
         [ForeignKey("ClassId")]
         public int? ClassId { get; set; }
 
+        [ForeignKey("SectionId")]
+        public int? SectionId { get; set; }
+
         [Required]
         [ForeignKey("CampusId")]
         public int? CampusId { get; set; }
@@ -66,7 +69,7 @@ namespace SchoolManagementSystem.Domain.Entities
         // Navigation Properties
 
         public Class? Class { get; set; }
-
+        public Section? Section { get; set; }
         public Campus? Campus { get; set; }
         public User? CreatedUser { get; set; }
         public User? UpdatedUser { get; set; }
