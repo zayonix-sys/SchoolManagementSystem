@@ -2,8 +2,8 @@
 
 import WelcomeBlock from "./components/welcome-block";
 import ReportChart from "./components/report-chart";
-import ProjectBudget from "./components/project-budget";
-import OverdueTask from "./components/overdue-task";
+// import ProjectBudget from "./components/project-budget";
+// import OverdueTask from "./components/overdue-task";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -70,13 +70,13 @@ const ProjectPageView = ({ trans }: ProjectPageViewProps) => {
         </div>
         <div className="col-span-12 2xl:col-span-4">
           
-            <ProjectBudget />
+            {/* <ProjectBudget /> */}
         </div>
       </div>
 
       <div className="grid grid-cols-12 gap-6">
         <div className="col-span-12 lg:col-span-12 xl:col-span-12 ">
-          <OverdueTask />
+          {/* <OverdueTask /> */}
         </div>
       </div>
         <div className="col-span-12 lg:col-span-6 xl:col-span-7">

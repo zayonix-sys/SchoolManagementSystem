@@ -3,44 +3,22 @@
 import { BreadcrumbItem, Breadcrumbs } from '@/components/ui/breadcrumbs'
 import React, { useEffect, useState } from 'react'
 import SponsorshipListTable from './sponsorship-list-table'
-import AddSponsorshipForm from './add-sponsordhip'
-import { fetchSponsorship, SponsorshipData } from '@/services/sponsorshipService'
 import { SponsorData, useFetchSponsorsQuery } from '@/services/apis/sponsorService'
+import { SponsorshipData, SponsorshipDataDetails, useFetchSponsorshipDetailQuery, useFetchSponsorshipsQuery } from '@/services/apis/sponsorshipService'
+import AddSponsorshipForm from './add-sponsorship'
 
 const Page = () => {
 
   const { data: sponsorData, isLoading:sponsorLoading, error:sponsorError, refetch } = useFetchSponsorsQuery();
+  const {data: sponsershipData, isLoading} = useFetchSponsorshipsQuery();
+  const {data: sponsorshipDetailData, isLoading:sponsorshipLoading,error:sponsorshipError } = useFetchSponsorshipDetailQuery();
   const sponsor = sponsorData?.data as SponsorData[];
+  const sponsorship = sponsershipData?.data as SponsorshipData[];
+  const sponsorshipDetail = sponsorshipDetailData?.data as SponsorshipDataDetails[];
   
   const handleRefetch = () => {
     refetch();
   }
-
-
-
-  const [sponsorship, setSponsorship] = useState<SponsorshipData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [sponsorshipData] = await Promise.all([
-          fetchSponsorship(),
-
-        ]);
-        setSponsorship(sponsorshipData.data as SponsorshipData[]);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  
-  }, []);
 
 
   return (
@@ -49,8 +27,8 @@ const Page = () => {
         <BreadcrumbItem>Administration</BreadcrumbItem>
         <BreadcrumbItem className="text-primary">Sponsorship</BreadcrumbItem>
       </Breadcrumbs>
-      <AddSponsorshipForm sponsorship={sponsorship} refetch={handleRefetch} sponsor={sponsor}/>
-        <SponsorshipListTable sponsorship={sponsorship} refetch={handleRefetch} sponsor={sponsor}/>
+      <AddSponsorshipForm sponsorship={sponsorship} refetch={handleRefetch} sponsor={sponsor}  sponsorshipDetail={sponsorshipDetail}/>
+        <SponsorshipListTable sponsorship={sponsorship} refetch={handleRefetch} sponsor={sponsor} sponsorshipDetail={sponsorshipDetail}/>
         
         </div>
     

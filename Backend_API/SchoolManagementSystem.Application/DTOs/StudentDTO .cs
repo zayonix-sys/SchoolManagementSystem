@@ -3,7 +3,7 @@
     public class StudentDTO
     {
         public int StudentId { get; set; }
-        public int GrNo { get; set; }
+        public int? GrNo { get; set; }
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }

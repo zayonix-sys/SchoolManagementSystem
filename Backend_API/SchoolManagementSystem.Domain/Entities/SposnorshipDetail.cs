@@ -3,24 +3,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
-    public class Sponsorship
+    public class SponsorshipDetail
     {
+
         [Key]
+        public int? SponsorshipDetailId { get; set; }
+
+        [Required]
+        public int? Amount { get; set; }
+
+        [ForeignKey("Sponsorship")]
         public int? SponsorshipId { get; set; }
+        [ForeignKey("Class")]
+        public int? ClassId { get; set; }
 
+        [ForeignKey("Student")]
+        public int? StudentId { get; set; }
         [Required]
-        public decimal? Amount { get; set; }
-
-        [Required]
-        public DateOnly? StartDate { get; set; }
-
-        [Required]
-        public int? Frequency { get; set; }
-
-        public int? SponsorId { get; set; }
-
-        [Required]
-        public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("CreatedUser")]
         public int? CreatedBy { get; set; }
@@ -36,7 +36,11 @@ namespace SchoolManagementSystem.Domain.Entities
         //Navigation properties
         public User? CreatedUser { get; set; }
         public User? UpdatedUser { get; set; }
-        public Sponsor? Sponsor { get; set; }
-        public ICollection<SponsorshipDetail> SponsorshipDetails { get; set; }
+        public Class? Class { get; set; }
+        public Student? Student { get; set; }
+        public Sponsorship? Sponsorship { get; set; }
+
+
     }
 }
+

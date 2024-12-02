@@ -9,7 +9,7 @@ export interface StudentAttendanceData{
   studentName?: string;
   className?: string;
   sectionName?: string;
-  studentId?: number | null;
+  studentId?: number;
   grNo?: number;
   classId?: number;
   campusId?: number;

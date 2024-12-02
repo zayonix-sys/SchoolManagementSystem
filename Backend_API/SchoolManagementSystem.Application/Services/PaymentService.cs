@@ -57,7 +57,8 @@ namespace SchoolManagementSystem.Application.Services
             {
                 var payments = await _paymentRepository.GetAllAsync(
                     include: query => query.Include(x => x.Sponsorship).ThenInclude(x => x.Sponsor)
-                    .Include(s => s.Sponsorship).ThenInclude(s => s.Student)
+                    .Include(s => s.Sponsorship)
+                    //.ThenInclude(s => s.Student)
 
                     );
                 var activePayments = payments.Where(c => c.IsActive);

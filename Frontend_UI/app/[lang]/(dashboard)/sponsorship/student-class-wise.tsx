@@ -13,61 +13,71 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { StudentData, fetchStudents } from "@/services/studentService";
-import { SponsorshipData } from "@/services/sponsorshipService";
 import { useEffect, useState } from "react";
+import { SponsorshipData, SponsorshipDataDetails } from "@/services/apis/sponsorshipService";
 
+// In the child component (ClassStudentListTable)
 interface StudentListTableProps {
-  onStudentSelectionChange: (selectedStudents: number[]) => void;
+  // onStudentSelectionChange: (selectedStudents: number[]) => void;
   sponsorship: SponsorshipData[];
-  students: StudentData[]
+  sponsorshipDetail: SponsorshipDataDetails[];
+  students: StudentData[];
   selectedStudents: { studentId: number; classId: number | null }[];
-  handleStudentSelectionChange: (selectedStudent: { studentId: number; classId: number } | null) => void;
+  handleStudentSelectionChange: (selectedStudent: { studentId: number; classId: number }) => void; // Adjust type to not allow null
 }
 
+
 const ClassStudentListTable: React.FC<StudentListTableProps> = ({
-  onStudentSelectionChange,
+  // onStudentSelectionChange,
   sponsorship,
-  students,
-  selectedStudents,
+  sponsorshipDetail,
+  // students,
+  // selectedStudents,
   handleStudentSelectionChange
 }) => {
-  // const [students, setStudents] = useState<StudentData[]>([]);
-  // const [selectedStudents, setSelectedStudents] = useState<{ studentId: number; classId: number | null }[]>([]);
+  const [students, setStudents] = useState<StudentData[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<{ studentId: number | null; classId: number | null }[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const data = await fetchStudents();
-  //     setStudents(data?.data || []);
-  //   };
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchStudents();
+      setStudents(data?.data || []);
+    };
+    fetchData();
+  }, []);
 
-  // Handle checkbox change
-  // const handleCheckboxChange = (student: StudentData) => {
-  //   const isAlreadySelected = selectedStudents.some(
-  //     (s) => s.studentId === student.studentId
-  //   );
-  //   const updatedSelection = isAlreadySelected
-  //     ? selectedStudents.filter((s) => s.studentId !== student.studentId)
-  //     : [
-  //         ...selectedStudents,
-  //         { studentId: student.studentId, classId: student.classId ?? null },
-  //       ];
-
-  //   setSelectedStudents(updatedSelection);
-  //   onStudentSelectionChange(updatedSelection.map(s => s.studentId)); // Only pass studentIds to parent
-  // };
+  const handleCheckboxChange = (student: StudentData) => {
+    const isAlreadySelected = selectedStudents.some(
+      (s) => s.studentId === student?.studentId
+    );
+  
+    const studentId = student?.studentId ?? null;
+  
+    const updatedSelection = isAlreadySelected
+      ? selectedStudents.filter((s) => s.studentId !== studentId)
+      : [
+          ...selectedStudents,
+          { studentId: studentId, classId: student.classId ?? null },
+        ];
+  
+    setSelectedStudents(updatedSelection);
+    
+    // Ensure no null values are passed to onStudentSelectionChange
+    // onStudentSelectionChange(updatedSelection?.map(s => s.studentId).filter((id): id is number => id !== null));
+  };
+  
+  
 
   // Filter students by search query and exclude those with existing sponsorship
   const filteredStudents = students.filter(
     (student) =>
       (student.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         student.lastName?.toLowerCase().includes(searchQuery.toLowerCase()))
-      //    &&
-      // !sponsorship?.some((s) => s?.studentId === student?.studentId)
+         &&
+      !sponsorshipDetail?.some((s) => s?.studentId === student?.studentId)
   );
 
   // Paginate students
@@ -130,20 +140,19 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-center">
-                  <input
+                <input
                     type="checkbox"
                     checked={selectedStudents.some(
                       (s) => s.studentId === student.studentId
                     )}
                     onChange={() => {
-                      let foundStudent = selectedStudents.map(s => ({studentId: s.studentId, classId: s.classId})).find((s) => s.studentId === student.studentId)
-                      if(!foundStudent){
-                        return
-                      }
-
-                      handleStudentSelectionChange(foundStudent)
+                      handleStudentSelectionChange({
+                        studentId: student.studentId ?? 0,
+                        classId: student.classId ?? 0,
+                      });
                     }}
                   />
+
                 </TableCell>
               </TableRow>
             ))}

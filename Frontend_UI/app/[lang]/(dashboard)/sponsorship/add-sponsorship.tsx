@@ -26,17 +26,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-
-import {
-  SponsorshipData,
-  SponsorshipDataDetails,
-  addSponsorship,
-  fetchSponsorship,
-} from "@/services/sponsorshipService";
 import { fetchStudents, StudentData } from "@/services/studentService";
 import { ClassData } from "@/services/ClassService";
 import ClassStudentListTable from "./student-class-wise";
 import { SponsorData } from "@/services/apis/sponsorService";
+import { SponsorshipData, SponsorshipDataDetails, useAddSponsorshipMutation } from "@/services/apis/sponsorshipService";
 
 const sponsorshipSchema = z.object({
   amount: z.string().min(1, "Please Enter Correct Amount").optional(),
@@ -53,12 +47,16 @@ type SponsorshipFormValues = z.infer<typeof sponsorshipSchema>;
 interface SponsorshipListTableProps {
   sponsorship: SponsorshipData[];
   sponsor: SponsorData[];
+  sponsorshipDetail: SponsorshipDataDetails[];
   refetch: () => void;
 }
 
 const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
-  sponsorship,sponsor,refetch
+  sponsorship,sponsor,refetch,sponsorshipDetail,
 }) => {
+
+  const [addSponsorship] = useAddSponsorshipMutation();
+
   const [students, setStudents] = useState<StudentData[]>([]);
   const [sponsorId, setSponsorId] = useState<number | null>(null);
   const [frequency, setFrequency] = useState<number>(1);
@@ -80,85 +78,104 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
     resolver: zodResolver(sponsorshipSchema),
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const sponsorshipResponse = await fetchSponsorship();
-        const sponsoredStudentIds = sponsorshipResponse.data.map(
-          (s: SponsorshipDataDetails) => s.studentId
-        );
-
-        const studentResponse = await fetchStudents();
-        setStudents(
-          studentResponse.data.filter(
-            (student: StudentData) =>
-              !sponsoredStudentIds.includes(student.studentId)
-          )
-        );
-      } catch (error) {
-        toast.error("Error fetching data");
-      }
-    };
-    fetchData();
-  }, []);
-
   const handleFrequencyChange = (value: string) => setFrequency(Number(value));
 
-  const handleStudentSelectionChange = (
-    selectedStudent: { studentId: number; classId: number }
-  ) => {
-    setSelectedStudents([...selectedStudents, selectedStudent]);
+  const handleStudentSelectionChange = (selectedStudent: { studentId: number; classId: number }) => {
+    setSelectedStudents((prevSelectedStudents) => {
+      const studentExists = prevSelectedStudents.some(
+        (s) => s.studentId === selectedStudent.studentId
+      );
+      
+      if (studentExists) {
+        // Deselect the student
+        return prevSelectedStudents.filter(
+          (s) => s.studentId !== selectedStudent.studentId
+        );
+      } else {
+        // Add the student to selected list
+        return [...prevSelectedStudents, selectedStudent];
+      }
+    });
     console.log("Selected Students:", selectedStudents);
   };
+  
 
   const onSubmit: SubmitHandler<SponsorshipFormValues> = async (data) => {
+
+
     if (!sponsorId) {
       toast.error("Please select a sponsor");
       return;
     }
 
     let details = selectedStudents.map((selectedStudent) => {
-      const student = students.find(
-        (s) => s.studentId === selectedStudent.studentId
-      );
+      // Find the student object matching the selectedStudent.studentId
+      const student = students.find((s) => s.studentId === selectedStudent.studentId);
+      
+      // Return an object only if a match is found
+      return student
+        ? {
+            studentId: selectedStudent.studentId,
+            classId: selectedStudent.classId,
+            amount: 20, // Replace with the correct amount calculation
+          }
+        : null; // If no match is found, return null
+    });
+    
+    // Filter out null values
+    details = details.filter((detail) => detail !== null);
+    
 
-      const perStudentAmount = fixedAmountPerStudent * frequency;
-      if(student){
-        return {
-          studentId: student.studentId,
-          classId: student.classId ?? 0,
-          amount: perStudentAmount / selectedStudents.length,
-        };
-      }
+    //   const perStudentAmount = fixedAmountPerStudent * frequency;
+    //   if(student){
+    //     return {
+    //       studentId: student.studentId,
+    //       classId: student.classId ?? 0,
+    //       amount: perStudentAmount / selectedStudents.length,
+    //     };
+    //   }
 
-      return null; // If student not found or classId is not provided
-    }).filter(Boolean);
+    //   return null; 
+    // }).filter(Boolean);
+
+    const formatDate = (isoString: string): string => {
+      const date = new Date(isoString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
 
     let combineData = {
       sponsorshipId: 0, // Assuming ID is auto-generated server-side
       sponsorId,
       amount: totalExpense, // Total amount for all students combined
-      startDate: data.startDate,
+      startDate: formatDate(
+        typeof data?.startDate === 'string' ? data.startDate : new Date().toISOString()
+      ), // Ensuring startDate is always a string
       frequency,
-      details
-    }
-
-    console.log("Submitting data:", combineData);
-    if (combineData != null) {
-      return;
-    }
+      details,
+    };
+console.log(combineData);
 
     try {
-      const response = await addSponsorship(combineData);
+      const response = await addSponsorship(combineData as SponsorshipData).unwrap();   
       if (response.success) {
-        toast.success("Sponsorship added successfully!");
+        toast.success(`Sponsorship  added successfully!`);
         reset();
-        setSelectedStudents([]); // Clear selected students state
+        refetch();
       } else {
-        toast.error(response.message || "Something went wrong");
+        console.error("Error:", response);
+        toast.error(`Error: ${response.message || "Something went wrong"}`);
       }
     } catch (error) {
-      toast.error("Error submitting sponsorships");
+      console.error("Request Failed:", error);
+      toast.error("Request Failed");
+    }
+  };
+  const handleError = () => {
+    if (Object.keys(errors).length > 0) {
+      toast.error("Please correct the errors in the form.");
     }
   };
 
@@ -234,12 +251,14 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
             </div>
 
             <div className="col-span-2">
-              <ClassStudentListTable
-                students={students}
-                selectedStudents={selectedStudents}
-                sponsorshipDetail={sponsorship}
-                handleStudentSelectionChange={handleStudentSelectionChange}
-              />
+            <ClassStudentListTable
+  students={students}
+  selectedStudents={selectedStudents}
+  sponsorship={sponsorship}
+  sponsorshipDetail={sponsorshipDetail}
+  handleStudentSelectionChange={handleStudentSelectionChange}
+/>
+
             </div>
 
             <div className="col-span-2 flex justify-end">

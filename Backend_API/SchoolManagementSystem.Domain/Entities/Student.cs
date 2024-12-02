@@ -9,15 +9,15 @@ namespace SchoolManagementSystem.Domain.Entities
         public int StudentId { get; set; }
 
         [Required]
-        public int GrNo { get; set; }
+        public int? GrNo { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
         [Required]
         public DateOnly? DateOfBirth { get; set; }

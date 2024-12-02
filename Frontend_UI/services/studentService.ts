@@ -15,6 +15,7 @@ export interface StudentData {
   enrollmentDate: Date | string;
   className?: string;
   classId?: number | null;
+  sectionId?: number;
   campusId?: number;
   isActive: boolean;
 }

@@ -44,7 +44,7 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
   );
   const [detailedApplicant, setDetailedApplicant] =
     useState<ApplicantApplicationDetail | null>(null); // State for detailed view
-  const itemsPerPage = 5;
+  const itemsPerPage = 25;
 
   // Apply search filter and pagination
   const filteredApplicants = applicants?.filter(

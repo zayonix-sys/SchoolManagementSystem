@@ -1146,3 +1146,6 @@ CREATE TABLE AuditTrails (
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
 
+
+--Alteration Script
+

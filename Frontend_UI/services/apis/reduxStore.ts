@@ -8,6 +8,8 @@ import { empRoleApi } from "./employeeRoleService";
 import employeeApi from "./employeeService";
 import sponsorApi from "./sponsorService";
 import dashboardApi from "./dashboardService";
+import paymentApi from "./sponsorPaymentService";
+import sponsorshipApi from "./sponsorshipService";
 
 // Import or define your auth reducer
 // import authReducer from "./authSlice"; // Assuming your auth reducer is in authSlice.js
@@ -26,7 +28,9 @@ const rootReducer = combineReducers({
   [employeeApi.reducerPath]: employeeApi.reducer,
   [empRoleApi.reducerPath]: empRoleApi.reducer,
   [sponsorApi.reducerPath]: sponsorApi.reducer,
+  [sponsorshipApi.reducerPath]: sponsorshipApi.reducer,
   [dashboardApi.reducerPath]: dashboardApi.reducer,
+  [paymentApi.reducerPath]: paymentApi.reducer,
 });
 
 const store = configureStore({
@@ -41,7 +45,9 @@ const store = configureStore({
       .concat(employeeApi.middleware)
       .concat(empRoleApi.middleware)
       .concat(sponsorApi.middleware)
+      .concat(sponsorshipApi.middleware)
       .concat(dashboardApi.middleware)
+      .concat(paymentApi.middleware)
 
       ,
 });
