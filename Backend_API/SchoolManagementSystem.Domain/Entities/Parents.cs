@@ -7,7 +7,7 @@ namespace SchoolManagementSystem.Domain.Entities
     public class Parents
     {
         [Key]
-        public int ParentId { get; set; }
+        public int? ParentId { get; set; }
 
         [Required]
         [MaxLength(50)]

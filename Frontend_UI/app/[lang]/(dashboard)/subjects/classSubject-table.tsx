@@ -13,28 +13,23 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  AssignSubjectData,
-  deleteClassSubjectAssignment,
-  fetchAssignSubject,
-} from "@/services/assignSubjectService";
-import { ClassData } from "@/services/ClassService";
-import { SubjectData } from "@/services/subjectService";
 import EditClassSubjectAssign from "./edit-classsubjectassignment";
 import { toast } from "sonner";
 import ConfirmationDialog from "../common/confirmation-dialog";
+import { ClassData } from "@/services/apis/classService";
+import { SubjectData } from "@/services/apis/subjectService";
+import { AssignClassSubjectData, useDeleteClassSubjectMutation, useFetchClassSubjectQuery } from "@/services/apis/assignClassSubjectService";
 
 interface SubjectAssignmentProps {
   classes: ClassData[];
   subject: SubjectData[];
+  refetch: () => void
 }
 
-const SubjectAssignTable = ({ classes, subject }: SubjectAssignmentProps) => {
-  const [subjectAssignments, setSubjectAssignments] = useState<
-    AssignSubjectData[]
-  >([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+const SubjectAssignTable = ({ classes, subject, refetch }: SubjectAssignmentProps) => {
+  const {data: classSubject, isLoading, isError} = useFetchClassSubjectQuery();
+  const subjectAssignments = classSubject?.data as AssignClassSubjectData[];
+  const [deleteClassSubjectAssignment] = useDeleteClassSubjectMutation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,51 +38,35 @@ const SubjectAssignTable = ({ classes, subject }: SubjectAssignmentProps) => {
   >(null);
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    const fetchClassSubjectAssignData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchAssignSubject();
-        setSubjectAssignments(response.data as AssignSubjectData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClassSubjectAssignData();
-  }, []);
-
   // Group subjects by classId
-  const groupedAssignments = subjectAssignments.reduce((acc, assignment) => {
-    const associatedClass = classes.find(
+  const groupedAssignments = subjectAssignments?.reduce((acc, assignment) => {
+    const associatedClass = classes?.find(
       (cls) => cls.classId === assignment.classId
     );
-    const associatedSubjects = subject.filter((sub) =>
+    const associatedSubjects = subject?.filter((sub) =>
       assignment.subjectIds?.includes(sub.subjectId ?? 0)
     );
 
     if (associatedClass) {
       if (!acc[assignment.classId ?? 0]) {
         acc[assignment.classId ?? 0] = {
-          classSubjectId: assignment.classSubjectId,
-          classId: assignment.classId,
-          className: associatedClass.className,
+          classSubjectId: assignment?.classSubjectId,
+          classId: assignment?.classId,
+          className: associatedClass?.className ?? "",
           subjects: [],
           isActive: assignment.isActive ?? false,
         };
       }
-      acc[assignment.classId ?? 0].subjects.push(
-        ...associatedSubjects.map((sub) => sub.subjectName)
+      acc[assignment.classId ?? 0].subjects?.push(
+        ...associatedSubjects?.map((sub) => sub.subjectName)
       );
     }
     return acc;
   }, {} as Record<number, { classSubjectId?: number; classId?: number; className: string; subjects: string[]; isActive?: boolean }>);
 
-  const combinedData = Object.values(groupedAssignments);
+  const combinedData = groupedAssignments ? Object.values(groupedAssignments) : [];
 
-  const filteredAssignments = combinedData.filter((item) =>
+  const filteredAssignments = combinedData?.filter((item) =>
     item.className.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -121,6 +100,7 @@ const SubjectAssignTable = ({ classes, subject }: SubjectAssignmentProps) => {
     try {
       await deleteClassSubjectAssignment(id);
       toast.success("ClassSubject deleted successfully");
+      refetch();
       setClassSubjectToDelete(null);
     } catch (error) {
       console.error("Error deleting ClassSubject:", error);
@@ -175,7 +155,9 @@ const SubjectAssignTable = ({ classes, subject }: SubjectAssignmentProps) => {
                 <div className="flex gap-3">
                   <EditClassSubjectAssign
                     subject={subject}
-                    subjectAssignmentData={item}
+                    classes={classes}
+                    subjectAssignmentData={[item]}
+                    refetch={refetch}
                   />
                   <Button
                     size="icon"

@@ -14,9 +14,6 @@ import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { ClassData } from "@/services/ClassService";
-import { SubjectData } from "@/services/subjectService";
-import { addClassSubjectAssignment } from "@/services/assignSubjectService";
 import {
   Select,
   SelectContent,
@@ -25,6 +22,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ClassData } from "@/services/apis/classService";
+import { SubjectData } from "@/services/apis/subjectService";
+import { useAddClassSubjectMutation } from "@/services/apis/assignClassSubjectService";
 
 const assignSubjectsSchema = z.object({
   classSubjectId: z.coerce.number().optional(),
@@ -37,9 +37,11 @@ type AssignSubjectFormValues = z.infer<typeof assignSubjectsSchema>;
 export default function AddAssignSubject({
   classes,
   subject,
+  refetch
 }: {
   classes: ClassData[];
   subject: SubjectData[];
+  refetch: () => void
 }) {
   const {
     register,
@@ -52,16 +54,17 @@ export default function AddAssignSubject({
     resolver: zodResolver(assignSubjectsSchema),
   });
 
+  const [addClassSubjectAssignment] = useAddClassSubjectMutation();
   const onSubmit: SubmitHandler<AssignSubjectFormValues> = async (data) => {
     try {
       const response = await addClassSubjectAssignment(data);
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success("Subject Assigned successfully!");
+        refetch();
         reset();
       } else {
         console.error("Error:", response);
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
       }
     } catch (error) {
       console.error("Request Failed:", error);
@@ -126,7 +129,7 @@ export default function AddAssignSubject({
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
                     <SelectContent>
-                      {classes.map((classData) => (
+                      {classes?.map((classData) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={classData.classId}
@@ -145,7 +148,7 @@ export default function AddAssignSubject({
                 <div className="col-span-6">
                   <label className="block mb-2">Select Subjects</label>
                   <div className="grid grid-cols-1 gap-4">
-                    {subject.map((sub) => (
+                    {subject?.map((sub) => (
                       <div
                         key={sub.subjectId !== undefined ? sub.subjectId : 0}
                         className="flex items-center"

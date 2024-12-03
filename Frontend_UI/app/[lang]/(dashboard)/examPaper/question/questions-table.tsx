@@ -12,23 +12,24 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import ConfirmationDialog from "../../common/confirmation-dialog";
-import { deleteQuestion, QuestionsData } from "@/services/QBankService";
 import EditQuestions from "./edit-question";
 import dynamic from "next/dynamic";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Icon } from "@iconify/react";
+import { QuestionsData, useDeleteQuestionMutation } from "@/services/apis/qBankService";
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
 });
 
 
-const QuestionsTable = ({Questions}:{Questions: QuestionsData[]}) => { 
+const QuestionsTable = ({Questions, refetch}:{Questions: QuestionsData[], refetch: () => void}) => { 
+  const [deleteQuestion] = useDeleteQuestionMutation();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState(""); 
   const [questionToDelete, setQuestionToDelete] = useState<number | null>(null);
-  const [detailQuestion, setDetailQuestion] = useState<QuestionsData| null>(null);
+  const [detailQuestion, setDetailQuestion] = useState<QuestionsData | null>(null);
   const itemsPerPage = 7;
   const [isClient, setIsClient] = useState(false);
 
@@ -66,6 +67,7 @@ const QuestionsTable = ({Questions}:{Questions: QuestionsData[]}) => {
     try {
       await deleteQuestion(id);
       toast.success("Question deleted successfully");
+      refetch();
       setQuestionToDelete(null);
     } catch (error) {
       console.error("Error deleting Question:", error);
@@ -111,7 +113,6 @@ const QuestionsTable = ({Questions}:{Questions: QuestionsData[]}) => {
             console.log(item.questions);
             return (
               
-            
             <TableRow
               key={item.questionBankId}
               className="hover:bg-default-200"
@@ -147,7 +148,7 @@ const QuestionsTable = ({Questions}:{Questions: QuestionsData[]}) => {
 
               <TableCell className=" flex justify-center">
                 <div className="flex gap-3">
-                  <EditQuestions question={[item]}  />
+                  <EditQuestions question={[item]} refetch={refetch}/>
 
                   <Button
                     size="icon"
@@ -195,12 +196,11 @@ const QuestionsTable = ({Questions}:{Questions: QuestionsData[]}) => {
                   toolbar: false, 
                 }}
               />
-            )          
-}
+            )  
+            }
               
         </DialogContent>
         </Dialog>
-
 
       {questionToDelete !== null && (
         <ConfirmationDialog

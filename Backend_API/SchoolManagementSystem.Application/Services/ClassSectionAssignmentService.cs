@@ -114,63 +114,6 @@ namespace SchoolManagementSystem.Application.Services
             return classAssignmentDtos;
         }
 
-        //public async Task UpdateClassSectionAssignmentAsync(ClassSectionAssignmentDTO classroom)
-        //{
-        //    try
-        //    {
-        //        var assignments = await _classSectionAssignmentRepository.GetAllAsync(
-        //            include: query => query
-        //            .Include(a => a.Classroom)
-        //            .Include(a => a.Class)
-        //            .Include(a => a.Section)
-        //            .Include(a => a.Campus)
-        //            );
-
-        //        var classroomAssignments = assignments.Where(a =>
-        //            a.Classroom.ClassroomId == classroom.ClassroomId &&
-        //            a.Campus.CampusId == classroom.CampusId &&
-        //            a.IsActive).ToList();
-
-        //        if (classroomAssignments != null)
-        //        {
-        //            var classroomCapacity = assignments
-        //            .Where(a => a.Classroom.ClassroomId == classroom.ClassroomId)
-        //            .Select(a => a.Classroom.Capacity)
-        //            .FirstOrDefault();
-
-        //            var totalSectionCapacity = classroomAssignments.Sum(s => s.Section.Capacity);
-
-        //            if (totalSectionCapacity > classroomCapacity)
-        //            {
-        //                throw new Exception("Classroom capacity exceeded. Cannot assign more sections.");
-        //            }
-
-        //            // Check if the assignment exists
-        //            var existingAssignment = assignments
-        //                .FirstOrDefault(a => a.AssignmentId == classroom.AssignmentId);
-
-        //            if (existingAssignment == null)
-        //            {
-        //                throw new Exception("The assignment does not exist.");
-        //            }
-        //            // Map the DTO to the existing entity
-        //            existingAssignment.CampusId = classroom.CampusId;
-        //            existingAssignment.ClassId = classroom.ClassId;
-        //            existingAssignment.SectionId = classroom.SectionId;
-        //            existingAssignment.ClassroomId = classroom.ClassroomId;
-        //            existingAssignment.IsActive = classroom.IsActive;
-
-        //            // Update the modified entity in the repository
-        //            await _classSectionAssignmentRepository.UpdateAsync(existingAssignment);
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception("Error occurred while updating the class section assignment.", ex);
-        //    }
-        //}
-
         public async Task UpdateClassSectionAssignmentAsync(ClassSectionAssignmentDTO dto)
         {
             try
@@ -190,7 +133,7 @@ namespace SchoolManagementSystem.Application.Services
                                          a.Section.SectionId == dto.SectionId &&
                                          a.Campus.CampusId == dto.CampusId &&
                                          a.IsActive &&
-                                         a.AssignmentId != dto.AssignmentId); // Exclude the current assignment
+                                         a.ClassSectionAssignmentId != dto.ClassSectionAssignmentId); // Exclude the current assignment
 
                 if (existingAssignment != null)
                 {
@@ -213,7 +156,7 @@ namespace SchoolManagementSystem.Application.Services
                 var newSectionCapacity = section?.Capacity ?? 0;
 
                 var existingSectionCapacity = sameCampusAssignments
-                    .Where(a => a.AssignmentId != dto.AssignmentId) // Exclude the existing assignment being updated
+                    //.Where(a => a.ClassSectionAssignmentId != dto.ClassSectionAssignmentId) // Exclude the existing assignment being updated
                     .Sum(a => a.Section.Capacity);
 
                 var totalSectionCapacity = newSectionCapacity + existingSectionCapacity;
@@ -222,22 +165,6 @@ namespace SchoolManagementSystem.Application.Services
                 {
                     throw new Exception("Classroom capacity exceeded on the current campus. Cannot assign more sections.");
                 }
-
-                //// Check if the assignment exists
-                //var existingAssignments = assignments
-                //    .FirstOrDefault(a => a.AssignmentId == dto.AssignmentId);
-
-                //if (existingAssignments == null)
-                //{
-                //    throw new Exception("The assignment does not exist.");
-                //}
-
-                // Map the DTO to the existing entity
-                //existingAssignment.CampusId = dto.CampusId;
-                //existingAssignment.ClassId = dto.ClassId;
-                //existingAssignment.SectionId = dto.SectionId;
-                //existingAssignment.ClassroomId = dto.ClassroomId;
-                //existingAssignment.IsActive = dto.IsActive;
 
                 var model = _mapper.MapToEntity(dto);
                 await _classSectionAssignmentRepository.UpdateAsync(model);

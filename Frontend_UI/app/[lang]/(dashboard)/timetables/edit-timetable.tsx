@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,9 +15,19 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { fetchTimeTable, TimeTableData, updateTimeTable } from "@/services/TimeTableService";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AssignSubjectData } from "@/services/assignSubjectService";
+import {
+  fetchTimeTable,
+  TimeTableData,
+  updateTimeTable,
+} from "@/services/TimeTableService";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { AssignClassSubjectData } from "@/services/apis/assignClassSubjectService";
 
 const timetableSchema = z.object({
   timetableId: z.coerce.number().optional(),
@@ -30,22 +40,32 @@ const timetableSchema = z.object({
   endTime: z.string().optional(),
   className: z.string().optional(),
   subjectName: z.string().optional(),
-  campusName: z.string().optional()
+  campusName: z.string().optional(),
 });
 
 type TimeTableFormValues = z.infer<typeof timetableSchema>;
 
 interface EditTimeTableProps {
   timetableData: TimeTableData[];
-  useSubjectData: AssignSubjectData[];
+  useSubjectData: AssignClassSubjectData[];
 }
-const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubjectData }) => {
+const EditTimeTable: React.FC<EditTimeTableProps> = ({
+  timetableData,
+  useSubjectData,
+}) => {
   const [timeTable, setTimeTable] = useState<TimeTableData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { campusId, classId, subjectId, periodId, dayOfWeek } = timetableData[0];
+  const { campusId, classId, subjectId, periodId, dayOfWeek } =
+    timetableData[0];
 
-  const { setValue, handleSubmit, watch, reset, formState: { errors } } = useForm<TimeTableFormValues>({
+  const {
+    setValue,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<TimeTableFormValues>({
     resolver: zodResolver(timetableSchema),
     defaultValues: {
       timetableId: timetableData[0].timetableId,
@@ -58,25 +78,21 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
   });
 
   const subjectIdWatch = watch("subjectId");
- console.log("Current Subject ID:", subjectIdWatch); 
+  console.log("Current Subject ID:", subjectIdWatch);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      try{
-      const [timetableResponse ] = await Promise.all([
-        fetchTimeTable(),
-        
-      ]);
+      try {
+        const [timetableResponse] = await Promise.all([fetchTimeTable()]);
         setTimeTable(timetableResponse.data as TimeTableData[]);
-        
       } catch (err) {
         setError(err as any);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, []);
 
@@ -91,7 +107,9 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
       if (response.success) {
         setTimeTable((prevTimeTable) =>
           prevTimeTable.map((per) =>
-            per.subjectId === updatedTimeTable.subjectId ? updatedTimeTable : per
+            per.subjectId === updatedTimeTable.subjectId
+              ? updatedTimeTable
+              : per
           )
         );
 
@@ -115,11 +133,7 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          className="h-4 w-4"
-        >
+        <Button size="icon" variant="outline" className="h-4 w-4">
           <Icon icon="heroicons:pencil" className="h-3 w-3" />
         </Button>
       </SheetTrigger>
@@ -127,7 +141,10 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
         <SheetHeader>
           <SheetTitle>Edit Time Table</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-between" style={{ height: "calc(100vh - 80px)" }}>
+        <div
+          className="flex flex-col justify-between"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
           <div className="py-5">
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
@@ -186,18 +203,16 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
                   </Select>
 
                   {errors.classId && (
-                    <p className="text-destructive">
-                      {errors.classId.message}
-                    </p>
+                    <p className="text-destructive">{errors.classId.message}</p>
                   )}
                 </div>
-                
+
                 <div className="col-span-3">
                   <Select
                     value={watch("subjectId")?.toString() ?? ""}
                     onValueChange={(value) => {
                       console.log("Selected Subject ID:", value);
-                      setValue("subjectId", parseInt(value))
+                      setValue("subjectId", parseInt(value));
                     }}
                   >
                     <SelectTrigger>
@@ -205,26 +220,33 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
                     </SelectTrigger>
                     <SelectContent>
                       {timeTable
-                      .map((tt) => ({ subjectName: tt.subjectName, subjectId: tt.subjectId }))
-                      .filter((value, index, self) => self.findIndex(v => v.subjectId === value.subjectId) === index) // Filter duplicates
-                      .map((subject) => (
-                      
-                      // {useSubjectData.map((subject) => (
-                        <SelectItem
-                          className="hover:bg-default-300"
-                          // key={subject.subjectIds.join(',')}
-                          key={subject.subjectId}
-                          // value={subject.subjectIds?.toString() ?? ""}
-                          value={subject.subjectId?.toString() ?? ""}
-                        >
-                          {subject.subjectName}
-                          
-                        </SelectItem>
-                        
-                      ))}
+                        .map((tt) => ({
+                          subjectName: tt.subjectName,
+                          subjectId: tt.subjectId,
+                        }))
+                        .filter(
+                          (value, index, self) =>
+                            self.findIndex(
+                              (v) => v.subjectId === value.subjectId
+                            ) === index
+                        ) // Filter duplicates
+                        .map((subject) => (
+                          // {useSubjectData.map((subject) => (
+                          <SelectItem
+                            className="hover:bg-default-300"
+                            // key={subject.subjectIds.join(',')}
+                            key={subject.subjectId}
+                            // value={subject.subjectIds?.toString() ?? ""}
+                            value={subject.subjectId?.toString() ?? ""}
+                          >
+                            {subject.subjectName}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-sm mt-2 text-gray-500">Change subject for updating the Timetable.</p>
+                  <p className="text-sm mt-2 text-gray-500">
+                    Change subject for updating the Timetable.
+                  </p>
 
                   {errors.subjectId && (
                     <p className="text-destructive">
@@ -236,9 +258,7 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
                 <div className="col-span-3">
                   <Select
                     defaultValue={dayOfWeek?.toString() ?? ""}
-                    onValueChange={(value) =>
-                      setValue("dayOfWeek", (value))
-                    }
+                    onValueChange={(value) => setValue("dayOfWeek", value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Day of the Week" />
@@ -308,6 +328,6 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({ timetableData, useSubject
       </SheetContent>
     </Sheet>
   );
-}
+};
 
 export default EditTimeTable;

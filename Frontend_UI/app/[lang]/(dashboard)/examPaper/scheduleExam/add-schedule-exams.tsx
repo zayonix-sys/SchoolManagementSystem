@@ -1,5 +1,4 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,14 +15,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"; 
-import { ClassData } from "@/services/ClassService";
-import { AssignSubjectData } from "@/services/assignSubjectService";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import 'react-quill/dist/quill.snow.css';
-import { ExamData, fetchExamPapers } from "@/services/ExamPaperService";
-import { CampusData, getCampuses } from "@/services/campusService";
-import { addExams } from "@/services/ExamScheduleService";
+import { useAddExamMutation } from "@/services/apis/examService";
+import { ClassData } from "@/services/apis/classService";
+import { CampusData, useFetchCampusesQuery } from "@/services/apis/campusService";
+import { AssignClassSubjectData } from "@/services/apis/assignClassSubjectService";
+import { ExamPaperData, useFetchExamPapersQuery } from "@/services/apis/examPaperService";
 
 const scheduleExamsSchema = z.object({
   examId: z.coerce.number().optional(),
@@ -46,36 +45,15 @@ type ExamsScheduleFormValues = z.infer<typeof scheduleExamsSchema>;
 
 interface DataProps{
     classes: ClassData[];
-    subject: AssignSubjectData[];
+    subject: AssignClassSubjectData[];
+    refetch: () => void
 }
-export default function AddScheduleExams({ classes, subject }: DataProps) {
-  const [isClient, setIsClient] = useState(false);
-  const [examPaper, setExamPaper] = useState<ExamData[]>([]);
-  const [campus, setCampus] = useState<CampusData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setIsClient(true);
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [campusData, examPaperData] =
-          await Promise.all([
-            getCampuses(),
-            fetchExamPapers(),
-          ]);
-
-        setCampus(campusData.data as CampusData[]);
-        setExamPaper(examPaperData.data as ExamData[]);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+export default function AddScheduleExams({ classes, subject, refetch }: DataProps) {
+  const {data: campus, isLoading, isError,} = useFetchCampusesQuery();
+  const campusData = campus?.data as CampusData[];
+  const [addExams] = useAddExamMutation();
+  const {data: examPaperData} = useFetchExamPapersQuery();
+  const examPaper = examPaperData?.data as ExamPaperData[];
 
   const {
     register,
@@ -91,11 +69,11 @@ export default function AddScheduleExams({ classes, subject }: DataProps) {
   const selectedClassId = watch("classId");
   const selectedSubjectId = watch("subjectId");
 
-  const filteredClassSubjects = subject.filter(
+  const filteredClassSubjects = subject?.filter(
     (subjects) => subjects.classId === selectedClassId && subjects.isActive
   );
 
-  const filteredExamPapers = examPaper.filter(
+  const filteredExamPapers = examPaper?.filter(
     (exams) => exams.classId === selectedClassId && exams.subjectId === selectedSubjectId && exams.isActive
   ) 
 
@@ -113,12 +91,12 @@ export default function AddScheduleExams({ classes, subject }: DataProps) {
     };
     try {
       const response = await addExams(formData);
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success(`Exams scheduled successfully!`);
+        refetch();
         reset();
       } else {
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
       }
     } catch (error) {
       toast.error("Request Failed");
@@ -158,7 +136,7 @@ export default function AddScheduleExams({ classes, subject }: DataProps) {
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {campus.map((c) => (
+                      {campusData?.map((c) => (
                         <SelectItem key={c?.campusId ?? ''} value={c?.campusId?.toString() ?? ''}>
                           {c.campusName}
                         </SelectItem>
@@ -175,7 +153,7 @@ export default function AddScheduleExams({ classes, subject }: DataProps) {
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
                     <SelectContent>
-                      {classes.map((e) => (
+                      {classes?.map((e) => (
                         <SelectItem key={e.classId} value={e.classId?.toString() ?? ''}>
                           {e.className}
                         </SelectItem>
@@ -192,7 +170,7 @@ export default function AddScheduleExams({ classes, subject }: DataProps) {
                       <SelectValue placeholder="Select Subject" />
                     </SelectTrigger>
                     <SelectContent>
-                      {filteredClassSubjects.map((e) => (
+                      {filteredClassSubjects?.map((e) => (
                         <SelectItem key={e.subjectName} value={e.subjectIds?.toString() || ''}>
                           {e.subjectName}
                         </SelectItem>
@@ -211,7 +189,7 @@ export default function AddScheduleExams({ classes, subject }: DataProps) {
                     <SelectContent>
                       {[
                         ...new Map(
-                          filteredExamPapers.map((e) => [
+                          filteredExamPapers?.map((e) => [
                             `${e.classId}-${e.subjectId}-${e.termName}`,
                             { termName: e.termName, examPaperId: e.examPaperId },
                           ])

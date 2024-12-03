@@ -9,18 +9,21 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useEffect, useState } from "react";
-import { SubjectData } from "@/services/subjectService";
-import SubjectListTable from "./subject-table";
 import SubjectTeacherTable from "./table-subject-teacher";
 import { EmployeesData } from "@/services/EmployeeService";
+import { SubjectTeacherData } from "@/services/apis/assignSubjectTeacherService";
+import { SubjectData } from "@/services/apis/subjectService";
 
 export default function ViewSubjectTeacher({
+  subjectTeacherData,
   subject,
   employee,
+  refetch,
 }: {
-  subject: SubjectData[] | null;
+  subjectTeacherData: SubjectTeacherData[];
+  subject: SubjectData[];
   employee: EmployeesData[] | null;
+  refetch: () => void;
 }) {
   return (
     <Sheet>
@@ -41,7 +44,9 @@ export default function ViewSubjectTeacher({
           <div className="py-6">
             <SubjectTeacherTable
               employee={employee ? employee : []}
-              subject={subject ? subject : []}
+              subjectTeacher={subjectTeacherData ? subjectTeacherData : []}
+              subject={subject}
+              refetch={refetch}
             />
           </div>
         </div>

@@ -2,21 +2,17 @@
 
 import { Docs } from "@/components/svg";
 import { Card } from "@/components/ui/card";
-import React, { Fragment, useEffect, useState } from "react";
-import { QuestionsData } from "@/services/QBankService";
-import { ClassData } from "@/services/ClassService";
-import { SubjectData } from "@/services/subjectService";
-import { AssignSubjectData } from "@/services/assignSubjectService";
+import React, { Fragment } from "react";
 import ViewQuestions from "./question/view-questions";
+import { QuestionsData } from "@/services/apis/qBankService";
 
 interface QuestionProps {
   Questions: QuestionsData[];
-  classData: ClassData[];
-  subjectData: AssignSubjectData[];
+  refetch: () => void
 } 
-const QuestionsReport = ({Questions, classData, subjectData}: QuestionProps) => {
+const QuestionsReport = ({Questions, refetch}: QuestionProps) => {
   
-  const questionBank = Questions.length.toString();
+  const questionBank = Questions?.length.toString();
 
   interface ReportItem {
     id: number;
@@ -53,7 +49,7 @@ const QuestionsReport = ({Questions, classData, subjectData}: QuestionProps) => 
                <div className={"text-3xl font-semibold text-${item.color} mt-1"}>
               {item.count}
             </div>
-            {item.id === 1 && <ViewQuestions Questions={Questions} />}
+            {item.id === 1 && <ViewQuestions Questions={Questions} refetch={refetch}/>}
             </div>
           </Card>
         ))

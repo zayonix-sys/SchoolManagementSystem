@@ -1,20 +1,32 @@
-
 "use client";
-import { Icon } from '@iconify/react';
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { z } from 'zod';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ClassData } from '@/services/ClassService';
-import { CampusData } from '@/services/campusService';
-import { AssignSubjectData } from '@/services/assignSubjectService';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { addTimeTable } from '@/services/TimeTableService';
-import { PeriodsData } from '@/services/periodService';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { z } from "zod";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { addTimeTable } from "@/services/TimeTableService";
+import { PeriodsData } from "@/services/periodService";
+import { ClassData } from "@/services/apis/classService";
+import { CampusData } from "@/services/apis/campusService";
+import { AssignClassSubjectData } from "@/services/apis/assignClassSubjectService";
 
 const addTimeTableSchema = z.object({
   timetableId: z.coerce.number().optional(),
@@ -26,8 +38,7 @@ const addTimeTableSchema = z.object({
   startTime: z.string().optional(),
   endTime: z.string().optional(),
   periodName: z.string().optional(),
-  subjectName: z.string().optional()
-
+  subjectName: z.string().optional(),
 });
 
 type AddTimeTableFormValues = z.infer<typeof addTimeTableSchema>;
@@ -35,11 +46,16 @@ type AddTimeTableFormValues = z.infer<typeof addTimeTableSchema>;
 interface TimeTableProps {
   classes: ClassData[];
   campus: CampusData[];
-  subject: AssignSubjectData[];
+  subject: AssignClassSubjectData[];
   periods: PeriodsData[];
 }
 
-export default function AddTimeTable({ classes, campus, subject, periods }: TimeTableProps) {
+export default function AddTimeTable({
+  classes,
+  campus,
+  subject,
+  periods,
+}: TimeTableProps) {
   const {
     register,
     handleSubmit,
@@ -55,16 +71,16 @@ export default function AddTimeTable({ classes, campus, subject, periods }: Time
 
   // Filter subjects by the selected class ID
   const filteredClassSubjects = subject.filter(
-    (assignSubject) => assignSubject.classId === selectedClassId && assignSubject.isActive
+    (assignSubject) =>
+      assignSubject.classId === selectedClassId && assignSubject.isActive
   );
 
   const onSubmit: SubmitHandler<AddTimeTableFormValues> = async (data) => {
-    
     try {
       const response = await addTimeTable(data);
 
       if (response.success) {
-        toast.success('Time Table added successfully!');
+        toast.success("Time Table added successfully!");
         reset();
       } else {
         toast.error(response.message || "Something went wrong");
@@ -78,7 +94,10 @@ export default function AddTimeTable({ classes, campus, subject, periods }: Time
     <Sheet>
       <SheetTrigger asChild>
         <Button>
-          <Icon icon="heroicons:building-library-solid" className="w-6 h-6 mr-2" />
+          <Icon
+            icon="heroicons:building-library-solid"
+            className="w-6 h-6 mr-2"
+          />
           Add Time Table
         </Button>
       </SheetTrigger>
@@ -92,36 +111,54 @@ export default function AddTimeTable({ classes, campus, subject, periods }: Time
             <div className="grid grid-cols-6 gap-4">
               <div className="col-span-3">
                 <Label>Campus</Label>
-                <Select onValueChange={(value) => setValue("campusId", parseInt(value))}>
+                <Select
+                  onValueChange={(value) =>
+                    setValue("campusId", parseInt(value))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Campus" />
                   </SelectTrigger>
                   <SelectContent>
                     {campus.map((campusData) => (
-                      <SelectItem key={campusData?.campusId ?? ''} value={campusData?.campusId?.toString() ?? ''}>
+                      <SelectItem
+                        key={campusData?.campusId ?? ""}
+                        value={campusData?.campusId?.toString() ?? ""}
+                      >
                         {campusData.campusName}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.campusId && <p className="text-destructive">{errors.campusId.message}</p>}
+                {errors.campusId && (
+                  <p className="text-destructive">{errors.campusId.message}</p>
+                )}
               </div>
 
               <div className="col-span-3">
                 <Label>Class</Label>
-                <Select onValueChange={(value) => setValue("classId", parseInt(value))}>
+                <Select
+                  onValueChange={(value) =>
+                    setValue("classId", parseInt(value))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Class" />
                   </SelectTrigger>
                   <SelectContent>
                     {classes.map((classData) => (
-                      <SelectItem key={classData?.classId ?? ''} value={classData?.classId?.toString() ?? ''}>
+                      <SelectItem
+                        key={classData?.classId ?? ""}
+                        value={classData?.classId?.toString() ?? ""}
+                      >
                         {classData.className}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.classId && <p className="text-destructive">{errors.classId.message}</p>}
+                {errors.classId && (
+                  <p className="text-destructive">{errors.classId.message}</p>
+                )}
               </div>
             </div>
 
@@ -141,41 +178,61 @@ export default function AddTimeTable({ classes, campus, subject, periods }: Time
                     <SelectItem value="Saturday">Saturday</SelectItem>
                   </SelectContent>
                 </Select>
-                {errors.dayOfWeek && <p className="text-destructive">{errors.dayOfWeek.message}</p>}
+                {errors.dayOfWeek && (
+                  <p className="text-destructive">{errors.dayOfWeek.message}</p>
+                )}
               </div>
 
               <div className="col-span-2">
                 <Label>Class Periods</Label>
-                <Select onValueChange={(value) => setValue("periodId", parseInt(value))}>
+                <Select
+                  onValueChange={(value) =>
+                    setValue("periodId", parseInt(value))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Periods" />
                   </SelectTrigger>
                   <SelectContent>
                     {periods.map((periodData) => (
-                      <SelectItem key={periodData?.periodId ?? ''} value={periodData?.periodId?.toString() ?? ''}>
+                      <SelectItem
+                        key={periodData?.periodId ?? ""}
+                        value={periodData?.periodId?.toString() ?? ""}
+                      >
                         {periodData.periodName}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.periodId && <p className="text-destructive">{errors.periodId.message}</p>}
+                {errors.periodId && (
+                  <p className="text-destructive">{errors.periodId.message}</p>
+                )}
               </div>
 
               <div className="col-span-2">
                 <Label>Subject</Label>
-                <Select onValueChange={(value) => setValue("subjectId", parseInt(value))}>
+                <Select
+                  onValueChange={(value) =>
+                    setValue("subjectId", parseInt(value))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Subject" />
                   </SelectTrigger>
                   <SelectContent>
                     {filteredClassSubjects.map((subjectData) => (
-                      <SelectItem key={subjectData?.classSubjectId} value={subjectData.subjectIds?.toString() || ''}>
+                      <SelectItem
+                        key={subjectData?.classSubjectId}
+                        value={subjectData.subjectIds?.toString() || ""}
+                      >
                         {subjectData.subjectName}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.subjectId && <p className="text-destructive">{errors.subjectId.message}</p>}
+                {errors.subjectId && (
+                  <p className="text-destructive">{errors.subjectId.message}</p>
+                )}
               </div>
             </div>
 

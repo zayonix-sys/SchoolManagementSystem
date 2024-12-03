@@ -22,12 +22,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ClassData } from "@/services/ClassService";
-import { addClassSectionAssignment } from "@/services/assignClassService";
-import { CampusData } from "@/services/campusService";
 import { SectionData } from "@/services/apis/sectionService";
-
-//we can change the props "side"'s value to 'top', 'left', 'bottom', 'right' so that the sheet will come out from different direction.
+import { ClassData } from "@/services/apis/classService";
+import { ClassAssignData, useAddClassAssignmentMutation } from "@/services/apis/assignClassService";
+import { CampusData } from "@/services/apis/campusService";
 
 const assignclassesSchema = z.object({
   campusId: z.coerce.number(),
@@ -42,6 +40,8 @@ interface ClassAssignmentProps {
   classroom: ClassroomData[];
   section: SectionData[];
   campus: CampusData[];
+  assignClassData: ClassAssignData[];
+  refetch: () => void;
 }
 
 export default function AddAssignClasses({
@@ -49,6 +49,8 @@ export default function AddAssignClasses({
   classroom,
   section,
   campus,
+  assignClassData,
+  refetch,
 }: ClassAssignmentProps) {
   const {
     register,
@@ -61,34 +63,28 @@ export default function AddAssignClasses({
     resolver: zodResolver(assignclassesSchema),
   });
 
+  const [assignClass] = useAddClassAssignmentMutation();
   const selectedCampusId = watch("campusId");
-  // const selectedClassId = watch("sectionId")
 
-  // Filter classrooms based on selected campusId
   const filteredClassrooms = classroom?.filter(
     (classroomData) => classroomData.campusId === selectedCampusId
   );
 
-  // const filteredSections = section.filter(
-  //   (sectionData) => sectionData.classId === selectedClassId
-  // );
-
   const onSubmit: SubmitHandler<AssignClassFormValues> = async (data) => {
     try {
-      const response = await addClassSectionAssignment(data);
-
-      if (response.success) {
-        // const roomNumber = Array.isArray(response.data)
-        //   ? response.data[0].roomNumber
-        //   : response.data.roomNumber;
-        toast.success(`Class Assigned successfully!`);
+      const response = await assignClass(data);
+      if (response.data?.success) {
+        const className = Array.isArray(response.data?.data)
+          ? response.data?.data[0].className
+          : response.data?.data.classId;
+        toast.success(`${className}Class Assigned successfully!`);
         reset();
+        refetch();
       } else {
         console.error("Error:", response);
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
       }
     } catch (error: any) {
-      // Check if the error has a response message, else show fallback error
       const errorMessage = error.response?.data?.message || "Request Failed";
       console.error("Request Failed:", errorMessage);
       toast.error(errorMessage);
@@ -137,7 +133,7 @@ export default function AddAssignClasses({
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {campus.map((campusData) => (
+                      {campus?.map((campusData) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={campusData.campusId}
@@ -239,18 +235,7 @@ export default function AddAssignClasses({
                     </p>
                   )}
                 </div>
-                {/* <div className="col-span-3 lg:col-span-1">
-                <Input
-                        type="number"
-                        placeholder="capacity"
-                        {...register("capacity")}
-                      />
-                      {errors.capacity && (
-                        <p className="text-destructive">
-                          {errors.capacity.message}
-                        </p>
-                      )}
-                </div> */}
+                
                 <div className="col-span-2">
                   <Button type="submit">Submit Form</Button>
                 </div>
@@ -258,7 +243,6 @@ export default function AddAssignClasses({
             </form>
           </div>
         </div>
-
         <SheetFooter>
           <SheetClose asChild>footer content</SheetClose>
         </SheetFooter>

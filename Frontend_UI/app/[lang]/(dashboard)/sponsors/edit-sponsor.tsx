@@ -18,8 +18,11 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SponsorData, updateSponsor } from "@/services/sponsorService";
 import { Label } from "@/components/ui/label";
+import { SponsorData, useUpdateSponsorMutation } from "@/services/apis/sponsorService";
+
+
+
 
 const sponsorSchema = z.object({
     sponsorId: z.coerce.number().optional(),
@@ -43,16 +46,20 @@ type SponsorFormValues = z.infer<typeof sponsorSchema>;
 
 interface SponsorProps {
     sponsorData: SponsorData;
-    // Sponsor: SponsorData[];
+    refetch: () => void;
 }
 
-export default function EditSponsor({ sponsorData }: SponsorProps) {
+const EditSponsor: React.FC<SponsorProps> = ({ sponsorData, refetch }) => {
  
     const { sponsorId, sponsorName, email, gender, occupation, phoneNumber, country, state, city, postalCode, address, isActive } = sponsorData;
+
+  const [updateSponsor] = useUpdateSponsorMutation();
+
 
     const { register, setValue, handleSubmit, reset, formState: { errors } } = useForm<SponsorFormValues>({
         resolver: zodResolver(sponsorSchema),
         defaultValues: {
+            sponsorId,
             sponsorName,
             email,
             gender,
@@ -69,21 +76,27 @@ export default function EditSponsor({ sponsorData }: SponsorProps) {
 
     const onSubmit: SubmitHandler<SponsorFormValues> = async (data) => {
 
+      
         try {
             const updatedSponsor = { ...data, sponsorId };
-            const response = await updateSponsor(updatedSponsor);
-
+            const response = await updateSponsor(updatedSponsor).unwrap();
+        
             if (response.success) {
-                toast.success(`${updatedSponsor.sponsorName} Sponsor Updated successfully!`);
-                reset();
+              toast.success(
+                `${updatedSponsor.sponsorName} was updated successfully!`
+              );
+              reset();
+              refetch();
             } else {
-                toast.error("Failed to update the Sponsor");
+              toast.error("Failed to update the Sponsor");
             }
-        } catch (error) {
+          } catch (error) {
             console.error("Request failed:", error);
             toast.error("Request failed");
-        }
-    };
+          }
+        };
+        
+  
 
     const handleError = () => {
         if (Object.keys(errors).length > 0) {
@@ -323,3 +336,5 @@ export default function EditSponsor({ sponsorData }: SponsorProps) {
         </Sheet>
     );
 }
+
+export default EditSponsor

@@ -2,42 +2,25 @@
 
 import { Docs } from "@/components/svg";
 import { Card } from "@/components/ui/card";
-import { TrendingUp } from "lucide-react";
 import React, { Fragment, useEffect, useState } from "react";
 import ViewClass from "./view-class";
-import { ClassData, fetchClasses } from "@/services/ClassService";
 import ViewSection from "./view-section";
 import ViewClassroom from "./view-classroom";
 import { SectionData } from "@/services/apis/sectionService";
 import { ClassroomData } from "@/services/apis/classroomService";
+import { ClassData } from "@/services/apis/classService";
 
 const ReportsCard = ({
   sections,
   classrooms,
+  classes,
 }: {
   sections: SectionData[];
   classrooms: ClassroomData[];
+  classes: ClassData[];
 }) => {
-  const [classes, setClasses] = useState<ClassData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchClassroomsAndClassesAndSectionsData = async () => {
-      setLoading(true);
-      try {
-        const classResponse = await fetchClasses();
-        setClasses(classResponse.data as ClassData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClassroomsAndClassesAndSectionsData();
-  }, []);
-  const classesCount = classes.length.toString();
+  const classesCount = classes?.length.toString();
   const sectionsCount = sections?.length.toString();
   const classroomCount = classrooms?.length.toString();
   interface ReportItem {
@@ -110,12 +93,6 @@ const ReportsCard = ({
             {item.id === 3 && (
               <ViewSection selectedSection={sections} selectedClass={classes} />
             )}
-            {/* <div className={`text-3xl font-semibold text-${item.color} mt-1`}>{item.count}</div> */}
-            {/* <div className="flex items-center gap-1 mt-2.5">
-                <span className="text-xs xl:text-sm font-medium text-default-600 whitespace-nowrap">Project Progress</span>
-                <span className="text-xs xl:text-sm font-medium text-success">+{item.rate}</span>
-                <TrendingUp className="h-[14px] w-[14px] text-success/90" />
-              </div> */}
           </div>
         </Card>
       ))}

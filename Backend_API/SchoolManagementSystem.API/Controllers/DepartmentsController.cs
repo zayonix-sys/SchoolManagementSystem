@@ -20,13 +20,13 @@ namespace SchoolManagementSystem.API.Controllers
             _departmentService = department;
         }
 
-        [HttpGet("GetDepartments/{campusId}")]
-        public async Task<ActionResult<ApiResponse<IEnumerable<DepartmentDTO>>>> GetDepartments(int campusId)
+        [HttpGet("[action]")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<DepartmentDTO>>>> GetDepartments(int departmentId)
         {
             _logger.LogInformation("Fetching all Departments.");
             try
             {
-                var departments = await _departmentService.GetAllDepartmentsWithCampusAsync(campusId);
+                var departments = await _departmentService.GetAllDepartmentsWithCampusAsync(departmentId);
                 _logger.LogInformation("Successfully retrieved {Count} departments.", departments?.Count() ?? 0);
 
                 return Ok(ApiResponse<IEnumerable<DepartmentDTO>>.SuccessResponse(departments, "Departments retrieved successfully"));
@@ -96,7 +96,7 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
-        [HttpDelete("DeleteDepartment/{departmentId}")]
+        [HttpDelete("[action]")]
         public async Task<IActionResult> DeleteDepartment(int departmentId)
         {
             _logger.LogInformation("Deleting Department with ID {DepartmentId}.", departmentId);

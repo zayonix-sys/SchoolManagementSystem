@@ -16,7 +16,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { CampusData, updateCampus } from "../../../../services/campusService";
+import { CampusData, useUpdateCampusMutation } from "@/services/apis/campusService";
 
 // Define Zod schema
 const campusSchema = z.object({
@@ -32,8 +32,9 @@ const campusSchema = z.object({
 
 type CampusFormValues = z.infer<typeof campusSchema>;
 
-export default function EditCampus({ campus }: { campus: CampusData }) {
+export default function EditCampus({ campus, refetch }: { campus: CampusData, refetch: () => void }) {
   const { campusId, campusName, address, country, city, state, postalCode, phoneNumber, email } = campus;
+  const [updateCampus] = useUpdateCampusMutation();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CampusFormValues>({
     resolver: zodResolver(campusSchema),
@@ -53,23 +54,20 @@ export default function EditCampus({ campus }: { campus: CampusData }) {
     try {
         const updatedCampus = { ...data, campusId };
         const response = await updateCampus(updatedCampus);
-
-        if (response.success) {
-          if (Array.isArray(response.data)) {
-            toast.success(`${response.data[0].campusName} Campus Updated successfully!`);
-          } else {
-            toast.success(`${response.data.campusName} Campus Updated successfully!`);
-          }
+        if (response.data?.success) {
+          if (response.data?.success) {
+            toast.success(`${updatedCampus.campusName} Campus Updated successfully!`);
+          refetch();  
           reset();
         } else {
             toast.error("Failed to update the campus");
         }
-    } catch (error) {
+    }
+   } catch (error) {
         console.error("Request failed:", error);
         toast.error("Request failed");
     }
 };
-
 
   const handleError = () => {
     if (Object.keys(errors).length > 0) {

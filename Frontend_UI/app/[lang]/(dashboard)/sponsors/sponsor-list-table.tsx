@@ -14,34 +14,37 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
-import { deleteSponsor, SponsorData } from "@/services/sponsorService";
+
 import EditSponsor from "./edit-sponsor";
+import { SponsorData, useDeleteSponsorMutation } from "@/services/apis/sponsorService";
 
 interface SponsorListTableProps {
-  Sponsor: SponsorData[];
+  sponsor: SponsorData[];
+  refetch: () => void;
+
 }
 
-const SponsorListTable: React.FC<SponsorListTableProps> = ({Sponsor}) => {
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+const SponsorListTable: React.FC<SponsorListTableProps> = ({sponsor, refetch}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [sponsorToDelete, setSponsorToDelete] = useState<number | null>(null);
-  const itemsPerPage = 20;
+  const itemsPerPage = 50;
   // const [detailedSponsor, setDetailedSponsor] = useState<SponsorData | null>(null); 
+  const [deleteSponsor] = useDeleteSponsorMutation();
   
-  const filteredSponsors = (Sponsor as any[]).filter((sponsor) =>
+  const filteredSponsors = (sponsor as SponsorData[])?.filter((sponsor) =>
     sponsor?.sponsorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     sponsor?.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSponsors.slice(
+  const currentItems = filteredSponsors?.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
 
-  const totalPages = Math.ceil(filteredSponsors.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredSponsors?.length / itemsPerPage);
 
 
   const handlePreviousPage = () => {
@@ -64,7 +67,8 @@ const SponsorListTable: React.FC<SponsorListTableProps> = ({Sponsor}) => {
     try {
       await deleteSponsor(id);
       toast.success("Sponsor deleted successfully");
-      setSponsorToDelete(null); 
+      setSponsorToDelete(null);
+      refetch();
     } catch (error) {
       console.error("Error deleting Sponsor:", error);
       toast.error("Failed to delete Sponsor");
@@ -102,25 +106,24 @@ const SponsorListTable: React.FC<SponsorListTableProps> = ({Sponsor}) => {
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item, index) => (
+          {currentItems?.map((item, index) => (
             <TableRow
               key={item.sponsorId}
               className="hover:bg-default-200"
-              data-state={selectedRows.includes(item.sponsorId!) && "selected"}
             >
               <TableCell className="p-2.5">{index + 1}</TableCell>
               <TableCell className="p-2.5">
-               {item.sponsorName}
+               {item?.sponsorName}
               </TableCell>
-              <TableCell className="p-2.5"> {item.gender}</TableCell>
-              <TableCell className="p-2.5"> {item.occupation}</TableCell>
-              <TableCell className="p-2.5"> {item.country}</TableCell>
-              <TableCell className="p-2.5"> {item.state}</TableCell>
-              <TableCell className="p-2.5"> {item.city}</TableCell>
-              <TableCell className="p-2.5">{item.email}</TableCell>
-              <TableCell className="p-2.5"> {item.phoneNumber}</TableCell>
-              <TableCell className="p-2.5"> {item.postalCode}</TableCell>
-              <TableCell className="p-2.5"> {item.address}</TableCell>
+              <TableCell className="p-2.5"> {item?.gender}</TableCell>
+              <TableCell className="p-2.5"> {item?.occupation}</TableCell>
+              <TableCell className="p-2.5"> {item?.country}</TableCell>
+              <TableCell className="p-2.5"> {item?.state}</TableCell>
+              <TableCell className="p-2.5"> {item?.city}</TableCell>
+              <TableCell className="p-2.5">{item?.email}</TableCell>
+              <TableCell className="p-2.5"> {item?.phoneNumber}</TableCell>
+              <TableCell className="p-2.5"> {item?.postalCode}</TableCell>
+              <TableCell className="p-2.5"> {item?.address}</TableCell>
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
@@ -132,7 +135,7 @@ const SponsorListTable: React.FC<SponsorListTableProps> = ({Sponsor}) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditSponsor sponsorData={item}/>
+                  <EditSponsor sponsorData={item} refetch={refetch}/>
                   <Button
                     size="icon"
                     variant="outline"

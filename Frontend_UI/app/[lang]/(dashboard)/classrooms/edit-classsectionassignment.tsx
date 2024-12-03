@@ -7,7 +7,6 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetClose,
@@ -19,18 +18,10 @@ import {
 } from "@/components/ui/sheet";
 import {
   ClassroomData,
-  useFetchClassroomsQuery,
-  useUpdateClassroomMutation,
 } from "@/services/apis/classroomService";
-import { ClassData, fetchClasses } from "@/services/ClassService";
 import {
   SectionData,
-  useFetchSectionQuery,
 } from "@/services/apis/sectionService";
-import {
-  AssignClassData,
-  updateClassAssignment,
-} from "@/services/assignClassService";
 import {
   Select,
   SelectContent,
@@ -38,9 +29,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CampusData, getCampuses } from "@/services/campusService";
+import { ClassAssignData, useUpdateClassAssignmentMutation } from "@/services/apis/assignClassService";
+import { ClassData } from "@/services/apis/classService";
+import { CampusData } from "@/services/apis/campusService";
 
-// Define Zod schema for class form validation
 const classassignmentSchema = z.object({
   campusId: z.number().min(1, "Campus is required"),
   classroomId: z.number().min(1, "Room Number is required"),
@@ -51,11 +43,21 @@ const classassignmentSchema = z.object({
 type ClassAssignFormValues = z.infer<typeof classassignmentSchema>;
 
 interface ClassAssignmentProps {
-  assignmentData: AssignClassData[];
+  assignmentData: ClassAssignData[];
+  classData: ClassData[];
+  sectionData: SectionData[];
+  classroomData: ClassroomData[];
+  // campusData: CampusData[];
+  refetch: () => void;
 }
 
 const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({
   assignmentData,
+  classData,
+  sectionData,
+  classroomData,
+  // campusData,
+  refetch,
 }) => {
   const { classroomId, classId, sectionId, campusId, assignmentId } =
     assignmentData[0];
@@ -76,50 +78,16 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({
     },
   });
 
-  const [classrooms, setClassrooms] = useState<ClassroomData[]>([]);
-  const [classes, setClasses] = useState<ClassData[]>([]);
-  const [sections, setSections] = useState<SectionData[]>([]);
-  const [campus, setCampus] = useState<CampusData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchClassroomsAndClassesAndSectionsData = async () => {
-      setLoading(true);
-      try {
-        const [
-          classResponse,
-          sectionResponse,
-          //classroomResponse,
-          //campusResponse,
-        ] = await Promise.all([
-          fetchClasses(),
-          //fetchSection(),
-          //fetchClassrooms(),
-          getCampuses(),
-        ]);
-        setClasses(classResponse.data as ClassData[]);
-        setSections(sectionResponse.data as SectionData[]);
-        //setClassrooms(classroomResponse.data as ClassroomData[]);
-        //setCampus(campusResponse.data as CampusData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClassroomsAndClassesAndSectionsData();
-  }, []);
+  const [updateClassAssignment] = useUpdateClassAssignmentMutation();
 
   const onSubmit: SubmitHandler<ClassAssignFormValues> = async (data) => {
     try {
       const updatedClassAssignment = { ...data, assignmentId };
       const response = await updateClassAssignment(updatedClassAssignment);
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success("Class Assignment Updated successfully!");
         reset();
+        refetch();
       } else {
         toast.error("Failed to update the class assignment");
       }
@@ -195,7 +163,7 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({
                       <SelectValue placeholder="Select Classroom" />
                     </SelectTrigger>
                     <SelectContent>
-                      {classrooms.map((classroom) => (
+                      {classroomData.map((classroom) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={classroom.classroomId}
@@ -224,7 +192,7 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({
                       <SelectValue placeholder="Select a Class" />
                     </SelectTrigger>
                     <SelectContent>
-                      {classes.map((classData) => (
+                      {classData.map((classData) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={classData.classId}
@@ -251,7 +219,7 @@ const EditClassSectionAssign: React.FC<ClassAssignmentProps> = ({
                       <SelectValue placeholder="Select a Section" />
                     </SelectTrigger>
                     <SelectContent>
-                      {sections.map((section) => (
+                      {sectionData.map((section) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={section.sectionId}

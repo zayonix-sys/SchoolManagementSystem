@@ -18,7 +18,6 @@ namespace SchoolManagementSystem.API.Controllers
             _roleService = role;
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<RolesDTO>>> GetRoles()
         {

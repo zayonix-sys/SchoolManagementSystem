@@ -1,8 +1,5 @@
 "use client";
 import { Breadcrumbs, BreadcrumbItem } from "@/components/ui/breadcrumbs";
-import { Button } from "@/components/ui/button";
-import { Icon } from "@iconify/react";
-import CampusSheet from "./add-classroom";
 import ReportsCard from "./reports";
 import {
   Accordion,
@@ -10,19 +7,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import ClassroomSheet from "./add-classroom";
 import AddSection from "./add-section";
-import { Table } from "@/components/ui/table";
 import AddClass from "./add-class";
-import { ClassData, deleteClass, fetchClasses } from "@/services/ClassService";
-import { useEffect, useState } from "react";
-import EditClass from "./edit-class";
+import { useState } from "react";
 import AddClassroom from "./add-classroom";
-import Campus from "../campuses/page";
-import { CampusData, getCampuses } from "@/services/campusService";
 import AssignClasses from "./add-assignclasses";
 import ClassAssignTable from "./classassign-table";
-import AddAssignClasses from "./add-assignclasses";
 import {
   SectionData,
   useFetchSectionQuery,
@@ -31,59 +21,33 @@ import {
   ClassroomData,
   useFetchClassroomsQuery,
 } from "@/services/apis/classroomService";
+import { ClassData, useDeleteClassMutation, useFetchClassQuery } from "@/services/apis/classService";
+import { CampusData, useFetchCampusesQuery } from "@/services/apis/campusService";
+import { ClassAssignData, useFetchClassAssignmentsQuery } from "@/services/apis/assignClassService";
 
 const Classroom = () => {
-  const [classes, setClasses] = useState<ClassData[]>([]);
-  const [campuses, setCampuses] = useState<CampusData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
   const { data, isLoading, refetch } = useFetchSectionQuery();
   const sectionsData = data?.data as SectionData[];
 
-  const {
-    data: classrooms,
-    isLoading: classroomLoading,
-    refetch: classroomsRefetch,
-  } = useFetchClassroomsQuery();
+  const { data: classrooms,isLoading: classroomLoading, refetch: classroomsRefetch,} = useFetchClassroomsQuery();
   const classroomsData = classrooms?.data as ClassroomData[];
 
-  useEffect(() => {
-    const fetchClassesAndClassroomData = async () => {
-      setLoading(true);
-      try {
-        const classData = await fetchClasses();
-        const campuses = await getCampuses();
-        setClasses(classData.data as ClassData[]);
-        setCampuses(campuses.data as CampusData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {data: classes, isLoading: classLoading, refetch: classRefetch} = useFetchClassQuery();
+  const [deleteClass] = useDeleteClassMutation();
+  const classData = classes?.data as ClassData[];
 
-    fetchClassesAndClassroomData();
-  }, []);
-  const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this campus?");
+  const {data: campus, isLoading: campusLoading, isError: campusError, refetch: campusRefetch} = useFetchCampusesQuery();
+  const campusData = campus?.data as CampusData[];
 
-    if (isConfirmed) {
-      try {
-        await deleteClass(id);
-        alert("Class deleted successfully");
-      } catch (error) {
-        console.error("Error deleting class:", error);
-        alert("Failed to delete class");
-      }
-    } else {
-      alert("Deletion cancelled");
-    }
-  };
+  const {data: assignClass, isLoading: assignClassLoading, refetch: assignClassRefetch} = useFetchClassAssignmentsQuery();
+  const assignClassData = assignClass?.data as ClassAssignData[];
 
-  const hanldeRefetch = () => {
+  const handleRefetch = () => {
     refetch();
+    classRefetch();
     classroomsRefetch();
+    campusRefetch();
+    assignClassRefetch();
   };
 
   return (
@@ -94,24 +58,20 @@ const Classroom = () => {
           <BreadcrumbItem className="text-primary">Classroom</BreadcrumbItem>
         </Breadcrumbs>
         <div className="flex justify-end space-x-4">
-          <AddClassroom campuses={campuses} refetch={hanldeRefetch} />
-          <AddClass />
-          <AddSection refetch={hanldeRefetch} />
+          <AddClassroom campuses={campusData} refetch={handleRefetch} />
+          <AddClass refetch={handleRefetch} />
+          <AddSection refetch={handleRefetch} />
           <AssignClasses
-            classes={classes}
+            classes={classData}
             section={sectionsData}
             classroom={classroomsData}
-            campus={campuses}
+            campus={campusData}
+            assignClassData={assignClassData}
+            refetch={handleRefetch}
           />
         </div>
       </div>
-      {/* <div className="mt-5 text-2xl font-medium text-default-900">Campus Registration</div> */}
-      {/* <Card className="mt-4">
-        <CardContent>
-        
-        <CollapsibleTable />
-        </CardContent>
-      </Card> */}
+
       <Accordion
         type="single"
         collapsible
@@ -129,6 +89,7 @@ const Classroom = () => {
                 <ReportsCard
                   sections={sectionsData}
                   classrooms={classroomsData}
+                  classes = {classData} 
                 />
               </div>
             </div>
@@ -151,10 +112,10 @@ const Classroom = () => {
             <div className="col-span-12 md:col-span-8">
               {/* <ReportsCard/>x */}
               <ClassAssignTable
-                classes={classes}
+                classes={classData}
                 section={sectionsData}
                 classroom={classroomsData}
-                campus={campuses}
+                campus={campusData}
               />
             </div>
           </AccordionContent>
