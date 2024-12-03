@@ -4,39 +4,25 @@ import { useEffect, useState } from "react";
 import ViewUserRole from "./userRoles/veiw-user-role";
 import UserListTable from "./users/user-table";
 import AddUser from "./users/add-user";
-import { CampusData, getCampuses } from "@/services/campusService";
 import ViewUserPermission from "./userPermission/view-user-permission";
 import { useFetchUsersQuery, UserData } from "@/services/apis/userService";
 import {
   useFetchUserRolesQuery,
   UserRoleData,
 } from "@/services/apis/userRoleService";
+import {
+  CampusData,
+  useFetchCampusesQuery,
+} from "@/services/apis/campusService";
 
 const Page = () => {
-  const [campuses, setCampuses] = useState<CampusData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { data: campusData } = useFetchCampusesQuery();
+  const campuses = (campusData?.data as CampusData[]) || [];
   const { data: allUsers, refetch } = useFetchUsersQuery();
   const users = (allUsers?.data as UserData[]) || [];
   const { data: allUserRoles, refetch: refetchUserRoles } =
     useFetchUserRolesQuery();
   const userRole = (allUserRoles?.data as UserRoleData[]) || [];
-
-  useEffect(() => {
-    const fetchUserAndRoles = async () => {
-      setLoading(true);
-      try {
-        const campusResponse = await getCampuses();
-        setCampuses(campusResponse.data as CampusData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserAndRoles();
-  }, []);
 
   const handleRefetch = () => {
     refetch();

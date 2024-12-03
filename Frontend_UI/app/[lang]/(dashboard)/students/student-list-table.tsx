@@ -23,14 +23,17 @@ import {
   StudentData,
   useDeleteStudentMutation,
 } from "@/services/apis/studentService";
+import { ClassData } from "@/services/apis/classService";
 
 interface StudentListTableProps {
+  classData: ClassData[];
   students: StudentData[];
   refetch: () => void;
 }
 const StudentList: React.FC<StudentListTableProps> = ({
   students,
   refetch,
+  classData,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,7 +81,6 @@ const StudentList: React.FC<StudentListTableProps> = ({
       toast.error("Failed to delete Student");
     }
   };
-  // console.log("student-list",currentItems);
 
   return (
     <>
@@ -144,7 +146,11 @@ const StudentList: React.FC<StudentListTableProps> = ({
                   </Badge>
                 </TableCell>
                 <TableCell className="flex gap-3 justify-end bg-background drop-shadow-md">
-                  <EditStudent studentData={item} refetch={refetch} />
+                  <EditStudent
+                    studentData={item}
+                    refetch={refetch}
+                    classes={classData}
+                  />
                   {/* <Button
                   size="icon"
                   variant="outline"

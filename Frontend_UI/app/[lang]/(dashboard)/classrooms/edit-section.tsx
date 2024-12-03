@@ -55,7 +55,6 @@ export default function EditSection({
   const onSubmit: SubmitHandler<ClassFormValues> = async (data) => {
     try {
       const updatedSection = { ...data, sectionId: sectionId ?? 0 };
-      //const response = await updateSection(updatedSection);
       const response = await editSection(updatedSection);
 
       if (response.data?.success) {

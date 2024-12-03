@@ -24,7 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CampusData, getCampuses } from "@/services/campusService";
+import {
+  CampusData,
+  useFetchCampusesQuery,
+} from "@/services/apis/campusService";
 import { UserData, useUpdateUserMutation } from "@/services/apis/userService";
 import { UserRoleData } from "@/services/apis/userRoleService";
 
@@ -46,9 +49,8 @@ const EditUser: React.FC<UserProps> = ({ userData, refetch, userRole }) => {
   const { userId, roleId, campusId, userName } = userData;
 
   const [selectedCampusId, setSelectedCampusId] = useState<number | null>(null);
-  const [campuses, setCampuses] = useState<CampusData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { data: campusData } = useFetchCampusesQuery();
+  const campuses = (campusData?.data as CampusData[]) || [];
   const [updateUser] = useUpdateUserMutation();
 
   const {
@@ -65,25 +67,6 @@ const EditUser: React.FC<UserProps> = ({ userData, refetch, userRole }) => {
       userName,
     },
   });
-
-  useEffect(() => {
-    const fetchUserAndCampusData = async () => {
-      setLoading(true);
-      try {
-        const campusResponse = await getCampuses();
-        setCampuses(campusResponse.data as CampusData[]);
-        const validCampusId = campusId ?? 0;
-        setSelectedCampusId(validCampusId);
-        setValue("campusId", validCampusId);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserAndCampusData();
-  }, [campusId, setValue]);
 
   const onSubmit: SubmitHandler<UserFormValues> = async (data) => {
     try {
@@ -143,7 +126,7 @@ const EditUser: React.FC<UserProps> = ({ userData, refetch, userRole }) => {
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {campuses.map((campus) => (
+                      {campuses?.map((campus) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={campus.campusId}

@@ -37,7 +37,6 @@ const SectionListTable = () => {
     refetch();
   };
 
-  // Apply search filter and pagination
   const filteredSections = sectionsData?.filter((section) =>
     section.sectionName.toLowerCase().includes(searchQuery.toLowerCase())
   );

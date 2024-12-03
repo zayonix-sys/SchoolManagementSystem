@@ -24,9 +24,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CampusData, getCampuses } from "@/services/campusService";
-import { EmployeesData, useUpdateEmployeeMutation } from "@/services/apis/employeeService";
+import {
+  EmployeesData,
+  useUpdateEmployeeMutation,
+} from "@/services/apis/employeeService";
 import { RoleData } from "@/services/apis/employeeRoleService";
+import {
+  CampusData,
+  useFetchCampusesQuery,
+} from "@/services/apis/campusService";
 
 const employeeSchema = z.object({
   campusId: z.number().int().positive("Campus is required"),
@@ -46,12 +52,16 @@ const employeeSchema = z.object({
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
-interface EmployeeRoleDataProps{
+interface EmployeeRoleDataProps {
   employeeData: EmployeesData;
   employeeRole: RoleData[];
   refetch: () => void;
 }
-const EditEmployee: React.FC<EmployeeRoleDataProps> = ({ employeeData,employeeRole, refetch }) => {
+const EditEmployee: React.FC<EmployeeRoleDataProps> = ({
+  employeeData,
+  employeeRole,
+  refetch,
+}) => {
   const {
     employeeId,
     roleId,
@@ -65,13 +75,11 @@ const EditEmployee: React.FC<EmployeeRoleDataProps> = ({ employeeData,employeeRo
     emergencyContact,
     qualifications,
   } = employeeData;
-  
+
   const [updateEmployee] = useUpdateEmployeeMutation();
-  
+  const { data: campusData } = useFetchCampusesQuery();
+  const campuses = (campusData?.data as CampusData[]) || [];
   const [selectedCampusId, setSelectedCampusId] = useState<number | null>(null);
-  const [campuses, setCampuses] = useState<CampusData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -95,52 +103,29 @@ const EditEmployee: React.FC<EmployeeRoleDataProps> = ({ employeeData,employeeRo
     },
   });
 
-  useEffect(() => {
-    const fetchEmployeeAndCampusData = async () => {
-      setLoading(true);
-      try {
-        const campusResponse = await getCampuses();
-        setCampuses(campusResponse.data as CampusData[]);
-        const validCampusId = campusId ?? 0;
-        const validDepartmentId = departmentId ?? 0;
-          setSelectedCampusId(validCampusId);
-          setValue("campusId", validCampusId);
-        setValue("departmentId", validDepartmentId);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEmployeeAndCampusData();
-  }, [campusId, departmentId, setValue]);
-
   const filteredDepartments =
-    campuses.find((campus) => campus.campusId === selectedCampusId)
+    campuses.find((campus: CampusData) => campus.campusId === selectedCampusId)
       ?.departments || [];
 
-      const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
-      
-        try {
-          const updatedEmployee = { ...data, employeeId };
-          const response = await updateEmployee(updatedEmployee).unwrap();
-      
-          if (response.success) {
-            toast.success(
-              `${updatedEmployee.firstName} ${updatedEmployee.lastName} was updated successfully!`
-            );
-            reset();
-            refetch();
-          } else {
-            toast.error("Failed to update the employee");
-          }
-        } catch (error) {
-          console.error("Request failed:", error);
-          toast.error("Request failed");
-        }
-      };
-      
+  const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
+    try {
+      const updatedEmployee = { ...data, employeeId };
+      const response = await updateEmployee(updatedEmployee).unwrap();
+
+      if (response.success) {
+        toast.success(
+          `${updatedEmployee.firstName} ${updatedEmployee.lastName} was updated successfully!`
+        );
+        reset();
+        refetch();
+      } else {
+        toast.error("Failed to update the employee");
+      }
+    } catch (error) {
+      console.error("Request failed:", error);
+      toast.error("Request failed");
+    }
+  };
 
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
@@ -183,7 +168,7 @@ const EditEmployee: React.FC<EmployeeRoleDataProps> = ({ employeeData,employeeRo
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {campuses.map((campus) => (
+                      {campuses.map((campus: CampusData) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={campus.campusId}
@@ -209,11 +194,11 @@ const EditEmployee: React.FC<EmployeeRoleDataProps> = ({ employeeData,employeeRo
                     }
                   >
                     <SelectTrigger>
-                    <SelectValue placeholder="Select Department" />
+                      <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
                       {filteredDepartments.length > 0 ? (
-                        filteredDepartments.map((department) => (
+                        filteredDepartments.map((department: any) => (
                           <SelectItem
                             className="hover:bg-default-300"
                             key={department.departmentId}
@@ -346,10 +331,7 @@ const EditEmployee: React.FC<EmployeeRoleDataProps> = ({ employeeData,employeeRo
               </div>
               <SheetFooter className="py-5">
                 <SheetClose asChild>
-                  <Button
-                    type="submit"
-                    className="w-full sm:w-auto"
-                  >
+                  <Button type="submit" className="w-full sm:w-auto">
                     Save Changes
                   </Button>
                 </SheetClose>
@@ -369,6 +351,6 @@ const EditEmployee: React.FC<EmployeeRoleDataProps> = ({ employeeData,employeeRo
       </SheetContent>
     </Sheet>
   );
-}
+};
 
-export default EditEmployee
+export default EditEmployee;

@@ -11,22 +11,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { deleteDepartment, DepartmentData } from "@/services/departmentService";
 import EditDepartment from "./edit-department";
-import { CampusData } from "@/services/campusService";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import ConfirmationDialog from "../common/confirmation-dialog";
+import { CampusData } from "@/services/apis/campusService";
+import { DepartmentData, useDeleteDepartmentMutation } from "@/services/apis/departmentService";
 
 interface DepartmentProps {
   campus: CampusData;
+  refetch: () => void;
 }
 
-const SelectionOperation = ({ campus }: DepartmentProps) => {
+const SelectionOperation = ({ campus, refetch }: DepartmentProps) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [departmentToDelete, setDepartmentToDelete] = useState<number | null>(null);
+  const [deleteDepartment] = useDeleteDepartmentMutation();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
@@ -35,7 +36,6 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  // Filter and paginate items based on search query
   const filteredDepartments =
     campus?.departments?.filter((dept) =>
       dept.departmentName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -47,28 +47,6 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
   );
 
   const totalPages = Math.ceil(filteredDepartments.length / itemsPerPage);
-
-  const handleSelectAll = () => {
-    if (selectedRows.length === currentItems.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(
-        currentItems
-          .map((row) => row.departmentId!)
-          .filter((id) => id !== null && id !== undefined)
-      );
-    }
-  };
-
-  const handleRowSelect = (id: number) => {
-    const updatedSelectedRows = [...selectedRows];
-    if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
-    } else {
-      updatedSelectedRows.push(id);
-    }
-    setSelectedRows(updatedSelectedRows);
-  };
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -90,6 +68,7 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
     try {
       await deleteDepartment(id);
       toast.success("Department deleted successfully");
+      refetch();
       setDepartmentToDelete(null); // Close dialog after successful deletion
     } catch (error) {
       console.error("Error deleting Department:", error);
@@ -140,7 +119,7 @@ const SelectionOperation = ({ campus }: DepartmentProps) => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditDepartment department={item} campus={campus} />
+                  <EditDepartment department={item} campus={campus} refetch={refetch} />
                   <Button
                     size="icon"
                     variant="outline"

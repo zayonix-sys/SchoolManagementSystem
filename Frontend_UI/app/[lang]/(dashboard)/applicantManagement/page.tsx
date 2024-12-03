@@ -1,13 +1,6 @@
 "use client";
 
 import { Breadcrumbs, BreadcrumbItem } from "@/components/ui/breadcrumbs";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import Reports from "./reports";
 import AddApplicant from "./add-applicant";
 import ApplicantListTable from "./veiw-applicant";
 import {

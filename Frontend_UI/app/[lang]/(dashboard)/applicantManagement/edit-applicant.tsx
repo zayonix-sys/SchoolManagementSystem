@@ -25,12 +25,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { format } from "date-fns";
-import { fetchClasses } from "@/services/ClassService";
-import { CampusData, getCampuses } from "@/services/campusService";
 import {
   ApplicantApplicationDetail,
   useUpdateApplicantMutation,
 } from "@/services/apis/applicantService";
+import {
+  CampusData,
+  useFetchCampusesQuery,
+} from "@/services/apis/campusService";
 
 const applicantSchema = z.object({
   applicantId: z.number().optional(),
@@ -101,7 +103,8 @@ const EditApplicant: React.FC<ApplicantProps> = ({
     { classId: number; className: string }[]
   >([]);
   const [updateApplicant] = useUpdateApplicantMutation();
-  const [campuses, setCampuses] = useState<CampusData[]>([]);
+  const { data: campusData } = useFetchCampusesQuery();
+  const campuses = (campusData?.data as CampusData[]) || [];
   const {
     register,
     handleSubmit,
@@ -160,20 +163,6 @@ const EditApplicant: React.FC<ApplicantProps> = ({
       toast.error("Please correct the errors in the form.");
     }
   };
-
-  useEffect(() => {
-    const loadClasses = async () => {
-      try {
-        const response = await fetchClasses();
-        const campuses = await getCampuses();
-        setCampuses(campuses.data as CampusData[]);
-        setClasses(response.data);
-      } catch (error) {
-        console.error("Failed to fetch classes:", error);
-      }
-    };
-    loadClasses(); // Call the loadClasses function
-  }, []);
 
   return (
     <Sheet>

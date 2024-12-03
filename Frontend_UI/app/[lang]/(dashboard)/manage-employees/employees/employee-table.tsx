@@ -23,7 +23,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { EmployeesData, useDeleteEmployeeMutation } from "@/services/apis/employeeService";
+import { CampusData } from "@/services/apis/campusService";
+import {
+  EmployeesData,
+  useDeleteEmployeeMutation,
+} from "@/services/apis/employeeService";
 import { RoleData } from "@/services/apis/employeeRoleService";
 import ConfirmationDialog from "../../common/confirmation-dialog";
 
@@ -33,7 +37,11 @@ interface EmployeeListTableProps {
   refetch: () => void;
 }
 
-const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees, refetch , employeeRole}) => {
+const EmployeeListTable: React.FC<EmployeeListTableProps> = ({
+  employees,
+  refetch,
+  employeeRole,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
@@ -41,8 +49,8 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees, refetc
   const [detailedEmployee, setDetailedEmployee] =
     useState<EmployeesData | null>(null);
 
-    const [deleteEmployee] = useDeleteEmployeeMutation();
- 
+  const [deleteEmployee] = useDeleteEmployeeMutation();
+
   // Apply search filter and pagination
   const filteredEmployees = (employees ?? []).filter(
     (employee) =>
@@ -60,7 +68,7 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees, refetc
 
   const totalPages = Math.ceil(filteredEmployees?.length / itemsPerPage);
 
-    const handlePreviousPage = () => {
+  const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
@@ -156,7 +164,11 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees, refetc
                   >
                     <Icon icon="heroicons:eye" className=" h-4 w-4" />
                   </Button>
-                  <EditEmployee employeeData={item} refetch={refetch} employeeRole={employeeRole}/>
+                  <EditEmployee
+                    employeeData={item}
+                    refetch={refetch}
+                    employeeRole={employeeRole}
+                  />
                   <Button
                     size="icon"
                     variant="outline"

@@ -25,12 +25,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { ClassData, fetchClasses } from "@/services/ClassService";
 import { format } from "date-fns";
 import {
   StudentData,
   useUpdateStudentMutation,
 } from "@/services/apis/studentService";
+import { ClassData } from "@/services/apis/classService";
 
 const studentSchema = z.object({
   campusId: z.coerce.number().optional(),
@@ -61,11 +61,15 @@ type StudentFormValues = z.infer<typeof studentSchema>;
 
 interface StudentProps {
   studentData: StudentData;
+  classes: ClassData[];
   refetch: () => void;
 }
 
-const EditStudent: React.FC<StudentProps> = ({ studentData, refetch }) => {
-  const [classes, setClasses] = useState<ClassData[]>([]);
+const EditStudent: React.FC<StudentProps> = ({
+  studentData,
+  refetch,
+  classes,
+}) => {
   const [selectclassId, setClassId] = useState<number | null>(null);
   const [updateStudent] = useUpdateStudentMutation();
 
@@ -108,20 +112,6 @@ const EditStudent: React.FC<StudentProps> = ({ studentData, refetch }) => {
     },
   });
   // console.log("default values", studentData);
-  useEffect(() => {
-    const loadClasses = async () => {
-      try {
-        const response = await fetchClasses();
-        if (response.success) {
-          setClasses(response.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch classes:", error);
-      }
-    };
-
-    loadClasses();
-  }, []);
 
   const onSubmit: SubmitHandler<StudentFormValues> = async (data) => {
     try {

@@ -8,15 +8,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { QuestionsData } from "@/services/QBankService";
 import QuestionsTable from "./questions-table";
+import { QuestionsData } from "@/services/apis/qBankService";
 
 
 interface QuestionProps {
   Questions: QuestionsData[];
+  refetch: () => void
 } 
 
-const ViewQuestions = ({Questions}: QuestionProps) => {
+const ViewQuestions = ({Questions, refetch}: QuestionProps) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -34,7 +35,7 @@ const ViewQuestions = ({Questions}: QuestionProps) => {
         </SheetHeader>
         <div>
           <div className="py-6">
-            <QuestionsTable Questions={Questions} />
+            <QuestionsTable Questions={Questions} refetch={refetch}/>
           </div>
         </div>
         <SheetFooter>

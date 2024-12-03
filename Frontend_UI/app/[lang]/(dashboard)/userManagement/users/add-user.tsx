@@ -23,9 +23,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CampusData } from "@/services/campusService";
 import { useAddUserMutation, UserData } from "@/services/apis/userService";
 import { UserRoleData } from "@/services/apis/userRoleService";
+import { CampusData } from "@/services/apis/campusService";
 
 // Props interface
 interface UserListTableProps {

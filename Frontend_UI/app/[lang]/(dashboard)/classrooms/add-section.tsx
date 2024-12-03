@@ -16,20 +16,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   SectionData,
   useAddSectionMutation,
 } from "@/services/apis/sectionService";
+import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
 
-// Zod schema definition
 const sectionSchema = z.object({
   sectionName: z.string().min(1, "Section Name is required"),
   capacity: z.number().min(1, "Capacity is required").max(999),
@@ -40,7 +33,6 @@ type SectionFormValues = z.infer<typeof sectionSchema>;
 export default function AddSection({ refetch }: { refetch: () => void }) {
   const [addSection] = useAddSectionMutation();
 
-  const [classes, setClasses] = useState([]);
   const {
     register,
     handleSubmit,
@@ -50,26 +42,9 @@ export default function AddSection({ refetch }: { refetch: () => void }) {
     resolver: zodResolver(sectionSchema),
   });
 
-  useEffect(() => {
-    // Fetch classes from the database
-    async function fetchClasses() {
-      try {
-        const response = await fetch("/api/Class/GetClass");
-        const data = await response.json();
-        setClasses(data);
-      } catch (error) {
-        console.error("Failed to fetch classes:", error);
-      }
-    }
-
-    fetchClasses();
-  }, []);
-
   const onSubmit: SubmitHandler<SectionFormValues> = async (data) => {
     try {
-      //const response = await addSection(data);
       const response = await addSection(data as SectionData);
-
       if (response.data?.success) {
         toast.success(
           `${response.data?.data.sectionName} Section Added successfully!`

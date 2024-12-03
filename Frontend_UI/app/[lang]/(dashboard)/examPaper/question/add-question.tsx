@@ -16,13 +16,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"; // Adjusted service import
-import { ClassData } from "@/services/ClassService";
-import { AssignSubjectData } from "@/services/assignSubjectService";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import 'react-quill/dist/quill.snow.css';
-import { addQuestions } from "@/services/QBankService";
 import dynamic from "next/dynamic";
+import { ClassData } from "@/services/apis/classService";
+import { AssignClassSubjectData } from "@/services/apis/assignClassSubjectService";
+import { useAddQuestionMutation } from "@/services/apis/qBankService";
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -40,9 +40,11 @@ type QuestionsFormValues = z.infer<typeof questionSchema>;
 
 interface QuestionProps {
   classes: ClassData[];
-  subject: AssignSubjectData[];
+  subject: AssignClassSubjectData[];
+  refetch: () => void
 }
-export default function AddQuestions({ subject, classes }: QuestionProps) {
+export default function AddQuestions({ subject, classes, refetch }: QuestionProps) {
+  const [addQuestions] = useAddQuestionMutation();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -62,7 +64,7 @@ export default function AddQuestions({ subject, classes }: QuestionProps) {
 
   const selectedClassId = watch("classId");
 
-  const filteredClassSubjects = subject.filter(
+  const filteredClassSubjects = subject?.filter(
     (subjects) => subjects.classId === selectedClassId && subjects.isActive
   );
 
@@ -70,12 +72,12 @@ export default function AddQuestions({ subject, classes }: QuestionProps) {
     console.log("Data Submitted", data);
     try {
       const response = await addQuestions(data);
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success(`${data.questionType} added successfully!`);
+        refetch();
         reset();
       } else {
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
       }
     } catch (error) {
       toast.error("Request Failed");
@@ -115,7 +117,7 @@ export default function AddQuestions({ subject, classes }: QuestionProps) {
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
                     <SelectContent>
-                      {classes.map((cd) => (
+                      {classes?.map((cd) => (
                         <SelectItem key={cd?.classId ?? ''} value={cd?.classId?.toString() ?? ''}>
                           {cd.className}
                         </SelectItem>
@@ -131,7 +133,7 @@ export default function AddQuestions({ subject, classes }: QuestionProps) {
                       <SelectValue placeholder="Select Subject" />
                     </SelectTrigger>
                     <SelectContent>
-                      {filteredClassSubjects.map((subjectData) => (
+                      {filteredClassSubjects?.map((subjectData) => (
                         <SelectItem key={subjectData.subjectName} value={subjectData.subjectIds?.toString() || ''}>
                           {subjectData.subjectName}
                         </SelectItem>

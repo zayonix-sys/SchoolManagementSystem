@@ -12,10 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fetchClasses } from "@/services/ClassService";
-import { CampusData, getCampuses } from "@/services/campusService";
 import { format } from "date-fns";
 import { useAddApplicantMutation } from "@/services/apis/applicantService";
+import {
+  CampusData,
+  useFetchCampusesQuery,
+} from "@/services/apis/campusService";
+import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
 
 const applicantSchema = z.object({
   applicantId: z.number().optional(),
@@ -61,6 +64,10 @@ interface ApplicantProp {
 
 const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
   const [addApplicant] = useAddApplicantMutation();
+  const { data: classData } = useFetchClassQuery();
+  const classes = (classData?.data as ClassData[]) || [];
+  const { data: campusData } = useFetchCampusesQuery();
+  const campuses = (campusData?.data as CampusData[]) || [];
 
   const {
     register,
@@ -74,34 +81,6 @@ const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
       gender: "male",
     },
   });
-
-  const [classes, setClasses] = useState<
-    { classId: number; className: string }[]
-  >([]);
-  const [campuses, setCampuses] = useState<CampusData[]>([]);
-
-  useEffect(() => {
-    const loadClasses = async () => {
-      try {
-        const response = await fetchClasses();
-        setClasses(response.data);
-      } catch (error) {
-        console.error("Failed to fetch classes:", error);
-      }
-    };
-
-    loadClasses();
-    const fetchCampuses = async () => {
-      try {
-        const campuses = await getCampuses();
-        setCampuses(campuses.data as CampusData[]);
-      } catch (err) {
-        console.error("Failed to fetch campuses:", err);
-      }
-    };
-
-    fetchCampuses();
-  }, []);
 
   const onSubmit: SubmitHandler<ApplicantFormValues> = async (data) => {
     try {
@@ -333,13 +312,13 @@ const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
                     <SelectValue placeholder="Select Last Class Attended" />
                   </SelectTrigger>
                   <SelectContent>
-                    {classes.map((c) => (
+                    {classes?.map((c) => (
                       <SelectItem
                         className="hover:bg-default-300"
-                        key={c.classId}
-                        value={c.classId.toString()}
+                        key={c?.classId}
+                        value={c?.classId?.toString() ?? ""}
                       >
-                        {c.className}
+                        {c?.className}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -364,10 +343,10 @@ const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
                     {classes.map((c) => (
                       <SelectItem
                         className="hover:bg-default-300"
-                        key={c.classId}
-                        value={c.classId.toString()}
+                        key={c?.classId}
+                        value={c?.classId?.toString() ?? ""}
                       >
-                        {c.className}
+                        {c?.className}
                       </SelectItem>
                     ))}
                   </SelectContent>

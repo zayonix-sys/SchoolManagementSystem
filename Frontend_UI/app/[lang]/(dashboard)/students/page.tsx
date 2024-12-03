@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { BreadcrumbItem, Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { ClassData, fetchClasses } from "@/services/ClassService"; // Import your fetchClasses service
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -12,16 +11,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import StudentList from "./student-list-table";
+import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
 import {
   StudentData,
   useFetchStudentByClassWiseQuery,
 } from "@/services/apis/studentService";
 
 const Page = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [classId, setClassId] = useState<number | null>(null);
-  const [classes, setClasses] = useState<ClassData[]>([]);
   const { data: students, refetch } = useFetchStudentByClassWiseQuery(
     classId ?? 0
   );
@@ -29,24 +26,16 @@ const Page = () => {
     ? (students?.data as StudentData[])
     : [];
 
-  useEffect(() => {
-    const fetchClassData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchClasses();
-        setClasses(response.data as ClassData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClassData();
-  }, []);
+  const {
+    data: classData,
+    isLoading: classLoading,
+    refetch: classRefetch,
+  } = useFetchClassQuery();
+  const classes = classData?.data as ClassData[];
 
   const handleRefetch = () => {
     refetch();
+    classRefetch();
   };
 
   return (
@@ -72,7 +61,11 @@ const Page = () => {
         </Select>
       </div>
 
-      <StudentList students={studentData} refetch={handleRefetch} />
+      <StudentList
+        students={studentData}
+        classData={classes}
+        refetch={handleRefetch}
+      />
     </div>
   );
 };

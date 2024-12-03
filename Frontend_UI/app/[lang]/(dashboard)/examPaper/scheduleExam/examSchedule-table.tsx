@@ -15,33 +15,33 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import ConfirmationDialog from "../../common/confirmation-dialog";
-import { deleteExam, ExamScheduleData } from "@/services/ExamScheduleService";
 import EditExamSchedule from "./edit-schedule";
-
+import { ExamData, useDeleteExamMutation } from "@/services/apis/examService";
 
 interface DataProps{
-  examSchedule: ExamScheduleData[];
+  examSchedule: ExamData[];
+  refetch: () => void;
 }
 
-const ExamScheduleTable: React.FC<DataProps> = ({examSchedule}) => {
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+const ExamScheduleTable: React.FC<DataProps> = ({examSchedule, refetch}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [examToDelete, setExamToDelete] = useState<number | null>(null);
   const itemsPerPage = 10;
-
-  const filteredExams = examSchedule.filter((cls) =>
+  const [deleteExam] = useDeleteExamMutation();
+  
+  const filteredExams = examSchedule?.filter((cls) =>
       cls.className?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredExams.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredExams?.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredExams.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredExams?.length / itemsPerPage);
+
+  
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -64,6 +64,7 @@ const ExamScheduleTable: React.FC<DataProps> = ({examSchedule}) => {
     try {
       await deleteExam(id);
       toast.success("ExamSchedule deleted successfully");
+      refetch();
       setExamToDelete(null);
     } catch (error) {
       console.error("Error deleting ExamSchedule:", error);
@@ -100,7 +101,7 @@ const ExamScheduleTable: React.FC<DataProps> = ({examSchedule}) => {
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item, index) => (
+          {currentItems?.map((item, index) => (
             <TableRow
               key={item.examId}
               className="hover:bg-default-200"
@@ -127,7 +128,7 @@ const ExamScheduleTable: React.FC<DataProps> = ({examSchedule}) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditExamSchedule examItem={[item]} />
+                  <EditExamSchedule examItem={[item]} refetch={refetch} />
                   <Button
                     size="icon"
                     variant="outline"

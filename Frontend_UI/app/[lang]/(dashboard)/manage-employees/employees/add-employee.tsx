@@ -16,15 +16,24 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"; // Adjusted service import
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CampusData } from "@/services/campusService";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  EmployeesData,
+  useAddEmployeeMutation,
+} from "@/services/apis/employeeService";
+import { CampusData } from "@/services/apis/campusService";
 import { RoleData } from "@/services/apis/employeeRoleService";
-import { EmployeesData, useAddEmployeeMutation } from "@/services/apis/employeeService";
 
 interface EmployeeListTableProps {
   campuses: CampusData[];
   employeeRole: RoleData[];
-  refetch: () => void ;
+  refetch: () => void;
 }
 // Define Zod schema
 const employeeSchema = z.object({
@@ -45,7 +54,11 @@ const employeeSchema = z.object({
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
-const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,refetch  }) => {
+const AddEmployee: React.FC<EmployeeListTableProps> = ({
+  campuses,
+  employeeRole,
+  refetch,
+}) => {
   const [addEmployee] = useAddEmployeeMutation();
   const [selectedCampusId, setSelectedCampusId] = useState<number | null>(null);
   const {
@@ -59,11 +72,12 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,
   });
 
   const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
-  
     try {
-      const response = await addEmployee(data as EmployeesData).unwrap();   
+      const response = await addEmployee(data as EmployeesData).unwrap();
       if (response.success) {
-        toast.success(`Employee ${data.firstName} ${data.lastName} added successfully!`);
+        toast.success(
+          `Employee ${data.firstName} ${data.lastName} added successfully!`
+        );
         reset();
         refetch();
       } else {
@@ -89,8 +103,9 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,
     setValue("departmentId", 0);
   };
 
-  const filteredDepartments = campuses.find(campus => campus.campusId === selectedCampusId)?.departments || [];
-
+  const filteredDepartments =
+    campuses?.find((campus) => campus.campusId === selectedCampusId)
+      ?.departments || [];
 
   return (
     <Sheet>
@@ -117,15 +132,13 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
               <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                  <Select
-                    onValueChange={handleCampusChange}
-                  >
+                <div className="col-span-2">
+                  <Select onValueChange={handleCampusChange}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {campuses.map((campus) => (
+                      {campuses?.map((campus) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={campus.campusId}
@@ -153,8 +166,8 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,
                       <SelectValue placeholder="Select Department" />
                     </SelectTrigger>
                     <SelectContent>
-                      {filteredDepartments.length > 0 ? (
-                        filteredDepartments.map((department) => (
+                      {filteredDepartments?.length > 0 ? (
+                        filteredDepartments?.map((department) => (
                           <SelectItem
                             className="hover:bg-default-300"
                             key={department.departmentId}
@@ -200,9 +213,7 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,
                   </Select>
 
                   {errors.roleId && (
-                    <p className="text-destructive">
-                      {errors.roleId.message}
-                    </p>
+                    <p className="text-destructive">{errors.roleId.message}</p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
@@ -212,7 +223,9 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,
                     {...register("firstName")}
                   />
                   {errors.firstName && (
-                    <p className="text-destructive">{errors.firstName.message}</p>
+                    <p className="text-destructive">
+                      {errors.firstName.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
@@ -222,7 +235,9 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,
                     {...register("lastName")}
                   />
                   {errors.lastName && (
-                    <p className="text-destructive">{errors.lastName.message}</p>
+                    <p className="text-destructive">
+                      {errors.lastName.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
@@ -264,7 +279,9 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,
                     {...register("emergencyContact")}
                   />
                   {errors.emergencyContact && (
-                    <p className="text-destructive">{errors.emergencyContact.message}</p>
+                    <p className="text-destructive">
+                      {errors.emergencyContact.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2 lg:col-span-1">
@@ -274,7 +291,9 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,
                     {...register("qualifications")}
                   />
                   {errors.qualifications && (
-                    <p className="text-destructive">{errors.qualifications.message}</p>
+                    <p className="text-destructive">
+                      {errors.qualifications.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2">
@@ -290,5 +309,5 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({ campuses, employeeRole,
       </SheetContent>
     </Sheet>
   );
-}
+};
 export default AddEmployee;

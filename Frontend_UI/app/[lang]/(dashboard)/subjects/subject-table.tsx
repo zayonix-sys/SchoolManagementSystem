@@ -10,13 +10,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import EditClass from "../classrooms/edit-class";
 import { Input } from "@/components/ui/input";
-import { deleteSubject, SubjectData } from "@/services/subjectService";
 import EditSubject from "./edit-subject";
 import { toast } from "sonner";
 import ConfirmationDialog from "../common/confirmation-dialog";
+import { SubjectData, useDeleteSubjectMutation } from "@/services/apis/subjectService";
 
-const SubjectListTable = ({ subject }: { subject: SubjectData[] }) => {
+const SubjectListTable = (
+  {
+    subject,
+    refetch
+  }:{
+    subject: SubjectData[];
+    refetch: () => void;
+  }) => {
+  const [deleteSubject] = useDeleteSubjectMutation();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,36 +38,11 @@ const SubjectListTable = ({ subject }: { subject: SubjectData[] }) => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSubjects.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = filteredSubjects.slice(indexOfFirstItem, indexOfLastItem);
 
   const totalPages = Math.ceil(filteredSubjects.length / itemsPerPage);
 
-  const handleSelectAll = () => {
-    if (selectedRows.length === currentItems.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(
-        currentItems
-          .map((row) => row.subjectId!)
-          .filter((id) => id !== null && id !== undefined)
-      );
-    }
-  };
-
-  const handleRowSelect = (id: number) => {
-    const updatedSelectedRows = [...selectedRows];
-    if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
-    } else {
-      updatedSelectedRows.push(id);
-    }
-    setSelectedRows(updatedSelectedRows);
-  };
-
-  const handlePreviousPage = () => {
+   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
@@ -74,10 +58,14 @@ const SubjectListTable = ({ subject }: { subject: SubjectData[] }) => {
     setSubjectToDelete(null);
   };
 
+  const handleRefetch = () => {
+    refetch();
+  }
   const handleDelete = async (id: number) => {
     try {
       await deleteSubject(id);
       toast.success("Subject deleted successfully");
+      handleRefetch();
       setSubjectToDelete(null); // Close dialog after successful deletion
     } catch (error) {
       console.error("Error deleting Subject:", error);
@@ -127,7 +115,7 @@ const SubjectListTable = ({ subject }: { subject: SubjectData[] }) => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditSubject subject={item} />
+                  <EditSubject subject={item} refetch={handleRefetch}/>
 
                   <Button
                     size="icon"

@@ -130,8 +130,8 @@ const UserListTable: React.FC<UserListTableProps> = ({
                 <div className="flex gap-3">
                   <EditUser
                     userData={item}
-                    refetch={refetch}
                     userRole={userRole}
+                    refetch={refetch}
                   />
                   <Button
                     size="icon"
