@@ -19,9 +19,9 @@ import {
 } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import dynamic from "next/dynamic";
-import { deleteExamPaper, ExamData, updateExamPaper } from "@/services/ExamPaperService";
 import { Label } from "@/components/ui/label";
-import { QuestionsData } from "@/services/QBankService";
+import { QuestionsData } from "@/services/apis/qBankService";
+import { ExamPaperData, useDeleteExamPaperMutation, useUpdateExamPaperMutation } from "@/services/apis/examPaperService";
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -46,12 +46,15 @@ const examPaperSchema = z.object({
 type ExamFormValues = z.infer<typeof examPaperSchema>;
 
 interface ExamProps{
-  examData: ExamData[]
-  examItem: ExamData[]
+  examPaperData: ExamPaperData[]
+  examPaperItem: ExamPaperData[]
   questionData: QuestionsData[]
+  refetch: () => void
 }
 
-export default function EditExamPaper({ examData, examItem, questionData }: ExamProps) {
+export default function EditExamPaper({ examPaperData, examPaperItem, questionData, refetch }: ExamProps) {
+  const [deleteExamPaper] = useDeleteExamPaperMutation();
+  const [updateExamPaper] = useUpdateExamPaperMutation();
   const [writtensMarks, setWrittensMarks] = useState(0);
   const [totalsMarks, setTotalsMarks] = useState(0);
   const [isValidTotal, setIsValidTotal] = useState(true);
@@ -64,14 +67,14 @@ export default function EditExamPaper({ examData, examItem, questionData }: Exam
   const { register, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<ExamFormValues>({
     resolver: zodResolver(examPaperSchema),
     defaultValues: {
-      classId: examItem[0]?.classId,
-      subjectId: examItem[0]?.subjectId,
-      totalMarks: examItem[0]?.totalMarks,
-      writtenMarks: examItem[0]?.writtenMarks,
-      oralMarks: examItem[0]?.oralMarks,
-      dictationMarks: examItem[0]?.dictationMarks,
-      copyMarks: examItem[0]?.copyMarks,
-      termName: examItem[0]?.termName,
+      classId: examPaperItem[0]?.classId,
+      subjectId: examPaperItem[0]?.subjectId,
+      totalMarks: examPaperItem[0]?.totalMarks,
+      writtenMarks: examPaperItem[0]?.writtenMarks,
+      oralMarks: examPaperItem[0]?.oralMarks,
+      dictationMarks: examPaperItem[0]?.dictationMarks,
+      copyMarks: examPaperItem[0]?.copyMarks,
+      termName: examPaperItem[0]?.termName,
       questionIds: [],      
     },
   });
@@ -86,14 +89,14 @@ export default function EditExamPaper({ examData, examItem, questionData }: Exam
   const filteredQuestions = questionData.filter(
     (questions) => questions.classId === selectedClassId && questions.subjectId === selectedSubjectId && questions.isActive);
 
-  const filteredQuestionsExams = examData.filter(
+  const filteredQuestionsExams = examPaperData.filter(
     (questions) => questions.classId === selectedClassId && questions.subjectId === selectedSubjectId && questions.isActive);
    
     useEffect(() => {
-      if (examItem.length > 0) {
-        const { classId, subjectId } = examItem[0]; 
+      if (examPaperItem.length > 0) {
+        const { classId, subjectId } = examPaperItem[0]; 
   
-        const filteredQuestions = examData.filter(
+        const filteredQuestions = examPaperData.filter(
           (question) =>
             question.classId === classId &&
             question.subjectId === subjectId &&
@@ -114,7 +117,7 @@ export default function EditExamPaper({ examData, examItem, questionData }: Exam
         const questionIds = filteredQuestions.map((q) => q.questionIds[0]);
         setValue("questionIds", questionIds);
       }
-    }, [examData, examItem, questionData]);
+    }, [examPaperData, examPaperItem, questionData]);
     
    
 
@@ -139,14 +142,6 @@ export default function EditExamPaper({ examData, examItem, questionData }: Exam
     setRows((prev) => [...prev, { questionId: null, question: "", marks: null, examPaperId: null }]);
   };
 
-//   const removeRow = (index: number) => {
-//     const updatedRows = rows.filter((_, i) => i !== index);
-//     setRows(updatedRows);
-
-//     const updatedQuestionIds = updatedRows.map((row) => row.questionId).filter((id) => id !== null);;
-//     setValue("questionIds", updatedQuestionIds);  
-// };
-
 const removeRow = async (index: number) => {
   const examPaperIdToRemove = rows[index].examPaperId;
 
@@ -155,7 +150,7 @@ const removeRow = async (index: number) => {
     try {
       const response = await deleteExamPaper(examPaperIdToRemove);
 
-      if (response.success) {
+      if (response.data?.success) {
         const updatedRows = rows.filter((_, i) => i !== index);
         setRows(updatedRows);
 
@@ -210,10 +205,9 @@ const removeRow = async (index: number) => {
       const filteredExamPaperIds = filteredQuestionsExams.map((question) => question.examPaperId).filter((id) => id !== undefined) as number[];
       console.log(filteredExamPaperIds);
       const response = await updateExamPaper({...data, examPaperIds: filteredExamPaperIds,});
-      console.log(response);
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success(`${data.termName} ExamPaper Updated successfully!`);
+        refetch();
         reset();
       } else {
         toast.error("Failed to update the ExamPaper");
@@ -259,7 +253,7 @@ const removeRow = async (index: number) => {
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
                     <SelectContent>
-                      {examItem.map((cd) => (
+                      {examPaperItem.map((cd) => (
                         <SelectItem key={cd?.classId ?? ''} value={cd?.classId?.toString() ?? ''}>
                           {cd.className}
                         </SelectItem>
@@ -276,7 +270,7 @@ const removeRow = async (index: number) => {
                       <SelectValue placeholder="Select Subject" />
                     </SelectTrigger>
                     <SelectContent>
-                      {examItem.map((subjectData) => (
+                      {examPaperItem.map((subjectData) => (
                         <SelectItem key={subjectData.subjectId} value={subjectData.subjectId.toString()}>
                           {subjectData.subjectName}
                         </SelectItem>
@@ -287,13 +281,13 @@ const removeRow = async (index: number) => {
                 </div>
                 
                 <div className="col-span-4">
-                  <Select defaultValue={examItem[0].termName}
+                  <Select defaultValue={examPaperItem[0].termName}
                           onValueChange={(value) => setValue("termName", value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select Subject" />
                     </SelectTrigger>
                     <SelectContent>
-                      {examItem.map((subjectData) => (
+                      {examPaperItem.map((subjectData) => (
                         <SelectItem key={subjectData.termName} value={subjectData.termName}>
                           {subjectData.termName}
                         </SelectItem>
@@ -385,7 +379,7 @@ const removeRow = async (index: number) => {
                     readOnly
                     placeholder="Written Marks"
                     {...register("writtenMarks", { valueAsNumber: true })}
-                    value={examItem[0].writtenMarks}
+                    value={examPaperItem[0].writtenMarks}
                   />
                   {errors.writtenMarks && (<p className="text-destructive"> {errors.writtenMarks.message}
                   </p>)}

@@ -5,9 +5,9 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import { useThemeStore } from "@/store";
 import { useTheme } from "next-themes";
 import { themes } from "@/config/thems";
-
 import { getGridConfig } from "@/lib/appex-chart-options";
-import { fetchSponsorPayment, PaymentData } from "@/services/sponsorPaymentsService";
+import { PaymentData, useFetchSponsorPaymentsQuery } from "@/services/apis/sponsorPaymentService";
+
 
 const ReportChart = ({ height = 360 }) => {
   const { theme: config, setTheme: setConfig, isRtl } = useThemeStore();
@@ -15,28 +15,16 @@ const ReportChart = ({ height = 360 }) => {
 
   const theme = themes.find((theme) => theme.name === config);
 
-  const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
+  // const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
   const [totalPaidOverTime, setTotalPaidOverTime] = useState<number[]>([]);
   const [remainingBalanceOverTime, setRemainingBalanceOverTime] = useState<number[]>([]);
 
   // Define months outside the function so it is accessible for chart options
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  useEffect(() => {
-    const loadPayments = async () => {
-      try {
-        const response = await fetchSponsorPayment();
-        const payments = response.data;
-
-        setPaymentData(payments); // Store all payment data
-        calculatePaymentsOverTime(payments);
-      } catch (error) {
-        console.error("Error fetching payment data:", error);
-      }
-    };
-
-    loadPayments();
-  }, []);
+ 
+  const { data, isLoading, error, refetch } = useFetchSponsorPaymentsQuery();
+  const paymentData = data?.data as PaymentData[]; 
 
   const calculatePaymentsOverTime = (payments: PaymentData[]) => {
     let paidByMonth = Array(12).fill(0); // Initializing array for 12 months

@@ -16,7 +16,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"; // Adjusted service import
-import { addSubject } from "@/services/subjectService";
+import { useAddSubjectMutation } from "@/services/apis/subjectService";
 
 const subjectSchema = z.object({
   subjectId: z.number().int().positive().optional(),
@@ -25,8 +25,10 @@ const subjectSchema = z.object({
 });
 
 type SubjectFormValues = z.infer<typeof subjectSchema>;
-
-const AddSubject = () => {
+interface SubjectProps{
+  refetch: () => void;
+}
+const AddSubject = ({refetch}: SubjectProps) => {
   const {
     register,
     handleSubmit,
@@ -37,16 +39,17 @@ const AddSubject = () => {
     resolver: zodResolver(subjectSchema),
   });
 
+  const [addSubject] = useAddSubjectMutation();
   const onSubmit: SubmitHandler<SubjectFormValues> = async (data) => {
     try {
       const response = await addSubject(data); // Corrected function call
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success(`Subject ${data.subjectName} added successfully!`);
+        refetch();
         reset();
       } else {
         console.error("Error:", response);
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
       }
     } catch (error) {
       console.error("Request Failed:", error);

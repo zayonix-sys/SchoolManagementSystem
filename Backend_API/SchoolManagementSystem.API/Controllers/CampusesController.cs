@@ -95,19 +95,19 @@ public class CampusesController : ControllerBase
         }
     }
 
-    [HttpDelete("DeleteCampus/{id}")]
-    public async Task<IActionResult> DeleteCampus(int id)
+    [HttpDelete("[action]")]
+    public async Task<IActionResult> DeleteCampus(int campusId)
     {
-        _logger.LogInformation("Deleting campus with ID {CampusId}.", id);
+        _logger.LogInformation("Deleting campus with ID {CampusId}.", campusId);
         try
         {
-            await _campusService.DeleteCampusAsync(id);
-            _logger.LogInformation("Successfully deleted campus with ID {CampusId}.", id);
+            await _campusService.DeleteCampusAsync(campusId);
+            _logger.LogInformation("Successfully deleted campus with ID {CampusId}.", campusId);
             return Ok(ApiResponse<object>.SuccessResponse(null, "Campus deleted successfully"));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occurred while deleting Campus with ID {CampusId}.", id);
+            _logger.LogError(ex, "An error occurred while deleting Campus with ID {CampusId}.", campusId);
             return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
         }
     }

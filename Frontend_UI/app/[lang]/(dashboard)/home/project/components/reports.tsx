@@ -2,26 +2,17 @@
 
 import { Docs } from "@/components/svg";
 import { Card } from "@/components/ui/card";
-import { DashboardData, fetchDashobardCount } from "@/services/dashboardService";
+import { DashboardData, useFetchDashboardCountQuery } from "@/services/apis/dashboardService";
 import { TrendingUp } from "lucide-react";
 import React, { Fragment, useEffect, useState } from "react";
 
 const ReportsCard = () => {
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
 
-  useEffect(() => {
-    const fetchDashboardCount = async () => {
-      try {
-        const response = await fetchDashobardCount();
-        setDashboardData(response.data);
-      } catch (error) {
-        console.error("Error fetching dashboard count:", error);
-      }
-    };
+  const { data, isLoading, error, refetch } = useFetchDashboardCountQuery();
+  const dashboardCount = data?.data as DashboardData;
 
-    fetchDashboardCount();
-  }, []);
 
+  
   interface ReportItem {
     id: number;
     name: string;
@@ -35,32 +26,32 @@ const ReportsCard = () => {
     {
       id: 1,
       name: "Total Sponsors",
-      count: dashboardData?.totalSponsors || 0,
-      rate: dashboardData?.newSponsorsThisMonth || 0,
+      count: dashboardCount?.newSponsorsThisMonth || 0,
+      rate: dashboardCount?.newSponsorsThisMonth || 0,
       icon: <Docs className="w-6 h-6 text-primary" />,
       color: "primary",
     },
     {
       id: 2,
       name: "Total Students",
-      count: dashboardData?.totalStudents || 0,
-      rate: dashboardData?.newStudentsThisMonth || 0,
+      count: dashboardCount?.totalStudents || 0,
+      rate: dashboardCount?.newStudentsThisMonth || 0,
       icon: <Docs className="w-6 h-6 text-success" />,
       color: "success",
     },
     {
       id: 3,
       name: "Total Staff",
-      count: dashboardData?.totalEmployees || 0,
-      rate: dashboardData?.newEmployeesThisMonth || 0,
+      count: dashboardCount?.totalEmployees || 0,
+      rate: dashboardCount?.newEmployeesThisMonth || 0,
       icon: <Docs className="w-6 h-6 text-destructive" />,
       color: "destructive",
     },
     { 
       id: 4,
       name: "Sponsored Students",
-      count: dashboardData?.sponsorStudent || 0,
-      rate: dashboardData?.newSponsorsThisMonth || 0,
+      count: dashboardCount?.sponsorStudent || 0,
+      rate: dashboardCount?.newSponsorsThisMonth || 0,
       icon: <Docs className="w-6 h-6 text-info" />,
       color: "info",
     },

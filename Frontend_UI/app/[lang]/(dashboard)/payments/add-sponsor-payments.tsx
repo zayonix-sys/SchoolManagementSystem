@@ -26,14 +26,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import {
-  fetchSponsorship,
-  fetchStudentBySponsorId,
   SponsorshipData,
-} from "@/services/sponsorshipService";
-import {
-  addSponsorPayment,
-  PaymentData,
-} from "@/services/sponsorPaymentsService";
+  useFetchSponsorshipsQuery,
+  useFetchStudentBySponsorIdQuery,
+} from "@/services/apis/sponsorshipService";
+import { useAddSponsorPaymentMutation } from "@/services/apis/sponsorPaymentService";
+import { StudentData } from "@/services/apis/studentService";
 
 const paymentSchema = z.object({
   amountPaid: z.string().min(1, "Please Enter Correct Amount"),
@@ -52,14 +50,14 @@ type Student = {
 };
 
 const AddPaymentForm: React.FC = () => {
-  const [sponsorship, setSponsorship] = useState<SponsorshipData[]>([]);
-  const [students, setStudents] = useState<Student[]>([]);
+  const { data: sponsorships } = useFetchSponsorshipsQuery();
+  const sponsorship = sponsorships?.data as SponsorshipData[];
+  const [addSponsorPayment] = useAddSponsorPaymentMutation();
   const [sponsorId, setSponsorId] = useState<number | null>(null);
+  const { data: students } = useFetchStudentBySponsorIdQuery(sponsorId || 0);
   const [selectedSponsorshipIds, setSelectedSponsorshipIds] = useState<
     number[]
   >([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const {
     register,
@@ -71,46 +69,8 @@ const AddPaymentForm: React.FC = () => {
     resolver: zodResolver(paymentSchema),
   });
 
-  const getUniqueSponsors = (sponsorshipData: SponsorshipData[]) => {
-    const seenSponsorIds = new Set();
-    return sponsorshipData.filter((item) => {
-      if (seenSponsorIds.has(item.sponsorId)) {
-        return false;
-      } else {
-        seenSponsorIds.add(item.sponsorId);
-        return true;
-      }
-    });
-  };
-
-  useEffect(() => {
-    const fetchSponsorshipData = async () => {
-      setLoading(true);
-      try {
-        const sponsorshipResponse = await fetchSponsorship();
-        const uniqueSponsors = getUniqueSponsors(
-          sponsorshipResponse.data as SponsorshipData[]
-        );
-        setSponsorship(uniqueSponsors);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSponsorshipData();
-  }, []);
-
   const handleSponsorSelection = async (Id: number) => {
     setSponsorId(Id);
-    try {
-      const studentResponse = await fetchStudentBySponsorId(Id);
-      setStudents(studentResponse.data as Student[]);
-    } catch (err) {
-      setError(err as any);
-      console.error("Failed to fetch students:", err);
-    }
   };
 
   // Handle checkbox toggle for sponsorshipId selection
@@ -128,15 +88,15 @@ const AddPaymentForm: React.FC = () => {
       toast.error("Please select at least one sponsorship.");
       return;
     }
-  
+
     // Convert amountPaid to a number
     const numericAmountPaid = parseFloat(data.amountPaid);
-  
+
     if (isNaN(numericAmountPaid)) {
       toast.error("Invalid amount. Please enter a valid number.");
       return;
     }
-  
+
     // Loop through each selected sponsorship ID and submit a payment
     for (const sponsorshipId of selectedSponsorshipIds) {
       const response = await addSponsorPayment({
@@ -144,19 +104,20 @@ const AddPaymentForm: React.FC = () => {
         amountPaid: numericAmountPaid, // Convert to number
         sponsorshipId, // Submit each sponsorship ID separately
       });
-  
-      if (response.success) {
+
+      if (response?.data?.success) {
         toast.success(`Payment added successfully`);
       } else {
         toast.error(
-          `Error adding payment: ${response.message || "Something went wrong"}`
+          `Error adding payment: ${
+            response?.data?.message || "Something went wrong"
+          }`
         );
       }
     }
-  
+
     reset();
   };
-  
 
   return (
     <Sheet>
@@ -240,7 +201,7 @@ const AddPaymentForm: React.FC = () => {
           </div>
 
           {/* Student Data Table with Checkbox */}
-          {students.length > 0 && (
+          {students?.data?.length > 0 && (
             <div className="mt-5">
               <h3>Students for Selected Sponsor</h3>
               <table className="min-w-full bg-white border border-gray-300">
@@ -254,7 +215,7 @@ const AddPaymentForm: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {students.map((student) => (
+                  {students?.data?.map((student: any) => (
                     <tr key={student.studentId}>
                       <td className="py-2 px-4 border-b">
                         <input

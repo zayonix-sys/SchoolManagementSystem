@@ -11,13 +11,11 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             return new Sponsorship
             {
-                SponsorshipId = dto.SponsorshipId,
+
                 Amount = dto.Amount,
                 Frequency = dto.Frequency,
                 StartDate = dto.StartDate,
                 SponsorId = dto.SponsorId,
-                ClassId = dto.ClassId,
-                StudentId = dto.StudentId,
                 CreatedAt = dto.CreatedAt,
                 CreatedBy = dto.CreatedBy,
             };
@@ -31,21 +29,28 @@ namespace SchoolManagementSystem.Application.Mappers
 
             return new SponsorshipDTO
             {
-                SponsorshipId = entity.SponsorshipId,
+                //SponsorshipId = entity.SponsorshipId,
                 Amount = entity.Amount,
                 Frequency = entity.Frequency,
                 StartDate = entity.StartDate,
-                ClassId = entity.ClassId,
-                StudentId = entity.StudentId,
                 SponsorId = entity.SponsorId,
-                CreatedAt = entity.CreatedAt,
                 CreatedBy = entity.CreatedBy,
 
-                StudentName = entity.Student.FirstName,
-                Gender = entity.Student.Gender,
-                PhoneNumber = entity.Sponsor.PhoneNumber,
-                ClassName = entity.Class?.ClassName,
-                SponsorName = entity.Sponsor.SponsorName,
+                //StudentName = entity.Student.FirstName,
+                //Gender = entity.Student.Gender,
+                //PhoneNumber = entity.Sponsor.PhoneNumber,
+                //ClassName = entity.Class?.ClassName,
+                SponsorName = entity?.Sponsor.SponsorName,
+                Details = entity?.SponsorshipDetails?.Select(x => new SponsorshipDetailDTO
+                {
+                    Amount = x.Amount,
+                    SponsorshipId = x.SponsorshipId,
+                    ClassId = x.ClassId,
+                    StudentId = x.StudentId,
+                    CreatedBy = x.CreatedBy,
+                    StudentName = x.Student.FirstName,
+                    ClassName = x.Class.ClassName,
+                }).ToList()
 
             };
         }

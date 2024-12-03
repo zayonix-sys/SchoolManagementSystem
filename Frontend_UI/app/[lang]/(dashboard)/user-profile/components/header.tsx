@@ -20,12 +20,12 @@ const Header = () => {
         <BreadcrumbItem>Utility</BreadcrumbItem>
         <BreadcrumbItem>User Profile</BreadcrumbItem>
       </Breadcrumbs>
-            <Button asChild className=" bottom-0  absolute  rounded px-5 mb-12 hidden lg:flex" size="sm">
+            {/* <Button asChild className=" bottom-0  absolute  rounded px-5 mb-12 hidden lg:flex" size="sm">
               <Link href="/user-profile/settings">
                 <Icon className="w-4 h-4 ltr:mr-1 rtl:ml-1" icon="heroicons:pencil-square" />
                 Edit
               </Link>
-            </Button>
+            </Button> */}
           {/* <div className="flex flex-wrap justify-end gap-4 lg:gap-8 pt-7 lg:pt-5 pb-4 px-6">
             {
               [

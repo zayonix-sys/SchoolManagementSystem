@@ -3,12 +3,12 @@ import { Docs } from "@/components/svg";
 import { Card } from "@/components/ui/card";
 import React, { Fragment, useState } from "react";
 import ViewDepartment from "./view-department";
-import { DepartmentData } from "@/services/departmentService";
-import { CampusData } from "@/services/campusService";
+import { CampusData } from "@/services/apis/campusService";
 
 interface ReportsCardProps {
   //campusId: number | undefined;
   campus: CampusData;
+  refetch: () => void;
 }
 
 interface ReportItem {
@@ -21,7 +21,7 @@ interface ReportItem {
 }
 
 //const ReportsCard = ({ campusId }: ReportsCardProps) => {
-const ReportsCard = ({ campus }: ReportsCardProps) => {
+const ReportsCard = ({ campus, refetch }: ReportsCardProps) => {
   // const [department, setDepartments] = useState(
   //   departments as DepartmentData[]
   // );
@@ -83,7 +83,7 @@ const ReportsCard = ({ campus }: ReportsCardProps) => {
             <div className={"text-3xl font-semibold text-${item.color} mt-1"}>
               {item.count}
             </div>
-            {item.id === 1 && <ViewDepartment campus={campus} />}
+            {item.id === 1 && <ViewDepartment campus={campus} refetch={refetch} />}
             {/* {item.id === 2 && <ViewDepartment campusId={campusId} />} */}
           </div>
         </Card>

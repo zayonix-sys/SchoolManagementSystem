@@ -16,7 +16,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { addCampus } from "../../../../services/campusService";
+import { useAddCampusMutation } from "@/services/apis/campusService";
 
 // Define Zod schema
 const campusSchema = z.object({
@@ -37,7 +37,13 @@ const campusSchema = z.object({
 
 type CampusFormValues = z.infer<typeof campusSchema>;
 
-export default function AddCampus() {
+interface CampusProps {
+  refetch: () => void;
+}
+export default function AddCampus(
+  {
+    refetch,
+  }: CampusProps) {
   const {
     register,
     handleSubmit,
@@ -47,24 +53,20 @@ export default function AddCampus() {
     resolver: zodResolver(campusSchema),
   });
 
+  const [addCampus] = useAddCampusMutation();
   const onSubmit: SubmitHandler<CampusFormValues> = async (data) => {
     try {
       const response = await addCampus(data);
-
-      if (response.success) {
-        if (Array.isArray(response.data)) {
-          toast.success(
-            `${response.data[0].campusName} Campus Added successfully!`
-          );
-        } else {
-          toast.success(
-            `${response.data.campusName} Campus Added successfully!`
-          );
-        }
+      if (response.data?.success) {
+        const campusName = Array.isArray(response.data?.data)
+          ? response.data?.data[0].campusName
+          : response.data?.data.campusName;
+          toast.success(`${campusName} Campus Added successfully!`);
+          refetch();
         reset();
       } else {
         console.error("Error:", response);
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
       }
     } catch (error) {
       console.error("Request Failed:", error);

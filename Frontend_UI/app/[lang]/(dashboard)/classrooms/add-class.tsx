@@ -17,9 +17,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { addClass } from "../../../../services/ClassService";
+import { useAddClassMutation } from "@/services/apis/classService";
 
-// Define Zod schema
 const classSchema = z.object({
   className: z.string().min(1, "Class Name is required"),
   capacity: z.number().min(1, "Capacity is required").max(999),
@@ -28,7 +27,12 @@ const classSchema = z.object({
 
 type ClassFormValues = z.infer<typeof classSchema>;
 
-export default function AddClass() {
+interface ClassProps {
+  refetch: () => void;
+}
+export default function AddClass({refetch}: ClassProps) {
+  const [addClass] = useAddClassMutation();
+
   const {
     register,
     handleSubmit,
@@ -41,23 +45,23 @@ export default function AddClass() {
   const onSubmit: SubmitHandler<ClassFormValues> = async (data) => {
     try {
       const response = await addClass(data);
-
-      if (response.success) {
-        const className = Array.isArray(response.data)
-          ? response.data[0].className
-          : response.data.className;
+      if (response?.data?.success) {
+        const className = Array.isArray(response.data?.data)
+          ? response.data?.data[0].className 
+          : response.data?.data.className;
         toast.success(`${className} Class Added successfully!`);
+        refetch();
         reset();
       } else {
         console.error("Error:", response);
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error(`Error: ${response?.data?.message || "Something went wrong"}`);
       }
     } catch (error) {
       console.error("Request Failed:", error);
       toast.error("Request Failed");
     }
   };
-
+  
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
       toast.error("Please correct the errors in the form.");

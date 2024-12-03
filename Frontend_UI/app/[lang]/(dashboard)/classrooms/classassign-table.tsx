@@ -12,25 +12,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import {
-  ClassroomData,
-  deleteClassroom,
-  fetchClassrooms,
-} from "@/services/apis/_classroomService";
 import { Input } from "@/components/ui/input";
-import EditClassroom from "./edit-classroom";
-import {
-  AssignClassData,
-  assignClasses,
-  deleteClassassignment,
-} from "@/services/assignClassService";
-import { ClassData } from "@/services/ClassService";
-import { SectionData } from "@/services/SectionService";
-// import EditClassSectionAssign from "./edit-classsectionassignment";
-import { CampusData } from "@/services/campusService";
 import EditClassSectionAssign from "./edit-classsectionassignment";
 import { toast } from "sonner";
 import ConfirmationDialog from "../common/confirmation-dialog";
+import { ClassData } from "@/services/apis/classService";
+import { ClassroomData } from "@/services/apis/classroomService";
+import { SectionData } from "@/services/apis/sectionService";
+import { ClassAssignData, useDeleteClassAssignmentMutation, useFetchClassAssignmentsQuery } from "@/services/apis/assignClassService";
+import { CampusData } from "@/services/apis/campusService";
 
 interface ClassAssignmentProps {
   classes: ClassData[];
@@ -45,34 +35,17 @@ const ClassAssignTable = ({
   section,
   campus,
 }: ClassAssignmentProps) => {
-  const [classassignment, setClassassignment] = useState<AssignClassData[]>([]);
-  const [classAssignmentToDelete, setClassAssignmentToDelete] = useState<
-    number | null
-  >(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [classAssignmentToDelete, setClassAssignmentToDelete] = useState< number | null >(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    const fetchClassAssignData = async () => {
-      setLoading(true);
-      try {
-        const response = await assignClasses();
-        setClassassignment(response.data as AssignClassData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {data: classassignment, isLoading, isError, refetch} = useFetchClassAssignmentsQuery();
+  const [deleteClassAssignment] = useDeleteClassAssignmentMutation();
+  const classAssignmentData = classassignment?.data as ClassAssignData[];
 
-    fetchClassAssignData();
-  }, []);
-
-  const combinedData = classassignment.map((assignment) => {
+  const combinedData = classAssignmentData?.map((assignment) => {
     const associatedClass = classes.find(
       (cls) => cls.classId === assignment.classId
     );
@@ -100,14 +73,14 @@ const ClassAssignTable = ({
     };
   });
 
-  const sortedData = combinedData.sort((a, b) => {
+  const sortedData = combinedData?.sort((a, b) => {
     if (a.roomNumber < b.roomNumber) return -1;
     if (a.roomNumber > b.roomNumber) return 1;
 
     return 0;
   });
 
-  const filteredClassassignments = sortedData.filter(
+  const filteredClassassignments = sortedData?.filter(
     (item) =>
       item.roomNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.className.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -116,12 +89,12 @@ const ClassAssignTable = ({
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredClassassignments.slice(
+  const currentItems = filteredClassassignments?.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
 
-  const totalPages = Math.ceil(filteredClassassignments.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredClassassignments?.length / itemsPerPage);
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -139,11 +112,15 @@ const ClassAssignTable = ({
     setClassAssignmentToDelete(null);
   };
 
+  const handleRefetch = () => {
+    refetch();
+  };
+
   const handleDelete = async (id: number) => {
     try {
-      await deleteClassassignment(id);
+      await deleteClassAssignment(id);
       toast.success("Class Assignment deleted successfully");
-      // setTimeTable((prev) => prev.filter((entry) => entry.timetableId !== id));
+      handleRefetch();
       setClassAssignmentToDelete(null);
     } catch (error) {
       console.error("Error deleting class assignment:", error);
@@ -175,7 +152,7 @@ const ClassAssignTable = ({
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item) => (
+          {currentItems?.map((item) => (
             <TableRow
               key={item.assignmentId}
               className="hover:bg-default-200"
@@ -199,7 +176,13 @@ const ClassAssignTable = ({
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditClassSectionAssign assignmentData={[item]} />
+                  <EditClassSectionAssign assignmentData={[item]} 
+                  refetch={handleRefetch}
+                  classData={classes}
+                  classroomData={classroom}
+                  sectionData={section}
+                  // campusData={campus}
+                  />
 
                   <Button
                     size="icon"

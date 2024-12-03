@@ -86,17 +86,29 @@ builder.Services.AddScoped<ExamPaperMapper>();
 builder.Services.AddScoped<ExamPaperUpdateMapper>();
 builder.Services.AddScoped<ISponsorship, SponsorshipService>();
 builder.Services.AddScoped<SponsorshipMapper>();
+builder.Services.AddScoped<ISponsorshipDetail, SponsorshipDetailService>();
+builder.Services.AddScoped<SponsorshipDetailMapper>();
+
 builder.Services.AddScoped<IExamPaperPDF, ExamPaperPdfService>();
 builder.Services.AddScoped<IExam, ExamService>();
 builder.Services.AddScoped<ExamMapper>();
 //builder.Services.AddScoped<IExamResult, ExamResultService>();
 //builder.Services.AddScoped<ExamResultMapper>();
 
+builder.Services.AddScoped<IStudentAttendance, StudentAttendanceService>();
+builder.Services.AddScoped<StudentAttendanceMapper>();
 
 builder.Services.AddScoped<IPayment, PaymentService>();
 builder.Services.AddScoped<PaymentMapper>();
 builder.Services.AddScoped<IUserRoles, UserRolesService>();
 builder.Services.AddScoped<UserRoleMapper>();
+builder.Services.AddScoped<IUserPermission, UserPermissionService>();
+builder.Services.AddScoped<UserPermissionMapper>();
+
+builder.Services.AddScoped<IDashboardCountView, DashboardCountViewService>();
+builder.Services.AddScoped<DashboardCountViewMapper>();
+
+
 
 
 
@@ -216,7 +228,7 @@ void SeedDefaultData(SchoolContext context)
         context.SaveChanges();
     }
 
-    var campudId = context.Campuses.Select(c => c.CampusId).FirstOrDefault();
+    var campusId = context.Campuses.Select(c => c.CampusId).FirstOrDefault();
 
     var adminRoleId = context.UserRoles
         .Where(r => r.RoleName == "Admin")
@@ -230,7 +242,7 @@ void SeedDefaultData(SchoolContext context)
             UserName = "Super Admin",
             PasswordHash = "password", // Properly hash the password
             RoleId = adminRoleId,
-            CampusId = Convert.ToInt32(campudId),
+            CampusId = Convert.ToInt32(campusId),
             CreatedAt = DateTime.Now,
         };
         context.Users.Add(defaultUser);

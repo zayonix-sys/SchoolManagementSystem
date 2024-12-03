@@ -13,68 +13,34 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
-import { deleteSponsorPayment, fetchSponsorPayment, PaymentData } from "@/services/sponsorPaymentsService";
 import EditPaymentForm from "./edit-sponsor-payment";
+import { PaymentData, useDeleteSponsorPaymentMutation } from "@/services/apis/sponsorPaymentService";
 
 interface PaymentListTableProps {
   payment: PaymentData[];
+  refetch: () => void;
 }
 
-const PaymentListTable: React.FC<PaymentListTableProps> = ({ payment }) => {
-  const [payments, setPayments] = useState<PaymentData[]>(payment || []); // Initialize with prop data if available
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+const PaymentListTable: React.FC<PaymentListTableProps> = ({ payment,refetch }) => {
+
+const [deleteSponsorPayment] = useDeleteSponsorPaymentMutation();
+
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [paymentToDelete, setPaymentToDelete] = useState<number | null>(null);
   const itemsPerPage = 20;
 
-  useEffect(() => {
-    if (!payment || payment.length === 0) {
-      const loadPayments = async () => {
-        try {
-          const response = await fetchSponsorPayment();
-          setPayments(response.data);
-        } catch (error) {
-          toast.error("Failed to load payments");
-        }
-      };
-      loadPayments();
-    }
-  }, [payment]);
-
-  const filteredPayments = payments.filter(
+  const filteredPayments = payment?.filter(
     (payment) =>
       payment?.sponsorName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredPayments.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredPayments?.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
-
-  const handleSelectAll = () => {
-    if (selectedRows.length === currentItems.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(
-        currentItems
-          .map((row) => row.paymentId)
-          .filter((id): id is number => id !== undefined) // Ensure only valid IDs are selected
-      );
-    }
-  };
-
-  const handleRowSelect = (id: number | undefined) => {
-    if (id === undefined) return; // Ignore undefined IDs
-    const updatedSelectedRows = [...selectedRows];
-    if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(updatedSelectedRows.indexOf(id), 1);
-    } else {
-      updatedSelectedRows.push(id);
-    }
-    setSelectedRows(updatedSelectedRows);
-  };
+  const totalPages = Math.ceil(filteredPayments?.length / itemsPerPage);
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -95,13 +61,12 @@ const PaymentListTable: React.FC<PaymentListTableProps> = ({ payment }) => {
   const handleDelete = async (id: number) => {
     try {
       await deleteSponsorPayment(id);
-      toast.success("Payment deleted successfully");
-      const updatedPayments = payments.filter((payment) => payment.paymentId !== id);
-      setPayments(updatedPayments);
+      toast.success("Sponsor Payment deleted successfully");
       setPaymentToDelete(null);
+      refetch();
     } catch (error) {
-      console.error("Error deleting payment:", error);
-      toast.error("Failed to delete payment");
+      console.error("Error deleting Sponsor Payment:", error);
+      toast.error("Failed to delete Sponsor Payment");
     }
   };
 
@@ -135,15 +100,11 @@ const PaymentListTable: React.FC<PaymentListTableProps> = ({ payment }) => {
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item) => (
+          {currentItems?.map((item) => (
             <TableRow
               key={item.paymentId}
               className="hover:bg-default-200"
-              data-state={
-                item.paymentId !== undefined && selectedRows.includes(item.paymentId)
-                  ? "selected"
-                  : undefined
-              }
+             
             >
               <TableCell className="p-2.5">{item.sponsorName}</TableCell>
               <TableCell className="p-2.5">
@@ -163,7 +124,7 @@ const PaymentListTable: React.FC<PaymentListTableProps> = ({ payment }) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditPaymentForm payment={item} />
+                  <EditPaymentForm payment={item} refetch={refetch} />
                   <Button
                     size="icon"
                     variant="outline"

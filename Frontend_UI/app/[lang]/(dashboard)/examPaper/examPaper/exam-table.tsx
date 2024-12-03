@@ -15,19 +15,24 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import ConfirmationDialog from "../../common/confirmation-dialog";
-import { deleteExamPaper, ExamData, fetchExamPapers } from "@/services/ExamPaperService";
-import { ExamPDFData, fetchExamPaperPDF } from "@/services/ExamPaperPDFService";
 import EditExamPaper from "./edit-exampaper";
-import { QuestionsData } from "@/services/QBankService";
+import { QuestionsData } from "@/services/apis/qBankService";
+import { ExamPaperData, useDeleteExamPaperMutation } from "@/services/apis/examPaperService";
+import { ExamPaperPDFData, useFetchExamPaperPDFQuery } from "@/services/apis/examPaperPDFService";
 
 interface QuestionProps{
-  questionBank: QuestionsData[]
+  questionBank: QuestionsData[];
+  refetch: () => void;
+  examPaper: ExamPaperData[];
 }
 
-const ExamPaperTable: React.FC<QuestionProps> = ({ questionBank }) => {
-
-  const [examPaper, setExamPaper] = useState<ExamData[]>([]);
-  const [examPaperPDF, setExamPaperPDF] = useState<ExamPDFData[]>([]);
+const ExamPaperTable: React.FC<QuestionProps> = ({ questionBank, refetch, examPaper }) => {
+  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
+  const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(null);
+  const {data: examPaperPDFBlob, isLoading: isLoadingPDF, isError: isErrorPDF, error: ErrorPDF} = useFetchExamPaperPDFQuery(
+    { classId: selectedClassId !== null ? selectedClassId : 0,subjectId: selectedSubjectId !== null ? selectedSubjectId : 0 }, { skip: !selectedClassId || !selectedSubjectId }
+  );
+  const [deleteExamPaper] = useDeleteExamPaperMutation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -35,23 +40,8 @@ const ExamPaperTable: React.FC<QuestionProps> = ({ questionBank }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [examPaperToDelete, setExamPaperToDelete] = useState<{classId: number; subjectId: number} | null >(null);
   const itemsPerPage = 10;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const responseExamPaper = await fetchExamPapers();
-        setExamPaper(responseExamPaper.data as ExamData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const filteredExamData = examPaper.reduce((acc: ExamData[], currentItem) => {
+  
+  const filteredExamData = examPaper?.reduce((acc: ExamPaperData[], currentItem) => {
     const exists = acc.find(
       (item) => item.classId === currentItem.classId && item.subjectId === currentItem.subjectId
     );
@@ -65,9 +55,28 @@ const ExamPaperTable: React.FC<QuestionProps> = ({ questionBank }) => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredExamData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredExamData?.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(currentItems.length / itemsPerPage);
+  const totalPages = Math.ceil(currentItems?.length / itemsPerPage);
+
+  useEffect(() => {
+    if(examPaperPDFBlob)
+    {
+        const pdfUrl = URL.createObjectURL(examPaperPDFBlob);
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.download = `Exam-Paper-${selectedClassId}.pdf`;
+        document.body.appendChild(link); 
+        link.click();
+        document.body.removeChild(link); 
+    }
+  }, [examPaperPDFBlob])
+
+  useEffect(() => {
+    if(isErrorPDF){
+      toast.error(ErrorPDF as string);
+    }
+  }, [isErrorPDF])
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -98,15 +107,14 @@ const ExamPaperTable: React.FC<QuestionProps> = ({ questionBank }) => {
             await deleteExamPaper(item.examPaperId!);
           }; 
         }
-  
         toast.success("ExamPaper deleted successfully");
-  
-        setExamPaper((prevExamPapers) =>
-          prevExamPapers.filter(
-            (item) =>
-              !(item.classId === params.classId && item.subjectId === params.subjectId)
-          )
-        );
+        // examPaper((prevExamPapers) =>
+        //   prevExamPapers.filter(
+        //     (item) =>
+        //       !(item.classId === params.classId && item.subjectId === params.subjectId)
+        //   )
+        // );
+        refetch();
       }
   
       setExamPaperToDelete(null);
@@ -116,30 +124,13 @@ const ExamPaperTable: React.FC<QuestionProps> = ({ questionBank }) => {
     }
   };
   
- 
   const handleViewDetails = async (params: { classId: number, subjectId: number }) => {
-    try {
-      setLoading(true);
-  
-      const response = await fetchExamPaperPDF(params.classId, params.subjectId);
-      const blob = new Blob([response], { type: 'application/pdf' });
-  
-      const pdfUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = pdfUrl;
-      link.download = `Exam-Paper-${params.classId}.pdf`;
-      document.body.appendChild(link); 
-      link.click();
-      document.body.removeChild(link); 
-  
-    } catch (err) {
-      setError(err as any);
-    } finally {
+      setLoading(true);      
+      setSelectedClassId(params.classId);
+      setSelectedSubjectId(params.subjectId);
       setLoading(false);
-    }
   };
   
-
   return (
     <>
       <div className="mb-4 flex justify-between items-center mt-5">
@@ -165,7 +156,7 @@ const ExamPaperTable: React.FC<QuestionProps> = ({ questionBank }) => {
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item, index) => (
+          {currentItems?.map((item, index) => (
             <TableRow
               key={item.examPaperId}
               className="hover:bg-default-200"
@@ -199,7 +190,7 @@ const ExamPaperTable: React.FC<QuestionProps> = ({ questionBank }) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditExamPaper examData={examPaper} examItem={[item]} questionData={questionBank}/>
+                  <EditExamPaper examPaperData={examPaper} examPaperItem={[item]} questionData={questionBank} refetch={refetch}/>
                   <Button
                     size="icon"
                     variant="outline"

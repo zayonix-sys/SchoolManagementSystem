@@ -50,11 +50,13 @@ namespace SchoolManagementSystem.Application.Services
             try
             {
                 var sponsorships = await _sponsorshipRepository.GetAllAsync(
-                    include: query => query
-                    .Include(s => s.Student)
-                    .Include(c => c.Class)
-                    .Include(sp => sp.Sponsor)
-                    );
+            include: query => query
+                .Include(sp => sp.Sponsor)
+                .Include(sp => sp.SponsorshipDetails)
+                    .ThenInclude(sd => sd.Class) // Include Class navigation property
+                .Include(sp => sp.SponsorshipDetails)
+                    .ThenInclude(sd => sd.Student) // Include Student navigation property
+        );
                 var activeSponsorships = sponsorships.Where(c => c.IsActive);
                 var sponsorshipDtos = activeSponsorships.Select(c => _mapper.MapToDto(c)).ToList();
                 return sponsorshipDtos;
@@ -76,9 +78,9 @@ namespace SchoolManagementSystem.Application.Services
             {
                 var sponsorStudent = await _sponsorshipRepository.GetAllAsync(
                     include: query => query
-                    .Include(s => s.Student)
+                    //.Include(s => s.Student)
                     .Include(sp => sp.Sponsor)
-                    .Include(c => c.Class)
+                    .Include(ss => ss.SponsorshipDetails)
                     );
                 var studentSponsorships = sponsorStudent.Where(s => s.SponsorId == sponsorId).ToList();
                 var activeSponsorStudent = studentSponsorships.Where(a => a.IsActive);

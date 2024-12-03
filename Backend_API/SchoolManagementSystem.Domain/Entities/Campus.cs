@@ -37,6 +37,10 @@ namespace SchoolManagementSystem.Domain.Entities
         [StringLength(100)]
         public string? Email { get; set; }
 
+        //public DateTime? CreatedAt { get; set; } = DateTime.Now;
+        //public int? CreatedBy { get; set; }
+        //public DateTime? UpdatedAt { get; set; }
+        //public int? UpdatedBy { get; set; }
         public bool IsActive { get; set; } = true;
 
         // Navigation properties for related entities

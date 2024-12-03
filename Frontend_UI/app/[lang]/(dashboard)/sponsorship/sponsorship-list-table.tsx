@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { fetchSection } from "@/services/SectionService";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
@@ -23,62 +22,66 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { deleteSponsorship, fetchSponsorship, SponsorshipData } from "@/services/sponsorshipService";
-import EditSponsorshipForm from "./edit-sponsorship";
+
+import { SponsorData } from "@/services/apis/sponsorService";
+import { SponsorshipData, SponsorshipDataDetails, useDeleteSponsorshipMutation } from "@/services/apis/sponsorshipService";
 
 interface SponsorshipListTableProps {
   sponsorship: SponsorshipData[];
+  sponsor: SponsorData[];
+  sponsorshipDetail: SponsorshipDataDetails[];
+  refetch: () => void;
 }
 
-const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship }) => {
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship, refetch, sponsor,sponsorshipDetail }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [sponsorshipToDelete, setSponsorshipToDelete] = useState<number | null>(null);
-  const itemsPerPage = 20;
-  const [detailedsponsorship, setDetailedSponsorship] =
-    useState<SponsorshipData | null>(null);
+  const [detailedSponsorship, setDetailedSponsorship] =
+  useState<SponsorshipDataDetails | null>(null);
 
-  const filteredSponsorshp = (sponsorship as any[]).filter(
-    (sponsorship) =>
-      sponsorship?.sponsorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    sponsorship?.studentName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    sponsorship?.amount?.toString().includes(searchQuery.toLowerCase())
+  const [deleteSponsorship] = useDeleteSponsorshipMutation();
+  const itemsPerPage = 20;
+
+  // Filter data based on the search query
+  const filteredSponsorship = sponsorship?.filter(
+    (item: any) =>
+      item.sponsorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.amount.toString().includes(searchQuery.toLowerCase())
   );
 
+  // Pagination indices
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSponsorshp.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = filteredSponsorship?.slice(indexOfFirstItem, indexOfLastItem);
 
+  const totalPages = Math.ceil(filteredSponsorship?.length / itemsPerPage);
 
-  const totalPages = Math.ceil(filteredSponsorshp.length / itemsPerPage);
-// console.log(filteredSponsorshp,"filterend Sponosorship");
-
-  const handleSelectAll = () => {
-    if (selectedRows.length === currentItems.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(
-        currentItems
-          .map((row) => row.sponsorshipId!)
-          .filter((id) => id !== null && id !== undefined)
-      );
-    }
+  // Group data by sponsorId
+  const groupBySponsorId = (data: any) => {
+    return data?.reduce((acc: Record<string, SponsorshipData>, item: any) => {
+      const existing = acc[item.sponsorId];
+      if (existing) {
+        existing.amount += item.amount; // Sum the amounts
+      } else {
+        acc[item.sponsorId] = { ...item };
+      }
+      return acc;
+    }, {});
   };
 
-  const handleRowSelect = (id: number) => {
-    const updatedSelectedRows = [...selectedRows];
-    if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
-    } else {
-      updatedSelectedRows.push(id);
-    }
-    setSelectedRows(updatedSelectedRows);
+  const groupedData = currentItems?.length
+  ? Object.values(groupBySponsorId(currentItems))
+  : [];
+
+  const handleViewDetails = (sponsorshipDetails: SponsorshipDataDetails) => {
+    setDetailedSponsorship(sponsorshipDetails);
   };
 
+  const handleCloseDetails = () => {
+    setDetailedSponsorship(null);
+  };
+  // Pagination handlers
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
@@ -87,6 +90,7 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   };
 
+  // Delete confirmation handlers
   const handleDeleteConfirmation = (id: number) => {
     setSponsorshipToDelete(id);
   };
@@ -98,31 +102,21 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
   const handleDelete = async (id: number) => {
     try {
       await deleteSponsorship(id);
-      toast.success("sponsorship deleted successfully");
-      fetchSponsorship();
+      toast.success("Sponsorship deleted successfully");
       setSponsorshipToDelete(null);
+      refetch();
     } catch (error) {
       console.error("Error deleting sponsorship:", error);
       toast.error("Failed to delete sponsorship");
     }
   };
-  const handleViewDetails = (sponsorship: SponsorshipData) => {
-    setDetailedSponsorship(sponsorship);
-  };
 
-  const handleCloseDetails = () => {
-    setDetailedSponsorship(null);
-  };
-  const formatDate = (dateString: string | Date): string => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
   return (
-    <>
+    <div>
       <div className="mb-4 flex justify-between items-center">
         <Input
           type="text"
-          placeholder="Search by Student Name & Sponsor Name..."
+          placeholder="Search by Sponsor Name or Amount..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border p-2 rounded m-2"
@@ -131,8 +125,6 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-            <TableHead className="h-10 p-2.5">Student Name</TableHead>
-            <TableHead className="h-10 p-2.5">Class</TableHead>
             <TableHead className="h-10 p-2.5">Sponsor Date</TableHead>
             <TableHead className="h-10 p-2.5">Amount</TableHead>
             <TableHead className="h-10 p-2.5">Sponsor Name</TableHead>
@@ -142,20 +134,11 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item) => (
-            <TableRow
-              key={item.sponsorshipId}
-              className="hover:bg-default-200"
-              data-state={selectedRows.includes(item.sponsorshipId!) && "selected"}
-            >
-              <TableCell className="p-2.5">
-                {item.studentName}
-              </TableCell>
-              <TableCell className="p-2.5">{item.className}</TableCell>
-              <TableCell className="p-2.5"> {item.startDate}</TableCell>
-              <TableCell className="p-2.5">{item.amount} </TableCell>
-              <TableCell className="p-2.5">{item.sponsorName} </TableCell>
-
+          {groupedData?.map((item: any) => (
+            <TableRow key={item.sponsorId} className="hover:bg-default-200">
+              <TableCell className="p-2.5">{item.startDate}</TableCell>
+              <TableCell className="p-2.5">{item.amount}</TableCell>
+              <TableCell className="p-2.5">{item.sponsorName}</TableCell>
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
@@ -166,32 +149,34 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
                 </Badge>
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
-                <div className="flex gap-3">
-                  <Button
+
+              <div className="flex gap-3 me-1">
+              <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleViewDetails(item)} 
+                    onClick={() => handleViewDetails(item)} // Show detailed view
                   >
                     <Icon icon="heroicons:eye" className=" h-4 w-4" />
                   </Button>
-                  <EditSponsorshipForm existingSponsorship={item} studentName={item.studentName} />
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDeleteConfirmation(item.sponsorshipId!)}
+                    onClick={() => handleDeleteConfirmation(item.sponsorId)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
                 </div>
+
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+
       <div className="flex justify-between items-center mt-4">
         <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
           Previous
@@ -203,61 +188,44 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
           Next
         </Button>
       </div>
+      <Dialog open={!!detailedSponsorship} onOpenChange={handleCloseDetails}>
+  <DialogContent className="max-w-screen-md mx-auto">
+    <DialogHeader>
+      <DialogTitle className="text-xl font-medium">Sponsorship Details</DialogTitle>
+      <DialogClose onClick={handleCloseDetails} />
+    </DialogHeader>
 
-      {/* Detailed Employee View in Dialog */}
-      <Dialog open={!!detailedsponsorship} onOpenChange={handleCloseDetails}>
-        <DialogContent className="max-w-screen-sm mx-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-medium">
-              Sponsorship Details
-            </DialogTitle>
-            <DialogClose onClick={handleCloseDetails} />
-          </DialogHeader>
+    {detailedSponsorship && (
+      <div className="text-sm text-default-500">
+        {/* Sponsor Details */}
+        <div className="mb-4">
+          <div className="font-bold">Sponsor Name:</div>
+          <div>{detailedSponsorship.sponsorName}</div>
+        </div>
 
-          {detailedsponsorship && (
-            <div className="text-sm text-default-500">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex flex-col">
-                  <span className="font-bold">Student Name: </span>
-                  {detailedsponsorship.studentName} 
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold">Gender </span>
-                  {detailedsponsorship.gender}
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold">Class </span>
-                  {detailedsponsorship.className}
-                </div>
-                {/* <div className="flex flex-col">
-                  <span className="font-bold">Age: </span>
-                  {detailedsponsorship.age}
-                </div> */}
-                <div className="flex flex-col">
-                  <span className="font-bold">Sponsorship Start Date </span>
-                  {detailedsponsorship?.startDate?.toString()}
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold">Amount: </span>
-                  {detailedsponsorship.amount}
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-bold">Sponsor Phone #: </span>
-                  {detailedsponsorship.phoneNumber}
-                </div>
-                {/* <div className="flex flex-col">
-                  <span className="font-bold">Sponsorship Status: </span>
-                  {detailedsponsorship.sponsorshipStatus}
-                </div> */}
-                {/* <div className="flex flex-col">
-                  <span className="font-bold">Sponsorship : </span>
-                  {detailedsponsorship.}
-                </div> */}
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+        {/* Table Display */}
+        <Table className="text-left w-full">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="p-2">Student Name</TableHead>
+              <TableHead className="p-2">Class</TableHead>
+              <TableHead className="p-2">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sponsorshipDetail?.map((student: any, index: number) => (
+              <TableRow key={index} className="hover:bg-gray-100">
+                <TableCell className="p-2">{student.studentName}</TableCell>
+                <TableCell className="p-2">{student.className}</TableCell>
+                <TableCell className="p-2">{student.amount}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    )}
+  </DialogContent>
+  </Dialog>
 
       {sponsorshipToDelete !== null && (
         <ConfirmationDialog
@@ -265,7 +233,7 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
           onCancel={handleCancelDelete}
         />
       )}
-    </>
+    </div>
   );
 };
 

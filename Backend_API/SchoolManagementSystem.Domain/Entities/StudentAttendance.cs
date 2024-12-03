@@ -1,30 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
     public class StudentAttendance
     {
         [Key]
-        public int AttendanceId { get; set; }
+        public int? AttendanceId { get; set; }
 
         [Required]
-        public int StudentId { get; set; }
-
-        [Required]
-        public DateTime AttendanceDate { get; set; }
-
-        [Required]
-        [MaxLength(20)]
-        public string AttendanceStatus { get; set; }
-
-        // Navigation Property
         [ForeignKey("StudentId")]
-        public virtual Student Student { get; set; }
+        public int? StudentId { get; set; }
+
+        [Required]
+        [ForeignKey("CampusId")]
+        public int? CampusId { get; set; }
+
+        [Required]
+        [ForeignKey("ClassId")]
+        public int? ClassId { get; set; }
+
+        [Required]
+        [ForeignKey("SectionId")]
+        public int? SectionId { get; set; }
+
+        [Required]
+        public DateTime? AttendanceDate { get; set; }
+
+        [MaxLength(20)]
+        public string? AttendanceStatus { get; set; }
+
+        public DateTime? CreatedAt { get; set; } = DateTime.Now;
+
+        [ForeignKey("CreatedUser")]
+        public int? CreatedBy { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [ForeignKey("UpdatedUser")]
+        public int? UpdatedBy { get; set; }
+        [Required]
+        public bool IsActive { get; set; }
+
+        // Navigation Properties
+
+        public Student? Student { get; set; }
+        public Campus? Campus { get; set; }
+        public Class? Class { get; set; }
+        public Section? Section { get; set; }
+        public User? CreatedUser { get; set; }
+        public User? UpdatedUser { get; set; }
     }
 }

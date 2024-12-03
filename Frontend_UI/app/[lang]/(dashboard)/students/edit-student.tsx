@@ -24,13 +24,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SponsorData, updateSponsor } from "@/services/sponsorService";
 import { Label } from "@/components/ui/label";
-import { StudentData, updateStudent } from "@/services/studentService";
-import { ClassData, fetchClasses } from "@/services/ClassService";
 import { format } from "date-fns";
-
-
+import {
+  StudentData,
+  useUpdateStudentMutation,
+} from "@/services/apis/studentService";
+import { ClassData } from "@/services/apis/classService";
 
 const studentSchema = z.object({
   campusId: z.coerce.number().optional(),
@@ -40,12 +40,12 @@ const studentSchema = z.object({
   lastName: z.string().min(1, "Last Name is required"),
   email: z.string().email({ message: "Invalid email address" }),
   gender: z.string().min(1, "Gender is required"),
-  profileImage:z.string().nullable().optional(),
+  profileImage: z.string().nullable().optional(),
   phoneNumber: z
     .string()
     .min(10, "Phone number must be at least 10 characters long")
     .max(15, "Phone number must be at most 15 characters long"),
-    dateOfBirth: z
+  dateOfBirth: z
     .string()
     .min(1, { message: "Date of Birth is required" })
     .refine((value) => !isNaN(Date.parse(value)), {
@@ -61,11 +61,17 @@ type StudentFormValues = z.infer<typeof studentSchema>;
 
 interface StudentProps {
   studentData: StudentData;
+  classes: ClassData[];
+  refetch: () => void;
 }
 
-export default function EditStudent({ studentData }: StudentProps) {
-  const [classes, setClasses] = useState<ClassData[]>([]);
+const EditStudent: React.FC<StudentProps> = ({
+  studentData,
+  refetch,
+  classes,
+}) => {
   const [selectclassId, setClassId] = useState<number | null>(null);
+  const [updateStudent] = useUpdateStudentMutation();
 
   const {
     campusId,
@@ -80,7 +86,7 @@ export default function EditStudent({ studentData }: StudentProps) {
     enrollmentDate,
     classId,
     isActive,
-    profileImage
+    profileImage,
   } = studentData;
 
   const {
@@ -102,25 +108,10 @@ export default function EditStudent({ studentData }: StudentProps) {
       dateOfBirth: studentData.dateOfBirth?.toString() as string | undefined,
       enrollmentDate: new Date(enrollmentDate).toISOString().slice(0, 10),
       classId,
-      profileImage,
       isActive,
     },
   });
   // console.log("default values", studentData);
-  useEffect(() => {
-    const loadClasses = async () => {
-      try {
-        const response = await fetchClasses(); 
-        if (response.success) {
-          setClasses(response.data); }
-      } catch (error) {
-        console.error("Failed to fetch classes:", error);
-      }
-    };
-
-    loadClasses();
-  }, []);
-
 
   const onSubmit: SubmitHandler<StudentFormValues> = async (data) => {
     try {
@@ -132,11 +123,12 @@ export default function EditStudent({ studentData }: StudentProps) {
       };
       const response = await updateStudent(updatedStudent);
 
-      if (response.success) {
+      if (response?.data?.success) {
         toast.success(
           `${updatedStudent.firstName} Student Updated successfully!`
         );
         reset();
+        refetch();
       } else {
         toast.error("Failed to update the Student");
       }
@@ -146,8 +138,6 @@ export default function EditStudent({ studentData }: StudentProps) {
     }
   };
 
-
-  
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
       toast.error("Please correct the errors in the form.");
@@ -173,20 +163,7 @@ export default function EditStudent({ studentData }: StudentProps) {
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
               <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-1">
-                  <Label>Profile Image</Label>
-                  <Input
-                    type="text"
-                    placeholder="Profile Image"
-                    {...register("profileImage")}
-                  />
-                  {errors.profileImage && (
-                    <p className="text-destructive">
-                      {errors.profileImage.message}
-                    </p>
-                  )}
-                </div>
-                <div className="col-span-3">
+                <div className="col-span-1">
                   <Label>Gr_No</Label>
                   <Input
                     type="number"
@@ -223,7 +200,6 @@ export default function EditStudent({ studentData }: StudentProps) {
                     </p>
                   )}
                 </div>
-               
 
                 <div className="col-span-1">
                   <Label htmlFor="gender">Gender</Label>
@@ -308,7 +284,7 @@ export default function EditStudent({ studentData }: StudentProps) {
                       {classes?.map((cd) => (
                         <SelectItem
                           key={cd.classId}
-                          value={cd.classId?.toString() || ''}
+                          value={cd.classId?.toString() || ""}
                         >
                           {cd.className}
                         </SelectItem>
@@ -331,4 +307,6 @@ export default function EditStudent({ studentData }: StudentProps) {
       </SheetContent>
     </Sheet>
   );
-}
+};
+
+export default EditStudent;

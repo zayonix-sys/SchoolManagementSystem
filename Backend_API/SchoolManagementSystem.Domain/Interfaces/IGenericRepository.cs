@@ -11,6 +11,7 @@ namespace SchoolManagementSystem.Domain.Interfaces
         Task<T> GetByIdAsync(int id);
         Task<object> AddAsync(T entity);
         Task<object> UpdateAsync(T entity);
+        Task<object> UpdateAsync(T entity, bool trackingOff);
         Task DeleteAsync(int id);
         Task DeleteAsync(T entity);
     }

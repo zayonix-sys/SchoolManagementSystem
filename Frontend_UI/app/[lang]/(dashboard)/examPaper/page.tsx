@@ -1,56 +1,43 @@
 "use client";
 import { Breadcrumbs, BreadcrumbItem } from "@/components/ui/breadcrumbs";
-import { ClassData, fetchClasses } from "@/services/ClassService";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { fetchQuestions, QuestionsData } from "@/services/QBankService";
 import QuestionsReport from "./reports";
 import AddQuestions from "./question/add-question";
-import { AssignSubjectData, fetchAssignSubject } from "@/services/assignSubjectService";
 import ExamPaperTemplate from "./examPaper/add-exampaper";
-import ExamPaperTable from "./examPaper/exam-table";
 import AddScheduleExams from "./scheduleExam/add-schedule-exams";
 import ExamScheduleTable from "./scheduleExam/examSchedule-table";
-import { ExamScheduleData, fetchExamsSchedule } from "@/services/ExamScheduleService";
+import { ExamData, useFetchExamQuery } from "@/services/apis/examService";
+import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
+import { AssignClassSubjectData, useFetchClassSubjectQuery } from "@/services/apis/assignClassSubjectService";
+import { QuestionsData, useFetchQuestionsQuery } from "@/services/apis/qBankService";
+import ExamPaperTable from "./examPaper/exam-table";
+import { ExamPaperData, useFetchExamPapersQuery } from "@/services/apis/examPaperService";
 
 const QuestionBank = () => {
-  const [classes, setClasses] = useState<ClassData[]>([]);
-  const [subjects, setSubjects] = useState<AssignSubjectData[]>([]);
-  const [questions, setQuestions] = useState<QuestionsData[]>([]);
-  const [examSchedule, setExamSchedule] = useState<ExamScheduleData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {data: subjectData, refetch: subjectRefetch} = useFetchClassSubjectQuery();
+  const subjects = subjectData?.data as AssignClassSubjectData[];
+  const {data: classData, isLoading, isError, refetch: classRefetch} = useFetchClassQuery();
+  const classes = classData?.data as ClassData[];
+  const {data: questionData, error: questionError, isLoading: questionLoading, refetch: questionRefetch} = useFetchQuestionsQuery();
+  const questions = questionData?.data as QuestionsData[];
+  const {data: exams, error: examError, isLoading: examLoading, refetch: examRefetch} = useFetchExamQuery();
+  const examData = exams?.data as ExamData[];
+  const {data: examPaperData, error: examPaperError, isLoading: examPaperLoading, refetch: examPaperRefetch} = useFetchExamPapersQuery();
+  const examPaper = examPaperData?.data as ExamPaperData[];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [classData, subjectData, questionsData, ExamScheduleData] =
-          await Promise.all([
-            fetchClasses(),
-            fetchAssignSubject(),
-            fetchQuestions(),
-            fetchExamsSchedule()
-          ]);
-
-        setClasses(classData.data as ClassData[]);
-        setSubjects(subjectData.data as AssignSubjectData[]);
-        setQuestions(questionsData.data as QuestionsData[]);
-        setExamSchedule(ExamScheduleData.data as ExamScheduleData[]);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const handleRefetch = () => {
+    examRefetch();
+    subjectRefetch();
+    classRefetch();
+    questionRefetch();
+    examPaperRefetch();
+  };
 
   return (
     <div>
@@ -60,11 +47,10 @@ const QuestionBank = () => {
           <BreadcrumbItem className="text-primary">Question Bank</BreadcrumbItem>
         </Breadcrumbs>
         <div className="flex justify-end space-x-4">
-          <AddQuestions classes={classes} subject={subjects}/>
-          <ExamPaperTemplate questionData={questions} classData={classes} subjectData={subjects}/>
-          <AddScheduleExams classes={classes} subject={subjects}/>
+          <AddQuestions classes={classes} subject={subjects} refetch={handleRefetch}/>
+          <ExamPaperTemplate questionData={questions} classData={classes} subjectData={subjects} refetch={handleRefetch}/>
+          <AddScheduleExams classes={classes} subject={subjects} refetch={handleRefetch}/>
         </div>
-
       </div>
 
       <Accordion
@@ -78,7 +64,7 @@ const QuestionBank = () => {
           <AccordionContent>
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5">
-                <QuestionsReport Questions={questions} classData={classes} subjectData={subjects}/>
+                <QuestionsReport Questions={questions} refetch={handleRefetch} />
               </div>
             </div>
           </AccordionContent>
@@ -95,7 +81,7 @@ const QuestionBank = () => {
           <AccordionTrigger>Exam Schedule</AccordionTrigger>
           <AccordionContent>
             <div className="col-span-12 md:col-span-8">
-              <ExamScheduleTable  examSchedule={examSchedule} />
+              <ExamScheduleTable  examSchedule={examData} refetch={handleRefetch} />
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -111,7 +97,7 @@ const QuestionBank = () => {
           <AccordionTrigger>View Exam Papers</AccordionTrigger>
           <AccordionContent>
             <div className="col-span-12 md:col-span-8">
-              <ExamPaperTable  questionBank={questions}/>
+              <ExamPaperTable  questionBank={questions} refetch={handleRefetch} examPaper={examPaper}/>
             </div>
           </AccordionContent>
         </AccordionItem>

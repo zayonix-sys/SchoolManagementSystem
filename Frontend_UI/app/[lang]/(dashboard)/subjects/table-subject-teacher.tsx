@@ -5,48 +5,32 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { SubjectData } from "@/services/subjectService";
 import { EmployeesData } from "@/services/EmployeeService";
-import { deleteSubjectTeacher, getSubjectTeacher, SubjectTeacherData } from "@/services/subjectTeacherService";
 import EditSubjectTeacher from "./edit-subject-teacher";
 import { toast } from "sonner";
 import ConfirmationDialog from "../common/confirmation-dialog";
+import { SubjectTeacherData, useDeleteSubjectTeacherMutation } from "@/services/apis/assignSubjectTeacherService";
+import { SubjectData } from "@/services/apis/subjectService";
 
 interface SubjectTeacherProps {
   employee: EmployeesData[];
+  subjectTeacher: SubjectTeacherData[];
   subject: SubjectData[];
+  refetch: () => void;
 }
 
 const itemsPerPage = 8;
 
-const SubjectTeacherTable = ({ employee, subject }: SubjectTeacherProps) => {
-  const [subjectTeacherAssignment, setSubjectTeacherAssignment] = useState<SubjectTeacherData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const SubjectTeacherTable = ({ refetch, subject, employee, subjectTeacher }: SubjectTeacherProps) => {
+  const [deleteSubjectTeacher] = useDeleteSubjectTeacherMutation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [subjectTeacherToDelete, setSubjectTeacherToDelete] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchSubjectTeacher = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await getSubjectTeacher();
-      setSubjectTeacherAssignment(response.data as SubjectTeacherData[]);
-    } catch (err) {
-      setError("Failed to fetch data.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchSubjectTeacher();
-  }, [fetchSubjectTeacher]);
-
-  const groupedAssignments = subjectTeacherAssignment.reduce((acc, assignment) => {
-    const associatedEmployee = employee.find(cls => cls?.employeeId === assignment?.employeeId);
-    const associatedSubjects = subject.filter(sub => assignment.subjectIds?.includes(sub.subjectId ?? 0));
+  const groupedAssignments = subjectTeacher?.reduce((acc, assignment) => {
+    const associatedEmployee = employee?.find(cls => cls?.employeeId === assignment?.employeeId);
+    const associatedSubjects = subject?.filter(sub => assignment.subjectIds?.includes(sub.subjectId ?? 0));
 
     if (associatedEmployee) {
       if (!acc[assignment.employeeId]) {
@@ -59,7 +43,7 @@ const SubjectTeacherTable = ({ employee, subject }: SubjectTeacherProps) => {
           isActive: assignment.isActive ?? false,
         };
       }
-      acc[assignment.employeeId].subjects.push(...associatedSubjects.map(sub => sub.subjectName));
+      acc[assignment.employeeId].subjects.push(...associatedSubjects?.map(sub => sub?.subjectName));
     }
     return acc;
   }, {} as Record<number, { subjectTeacherId?: number; employeeId: number; subjectIds: number[]; employeeName?: string; subjects: string[]; isActive?: boolean }>);
@@ -82,6 +66,7 @@ const SubjectTeacherTable = ({ employee, subject }: SubjectTeacherProps) => {
     try {
       await deleteSubjectTeacher(id);
       toast.success("Subject Teacher deleted successfully");
+      refetch();
       setSubjectTeacherToDelete(null);
     } catch (error) {
       console.error("Error deleting Subject Teacher:", error);
@@ -129,7 +114,7 @@ const SubjectTeacherTable = ({ employee, subject }: SubjectTeacherProps) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditSubjectTeacher subjectTeacherData={item} />
+                  <EditSubjectTeacher subjectTeacherData={item} subjectData={subject} refetch={refetch}/>
                   <Button
                     size="icon"
                     variant="outline"

@@ -9,10 +9,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useEffect, useState } from "react";
-import { ClassData } from "@/services/ClassService";
-import { SectionData } from "@/services/SectionService";
 import SectionListTable from "./section-table";
+import { SectionData } from "@/services/apis/sectionService";
+import { ClassData } from "@/services/apis/classService";
 
 export default function ViewSection({
   selectedSection,
