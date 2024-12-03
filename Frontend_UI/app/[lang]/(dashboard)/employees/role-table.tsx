@@ -57,28 +57,6 @@ const RoleListTable = () => {
 
   const totalPages = Math.ceil(filteredRoles.length / itemsPerPage);
 
-  const handleSelectAll = () => {
-    if (selectedRows.length === currentItems.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(
-        currentItems
-          .map((row) => row.roleId!)
-          .filter((id) => id !== null && id !== undefined)
-      );
-    }
-  };
-
-  const handleRowSelect = (id: number) => {
-    const updatedSelectedRows = [...selectedRows];
-    if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
-    } else {
-      updatedSelectedRows.push(id);
-    }
-    setSelectedRows(updatedSelectedRows);
-  };
-
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };

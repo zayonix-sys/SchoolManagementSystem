@@ -25,8 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CampusData, getCampuses } from "@/services/campusService";
 import { getRoles, RoleData } from "@/services/employeeRoleService";
+import { CampusData } from "@/services/apis/campusService";
 
 const employeeSchema = z.object({
   campusId: z.number().int().positive("Campus is required"),
@@ -48,8 +48,10 @@ type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
 export default function EditEmployee({
   employeeData,
+  campus,
 }: {
   employeeData: EmployeesData;
+  campus: CampusData[];
 }) {
   const {
     employeeId,
@@ -66,7 +68,6 @@ export default function EditEmployee({
   } = employeeData;
 
   const [selectedCampusId, setSelectedCampusId] = useState<number | null>(null);
-  const [campuses, setCampuses] = useState<CampusData[]>([]);
   const [employeeRole, setEmployeeRole] = useState<RoleData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -97,9 +98,7 @@ export default function EditEmployee({
     const fetchEmployeeAndCampusData = async () => {
       setLoading(true);
       try {
-        const campusResponse = await getCampuses();
         const empRoleResponse = await getRoles();
-        setCampuses(campusResponse.data as CampusData[]);
         setEmployeeRole(empRoleResponse.data as RoleData[]);
         // Set selected campus and department after fetching data
         const validCampusId = campusId ?? 0;
@@ -118,7 +117,7 @@ export default function EditEmployee({
   }, [campusId, departmentId, setValue]);
 
   const filteredDepartments =
-    campuses.find((campus) => campus.campusId === selectedCampusId)
+    campus.find((campus) => campus.campusId === selectedCampusId)
       ?.departments || [];
 
   const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
@@ -181,7 +180,7 @@ export default function EditEmployee({
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {campuses.map((campus) => (
+                      {campus.map((campus) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={campus.campusId}

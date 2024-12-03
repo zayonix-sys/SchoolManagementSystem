@@ -10,72 +10,32 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { deleteClass, fetchClasses, ClassData } from "../../../../services/ClassService"; 
 import EditClass from "../classrooms/edit-class";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
 import { toast } from "sonner";
+import { ClassData, useDeleteClassMutation, useFetchClassQuery } from "@/services/apis/classService";
 
 const ClassListTable = () => {
-  const [classes, setClasses] = useState<ClassData[]>([]);
-  const [filteredClasses, setFilteredClasses] = useState<ClassData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const {data: classes, isLoading, isError, refetch} = useFetchClassQuery();
+  const [deleteClass] = useDeleteClassMutation();
   const [classToDelete, setClassToDelete] = useState<number | null>(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 10;
 
-  useEffect(() => {
-    const fetchClassesData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchClasses();
-        setClasses(response.data as ClassData[]);
-        setFilteredClasses(response.data as ClassData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const classData = classes?.data as ClassData[];
 
-    fetchClassesData();
-  }, []);
-
-  useEffect(() => {
-    const filtered = classes.filter((cls) =>
-      cls.className.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredClass = classData?.filter((cls) =>
+      cls?.className?.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    setFilteredClasses(filtered);
-  }, [searchQuery, classes]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredClasses.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredClass.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredClasses.length / itemsPerPage);
-
-  const handleSelectAll = () => {
-    if (selectedRows.length === currentItems.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(
-        currentItems.map((row) => row.classId!).filter((id) => id !== null && id !== undefined)
-      );
-    }
-  };
-
-  const handleRowSelect = (id: number) => {
-    const updatedSelectedRows = [...selectedRows];
-    if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
-    } else {
-      updatedSelectedRows.push(id);
-    }
-    setSelectedRows(updatedSelectedRows);
-  };
+  const totalPages = Math.ceil(filteredClass.length / itemsPerPage);
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -92,11 +52,16 @@ const ClassListTable = () => {
     setClassToDelete(null);
   };
 
+  const handleRefetch = () => {
+    refetch();
+  };
+  
   const handleDelete = async (id: number) => {
     try {
       await deleteClass(id);
       toast.success("Class deleted successfully");
-      setClassToDelete(null); // Close dialog after successful deletion
+      setClassToDelete(null);
+      handleRefetch();
     } catch (error) {
       console.error("Error deleting Class:", error);
       toast.error("Failed to delete Class");
@@ -147,7 +112,7 @@ const ClassListTable = () => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditClass classData={item} />
+                  <EditClass classData={item} refetch={handleRefetch} />
 
                   <Button
                     size="icon"

@@ -21,12 +21,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SubjectData } from "@/services/subjectService";
-import { useEffect, useState } from "react";
-import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
-import { addSubjectTeacher } from "@/services/subjectTeacherService";
-import { Input } from "@/components/ui/input";
+import { EmployeesData } from "@/services/EmployeeService";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SubjectData } from "@/services/apis/subjectService";
+import { useAddSubjectTeacherMutation } from "@/services/apis/assignSubjectTeacherService";
 
 const assignSubjectTeacherSchema = z.object({
   subjectTeacherId: z.coerce.number().optional(),
@@ -57,16 +55,18 @@ export default function AssignSubjectTeacher({
     (emp) => emp.employeeRoleName === "Teacher"
   );
 
+  const [addSubjectTeacher] = useAddSubjectTeacherMutation();
+
   const onSubmit: SubmitHandler<AssignSubjectFormValues> = async (data) => {
     try {
       const response = await addSubjectTeacher(data);
 
-      if (response.success) {
+      if (response.data?.success) {
         toast.success("Subject Teacher Assigned successfully!");
         reset();
       } else {
         // console.error("Error:", response);
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
       }
     } catch (error) {
       // console.error("Request Failed:", error);
@@ -148,7 +148,7 @@ export default function AssignSubjectTeacher({
                 <div className="col-span-6">
                   <label className="block mb-2">Select Subjects</label>
                   <div className="grid grid-cols-1 gap-4">
-                    {subject.map((sub) => (
+                    {subject?.map((sub) => (
                       <div
                         key={sub.subjectId !== undefined ? sub.subjectId : 0}
                         className="flex items-center"

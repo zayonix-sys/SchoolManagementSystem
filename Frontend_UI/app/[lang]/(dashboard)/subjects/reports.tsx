@@ -2,48 +2,29 @@
 
 import { Docs } from "@/components/svg";
 import { Card } from "@/components/ui/card";
-import { fetchSubject, SubjectData } from "@/services/subjectService";
 import React, { Fragment, useEffect, useState } from "react";
 import ViewSubject from "./view-subject";
-import SubjectTeacherTable from "./veiw-subject-teacher";
-import { getSubjectTeacher, SubjectTeacherData } from "@/services/subjectTeacherService";
 import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
 import ViewSubjectTeacher from "./veiw-subject-teacher";
+import { SubjectData } from "@/services/apis/subjectService";
+import { SubjectTeacherData } from "@/services/apis/assignSubjectTeacherService";
 
-const SubjectReportCard = () => {
-  const [subject, setSubject] = useState<SubjectData[]>([]);
-  const [subjectTeacher, setSubjectTeacher] = useState<SubjectTeacherData[]>([]);
+interface SubjectProp{
+  refetch: () => void;
+  subjects: SubjectData[];
+  subjectTeacherData: SubjectTeacherData[];
+}
+const SubjectReportCard = ({refetch, subjects, subjectTeacherData}: SubjectProp) => {
   const [employee, setEmployees] = useState<EmployeesData[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchSubjectData = async () => {
-      setLoading(true);
-      try {
-        const subjectData = await fetchSubject();
-        setSubject(subjectData.data as SubjectData[]);
-      } catch (err) {
-        setError(err as any); 
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSubjectData();
-  }, []);
-
-
-  useEffect(() => {
     const fetchEmployeeAndSubjectData = async () => {
       setLoading(true);
       try {
-        const employeeSubjectResponse = await getSubjectTeacher();
         const employeeResponse = await fetchEmployees();
-        const subjectResponse = await fetchSubject();
-        setSubjectTeacher(employeeSubjectResponse.data as SubjectTeacherData[]);
-        setSubject(subjectResponse.data as SubjectData[]);
         setEmployees(employeeResponse.data as EmployeesData[]);
       } catch (err) {
         setError(err as any);
@@ -54,8 +35,8 @@ const SubjectReportCard = () => {
 
     fetchEmployeeAndSubjectData();
   }, []);
-  const subjectCount = subject.length.toString();
-  const subjectTeacherCount = subjectTeacher.length.toString();
+  const subjectCount = subjects?.length.toString();
+  const subjectTeacherCount = subjectTeacherData?.length.toString();
 
   interface ReportItem {
     id: number;
@@ -100,8 +81,8 @@ const SubjectReportCard = () => {
                <div className={"text-3xl font-semibold text-${item.color} mt-1"}>
               {item.count}
             </div>
-            {item.id === 1 && <ViewSubject subject={subject} />}
-            {item.id === 2 && <ViewSubjectTeacher employee={employee} subject={subject} />}
+            {item.id === 1 && <ViewSubject subject={subjects} refetch={refetch}/>}
+            {item.id === 2 && <ViewSubjectTeacher employee={employee} subject={subjects} subjectTeacherData={subjectTeacherData} refetch={refetch} />}
             </div>
           </Card>
         ))

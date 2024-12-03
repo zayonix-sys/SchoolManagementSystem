@@ -26,12 +26,12 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import { ClassData, fetchClasses } from "@/services/ClassService";
 import {
   updateSponsorship,
   SponsorshipData,
 } from "@/services/sponsorshipService";
 import { fetchSponsor, SponsorData } from "@/services/sponsorService";
+import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
 
 const sponsorshipSchema = z.object({
   amount: z.number().optional(),
@@ -53,7 +53,6 @@ const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({
   existingSponsorship,
   studentName,
 }) => {
-  const [classes, setClasses] = useState<ClassData[]>([]);
   const [sponsors, setSponsors] = useState<SponsorData[]>([]);
   const [classId, setClassId] = useState<number | null>(
     existingSponsorship.classId || null
@@ -67,6 +66,9 @@ const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({
   const [frequency, setFrequency] = useState<number | undefined>(
     existingSponsorship.frequency || undefined
   );
+
+  const {data: classData, isLoading: classLoading, refetch: classRefetch} = useFetchClassQuery();
+  const classes = classData?.data as ClassData[];
 
   const {
     register,
@@ -88,8 +90,6 @@ const EditSponsorshipForm: React.FC<EditSponsorshipFormProps> = ({
   useEffect(() => {
     const fetchClassSponsorData = async () => {
       try {
-        const classResponse = await fetchClasses();
-        setClasses(classResponse.data as ClassData[]);
         const sponsorResponse = await fetchSponsor();
         setSponsors(sponsorResponse.data as SponsorData[]);
       } catch (err) {

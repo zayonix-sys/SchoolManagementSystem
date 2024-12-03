@@ -25,10 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { updateUser, UserData } from "@/services/userService";
-import { CampusData, getCampuses } from "@/services/campusService";
 import { getUserRoles, UserRoleData } from "@/services/userRoleService";
-
-
+import { CampusData } from "@/services/apis/campusService";
 
 const userSchema = z.object({
   campusId: z.number().int().positive("Campus is required"),
@@ -41,8 +39,10 @@ type UserFormValues = z.infer<typeof userSchema>;
 
 export default function EditUser({
   userData,
+  campuses
 }: {
   userData: UserData;
+  campuses: CampusData[];
 }) {
   const {
     userId,
@@ -52,7 +52,6 @@ export default function EditUser({
   } = userData;
 
   const [selectedCampusId, setSelectedCampusId] = useState<number | null>(null);
-  const [campuses, setCampuses] = useState<CampusData[]>([]);
   const [userRole, setUserRole] = useState<UserRoleData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,9 +77,7 @@ export default function EditUser({
     const fetchUserAndCampusData = async () => {
       setLoading(true);
       try {
-        const campusResponse = await getCampuses();
         const userRoleResponse = await getUserRoles();
-        setCampuses(campusResponse.data as CampusData[]);
         setUserRole(userRoleResponse.data as UserRoleData[]);
         const validCampusId = campusId ?? 0;
           setSelectedCampusId(validCampusId);
@@ -155,7 +152,7 @@ export default function EditUser({
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {campuses.map((campus) => (
+                      {campuses?.map((campus) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={campus.campusId}

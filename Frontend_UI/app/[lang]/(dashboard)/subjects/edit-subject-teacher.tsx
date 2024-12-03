@@ -18,9 +18,9 @@ import {
 } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
-import { fetchSubject, SubjectData } from "@/services/subjectService";
-import { SubjectTeacherData, updateSubjectTeacher } from "@/services/subjectTeacherService";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SubjectTeacherData, useUpdateSubjectTeacherMutation } from "@/services/apis/assignSubjectTeacherService";
+import { SubjectData } from "@/services/apis/subjectService";
 
 const subjectTeacherSchema = z.object({
   subjectTeacherId: z.coerce.number().optional(),
@@ -31,11 +31,15 @@ const subjectTeacherSchema = z.object({
 type SubjectTeacherFormValues = z.infer<typeof subjectTeacherSchema>;
 
 export default function EditSubjectTeacher({
-  subjectTeacherData
+  subjectTeacherData,
+  subjectData,
+  refetch,
 }: {
   subjectTeacherData: SubjectTeacherData;
+  subjectData: SubjectData[];
+  refetch: () => void;
 }) {
-  const { employeeId, subjectIds = []  } = subjectTeacherData || {};
+  const { employeeId, subjectIds = []  } = subjectTeacherData || [];
 
   const { register, handleSubmit, setValue, reset, watch, formState: { errors } } = useForm<SubjectTeacherFormValues>({
     resolver: zodResolver(subjectTeacherSchema),
@@ -44,10 +48,8 @@ export default function EditSubjectTeacher({
       subjectIds,
     },
   });
-
-
+  const [updateSubjectTeacher] = useUpdateSubjectTeacherMutation();
   const [employee, setEmployee] = useState<EmployeesData[]>([]);
-  const [subjects, setSubjects] = useState<SubjectData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -56,24 +58,19 @@ export default function EditSubjectTeacher({
   );
 
   useEffect(() => {
-    console.log("subjectTeacherData: ", subjectTeacherData);
-    
     const fetchEmployeeAndSubjectData = async () => {
       setLoading(true);
       try {
-        const [employeeResponse, subjectResponse] = await Promise.all([
+        const [employeeResponse] = await Promise.all([
           fetchEmployees(),
-          fetchSubject()
         ]);
         setEmployee(employeeResponse.data as EmployeesData[]);
-        setSubjects(subjectResponse.data as SubjectData[]);
       } catch (err) {
         setError(err as any);
       } finally {
         setLoading(false);
       }
     };
-
     fetchEmployeeAndSubjectData();
   }, []);
 
@@ -90,9 +87,9 @@ export default function EditSubjectTeacher({
     try {
       const updatedSubjectTeacher = { ...data, employeeId }; 
       const response = await updateSubjectTeacher(updatedSubjectTeacher);
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success("Subject Teacher Updated successfully!");
+        refetch();
         reset();
       } else {
         toast.error("Failed to update the Subject Teacher");
@@ -174,7 +171,7 @@ export default function EditSubjectTeacher({
                 <div className="col-span-6">
                   <label className="block mb-2">Select Subjects</label>
                   <div className="grid grid-cols-1 gap-4">
-                    {subjects.map((sub) => (
+                    {subjectData.map((sub) => (
                       <div
                         key={sub.subjectId !== undefined ? sub.subjectId : 0}
                         className="flex items-center"

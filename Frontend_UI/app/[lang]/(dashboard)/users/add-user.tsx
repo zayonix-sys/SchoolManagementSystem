@@ -17,9 +17,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CampusData } from "@/services/campusService";
 import { UserData, addUser } from "@/services/userService";
 import { UserRoleData } from "@/services/userRoleService";
+import { CampusData } from "@/services/apis/campusService";
 
 // Props interface
 interface UserListTableProps {

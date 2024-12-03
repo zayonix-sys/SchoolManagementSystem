@@ -18,32 +18,17 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
-  ClassroomData,
-  fetchClassrooms,
-  updateClassroom,
-} from "@/services/apis/_classroomService";
-import { ClassData, fetchClasses } from "@/services/ClassService";
-import { fetchSection, SectionData } from "@/services/SectionService";
-import {
-  AssignClassData,
-  updateClassAssignment,
-} from "@/services/assignClassService";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CampusData, getCampuses } from "@/services/campusService";
-import {
-  AssignSubjectData,
-  updateClassSubjectAssignment,
-} from "@/services/assignSubjectService";
-import { fetchSubject, SubjectData } from "@/services/subjectService";
 import { Checkbox } from "@/components/ui/checkbox";
+import { AssignClassSubjectData, useUpdateClassSubjectMutation } from "@/services/apis/assignClassSubjectService";
+import { SubjectData } from "@/services/apis/subjectService";
+import { ClassData } from "@/services/apis/classService";
 
-// Define Zod schema for class form validation
 const subjectAssignmentSchema = z.object({
   classSubjectId: z.number().optional(),
   classId: z.number().min(1, "Class is required"),
@@ -56,12 +41,16 @@ type SubjectAssignFormValues = z.infer<typeof subjectAssignmentSchema>;
 export default function EditClassSubjectAssign({
   subjectAssignmentData,
   subject,
+  classes,
+  refetch,
 }: {
-  subjectAssignmentData: AssignSubjectData;
+  subjectAssignmentData: AssignClassSubjectData[];
   subject: SubjectData[];
+  classes: ClassData[];
+  refetch: () => void;
 }) {
-  const { classId, subjectIds = [], classSubjectId } = subjectAssignmentData; // Default empty array if missing
-
+  const { classId, subjectIds = [], classSubjectId } = subjectAssignmentData[0]; 
+  
   const {
     register,
     handleSubmit,
@@ -73,34 +62,26 @@ export default function EditClassSubjectAssign({
     resolver: zodResolver(subjectAssignmentSchema),
     defaultValues: {
       classId,
-      subjectIds, // This ensures the form has a valid subjectIds array
+      subjectIds, 
     },
   });
 
-  const [classes, setClasses] = useState<ClassData[]>([]);
-  const [subjects, setSubjects] = useState<SubjectData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
   useEffect(() => {
-    const fetchClassAndSubjectData = async () => {
-      setLoading(true);
-      try {
-        const [classResponse, subjectResponse] = await Promise.all([
-          fetchClasses(),
-          fetchSubject(),
-        ]);
-        setClasses(classResponse.data as ClassData[]);
-        setSubjects(subjectResponse.data as SubjectData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (subjectAssignmentData?.length > 0&& subjectAssignmentData[0].subjects) {
+      const { subjects } = subjectAssignmentData[0]; // Subjects from data
+      const subjectIds = subjects
+        .map((name) =>
+          subject.find((subj) => subj.subjectName.trim() === name.trim())
+        )
+        .filter(Boolean) // Exclude unmatched subjects
+        .map((match) => match?.subjectId);
+  
+        setValue("subjectIds", subjectIds.filter((id) => id !== undefined) ?? []); // Set only the relevant subjectIds
+    }
+  }, [subjectAssignmentData, subject, setValue]);
 
-    fetchClassAndSubjectData();
-  }, []);
+
+  const [updateClassSubjectAssignment] = useUpdateClassSubjectMutation();
 
   const onSubmit: SubmitHandler<SubjectAssignFormValues> = async (data) => {
     try {
@@ -108,9 +89,9 @@ export default function EditClassSubjectAssign({
       const response = await updateClassSubjectAssignment(
         updatedSubjectAssignment
       );
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success("Subject Assignment Updated successfully!");
+        refetch();
         reset();
       } else {
         toast.error("Failed to update the Subject assignment");
@@ -170,7 +151,7 @@ export default function EditClassSubjectAssign({
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
                     <SelectContent>
-                      {classes.map((classData) => (
+                      {classes?.map((classData) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={classData.classId}
@@ -190,7 +171,7 @@ export default function EditClassSubjectAssign({
                 <div className="col-span-6">
                   <label className="block mb-2">Select Subjects</label>
                   <div className="grid grid-cols-1 gap-4">
-                    {subject.map((sub) => (
+                    {/* {subject?.map((sub) => (
                       <div
                         key={sub.subjectId !== undefined ? sub.subjectId : 0}
                         className="flex items-center"
@@ -198,9 +179,9 @@ export default function EditClassSubjectAssign({
                         <Checkbox
                           variant="filled"
                           id={`subject-${sub.subjectId ?? 0}`}
-                          defaultChecked={watch("subjectIds")?.includes(
-                            sub.subjectId ?? 0
-                          )}
+                          // defaultChecked={watch("subjectIds")?.includes(
+                          //   sub.subjectId ?? 0
+                          // )}
                           checked={watch("subjectIds")?.includes(
                             sub.subjectId ?? 0
                           )} // Controlled checkbox state
@@ -209,8 +190,22 @@ export default function EditClassSubjectAssign({
                           ) =>
                             handleCheckboxChange(
                               sub.subjectId ?? 0,
-                              Boolean(isChecked)
-                            ) // Ensure isChecked is a boolean
+                              Boolean(isChecked)) // Ensure isChecked is a boolean
+                          }
+                          className="mr-2"
+                        >
+                          {sub.subjectName}
+                        </Checkbox>
+                      </div>
+                    ))} */}
+                    {subject?.filter((sub) => sub.subjectId !== undefined).map((sub) => (
+                      <div key={sub.subjectId} className="flex items-center">
+                        <Checkbox
+                          variant="filled"
+                          id={`subject-${sub.subjectId}`}
+                          checked={watch("subjectIds")?.includes(sub.subjectId as number)}
+                          onCheckedChange={(isChecked) =>
+                            handleCheckboxChange(sub.subjectId ?? 0, Boolean(isChecked))
                           }
                           className="mr-2"
                         >

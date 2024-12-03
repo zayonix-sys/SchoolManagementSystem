@@ -25,9 +25,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { CampusData } from "@/services/apis/campusService";
 
 interface EmployeeListTableProps {
   employees: EmployeesData[];
+  campuses: CampusData[];
 }
 
 const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
@@ -54,28 +56,6 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
   );
 
   const totalPages = Math.ceil(filteredSections.length / itemsPerPage);
-
-  const handleSelectAll = () => {
-    if (selectedRows.length === currentItems.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(
-        currentItems
-          .map((row) => row.employeeId!)
-          .filter((id) => id !== null && id !== undefined)
-      );
-    }
-  };
-
-  const handleRowSelect = (id: number) => {
-    const updatedSelectedRows = [...selectedRows];
-    if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
-    } else {
-      updatedSelectedRows.push(id);
-    }
-    setSelectedRows(updatedSelectedRows);
-  };
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -175,7 +155,7 @@ const EmployeeListTable: React.FC<EmployeeListTableProps> = ({ employees }) => {
                   >
                     <Icon icon="heroicons:eye" className=" h-4 w-4" />
                   </Button>
-                  <EditEmployee employeeData={item} />
+                  <EditEmployee employeeData={item} campus={item.campuses} />
                   <Button
                     size="icon"
                     variant="outline"

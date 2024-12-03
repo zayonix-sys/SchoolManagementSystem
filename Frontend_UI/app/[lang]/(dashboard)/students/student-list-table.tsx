@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataRows, users } from "./data";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -21,11 +20,13 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
 import EditStudent from "./edit-student";
+import { ClassData } from "@/services/apis/classService";
 
 
 interface StudentListTableProps {
   // students: StudentData[];
   classId: number | null,
+  classData: ClassData[]
 }
 const StudentList:React.FC<StudentListTableProps> = ({classId}) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,8 +42,6 @@ const StudentList:React.FC<StudentListTableProps> = ({classId}) => {
       try {
         const studentData = await getStudentByClassWise(id);
         setStudent(studentData?.data as StudentData[]);
-        
-        
       } catch (err) {
         setError(err as any);
       } finally {
@@ -95,7 +94,6 @@ const StudentList:React.FC<StudentListTableProps> = ({classId}) => {
       toast.error("Failed to delete Student");
     }
   };
-  // console.log("student-list",currentItems);
   
  
   return (
@@ -159,15 +157,7 @@ const StudentList:React.FC<StudentListTableProps> = ({classId}) => {
               </TableCell>
               <TableCell className="flex gap-3 justify-end bg-background drop-shadow-md">
            
-                <EditStudent studentData={item}/>
-                {/* <Button
-                  size="icon"
-                  variant="outline"
-                  className=" h-7 w-7"
-                  color="secondary"
-                >
-                  <Icon icon="heroicons:eye" className=" h-4 w-4  " />
-                </Button>  */}
+                <EditStudent studentData={item} classes={item.classData}/>
                 <Button
                   size="icon"
                   variant="outline"

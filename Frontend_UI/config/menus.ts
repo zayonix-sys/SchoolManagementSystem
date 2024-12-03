@@ -92,6 +92,11 @@ export const menuItems: MenuItemProps[] = [
         href: "/examPaper",
         icon: Book,
       },
+      {
+        title: "Manage Results",
+        href: "/examResults",
+        icon: DocsCheck,
+      },
       
     ],
   },

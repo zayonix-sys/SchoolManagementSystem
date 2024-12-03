@@ -17,9 +17,11 @@ import ConfirmationDialog from "../common/confirmation-dialog";
 import { deleteUser, fetchAllUser, UserData } from "@/services/userService";
 import EditUser from "./edit-user";
 import { toast } from "sonner";
+import { CampusData } from "@/services/apis/campusService";
 
 interface UserListTableProps {
   users: UserData[];
+  campus: CampusData[];
 }
 
 const UserListTable: React.FC<UserListTableProps> = ({ users }) => {
@@ -43,28 +45,6 @@ const UserListTable: React.FC<UserListTableProps> = ({ users }) => {
   );
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-
-  const handleSelectAll = () => {
-    if (selectedRows.length === currentItems.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(
-        currentItems
-          .map((row) => row.userId!)
-          .filter((id) => id !== null && id !== undefined)
-      );
-    }
-  };
-
-  const handleRowSelect = (id: number) => {
-    const updatedSelectedRows = [...selectedRows];
-    if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
-    } else {
-      updatedSelectedRows.push(id);
-    }
-    setSelectedRows(updatedSelectedRows);
-  };
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -148,7 +128,7 @@ const UserListTable: React.FC<UserListTableProps> = ({ users }) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditUser userData={item} />
+                  <EditUser userData={item} campuses={item.campus}/>
                   <Button
                     size="icon"
                     variant="outline"

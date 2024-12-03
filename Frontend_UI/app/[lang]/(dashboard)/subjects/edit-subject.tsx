@@ -17,7 +17,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { SubjectData, updateSubject } from "@/services/subjectService";
+import { SubjectData, useUpdateSubjectMutation } from "@/services/apis/subjectService";
 
 // Define Zod schema for class form validation
 const subjectSchema = z.object({
@@ -28,11 +28,13 @@ const subjectSchema = z.object({
 
 type SubjectFormValues = z.infer<typeof subjectSchema>;
 
-export default function EditSubject({ subject }: { 
+export default function EditSubject({ subject, refetch }: { 
   subject: SubjectData;
+  refetch: () => void;
 }) {
   
   const { subjectId, subjectName, subjectDescription } = subject;
+  const [updateSubject] = useUpdateSubjectMutation();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<SubjectFormValues>({
     resolver: zodResolver(subjectSchema),
@@ -46,9 +48,9 @@ export default function EditSubject({ subject }: {
     try {
       const updatedSubject = { ...data, subjectId };
       const response = await updateSubject(updatedSubject);
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success(`${updatedSubject.subjectName} Subject Updated successfully!`);
+        refetch();
         reset();
       } else {
         toast.error("Failed to update the Subject");

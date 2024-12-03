@@ -9,15 +9,16 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useEffect, useState } from "react";
-import { SubjectData } from "@/services/subjectService";
 import SubjectListTable from "./subject-table";
+import { SubjectData } from "@/services/apis/subjectService";
 
 // This component allows you to view class details in a sheet.
 export default function ViewSubject({
   subject,
+  refetch
 }: {
   subject: SubjectData[] | null;
+  refetch: () => void;
 }) {
   return (
     <Sheet>
@@ -36,7 +37,7 @@ export default function ViewSubject({
         </SheetHeader>
         <div>
           <div className="py-6">
-            <SubjectListTable subject={subject ?? []}/>
+            <SubjectListTable subject={subject ?? []} refetch ={refetch}/>
           </div>
         </div>
         <SheetFooter>

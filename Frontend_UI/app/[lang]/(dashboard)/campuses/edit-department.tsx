@@ -17,18 +17,14 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
-  addDepartment,
-  DepartmentData,
-  updateDepartment,
-} from "@/services/departmentService";
-import { CampusData, getCampuses } from "@/services/campusService";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DepartmentData, useUpdateDepartmentMutation } from "@/services/apis/departmentService";
+import { CampusData } from "@/services/apis/campusService";
 
 // Define Zod schema
 const departmentSchema = z.object({
@@ -44,9 +40,11 @@ type DepartmentFormValues = z.infer<typeof departmentSchema>;
 export default function EditDepartment({
   department,
   campus,
+  refetch,
 }: {
   department: DepartmentData;
   campus: CampusData;
+  refetch: () => void;
 }) {
   console.log(department);
   const { departmentId, departmentName, description } = department;
@@ -67,32 +65,27 @@ export default function EditDepartment({
     },
   });
 
+  const [updateDepartment] = useUpdateDepartmentMutation();
   //const [campusId, setCampusId] = useState(campuses);
 
   const onSubmit: SubmitHandler<DepartmentFormValues> = async (data) => {
     try {
       const updatedData = { ...data, departmentId };
       const response = await updateDepartment(updatedData);
-
-      if (response.success) {
-        if (Array.isArray(response.data)) {
-          toast.success(
-            `${response.data[0].departmentName} Department Edit successfully!`
-          );
-        } else {
-          toast.success(
-            `${response.data.departmentName} Department Edit successfully!`
-          );
-        }
+      if (response.data?.success) {
+        if (response.data?.success) {
+        toast.success(`${updatedData.departmentName} Department Updated successfully!`);
+        refetch();  
         reset();
       } else {
-        toast.error("Failed to update the department");
+        toast.error("Failed to update the campus");
       }
-    } catch (error) {
+  }
+ } catch (error) {
       console.error("Request failed:", error);
       toast.error("Request failed");
-    }
-  };
+  }
+};
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
       toast.error("Please correct the errors in the form.");

@@ -17,10 +17,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { SubjectData, updateSubject } from "@/services/subjectService";
-import { QuestionsData, updateQuestion } from "@/services/QBankService";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import dynamic from "next/dynamic";
+import { QuestionsData, useUpdateQuestionMutation } from "@/services/apis/qBankService";
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -36,11 +35,13 @@ const questionSchema = z.object({
 
 type SubjectFormValues = z.infer<typeof questionSchema>;
 
-export default function EditQuestions({ question }: {
-  question: QuestionsData[]
+export default function EditQuestions({ question, refetch }: {
+  question: QuestionsData[];
+  refetch: () => void
 }) {
   
   const [isClient, setIsClient] = useState(false);
+  const [updateQuestion] = useUpdateQuestionMutation();
 
   useEffect(() => {
     setIsClient(true);
@@ -63,9 +64,9 @@ export default function EditQuestions({ question }: {
     try {
       const updatedQuestion = { ...data, questionBankId };
       const response = await updateQuestion(updatedQuestion);
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success(`${updatedQuestion.questionType} Updated successfully!`);
+        refetch();
         reset();
       } else {
         toast.error("Failed to update the Question");

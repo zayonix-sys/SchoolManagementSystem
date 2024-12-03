@@ -18,8 +18,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ExamScheduleData, updateExam } from "@/services/ExamScheduleService";
 import { Label } from "@/components/ui/label";
+import { ExamData, useUpdateExamMutation } from "@/services/apis/examService";
 
 const scheduleExamsSchema = z.object({
   examId: z.coerce.number().optional(),
@@ -40,10 +40,12 @@ const scheduleExamsSchema = z.object({
 
 type EditScheduleFormValues = z.infer<typeof scheduleExamsSchema>;
 
-export default function EditExamSchedule({ examItem }: {
-  examItem: ExamScheduleData[]
+export default function EditExamSchedule({ examItem, refetch }: {
+  examItem: ExamData[]
+  refetch: () => void
 }) {
-  
+
+  const [updateExam] = useUpdateExamMutation();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -80,11 +82,10 @@ export default function EditExamSchedule({ examItem }: {
     
     };
     try {
-      // const updatedSchedule = { ...formData, examId };
       const response = await updateExam(formData);
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success(`Exam Schedule for ${formData.className} Updated successfully!`);
+        refetch();
         reset();
       } else {
         toast.error("Failed to update the Exam Schedule");

@@ -17,7 +17,6 @@ const Page = () => {
       try {
         const [sponsorshipData] = await Promise.all([
           fetchSponsorship(),
-
         ]);
         setSponsorship(sponsorshipData.data as SponsorshipData[]);
       } catch (err) {

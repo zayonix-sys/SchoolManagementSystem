@@ -216,7 +216,7 @@ void SeedDefaultData(SchoolContext context)
         context.SaveChanges();
     }
 
-    var campudId = context.Campuses.Select(c => c.CampusId).FirstOrDefault();
+    var campusId = context.Campuses.Select(c => c.CampusId).FirstOrDefault();
 
     var adminRoleId = context.UserRoles
         .Where(r => r.RoleName == "Admin")
@@ -230,7 +230,7 @@ void SeedDefaultData(SchoolContext context)
             UserName = "Super Admin",
             PasswordHash = "password", // Properly hash the password
             RoleId = adminRoleId,
-            CampusId = Convert.ToInt32(campudId),
+            CampusId = Convert.ToInt32(campusId),
             CreatedAt = DateTime.Now,
         };
         context.Users.Add(defaultUser);

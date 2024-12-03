@@ -10,13 +10,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import SelectionOperation from "./table-selection-operation";
-import { useEffect, useState } from "react";
-import { DepartmentData } from "@/services/departmentService";
-import { CampusData } from "@/services/campusService";
+import { CampusData } from "@/services/apis/campusService";
 
-//we can change the props "side"'s value to 'top', 'left', 'bottom', 'right' so that the sheet will come out from different direction.
-
-export default function ViewDepartment({ campus }: { campus: CampusData }) {
+export default function ViewDepartment({ campus, refetch }: { campus: CampusData, refetch: () => void }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -35,7 +31,7 @@ export default function ViewDepartment({ campus }: { campus: CampusData }) {
         </SheetHeader>
         <div>
           <div className="py-6">
-            <SelectionOperation campus={campus} />
+            <SelectionOperation campus={campus} refetch={refetch} />
           </div>
         </div>
         <SheetFooter>

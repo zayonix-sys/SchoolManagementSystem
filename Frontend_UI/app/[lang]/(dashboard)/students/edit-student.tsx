@@ -27,10 +27,8 @@ import {
 import { SponsorData, updateSponsor } from "@/services/sponsorService";
 import { Label } from "@/components/ui/label";
 import { StudentData, updateStudent } from "@/services/studentService";
-import { ClassData, fetchClasses } from "@/services/ClassService";
 import { format } from "date-fns";
-
-
+import { ClassData } from "@/services/apis/classService";
 
 const studentSchema = z.object({
   campusId: z.coerce.number().optional(),
@@ -61,10 +59,10 @@ type StudentFormValues = z.infer<typeof studentSchema>;
 
 interface StudentProps {
   studentData: StudentData;
+  classes: ClassData[];
 }
 
-export default function EditStudent({ studentData }: StudentProps) {
-  const [classes, setClasses] = useState<ClassData[]>([]);
+export default function EditStudent({ studentData, classes }: StudentProps) {
   const [selectclassId, setClassId] = useState<number | null>(null);
 
   const {
@@ -107,20 +105,6 @@ export default function EditStudent({ studentData }: StudentProps) {
     },
   });
   // console.log("default values", studentData);
-  useEffect(() => {
-    const loadClasses = async () => {
-      try {
-        const response = await fetchClasses(); 
-        if (response.success) {
-          setClasses(response.data); }
-      } catch (error) {
-        console.error("Failed to fetch classes:", error);
-      }
-    };
-
-    loadClasses();
-  }, []);
-
 
   const onSubmit: SubmitHandler<StudentFormValues> = async (data) => {
     try {
@@ -146,8 +130,6 @@ export default function EditStudent({ studentData }: StudentProps) {
     }
   };
 
-
-  
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
       toast.error("Please correct the errors in the form.");

@@ -9,11 +9,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useEffect, useState } from "react";
-import { ClassData } from "@/services/ClassService"; // Replace with actual service import
-import ClassListTable from "./class-table";
-import { ClassroomData } from "@/services/apis/_classroomService";
 import ClassroomListTable from "./classroom-table";
+import { ClassroomData } from "@/services/apis/classroomService";
 
 // This component allows you to view class details in a sheet.
 export default function ViewClassroom({

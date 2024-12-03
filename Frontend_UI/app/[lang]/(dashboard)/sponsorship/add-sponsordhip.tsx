@@ -37,9 +37,6 @@ import {
 import { fetchSponsor, SponsorData } from "@/services/sponsorService";
 import ClassStudentListTable from "./student-class-wise";
 import { fetchStudents, StudentData } from "@/services/studentService";
-import ClassStudentListTable from "./student-class-wise";
-import { ClassData } from "@/services/ClassService";
-
 
 const sponsorshipSchema = z.object({
   amount: z.string().min(1, "Please Enter Correct Amount").optional(),
@@ -93,8 +90,9 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
         );
         setStudents(
           (await fetchStudents()).data.filter(
-            (student) => !sponsoredStudentIds.includes(student.studentId)
-
+            (student:StudentData) => !sponsoredStudentIds.includes(student.studentId)
+          )
+        );
         const studentResponse = await fetchStudents();
         setStudents(
           studentResponse.data.filter(

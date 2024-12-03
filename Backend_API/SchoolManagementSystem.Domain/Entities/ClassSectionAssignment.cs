@@ -10,7 +10,7 @@ namespace SchoolManagementSystem.Domain.Entities
     public class ClassSectionAssignment
     {
         [Key]
-        public int AssignmentId { get; set; }
+        public int ClassSectionAssignmentId { get; set; }
 
         [ForeignKey("Class")]
         public int? ClassId { get; set; }

@@ -2,7 +2,6 @@
 import { BreadcrumbItem, Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { useEffect, useState } from "react";
 import AddSponsorForm from "./add-sponsor-form";
-import SponsorListTable from "./sponsor-list-table";
 import { fetchSponsor, SponsorData } from "@/services/sponsorService";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import SponsorsReports from "./sponsors-reports";

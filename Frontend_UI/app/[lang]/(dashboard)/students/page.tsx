@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { BreadcrumbItem, Breadcrumbs } from '@/components/ui/breadcrumbs';
 import { getStudentByClassWise, StudentData } from '@/services/studentService';
-import { ClassData, fetchClasses } from '@/services/ClassService'; // Import your fetchClasses service
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import StudentList from './student-list-table';
+import { ClassData, useFetchClassQuery } from '@/services/apis/classService';
 
 
 const Page = () => {
@@ -14,25 +14,8 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [classId, setClassId] = useState<number | null>(null);
-  const [classes, setClasses] = useState<ClassData[]>([]); 
-
-  
-  useEffect(() => {
-    const fetchClassData = async () => {
-      setLoading(true);
-      try {
-        const response = await fetchClasses(); 
-        setClasses(response.data as ClassData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClassData();
-  }, []);
-
+  const {data: classData, isLoading: classLoading, refetch: classRefetch} = useFetchClassQuery();
+  const classes = classData?.data as ClassData[];
   
   useEffect(() => {
     const fetchStudentByClass = async (id: number) => {
@@ -75,7 +58,7 @@ const Page = () => {
         </Select>
       </div>
 
-      <StudentList classId={classId} />
+      <StudentList classId={classId} classData={classes} />
     </div>
   );
 };
