@@ -2,11 +2,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import DashboardDropdown from "@/components/dashboard-dropdown";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ListItem from "./list-item";
 import DetailsCard from "./details-card";
-import { fetchSponsorPayment, PaymentData } from "@/services/sponsorPaymentsService";
+import { PaymentData } from "@/services/apis/sponsorPaymentService";
+
 
 interface AggregatedSponsorData {
   sponsorId: number;
@@ -22,56 +22,56 @@ const TopContributer = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const getTopSponsors = async () => {
-      try {
-        setLoading(true);
-        setError(null); // Reset error state
+  // // useEffect(() => {
+  //   const getTopSponsors = async () => {
+  //     try {
+  //       setLoading(true);
+  //       setError(null); // Reset error state
 
-        const response = await fetchSponsorPayment();
-        if (response.success) {
-          // Filter payments made in the last three months
-          const recentPayments = response.data.filter((payment: PaymentData) => {
-            const paymentDate = new Date(payment.paymentDate || "");
-            const threeMonthsAgo = new Date();
-            threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-            return paymentDate >= threeMonthsAgo;
-          });
+  //       // const response = await fetchSponsorPayment();
+  //       if (response.success) {
+  //         // Filter payments made in the last three months
+  //         const recentPayments = response.data.filter((payment: PaymentData) => {
+  //           const paymentDate = new Date(payment.paymentDate || "");
+  //           const threeMonthsAgo = new Date();
+  //           threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+  //           return paymentDate >= threeMonthsAgo;
+  //         });
 
-          // Group by sponsorId and calculate total payment using a Map
-          const groupedSponsors = new Map<number, AggregatedSponsorData>();
-          recentPayments.forEach((payment: PaymentData) => {
-            const sponsor = groupedSponsors.get(payment.sponsorId) || {
-              sponsorId: payment.sponsorId,
-              sponsorName: payment.sponsorName || "",
-              totalAmountPaid: 0,
-              amountPaid: payment.amountPaid || 0,
-              firstName: payment.firstName,
-              lastName: payment.lastName,
-            };
-            sponsor.totalAmountPaid += payment.amountPaid || 0;
-            groupedSponsors.set(payment.sponsorId, sponsor);
-          });
+  //         // Group by sponsorId and calculate total payment using a Map
+  //         const groupedSponsors = new Map<number, AggregatedSponsorData>();
+  //         recentPayments.forEach((payment: PaymentData) => {
+  //           const sponsor = groupedSponsors.get(payment.sponsorId) || {
+  //             sponsorId: payment.sponsorId,
+  //             sponsorName: payment.sponsorName || "",
+  //             totalAmountPaid: 0,
+  //             amountPaid: payment.amountPaid || 0,
+  //             firstName: payment.firstName,
+  //             lastName: payment.lastName,
+  //           };
+  //           sponsor.totalAmountPaid += payment.amountPaid || 0;
+  //           groupedSponsors.set(payment.sponsorId, sponsor);
+  //         });
 
-          // Sort by totalAmountPaid in descending order and slice the top 10
-          const sortedSponsors = Array.from(groupedSponsors.values())
-            .sort((a, b) => b.totalAmountPaid - a.totalAmountPaid)
-            .slice(0, 10);
+  //         // Sort by totalAmountPaid in descending order and slice the top 10
+  //         const sortedSponsors = Array.from(groupedSponsors.values())
+  //           .sort((a, b) => b.totalAmountPaid - a.totalAmountPaid)
+  //           .slice(0, 10);
 
-          setTopSponsors(sortedSponsors);
-        } else {
-          setError("Failed to fetch sponsor payments. Please try again later.");
-        }
-      } catch (error) {
-        console.error("Error fetching top sponsors:", error);
-        setError("An error occurred while fetching data.");
-      } finally {
-        setLoading(false);
-      }
-    };
+  //         setTopSponsors(sortedSponsors);
+  //       } else {
+  //         setError("Failed to fetch sponsor payments. Please try again later.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching top sponsors:", error);
+  //       setError("An error occurred while fetching data.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    getTopSponsors();
-  }, []);
+  //   getTopSponsors();
+  // }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -93,14 +93,15 @@ const TopContributer = () => {
       <CardContent className="pt-0">
         <div className="pt-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-6">
-            {topSponsors.slice(0, 3).map((item, index) => (
-              <DetailsCard key={item.sponsorId} item={mapToDetails(item)} index={index + 1} />
-            ))}
+            {/* {topSponsors.slice(0, 3).map((item, index) => ( */}
+              {/* // <DetailsCard key={item.sponsorId} item={mapToDetails(item)} index={index + 1} /> */}
+            {/* ))} */}
           </div>
           <div className="mt-8">
-            {topSponsors.slice(3).map((item, index) => (
-              <ListItem key={item.sponsorId} item={mapToDetails(item)} index={index + 4} />
-            ))}
+            {/* {topSponsors.slice(3).map((item, index) => ( */}
+              {/* <ListItem key={item.sponsorId} item={mapToDetails(item)} index={index + 4} /> */}
+            {/* )
+            )} */}
           </div>
         </div>
       </CardContent>

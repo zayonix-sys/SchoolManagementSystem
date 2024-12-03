@@ -12,49 +12,57 @@ import SubjectReportCard from "./reports";
 import AddSubject from "./add-subject";
 import AddAssignSubject from "./add-assignsubject";
 import SubjectAssignTable from "./classSubject-table";
-import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
 import AssignSubjectTeacher from "./assign-subject-teacher";
 import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
-import { SubjectData, useFetchSubjectQuery } from "@/services/apis/subjectService";
-import { SubjectTeacherData, useFetchSubjectTeacherQuery } from "@/services/apis/assignSubjectTeacherService";
-import { AssignClassSubjectData, useFetchClassSubjectQuery } from "@/services/apis/assignClassSubjectService";
+import {
+  SubjectData,
+  useFetchSubjectQuery,
+} from "@/services/apis/subjectService";
+import {
+  SubjectTeacherData,
+  useFetchSubjectTeacherQuery,
+} from "@/services/apis/assignSubjectTeacherService";
+import {
+  AssignClassSubjectData,
+  useFetchClassSubjectQuery,
+} from "@/services/apis/assignClassSubjectService";
+import {
+  EmployeesData,
+  useFetchEmployeesQuery,
+} from "@/services/apis/employeeService";
 
 const Subjects = () => {
-  const {data: classData, isLoading, isError, refetch: classRefetch} = useFetchClassQuery();
+  const {
+    data: classData,
+    isLoading,
+    isError,
+    refetch: classRefetch,
+  } = useFetchClassQuery();
   const classes = classData?.data as ClassData[];
-  const {data: subjectTeacher, refetch: subjectTeacherRefetch} = useFetchSubjectTeacherQuery();
+  const { data: subjectTeacher, refetch: subjectTeacherRefetch } =
+    useFetchSubjectTeacherQuery();
   const subjectTeacherData = subjectTeacher?.data as SubjectTeacherData[];
-  const {data: subjectData, isLoading: subjectLoading, isError: subjectError, refetch: subjectRefetch} = useFetchSubjectQuery();
+  const {
+    data: subjectData,
+    isLoading: subjectLoading,
+    isError: subjectError,
+    refetch: subjectRefetch,
+  } = useFetchSubjectQuery();
   const subjects = subjectData?.data as SubjectData[];
-  const {data: assignSubjectData, refetch: assignSubjectRefetch} = useFetchClassSubjectQuery();
+  const { data: assignSubjectData, refetch: assignSubjectRefetch } =
+    useFetchClassSubjectQuery();
   const assignSubject = assignSubjectData?.data as AssignClassSubjectData[];
-  const [employees, setEmployees] = useState<EmployeesData[]>([]);
+  const { data: employeeData } = useFetchEmployeesQuery();
+  const employees = (employeeData?.data as EmployeesData[]) || [];
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [employeeData] = await Promise.all([
-          fetchEmployees(),
-        ]);
-        setEmployees(employeeData.data as EmployeesData[]);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
 
   const handleRefetch = () => {
     classRefetch();
     subjectRefetch();
     subjectTeacherRefetch();
     assignSubjectRefetch();
-  }
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -67,10 +75,14 @@ const Subjects = () => {
           <BreadcrumbItem className="text-primary">Subjects</BreadcrumbItem>
         </Breadcrumbs>
         <div className="flex justify-end space-x-4">
-          <AddSubject refetch={handleRefetch}/>
-          <AddAssignSubject classes={classes} subject={subjects}  refetch={handleRefetch}/>
+          <AddSubject refetch={handleRefetch} />
+          <AddAssignSubject
+            classes={classes}
+            subject={subjects}
+            refetch={handleRefetch}
+          />
           <AssignSubjectTeacher subject={subjects} employee={employees} />
-        </div> 
+        </div>
       </div>
 
       <Accordion
@@ -84,7 +96,11 @@ const Subjects = () => {
           <AccordionContent>
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5">
-                <SubjectReportCard refetch={handleRefetch} subjects={subjects} subjectTeacherData={subjectTeacherData}/>
+                <SubjectReportCard
+                  refetch={handleRefetch}
+                  subjects={subjects}
+                  subjectTeacherData={subjectTeacherData}
+                />
                 <Table />
               </div>
             </div>
@@ -102,7 +118,11 @@ const Subjects = () => {
           <AccordionTrigger>Class Subject Details</AccordionTrigger>
           <AccordionContent>
             <div className="col-span-12 md:col-span-8">
-              <SubjectAssignTable classes={classes} subject={subjects} refetch={handleRefetch}/>
+              <SubjectAssignTable
+                classes={classes}
+                subject={subjects}
+                refetch={handleRefetch}
+              />
             </div>
           </AccordionContent>
         </AccordionItem>

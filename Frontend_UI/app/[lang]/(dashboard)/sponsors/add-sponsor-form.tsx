@@ -26,7 +26,14 @@ import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { addSponsor } from "@/services/sponsorService";
+import { SponsorData, useAddSponsorMutation } from "@/services/apis/sponsorService";
+
+
+interface SponsorTableProps{
+ 
+  refetch: () => void ;
+
+}
 
 const sponsorSchema = z.object({
   sponsorName: z.string().min(1, "Full Name is required"),
@@ -46,7 +53,9 @@ const sponsorSchema = z.object({
 
 type SponsorFormValues = z.infer<typeof sponsorSchema>;
 
-const AddSponsorForm = () => {
+const AddSponsorForm: React.FC<SponsorTableProps> = ({ refetch  }) => {
+  const [addSponsor] = useAddSponsorMutation();
+
   const {
     register,
     handleSubmit,
@@ -58,15 +67,21 @@ const AddSponsorForm = () => {
   });
 
   const onSubmit: SubmitHandler<SponsorFormValues> = async (data) => {
-    const response = await addSponsor(data);
-    if (response.success) {
-      toast.success(`Sponsor ${data.sponsorName} added successfully!`);
-      reset();
-    } else {
-      toast.error(`Error: ${response.message || "Something went wrong"}`);
+    try {
+      const response = await addSponsor(data as SponsorData).unwrap();   
+      if (response.success) {
+        toast.success(`Sponsor ${data?.sponsorName} added successfully!`);
+        reset();
+        refetch();
+      } else {
+        console.error("Error:", response);
+        toast.error(`Error: ${response.message || "Something went wrong"}`);
+      }
+    } catch (error) {
+      console.error("Request Failed:", error);
+      toast.error("Request Failed");
     }
   };
-
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
       toast.error("Please correct the errors in the form.");

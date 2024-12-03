@@ -28,7 +28,7 @@ const SubjectListTable = (
   const [deleteSubject] = useDeleteSubjectMutation();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
   const [subjectToDelete, setSubjectToDelete] = useState<number | null>(null);
   const itemsPerPage = 10;
 

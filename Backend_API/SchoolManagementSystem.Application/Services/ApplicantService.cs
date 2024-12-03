@@ -120,6 +120,7 @@ namespace SchoolManagementSystem.Application.Services
                             PhoneNumber = applicationData.PhoneNumber,
                             EnrollmentDate = DateTime.Now,
                             ClassId = applicationData.AppliedClassId,
+                            SectionId = dto.SectionId,
                             CampusId = applicationData.CampusId,
                             IsActive = true,
                             CreatedBy = 1,
@@ -138,6 +139,7 @@ namespace SchoolManagementSystem.Application.Services
                     else if (dto.ApplicationStatus == "Approved")
                     {
                         studentData.IsActive = true;
+                        studentData.SectionId = dto.SectionId;
                         await _studentRepository.UpdateStudentAsync(studentData);
                     }
                 }

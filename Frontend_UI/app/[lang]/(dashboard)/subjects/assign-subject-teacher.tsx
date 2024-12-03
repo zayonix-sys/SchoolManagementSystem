@@ -21,10 +21,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EmployeesData } from "@/services/EmployeeService";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SubjectData } from "@/services/apis/subjectService";
 import { useAddSubjectTeacherMutation } from "@/services/apis/assignSubjectTeacherService";
+import { EmployeesData } from "@/services/apis/employeeService";
 
 const assignSubjectTeacherSchema = z.object({
   subjectTeacherId: z.coerce.number().optional(),
@@ -66,7 +66,9 @@ export default function AssignSubjectTeacher({
         reset();
       } else {
         // console.error("Error:", response);
-        toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
+        toast.error(
+          `Error: ${response.data?.message || "Something went wrong"}`
+        );
       }
     } catch (error) {
       // console.error("Request Failed:", error);
@@ -179,7 +181,6 @@ export default function AssignSubjectTeacher({
                     </p>
                   )}
                 </div>
-
 
                 <div className="col-span-2">
                   <Button type="submit">Submit Form</Button>

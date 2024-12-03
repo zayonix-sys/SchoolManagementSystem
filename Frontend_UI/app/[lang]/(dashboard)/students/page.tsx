@@ -1,39 +1,42 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { BreadcrumbItem, Breadcrumbs } from '@/components/ui/breadcrumbs';
-import { getStudentByClassWise, StudentData } from '@/services/studentService';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import StudentList from './student-list-table';
-import { ClassData, useFetchClassQuery } from '@/services/apis/classService';
-
+import React, { useEffect, useState } from "react";
+import { BreadcrumbItem, Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import StudentList from "./student-list-table";
+import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
+import {
+  StudentData,
+  useFetchStudentByClassWiseQuery,
+} from "@/services/apis/studentService";
 
 const Page = () => {
-  const [student, setStudent] = useState<StudentData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [classId, setClassId] = useState<number | null>(null);
-  const {data: classData, isLoading: classLoading, refetch: classRefetch} = useFetchClassQuery();
-  const classes = classData?.data as ClassData[];
-  
-  useEffect(() => {
-    const fetchStudentByClass = async (id: number) => {
-      setLoading(true);
-      try {
-        const studentData = await getStudentByClassWise(id);
-        setStudent(studentData.data as StudentData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { data: students, refetch } = useFetchStudentByClassWiseQuery(
+    classId ?? 0
+  );
+  const studentData = Array.isArray(students?.data)
+    ? (students?.data as StudentData[])
+    : [];
 
-    if (classId) {
-      fetchStudentByClass(classId);
-    }
-  }, [classId]);
+  const {
+    data: classData,
+    isLoading: classLoading,
+    refetch: classRefetch,
+  } = useFetchClassQuery();
+  const classes = classData?.data as ClassData[];
+
+  const handleRefetch = () => {
+    refetch();
+    classRefetch();
+  };
 
   return (
     <div>
@@ -44,13 +47,13 @@ const Page = () => {
 
       <div className="col-span-1 mb-4">
         <Label>Select Class</Label>
-        <Select onValueChange={(value) => setClassId(parseInt(value))}> 
+        <Select onValueChange={(value) => setClassId(parseInt(value))}>
           <SelectTrigger>
             <SelectValue placeholder="Select Class" />
           </SelectTrigger>
           <SelectContent>
             {classes?.map((cd) => (
-              <SelectItem key={cd.classId} value={cd.classId?.toString() || ''}>
+              <SelectItem key={cd.classId} value={cd.classId?.toString() || ""}>
                 {cd.className}
               </SelectItem>
             ))}
@@ -58,7 +61,11 @@ const Page = () => {
         </Select>
       </div>
 
-      <StudentList classId={classId} classData={classes} />
+      <StudentList
+        students={studentData}
+        classData={classes}
+        refetch={handleRefetch}
+      />
     </div>
   );
 };

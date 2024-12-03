@@ -27,7 +27,7 @@ export const menuItems: MenuItemProps[] = [
       },
       {
         title: "Manage Users",
-        href: "/users",
+        href: "/userManagement",
         icon: User,
       },
       {
@@ -42,7 +42,7 @@ export const menuItems: MenuItemProps[] = [
       },
       {
         title: "Manage Employees",
-        href: "/employees",
+        href: "/manage-employees",
         icon: Users,
       },
       {
@@ -64,7 +64,7 @@ export const menuItems: MenuItemProps[] = [
     child: [
       {
         title: "Applicants",
-        href: "/applicant",
+        href: "/applicantManagement",
         icon: Graph,
       },
       {

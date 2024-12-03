@@ -2,6 +2,18 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 import classroomApi from "./classroomService";
 import sectionApi from "./sectionService";
+import studentAttendanceApi from "./studentAttendanceService";
+import { empRoleApi } from "./employeeRoleService";
+import employeeApi from "./employeeService";
+import sponsorApi from "./sponsorService";
+import dashboardApi from "./dashboardService";
+import paymentApi from "./sponsorPaymentService";
+import sponsorshipApi from "./sponsorshipService";
+import studentApi from "./studentService";
+import userApi from "./userService";
+import userRoleApi from "./userRoleService";
+import userPermissionApi from "./userPermissionService";
+import applicantApi from "./applicantService";
 import examApi from "./examService";
 import classApi from "./classService";
 import classAssignApi from "./assignClassService";
@@ -26,7 +38,19 @@ const rootReducer = combineReducers({
   // auth: persistReducer(authPersistConfig, authReducer),
 
   [sectionApi.reducerPath]: sectionApi.reducer,
+  [studentAttendanceApi.reducerPath]: studentAttendanceApi.reducer,
   [classroomApi.reducerPath]: classroomApi.reducer,
+  [employeeApi.reducerPath]: employeeApi.reducer,
+  [empRoleApi.reducerPath]: empRoleApi.reducer,
+  [sponsorApi.reducerPath]: sponsorApi.reducer,
+  [sponsorshipApi.reducerPath]: sponsorshipApi.reducer,
+  [dashboardApi.reducerPath]: dashboardApi.reducer,
+  [paymentApi.reducerPath]: paymentApi.reducer,
+  [studentApi.reducerPath]: studentApi.reducer,
+  [userApi.reducerPath]: userApi.reducer,
+  [userRoleApi.reducerPath]: userRoleApi.reducer,
+  [userPermissionApi.reducerPath]: userPermissionApi.reducer,
+  [applicantApi.reducerPath]: applicantApi.reducer,
   [classApi.reducerPath]: classApi.reducer,
   [classAssignApi.reducerPath]: classAssignApi.reducer,
   [departmentApi.reducerPath]: departmentApi.reducer,
@@ -47,6 +71,20 @@ const store = configureStore({
       serializableCheck: false,
     })
       .concat(sectionApi.middleware)
+      .concat(classroomApi.middleware)
+      .concat(studentAttendanceApi.middleware)
+      .concat(employeeApi.middleware)
+      .concat(empRoleApi.middleware)
+      .concat(sponsorApi.middleware)
+      .concat(sponsorshipApi.middleware)
+      .concat(dashboardApi.middleware)
+      .concat(paymentApi.middleware)
+      .concat(classroomApi.middleware)
+      .concat(studentApi.middleware)
+      .concat(userApi.middleware)
+      .concat(userRoleApi.middleware)
+      .concat(userPermissionApi.middleware)
+      .concat(applicantApi.middleware)
       .concat(classroomApi.middleware)
       .concat(classApi.middleware)
       .concat(classAssignApi.middleware)
