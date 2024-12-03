@@ -120,19 +120,19 @@ namespace SchoolManagementSystem.API.Controllers
 
 
         [HttpDelete("[action]")]
-        public async Task<IActionResult> DeleteStudent(int id)
+        public async Task<IActionResult> DeleteStudent(int studentId)
         {
-            _logger.LogInformation("Deleting student with ID {StudentId}.", id);
+            _logger.LogInformation("Deleting student with ID {StudentId}.", studentId);
             try
             {
-                await _studentService.DeleteStudentAsync(id);
-                _logger.LogInformation("Successfully deleted student with ID {StudentId}.", id);
+                await _studentService.DeleteStudentAsync(studentId);
+                _logger.LogInformation("Successfully deleted student with ID {StudentId}.", studentId);
                 return Ok(ApiResponse<object>.SuccessResponse(null, "Student deleted successfully"));
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while deleting student with ID {StudentId}.", id);
+                _logger.LogError(ex, "An error occurred while deleting student with ID {StudentId}.", studentId);
                 return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
 
             }

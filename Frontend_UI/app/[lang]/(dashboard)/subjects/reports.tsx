@@ -1,61 +1,32 @@
-"use client"
+"use client";
 
 import { Docs } from "@/components/svg";
 import { Card } from "@/components/ui/card";
-import { fetchSubject, SubjectData } from "@/services/subjectService";
 import React, { Fragment, useEffect, useState } from "react";
 import ViewSubject from "./view-subject";
-import SubjectTeacherTable from "./veiw-subject-teacher";
-import { getSubjectTeacher, SubjectTeacherData } from "@/services/subjectTeacherService";
-import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
-import ViewSubjectTeacher from "./veiw-subject-teacher";
 
-const SubjectReportCard = () => {
-  const [subject, setSubject] = useState<SubjectData[]>([]);
-  const [subjectTeacher, setSubjectTeacher] = useState<SubjectTeacherData[]>([]);
+import ViewSubjectTeacher from "./veiw-subject-teacher";
+import {
+  EmployeesData,
+  useFetchEmployeesQuery,
+} from "@/services/apis/employeeService";
+import { SubjectData } from "@/services/apis/subjectService";
+import { SubjectTeacherData } from "@/services/apis/assignSubjectTeacherService";
+
+interface SubjectProp {
+  refetch: () => void;
+  subjects: SubjectData[];
+  subjectTeacherData: SubjectTeacherData[];
+}
+const SubjectReportCard = ({
+  refetch,
+  subjects,
+  subjectTeacherData,
+}: SubjectProp) => {
   const [employee, setEmployees] = useState<EmployeesData[]>([]);
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchSubjectData = async () => {
-      setLoading(true);
-      try {
-        const subjectData = await fetchSubject();
-        setSubject(subjectData.data as SubjectData[]);
-      } catch (err) {
-        setError(err as any); 
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSubjectData();
-  }, []);
-
-
-  useEffect(() => {
-    const fetchEmployeeAndSubjectData = async () => {
-      setLoading(true);
-      try {
-        const employeeSubjectResponse = await getSubjectTeacher();
-        const employeeResponse = await fetchEmployees();
-        const subjectResponse = await fetchSubject();
-        setSubjectTeacher(employeeSubjectResponse.data as SubjectTeacherData[]);
-        setSubject(subjectResponse.data as SubjectData[]);
-        setEmployees(employeeResponse.data as EmployeesData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEmployeeAndSubjectData();
-  }, []);
-  const subjectCount = subject.length.toString();
-  const subjectTeacherCount = subjectTeacher.length.toString();
+  const subjectCount = subjects?.length.toString();
+  const subjectTeacherCount = subjectTeacherData?.length.toString();
 
   interface ReportItem {
     id: number;
@@ -63,7 +34,15 @@ const SubjectReportCard = () => {
     count: string;
     rate: string;
     icon: React.ReactNode;
-    color?: 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'destructive' | 'default' | 'dark'
+    color?:
+      | "primary"
+      | "secondary"
+      | "success"
+      | "info"
+      | "warning"
+      | "destructive"
+      | "default"
+      | "dark";
   }
 
   const reports: ReportItem[] = [
@@ -73,7 +52,7 @@ const SubjectReportCard = () => {
       count: (subjectCount ? subjectCount : 0).toString(),
       rate: "8.2",
       icon: <Docs className="w-6 h-6 text-destructive" />,
-      color: "destructive"
+      color: "destructive",
     },
     {
       id: 2,
@@ -81,31 +60,44 @@ const SubjectReportCard = () => {
       count: (subjectTeacherCount ? subjectTeacherCount : 0).toString(),
       rate: "8.2",
       icon: <Docs className="w-6 h-6 text-info" />,
-      color: "destructive"
+      color: "destructive",
     },
-
-  ]
+  ];
   return (
     <Fragment>
-      {
-        reports.map(item => (
-          <Card key={item.id} className="rounded-lg p-4 xl:p-2 xl:py-6 2xl:p-6  flex flex-col items-center 2xl:min-w-[168px]">
-            <div>
-              <span className={`h-12 w-12 rounded-full flex justify-center items-center bg-${item.color}/10`}>
-                {item.icon}
-              </span>
+      {reports.map((item) => (
+        <Card
+          key={item.id}
+          className="rounded-lg p-4 xl:p-2 xl:py-6 2xl:p-6  flex flex-col items-center 2xl:min-w-[168px]"
+        >
+          <div>
+            <span
+              className={`h-12 w-12 rounded-full flex justify-center items-center bg-${item.color}/10`}
+            >
+              {item.icon}
+            </span>
+          </div>
+          <div className="mt-4 text-center">
+            <div className="text-base font-medium text-default-600">
+              {item.name}
             </div>
-            <div className="mt-4 text-center">
-              <div className="text-base font-medium text-default-600">{item.name}</div>
-               <div className={"text-3xl font-semibold text-${item.color} mt-1"}>
+            <div className={"text-3xl font-semibold text-${item.color} mt-1"}>
               {item.count}
             </div>
-            {item.id === 1 && <ViewSubject subject={subject} />}
-            {item.id === 2 && <ViewSubjectTeacher employee={employee} subject={subject} />}
-            </div>
-          </Card>
-        ))
-      }
+            {item.id === 1 && (
+              <ViewSubject subject={subjects} refetch={refetch} />
+            )}
+            {item.id === 2 && (
+              <ViewSubjectTeacher
+                employee={employee}
+                subject={subjects}
+                subjectTeacherData={subjectTeacherData}
+                refetch={refetch}
+              />
+            )}
+          </div>
+        </Card>
+      ))}
     </Fragment>
   );
 };

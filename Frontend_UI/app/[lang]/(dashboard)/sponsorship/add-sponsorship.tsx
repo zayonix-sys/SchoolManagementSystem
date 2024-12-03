@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -26,11 +26,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { fetchStudents, StudentData } from "@/services/studentService";
-import { ClassData } from "@/services/ClassService";
-import ClassStudentListTable from "./student-class-wise";
+import {
+  SponsorshipData,
+  SponsorshipDataDetails,
+  useAddSponsorshipMutation,
+} from "@/services/apis/sponsorshipService";
 import { SponsorData } from "@/services/apis/sponsorService";
-import { SponsorshipData, SponsorshipDataDetails, useAddSponsorshipMutation } from "@/services/apis/sponsorshipService";
+import { StudentData } from "@/services/apis/studentService";
+import ClassStudentListTable from "./student-class-wise";
 
 const sponsorshipSchema = z.object({
   amount: z.string().min(1, "Please Enter Correct Amount").optional(),
@@ -52,21 +55,26 @@ interface SponsorshipListTableProps {
 }
 
 const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
-  sponsorship,sponsor,refetch,sponsorshipDetail,
+  sponsorship,
+  sponsor,
+  refetch,
+  sponsorshipDetail,
 }) => {
-
   const [addSponsorship] = useAddSponsorshipMutation();
 
   const [students, setStudents] = useState<StudentData[]>([]);
   const [sponsorId, setSponsorId] = useState<number | null>(null);
   const [frequency, setFrequency] = useState<number>(1);
-  const [selectedStudents, setSelectedStudents] = useState<{
-    studentId: number;
-    classId: number | null;
-  }[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<
+    {
+      studentId: number;
+      classId: number | null;
+    }[]
+  >([]);
 
   const fixedAmountPerStudent = 1500;
-  const totalExpense = selectedStudents.length * fixedAmountPerStudent * frequency;
+  const totalExpense =
+    selectedStudents.length * fixedAmountPerStudent * frequency;
 
   const {
     register,
@@ -80,12 +88,15 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
 
   const handleFrequencyChange = (value: string) => setFrequency(Number(value));
 
-  const handleStudentSelectionChange = (selectedStudent: { studentId: number; classId: number }) => {
+  const handleStudentSelectionChange = (selectedStudent: {
+    studentId: number;
+    classId: number;
+  }) => {
     setSelectedStudents((prevSelectedStudents) => {
       const studentExists = prevSelectedStudents.some(
         (s) => s.studentId === selectedStudent.studentId
       );
-      
+
       if (studentExists) {
         // Deselect the student
         return prevSelectedStudents.filter(
@@ -98,11 +109,8 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
     });
     console.log("Selected Students:", selectedStudents);
   };
-  
 
   const onSubmit: SubmitHandler<SponsorshipFormValues> = async (data) => {
-
-
     if (!sponsorId) {
       toast.error("Please select a sponsor");
       return;
@@ -110,8 +118,10 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
 
     let details = selectedStudents.map((selectedStudent) => {
       // Find the student object matching the selectedStudent.studentId
-      const student = students.find((s) => s.studentId === selectedStudent.studentId);
-      
+      const student = students.find(
+        (s) => s.studentId === selectedStudent.studentId
+      );
+
       // Return an object only if a match is found
       return student
         ? {
@@ -121,10 +131,9 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
           }
         : null; // If no match is found, return null
     });
-    
+
     // Filter out null values
     details = details.filter((detail) => detail !== null);
-    
 
     //   const perStudentAmount = fixedAmountPerStudent * frequency;
     //   if(student){
@@ -135,14 +144,14 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
     //     };
     //   }
 
-    //   return null; 
+    //   return null;
     // }).filter(Boolean);
 
     const formatDate = (isoString: string): string => {
       const date = new Date(isoString);
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+      const day = String(date.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
     };
 
@@ -151,15 +160,19 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
       sponsorId,
       amount: totalExpense, // Total amount for all students combined
       startDate: formatDate(
-        typeof data?.startDate === 'string' ? data.startDate : new Date().toISOString()
+        typeof data?.startDate === "string"
+          ? data.startDate
+          : new Date().toISOString()
       ), // Ensuring startDate is always a string
       frequency,
       details,
     };
-console.log(combineData);
+    console.log(combineData);
 
     try {
-      const response = await addSponsorship(combineData as SponsorshipData).unwrap();   
+      const response = await addSponsorship(
+        combineData as SponsorshipData
+      ).unwrap();
       if (response.success) {
         toast.success(`Sponsorship  added successfully!`);
         reset();
@@ -205,14 +218,15 @@ console.log(combineData);
                   <SelectValue placeholder="Select Sponsor" />
                 </SelectTrigger>
                 <SelectContent>
-                  {sponsor && sponsor?.map((sponsor) => (
-                    <SelectItem
-                      key={sponsor.sponsorId}
-                      value={sponsor.sponsorId?.toString() ?? ""}
-                    >
-                      {sponsor?.sponsorName}
-                    </SelectItem>
-                  ))}
+                  {sponsor &&
+                    sponsor?.map((sponsor) => (
+                      <SelectItem
+                        key={sponsor.sponsorId}
+                        value={sponsor.sponsorId?.toString() ?? ""}
+                      >
+                        {sponsor?.sponsorName}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -251,14 +265,13 @@ console.log(combineData);
             </div>
 
             <div className="col-span-2">
-            <ClassStudentListTable
-  students={students}
-  selectedStudents={selectedStudents}
-  sponsorship={sponsorship}
-  sponsorshipDetail={sponsorshipDetail}
-  handleStudentSelectionChange={handleStudentSelectionChange}
-/>
-
+              <ClassStudentListTable
+                students={students}
+                selectedStudents={selectedStudents}
+                sponsorship={sponsorship}
+                sponsorshipDetail={sponsorshipDetail}
+                handleStudentSelectionChange={handleStudentSelectionChange}
+              />
             </div>
 
             <div className="col-span-2 flex justify-end">

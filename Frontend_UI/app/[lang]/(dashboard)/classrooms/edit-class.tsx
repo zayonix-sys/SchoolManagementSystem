@@ -17,9 +17,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ClassData, updateClass } from "@/services/ClassService";
+import { ClassData, useUpdateClassMutation } from "@/services/apis/classService";
 
-// Define Zod schema for class form validation
 const classSchema = z.object({
   className: z.string().min(1, "Class Name is required"),
   capacity: z.number().min(1, "Capacity is required").max(999),
@@ -28,7 +27,8 @@ const classSchema = z.object({
 
 type ClassFormValues = z.infer<typeof classSchema>;
 
-export default function EditClass({ classData }: { classData: ClassData }) {
+export default function EditClass({ classData, refetch }: { classData: ClassData; refetch: () => void }) {
+  const [updateClass] = useUpdateClassMutation();
   const { classId, className, capacity, classDescription } = classData;
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ClassFormValues>({
@@ -45,9 +45,10 @@ export default function EditClass({ classData }: { classData: ClassData }) {
       const updatedClass = { ...data, classId };
       const response = await updateClass(updatedClass);
 
-      if (response.success) {
+      if (response.data?.success) {
         toast.success(`${updatedClass.className} Class Updated successfully!`);
         reset();
+        refetch();
       } else {
         toast.error("Failed to update the class");
       }

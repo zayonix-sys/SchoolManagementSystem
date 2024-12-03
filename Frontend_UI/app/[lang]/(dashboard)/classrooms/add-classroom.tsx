@@ -15,7 +15,6 @@ import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { CampusData } from "@/services/campusService";
 import {
   Select,
   SelectContent,
@@ -24,8 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAddClassroomMutation } from "@/services/apis/classroomService";
-
-//we can change the props "side"'s value to 'top', 'left', 'bottom', 'right' so that the sheet will come out from different direction.
+import { CampusData } from "@/services/apis/campusService";
 
 const classroomSchema = z.object({
   classroomId: z.coerce.number().optional(),
@@ -55,7 +53,6 @@ export default function AddClassroom({
     resolver: zodResolver(classroomSchema),
   });
 
-  // const [campusId, setCampusId] = useState(campuses);
   const [addClassroom] = useAddClassroomMutation();
   const onSubmit: SubmitHandler<ClassroomFormValues> = async (data) => {
     try {
@@ -122,7 +119,7 @@ export default function AddClassroom({
                       <SelectValue placeholder="Select a campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {campuses.map((campus) => (
+                      {campuses?.map((campus) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={campus.campusId}

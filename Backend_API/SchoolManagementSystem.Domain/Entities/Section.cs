@@ -21,7 +21,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public int? ClassId { get; set; }
 
         [Required]
-        public int Capacity { get; set; }
+        public int? Capacity { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;

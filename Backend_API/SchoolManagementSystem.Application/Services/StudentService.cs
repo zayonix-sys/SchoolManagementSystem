@@ -23,11 +23,11 @@ namespace SchoolManagementSystem.Application.Services
             await _studentRepository.AddAsync(std);
         }
 
-        public async Task DeleteStudentAsync(int stdId)
+        public async Task DeleteStudentAsync(int studentId)
         {
             try
             {
-                var students = await _studentRepository.GetByIdAsync(stdId);
+                var students = await _studentRepository.GetByIdAsync(studentId);
                 if (students != null)
                 {
                     students.IsActive = false;

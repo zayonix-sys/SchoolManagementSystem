@@ -3,17 +3,14 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useEffect, useState } from "react";
-import { ClassData } from "@/services/ClassService"; // Replace with actual service import
 import ClassListTable from "./class-table";
+import { ClassData } from "@/services/apis/classService";
 
-// This component allows you to view class details in a sheet.
 export default function ViewClass({
   selectedClass,
 }: {
@@ -33,7 +30,6 @@ export default function ViewClass({
       <SheetContent side="top">
         <SheetHeader>
           <SheetTitle>Class</SheetTitle>
-          {/* <SheetDescription>Class Name - {classes.className}</SheetDescription> */}
         </SheetHeader>
         <div>
           <div className="py-6">

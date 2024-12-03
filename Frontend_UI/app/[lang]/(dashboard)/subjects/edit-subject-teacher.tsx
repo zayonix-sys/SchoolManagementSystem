@@ -6,7 +6,6 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetClose,
@@ -16,11 +15,23 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
-import { fetchSubject, SubjectData } from "@/services/subjectService";
-import { SubjectTeacherData, updateSubjectTeacher } from "@/services/subjectTeacherService";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  EmployeesData,
+  useFetchEmployeesQuery,
+} from "@/services/apis/employeeService";
+import {
+  SubjectTeacherData,
+  useUpdateSubjectTeacherMutation,
+} from "@/services/apis/assignSubjectTeacherService";
+import { SubjectData } from "@/services/apis/subjectService";
 
 const subjectTeacherSchema = z.object({
   subjectTeacherId: z.coerce.number().optional(),
@@ -31,13 +42,24 @@ const subjectTeacherSchema = z.object({
 type SubjectTeacherFormValues = z.infer<typeof subjectTeacherSchema>;
 
 export default function EditSubjectTeacher({
-  subjectTeacherData
+  subjectTeacherData,
+  subjectData,
+  refetch,
 }: {
   subjectTeacherData: SubjectTeacherData;
+  subjectData: SubjectData[];
+  refetch: () => void;
 }) {
-  const { employeeId, subjectIds = []  } = subjectTeacherData || {};
+  const { employeeId, subjectIds = [] } = subjectTeacherData || {};
 
-  const { register, handleSubmit, setValue, reset, watch, formState: { errors } } = useForm<SubjectTeacherFormValues>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<SubjectTeacherFormValues>({
     resolver: zodResolver(subjectTeacherSchema),
     defaultValues: {
       employeeId,
@@ -45,37 +67,14 @@ export default function EditSubjectTeacher({
     },
   });
 
-
-  const [employee, setEmployee] = useState<EmployeesData[]>([]);
+  const { data: employeeData } = useFetchEmployeesQuery();
+  const employees = (employeeData?.data as EmployeesData[]) || [];
   const [subjects, setSubjects] = useState<SubjectData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [updateSubjectTeacher] = useUpdateSubjectTeacherMutation();
 
-  const subjectTeacher = employee.filter(
+  const subjectTeacher = employees.filter(
     (emp) => emp.employeeRoleName === "Teacher"
   );
-
-  useEffect(() => {
-    console.log("subjectTeacherData: ", subjectTeacherData);
-    
-    const fetchEmployeeAndSubjectData = async () => {
-      setLoading(true);
-      try {
-        const [employeeResponse, subjectResponse] = await Promise.all([
-          fetchEmployees(),
-          fetchSubject()
-        ]);
-        setEmployee(employeeResponse.data as EmployeesData[]);
-        setSubjects(subjectResponse.data as SubjectData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEmployeeAndSubjectData();
-  }, []);
 
   useEffect(() => {
     if (subjectTeacherData) {
@@ -88,11 +87,11 @@ export default function EditSubjectTeacher({
 
   const onSubmit: SubmitHandler<SubjectTeacherFormValues> = async (data) => {
     try {
-      const updatedSubjectTeacher = { ...data, employeeId }; 
+      const updatedSubjectTeacher = { ...data, employeeId };
       const response = await updateSubjectTeacher(updatedSubjectTeacher);
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success("Subject Teacher Updated successfully!");
+        refetch();
         reset();
       } else {
         toast.error("Failed to update the Subject Teacher");
@@ -108,15 +107,13 @@ export default function EditSubjectTeacher({
       toast.error("Please correct the errors in the form.");
     }
   };
-  
 
   const handleCheckboxChange = (subjectId: number, isChecked: boolean) => {
     const currentSubjects = watch("subjectIds") ?? [];
 
     if (isChecked) {
       setValue("subjectIds", [...currentSubjects, subjectId]);
-      console.log(currentSubjects,"currentSubjects");
-      
+      console.log(currentSubjects, "currentSubjects");
     } else {
       setValue(
         "subjectIds",
@@ -128,11 +125,7 @@ export default function EditSubjectTeacher({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          className="h-7 w-7"
-        >
+        <Button size="icon" variant="outline" className="h-7 w-7">
           <Icon icon="heroicons:pencil" className="h-4 w-4" />
         </Button>
       </SheetTrigger>
@@ -140,7 +133,10 @@ export default function EditSubjectTeacher({
         <SheetHeader>
           <SheetTitle>Edit Subject Teacher</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-between" style={{ height: "calc(100vh - 80px)" }}>
+        <div
+          className="flex flex-col justify-between"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
           <div className="py-5">
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
@@ -148,7 +144,9 @@ export default function EditSubjectTeacher({
                 <div className="col-span-3">
                   <Select
                     defaultValue={employeeId.toString() ?? ""}
-                    onValueChange={(value) => setValue("employeeId", parseInt(value))}
+                    onValueChange={(value) =>
+                      setValue("employeeId", parseInt(value))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Employee" />
@@ -174,7 +172,7 @@ export default function EditSubjectTeacher({
                 <div className="col-span-6">
                   <label className="block mb-2">Select Subjects</label>
                   <div className="grid grid-cols-1 gap-4">
-                    {subjects.map((sub) => (
+                    {subjectData.map((sub) => (
                       <div
                         key={sub.subjectId !== undefined ? sub.subjectId : 0}
                         className="flex items-center"
@@ -185,9 +183,14 @@ export default function EditSubjectTeacher({
                           defaultChecked={watch("subjectIds")?.includes(
                             sub.subjectId ?? 0
                           )}
-                          checked={watch("subjectIds")?.includes(sub.subjectId ?? 0)}
+                          checked={watch("subjectIds")?.includes(
+                            sub.subjectId ?? 0
+                          )}
                           onCheckedChange={(isChecked) =>
-                            handleCheckboxChange(sub.subjectId ?? 0, Boolean(isChecked))
+                            handleCheckboxChange(
+                              sub.subjectId ?? 0,
+                              Boolean(isChecked)
+                            )
                           }
                           className="mr-2"
                         >

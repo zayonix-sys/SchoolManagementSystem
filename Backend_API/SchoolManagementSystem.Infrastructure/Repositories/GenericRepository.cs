@@ -81,6 +81,86 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             return key;
         }
 
+        public async Task<object> UpdateAsync(T entity, bool trackingOff)
+        {
+            var entityType = entity.GetType();
+
+            PropertyInfo keyProperty;
+
+            if (entityType.Name == "AdmissionApplication")
+            {
+                keyProperty = entityType.GetProperty("ApplicationId");
+            }
+            else if (entityType.Name == "EmployeeRole" || entityType.Name == "UserRole")
+            {
+                keyProperty = entityType.GetProperty("RoleId");
+            }
+            else if (entityType.Name == "StudentAttendance")
+            {
+                keyProperty = entityType.GetProperty("AttendanceId");
+            }
+            else if (entityType.Name == "UserPermission")
+            {
+                keyProperty = entityType.GetProperty("PermissionId");
+            }
+            else
+            {
+                // Use default convention: ClassName + "Id"
+                keyProperty = entityType.GetProperty(entityType.Name + "Id");
+            }
+
+            // Get the value of the primary key
+            var key = keyProperty?.GetValue(entity);
+
+            if (key == null)
+            {
+                throw new ArgumentException("Entity key is not set.");
+            }
+
+            // Check if the entity is already tracked
+            var trackedEntity = _context.ChangeTracker.Entries<T>()
+                .FirstOrDefault(e => keyProperty.GetValue(e.Entity).Equals(key));
+
+            if (trackedEntity != null)
+            {
+                // Detach the existing tracked entity
+                _context.Entry(trackedEntity.Entity).State = EntityState.Detached;
+            }
+
+            if (trackingOff)
+            {
+                // Dynamically build a lambda expression to find the entity by key
+                var parameter = Expression.Parameter(typeof(T), "e");
+                var propertyAccess = Expression.Property(parameter, keyProperty.Name);
+                var keyConstant = Expression.Constant(key);
+                var equalsExpression = Expression.Equal(propertyAccess, keyConstant);
+
+                var lambda = Expression.Lambda<Func<T, bool>>(equalsExpression, parameter);
+
+                // Use the lambda expression in the query
+                var existingEntity = await _dbSet.AsNoTracking().FirstOrDefaultAsync(lambda);
+
+                if (existingEntity == null)
+                {
+                    throw new KeyNotFoundException("Entity not found.");
+                }
+
+                // Copy updated values to the existing entity
+                _context.Entry(existingEntity).CurrentValues.SetValues(entity);
+                _context.Entry(existingEntity).State = EntityState.Modified;
+            }
+            else
+            {
+                // Attach and update the entity with tracking
+                _dbSet.Attach(entity);
+                _context.Entry(entity).State = EntityState.Modified;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return key;
+        }
+
 
         public async Task DeleteAsync(int id)
         {

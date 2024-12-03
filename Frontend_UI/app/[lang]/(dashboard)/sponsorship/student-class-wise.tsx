@@ -12,9 +12,15 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { StudentData, fetchStudents } from "@/services/studentService";
 import { useEffect, useState } from "react";
-import { SponsorshipData, SponsorshipDataDetails } from "@/services/apis/sponsorshipService";
+import {
+  SponsorshipData,
+  SponsorshipDataDetails,
+} from "@/services/apis/sponsorshipService";
+import {
+  StudentData,
+  useFetchStudentQuery,
+} from "@/services/apis/studentService";
 
 // In the child component (ClassStudentListTable)
 interface StudentListTableProps {
@@ -23,9 +29,11 @@ interface StudentListTableProps {
   sponsorshipDetail: SponsorshipDataDetails[];
   students: StudentData[];
   selectedStudents: { studentId: number; classId: number | null }[];
-  handleStudentSelectionChange: (selectedStudent: { studentId: number; classId: number }) => void; // Adjust type to not allow null
+  handleStudentSelectionChange: (selectedStudent: {
+    studentId: number;
+    classId: number;
+  }) => void; // Adjust type to not allow null
 }
-
 
 const ClassStudentListTable: React.FC<StudentListTableProps> = ({
   // onStudentSelectionChange,
@@ -33,50 +41,42 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
   sponsorshipDetail,
   // students,
   // selectedStudents,
-  handleStudentSelectionChange
+  handleStudentSelectionChange,
 }) => {
-  const [students, setStudents] = useState<StudentData[]>([]);
-  const [selectedStudents, setSelectedStudents] = useState<{ studentId: number | null; classId: number | null }[]>([]);
+  const { data: studentsData } = useFetchStudentQuery();
+  const students = (studentsData?.data as StudentData[]) || [];
+  const [selectedStudents, setSelectedStudents] = useState<
+    { studentId: number | null; classId: number | null }[]
+  >([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchStudents();
-      setStudents(data?.data || []);
-    };
-    fetchData();
-  }, []);
 
   const handleCheckboxChange = (student: StudentData) => {
     const isAlreadySelected = selectedStudents.some(
       (s) => s.studentId === student?.studentId
     );
-  
+
     const studentId = student?.studentId ?? null;
-  
+
     const updatedSelection = isAlreadySelected
       ? selectedStudents.filter((s) => s.studentId !== studentId)
       : [
           ...selectedStudents,
           { studentId: studentId, classId: student.classId ?? null },
         ];
-  
+
     setSelectedStudents(updatedSelection);
-    
+
     // Ensure no null values are passed to onStudentSelectionChange
     // onStudentSelectionChange(updatedSelection?.map(s => s.studentId).filter((id): id is number => id !== null));
   };
-  
-  
 
   // Filter students by search query and exclude those with existing sponsorship
   const filteredStudents = students.filter(
     (student) =>
       (student.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        student.lastName?.toLowerCase().includes(searchQuery.toLowerCase()))
-         &&
+        student.lastName?.toLowerCase().includes(searchQuery.toLowerCase())) &&
       !sponsorshipDetail?.some((s) => s?.studentId === student?.studentId)
   );
 
@@ -129,8 +129,12 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                 <TableCell>{student.phoneNumber}</TableCell>
                 <TableCell>{student.gender}</TableCell>
                 <TableCell>{student.className}</TableCell>
-                <TableCell>{new Date(student.dateOfBirth).toLocaleDateString()}</TableCell>
-                <TableCell>{new Date(student.enrollmentDate).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  {new Date(student.dateOfBirth).toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  {new Date(student.enrollmentDate).toLocaleDateString()}
+                </TableCell>
                 <TableCell>
                   <Badge
                     variant="outline"
@@ -140,7 +144,7 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-center">
-                <input
+                  <input
                     type="checkbox"
                     checked={selectedStudents.some(
                       (s) => s.studentId === student.studentId
@@ -152,7 +156,6 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                       });
                     }}
                   />
-
                 </TableCell>
               </TableRow>
             ))}

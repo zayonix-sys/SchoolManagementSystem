@@ -16,8 +16,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { addDepartment } from "@/services/departmentService";
-import { CampusData, getCampuses } from "@/services/campusService";
 import {
   Select,
   SelectContent,
@@ -25,6 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CampusData } from "@/services/apis/campusService";
+import { useAddDepartmentsMutation } from "@/services/apis/departmentService";
 
 // Define Zod schema
 const departmentSchema = z.object({
@@ -37,8 +37,9 @@ const departmentSchema = z.object({
 type DepartmentFormValues = z.infer<typeof departmentSchema>;
 interface DepartmentSheetProps {
   campuses: CampusData[];
+  refetch: () => void;
 }
-export default function AddDepartment({ campuses }: DepartmentSheetProps) {
+export default function AddDepartment({ campuses, refetch }: DepartmentSheetProps) {
   const {
     register,
     handleSubmit,
@@ -49,31 +50,28 @@ export default function AddDepartment({ campuses }: DepartmentSheetProps) {
     resolver: zodResolver(departmentSchema),
   });
 
-  const [campusId, setCampusId] = useState(campuses);
+  const [addDepartment] = useAddDepartmentsMutation();
+  // const [campusId, setCampusId] = useState(campuses);
 
   const onSubmit: SubmitHandler<DepartmentFormValues> = async (data) => {
     try {
       const response = await addDepartment(data);
-      if (response.success) {
-        if (Array.isArray(response.data)) {
-          toast.success(
-            `${response.data[0].departmentName} Department Added successfully!`
-          );
-        } else {
-          toast.success(
-            `${response.data.departmentName} Department Added successfully!`
-          );
+      if (response.data?.success) {
+        const departmentName = Array.isArray(response.data?.data)
+          ? response.data?.data[0].departmentName
+          : response.data?.data.departmentName;
+          toast.success(`${departmentName} Department Added successfully!`);
+          refetch();
+          reset();
+        }else {
+          console.error("Error:", response);
+          toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
         }
-        reset();
-      } else {
-        console.error("Error:", response);
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+      } catch (error) {
+        console.error("Request Failed:", error);
+        toast.error("Request Failed");
       }
-    } catch (error) {
-      console.error("Request Failed:", error);
-      toast.error("Request Failed");
-    }
-  };
+    };
 
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
@@ -116,7 +114,7 @@ export default function AddDepartment({ campuses }: DepartmentSheetProps) {
                       <SelectValue placeholder="Select a campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {campuses.map((campus) => (
+                      {campuses?.map((campus) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={campus.campusId}

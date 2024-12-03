@@ -23,8 +23,6 @@ import {
 } from "@/services/apis/classroomService";
 
 const ClassroomListTable = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [classroomToDelete, setClassroomToDelete] = useState<number | null>(
@@ -53,28 +51,6 @@ const ClassroomListTable = () => {
   );
 
   const totalPages = Math.ceil(filteredClassrooms.length / itemsPerPage);
-
-  const handleSelectAll = () => {
-    if (selectedRows?.length === currentItems.length) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(
-        currentItems
-          .map((row) => row.classroomId!)
-          .filter((id) => id !== null && id !== undefined)
-      );
-    }
-  };
-
-  const handleRowSelect = (id: number) => {
-    const updatedSelectedRows = [...selectedRows];
-    if (selectedRows.includes(id)) {
-      updatedSelectedRows.splice(selectedRows.indexOf(id), 1);
-    } else {
-      updatedSelectedRows.push(id);
-    }
-    setSelectedRows(updatedSelectedRows);
-  };
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));

@@ -18,10 +18,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { AssignSubjectData } from "@/services/assignSubjectService";
-import { ClassData } from "@/services/ClassService";
-import { addExamPaper } from "@/services/ExamPaperService";
-import { QuestionsData } from "@/services/QBankService";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Icon } from "@iconify/react";
 import React, { useEffect, useState } from "react";
@@ -29,6 +25,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import dynamic from "next/dynamic";
+import { ClassData } from "@/services/apis/classService";
+import { AssignClassSubjectData } from "@/services/apis/assignClassSubjectService";
+import { QuestionsData } from "@/services/apis/qBankService";
+import { useAddExamPaperMutation, useFetchExamPapersQuery } from "@/services/apis/examPaperService";
 
 const ReactQuill = dynamic(() => import("react-quill"), {
   ssr: false,
@@ -53,20 +53,24 @@ type ExamFormValues = z.infer<typeof exampaperSchema>;
 
 interface ExamProps {
   questionData: QuestionsData[];
-  subjectData: AssignSubjectData[];
+  subjectData: AssignClassSubjectData[];
   classData: ClassData[];
+  refetch: () => void
 }
 export default function ExamPaperTemplate({
   questionData,
   subjectData,
   classData,
+  refetch
 }: ExamProps) {
+    
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<number[]>([]); // State to hold selected question ID
-  const [selectedQuestion, setSelectedQuestion] = useState<string[]>([]); // State to hold selected question content
-  const [selectedMarks, setSelectedMarks] = useState<number[]>([]);
+  // const [selectedQuestion, setSelectedQuestion] = useState<string[]>([]); // State to hold selected question content
+  // const [selectedMarks, setSelectedMarks] = useState<number[]>([]);
   const [writtenMarks, setWrittenMarks] = useState(0);
   const [totalMarks, setTotalMarks] = useState(0);
   const [isValidTotal, setIsValidTotal] = useState(true);
+  const [addExamPaper]  = useAddExamPaperMutation();
 
   const [rows, setRows] = useState<
     { questionId: number | null; question: string; marks: number | null }[]
@@ -105,11 +109,12 @@ export default function ExamPaperTemplate({
   const selectedClassId = watch("classId");
   const selectedSubjectId = watch("subjectId");
 
-  const filteredClassSubjects = subjectData.filter(
-    (subjects) => subjects.classId === selectedClassId && subjects.isActive
-  );
+  const filteredClassSubjects = subjectData?.filter(
+    (subjects) => {return subjects.classId === selectedClassId && subjects.isActive;
+    }
+    );
 
-  const filteredQuestions = questionData.filter(
+  const filteredQuestions = questionData?.filter(
     (questions) =>
       questions.classId === selectedClassId &&
       questions.subjectId === selectedSubjectId &&
@@ -149,17 +154,16 @@ export default function ExamPaperTemplate({
     try {
       const finalData = { ...data, questionId: selectedQuestionIds };
       const response = await addExamPaper(finalData);
-
       if (data.questionIds.length === 0) {
         toast.error("Please select at least one question.");
         return;
       }
-
-      if (response.success) {
+      if (response.data?.success) {
         toast.success(`Exam Paper for ${data.termName} added successfully!`);
+        refetch();
         reset();
       } else {
-        toast.error(`Error: ${response.message || "Something went wrong"}`);
+        toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
       }
     } catch (error) {
       toast.error("Request Failed");
@@ -239,7 +243,7 @@ export default function ExamPaperTemplate({
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
                     <SelectContent>
-                      {classData.map((cd) => (
+                      {classData?.map((cd) => (
                         <SelectItem
                           key={cd?.classId ?? ""}
                           value={cd?.classId?.toString() ?? ""}
@@ -265,7 +269,7 @@ export default function ExamPaperTemplate({
                       <SelectValue placeholder="Select Subject" />
                     </SelectTrigger>
                     <SelectContent>
-                      {filteredClassSubjects.map((subjectData) => (
+                      {filteredClassSubjects?.map((subjectData) => (
                         <SelectItem key={subjectData?.subjectName} value={subjectData.subjectIds?.toString() || ''}>
 
                           {subjectData.subjectName}
@@ -332,7 +336,7 @@ export default function ExamPaperTemplate({
                               />
                             </SelectTrigger>
                             <SelectContent>
-                              {filteredQuestions.map((q) => (
+                              {filteredQuestions?.map((q) => (
                                 <SelectItem
                                   key={q.questionBankId}
                                   value={q.questionBankId?.toString() ?? ""}

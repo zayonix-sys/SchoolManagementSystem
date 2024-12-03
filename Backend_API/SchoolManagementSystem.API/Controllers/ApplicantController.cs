@@ -20,7 +20,7 @@ namespace SchoolManagementSystem.API.Controllers
             _applicantService = applicant;
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<ApplicantApplicationViewDTO>>> GetAllApplicants()
         {

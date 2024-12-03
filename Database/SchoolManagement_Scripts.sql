@@ -1146,6 +1146,11 @@ CREATE TABLE AuditTrails (
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
 
+--ALTER Script 02-Dec-2024
 
---Alteration Script
+ALTER TABLE Students
+ADD SectionId INT
 
+ALTER TABLE Students
+ADD CONSTRAINT FK_Student_SectionId
+FOREIGN KEY (SectionId) REFERENCES Sections(SectionId)
