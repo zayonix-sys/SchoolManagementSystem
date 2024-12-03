@@ -1154,3 +1154,6 @@ ADD SectionId INT
 ALTER TABLE Students
 ADD CONSTRAINT FK_Student_SectionId
 FOREIGN KEY (SectionId) REFERENCES Sections(SectionId)
+
+--ALTER Script 03-Dec-2024
+exec sp_rename 'ClassroomAssignments.AssignmentId', 'ClassSectionAssignmentId' , 'Column'
