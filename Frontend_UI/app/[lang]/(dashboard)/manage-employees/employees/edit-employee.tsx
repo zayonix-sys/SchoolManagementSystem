@@ -17,7 +17,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { EmployeesData, updateEmployee } from "@/services/EmployeeService";
 import {
   Select,
   SelectContent,
@@ -26,7 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CampusData, getCampuses } from "@/services/campusService";
-import { getRoles, RoleData } from "@/services/employeeRoleService";
+import { EmployeesData, useUpdateEmployeeMutation } from "@/services/apis/employeeService";
+import { RoleData } from "@/services/apis/employeeRoleService";
 
 const employeeSchema = z.object({
   campusId: z.number().int().positive("Campus is required"),
@@ -46,11 +46,12 @@ const employeeSchema = z.object({
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
-export default function EditEmployee({
-  employeeData,
-}: {
+interface EmployeeRoleDataProps{
   employeeData: EmployeesData;
-}) {
+  employeeRole: RoleData[];
+  refetch: () => void;
+}
+const EditEmployee: React.FC<EmployeeRoleDataProps> = ({ employeeData,employeeRole, refetch }) => {
   const {
     employeeId,
     roleId,
@@ -64,10 +65,11 @@ export default function EditEmployee({
     emergencyContact,
     qualifications,
   } = employeeData;
-
+  
+  const [updateEmployee] = useUpdateEmployeeMutation();
+  
   const [selectedCampusId, setSelectedCampusId] = useState<number | null>(null);
   const [campuses, setCampuses] = useState<CampusData[]>([]);
-  const [employeeRole, setEmployeeRole] = useState<RoleData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -98,10 +100,7 @@ export default function EditEmployee({
       setLoading(true);
       try {
         const campusResponse = await getCampuses();
-        const empRoleResponse = await getRoles();
         setCampuses(campusResponse.data as CampusData[]);
-        setEmployeeRole(empRoleResponse.data as RoleData[]);
-        // Set selected campus and department after fetching data
         const validCampusId = campusId ?? 0;
         const validDepartmentId = departmentId ?? 0;
           setSelectedCampusId(validCampusId);
@@ -121,24 +120,27 @@ export default function EditEmployee({
     campuses.find((campus) => campus.campusId === selectedCampusId)
       ?.departments || [];
 
-  const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
-    try {
-      const updatedEmployee = { ...data, employeeId };
-      const response = await updateEmployee(updatedEmployee);
-
-      if (response.success) {
-        toast.success(
-          `${updatedEmployee.firstName} ${updatedEmployee.lastName} was updated successfully!`
-        );
-        reset();
-      } else {
-        toast.error("Failed to update the employee");
-      }
-    } catch (error) {
-      console.error("Request failed:", error);
-      toast.error("Request failed");
-    }
-  };
+      const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
+      
+        try {
+          const updatedEmployee = { ...data, employeeId };
+          const response = await updateEmployee(updatedEmployee).unwrap();
+      
+          if (response.success) {
+            toast.success(
+              `${updatedEmployee.firstName} ${updatedEmployee.lastName} was updated successfully!`
+            );
+            reset();
+            refetch();
+          } else {
+            toast.error("Failed to update the employee");
+          }
+        } catch (error) {
+          console.error("Request failed:", error);
+          toast.error("Request failed");
+        }
+      };
+      
 
   const handleError = () => {
     if (Object.keys(errors).length > 0) {
@@ -245,7 +247,7 @@ export default function EditEmployee({
                       <SelectValue placeholder="Select Role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {employeeRole.map((role) => (
+                      {employeeRole?.map((role) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={role.roleId}
@@ -368,3 +370,5 @@ export default function EditEmployee({
     </Sheet>
   );
 }
+
+export default EditEmployee

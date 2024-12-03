@@ -17,11 +17,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  updateSponsorPayment,
-  PaymentData,
-} from "@/services/sponsorPaymentsService";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PaymentData, useUpdateSponsorPaymentMutation } from "@/services/apis/sponsorPaymentService";
+
+
+interface PaymentProp{
+  payment: PaymentData;
+  refetch: () => void;
+}
 
 // Zod schema for validation
 const paymentSchema = z.object({
@@ -33,7 +36,10 @@ const paymentSchema = z.object({
 
 type PaymentFormValues = z.infer<typeof paymentSchema>;
 
-export default function EditPaymentForm({ payment }: { payment: PaymentData }) {
+const EditPaymentForm: React.FC<PaymentProp> = ({ payment, refetch }) => {
+
+  const { paymentId, amountPaid,paymentMethod, sponsorshipId,sponsorId,sponsorshipAmount, isActive } = payment;
+
   const {
     register,
     handleSubmit,
@@ -43,42 +49,37 @@ export default function EditPaymentForm({ payment }: { payment: PaymentData }) {
   } = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
-      amountPaid: payment?.amountPaid || 0, 
-      paymentMethod: payment?.paymentMethod || "",
+      paymentId,
+      amountPaid,
+      paymentMethod,
+      sponsorshipId,
     },
   });
+  const [updatePayment] = useUpdateSponsorPaymentMutation();
 
-  useEffect(() => {
-    if (payment) {
-      setValue("amountPaid", payment.amountPaid);
-      setValue("paymentMethod", payment.paymentMethod || "");
-    }
-  }, [payment, setValue]);
+
 
   const onSubmit: SubmitHandler<PaymentFormValues> = async (data) => {
-    if (!payment) return;
-
+    
     try {
-      const updatedPayment = {
-        ...payment,
-        paymentId: payment?.paymentId,
-        amountPaid: data.amountPaid, 
-        paymentMethod: data.paymentMethod,
-      };
-
-      const response = await updateSponsorPayment(updatedPayment);
-
+      const updatedPayment = { ...data, paymentId };
+      const response = await updatePayment(updatedPayment).unwrap();
+  
       if (response.success) {
-        toast.success("Payment updated successfully");
+        toast.success(
+          `${updatedPayment.amountPaid} amount was updated successfully!`
+        );
         reset();
+        refetch();
       } else {
-        toast.error(`Failed to update payment: ${response.message || "Something went wrong"}`);
+        toast.error("Failed to update the Sponsor Payment");
       }
     } catch (error) {
-      console.error("Error updating payment:", error);
+      console.error("Request failed:", error);
       toast.error("Request failed");
     }
   };
+  
 
   return (
     <Sheet>
@@ -147,3 +148,5 @@ export default function EditPaymentForm({ payment }: { payment: PaymentData }) {
     </Sheet>
   );
 }
+
+export default EditPaymentForm;

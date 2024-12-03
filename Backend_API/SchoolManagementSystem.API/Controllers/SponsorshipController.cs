@@ -9,11 +9,13 @@ public class SponsorshipController : ControllerBase
 {
     private readonly ILogger<SponsorshipController> _logger;
     private readonly ISponsorship _sponsorshipService;
+    private readonly ISponsorshipDetail _sponsorshipDetailService;
 
-    public SponsorshipController(ILogger<SponsorshipController> logger, ISponsorship sponsorshipService)
+    public SponsorshipController(ILogger<SponsorshipController> logger, ISponsorship sponsorshipService, ISponsorshipDetail sponsorshipDetailService)
     {
         _logger = logger;
         _sponsorshipService = sponsorshipService;
+        _sponsorshipDetailService = sponsorshipDetailService;
     }
 
 
@@ -32,6 +34,24 @@ public class SponsorshipController : ControllerBase
         {
             _logger.LogError(ex, "An error occurred while fetching all sponsorships.");
             return StatusCode(500, ApiResponse<IEnumerable<SponsorshipDTO>>.ErrorResponse("Internal server error."));
+        }
+    }
+
+    [HttpGet("[action]")]
+    public async Task<ActionResult<ApiResponse<IEnumerable<SponsorshipDetailDTO>>>> GetAllSponsorshipDetails()
+    {
+        _logger.LogInformation("Fetching all sponsorshipDetails.");
+        try
+        {
+            var sponsorshipDetails = await _sponsorshipDetailService.GetAllSponsorshipsDetailAsync();
+            _logger.LogInformation("Successfully retrieved {Count} sponsorshipDetails.", sponsorshipDetails?.Count() ?? 0);
+
+            return Ok(ApiResponse<IEnumerable<SponsorshipDetailDTO>>.SuccessResponse(sponsorshipDetails, "sponsorshipDetails retrieved successfully"));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while fetching all sponsorships.");
+            return StatusCode(500, ApiResponse<IEnumerable<SponsorshipDetailDTO>>.ErrorResponse("Internal server error."));
         }
     }
 
@@ -58,11 +78,15 @@ public class SponsorshipController : ControllerBase
     public async Task<ActionResult<ApiResponse<SponsorshipDTO>>> AddSponsorship([FromBody] SponsorshipDTO dto)
     {
 
-        _logger.LogInformation("Adding a new Sponsorship with {SponsorshipId}.", dto.SponsorshipId);
+        _logger.LogInformation("Adding a new Sponsorship with {SponsorshipId}.", dto.SponsorName);
         try
         {
             await _sponsorshipService.AddSponsorshipAsync(dto);
-            _logger.LogInformation("Successfully added Sponsorship with ID {SponsorshipId}.", dto.SponsorshipId);
+            foreach (var detail in dto.Details)
+            {
+                await _sponsorshipDetailService.AddSponsorshipDetailAsync(detail);
+            }
+            _logger.LogInformation("Successfully added Sponsorship with ID {SponsorshipId}.", dto.SponsorName);
             return Ok(ApiResponse<SponsorshipDTO>.SuccessResponse(dto, "Sponsorship added successfully"));
 
         }
@@ -76,16 +100,16 @@ public class SponsorshipController : ControllerBase
     [HttpPut("[action]")]
     public async Task<IActionResult> UpdateSponsorship([FromBody] SponsorshipDTO dto)
     {
-        _logger.LogInformation("Updating Sponsorship with ID {SponsorshipId}.", dto.SponsorshipId);
+        _logger.LogInformation("Updating Sponsorship with ID {SponsorshipId}.", dto.SponsorName);
         try
         {
             await _sponsorshipService.UpdateSponsorshipAsync(dto);
-            _logger.LogInformation("Successfully updated SponsorshipId with ID {SponsorshipId}.", dto.SponsorshipId);
+            _logger.LogInformation("Successfully updated SponsorshipId with ID {SponsorshipId}.", dto.SponsorName);
             return Ok(ApiResponse<SponsorshipDTO>.SuccessResponse(dto, "Sponsorship updated successfully"));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occurred while updating Sponsorship with ID {SponsorshipId}.", dto.SponsorshipId);
+            _logger.LogError(ex, "An error occurred while updating Sponsorship with ID {SponsorshipId}.", dto.SponsorName);
             return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
         }
     }

@@ -10,18 +10,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { deleteClass, fetchClasses, ClassData } from "../../../../services/ClassService"; 
-import EditClass from "../classrooms/edit-class";
 import { Input } from "@/components/ui/input";
 import { deleteSubject, SubjectData } from "@/services/subjectService";
 import EditSubject from "./edit-subject";
 import { toast } from "sonner";
 import ConfirmationDialog from "../common/confirmation-dialog";
 
-const SubjectListTable = ({subject}:{subject: SubjectData[]}) => {
+const SubjectListTable = ({ subject }: { subject: SubjectData[] }) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
   const [subjectToDelete, setSubjectToDelete] = useState<number | null>(null);
   const itemsPerPage = 10;
 
@@ -31,7 +29,10 @@ const SubjectListTable = ({subject}:{subject: SubjectData[]}) => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredSubjects.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredSubjects.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const totalPages = Math.ceil(filteredSubjects.length / itemsPerPage);
 
@@ -40,7 +41,9 @@ const SubjectListTable = ({subject}:{subject: SubjectData[]}) => {
       setSelectedRows([]);
     } else {
       setSelectedRows(
-        currentItems.map((row) => row.subjectId!).filter((id) => id !== null && id !== undefined)
+        currentItems
+          .map((row) => row.subjectId!)
+          .filter((id) => id !== null && id !== undefined)
       );
     }
   };
@@ -124,7 +127,7 @@ const SubjectListTable = ({subject}:{subject: SubjectData[]}) => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditSubject subject={item}/>
+                  <EditSubject subject={item} />
 
                   <Button
                     size="icon"

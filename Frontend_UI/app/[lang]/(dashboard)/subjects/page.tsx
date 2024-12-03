@@ -14,14 +14,18 @@ import AddAssignSubject from "./add-assignsubject";
 import SubjectAssignTable from "./classSubject-table";
 import { ClassData, fetchClasses } from "@/services/ClassService";
 import { fetchSubject, SubjectData } from "@/services/subjectService";
-import { EmployeesData, fetchEmployees } from "@/services/EmployeeService";
 import ViewSubjectTeacher from "./veiw-subject-teacher";
 import AssignSubjectTeacher from "./assign-subject-teacher";
+import {
+  EmployeesData,
+  useFetchEmployeesQuery,
+} from "@/services/apis/employeeService";
 
 const Subjects = () => {
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [subjects, setSubjects] = useState<SubjectData[]>([]);
-  const [employees, setEmployees] = useState<EmployeesData[]>([]);
+  const { data: employeeData } = useFetchEmployeesQuery();
+  const employees = (employeeData?.data as EmployeesData[]) || [];
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,15 +33,13 @@ const Subjects = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [classData, subjectData, employeeData] = await Promise.all([
+        const [classData, subjectData] = await Promise.all([
           fetchClasses(),
           fetchSubject(),
-          fetchEmployees(),
         ]);
 
         setClasses(classData.data as ClassData[]);
         setSubjects(subjectData.data as SubjectData[]);
-        setEmployees(employeeData.data as EmployeesData[]);
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -50,7 +52,7 @@ const Subjects = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
-    // fetchEmployeeAndSubjectData();
+  // fetchEmployeeAndSubjectData();
 
   return (
     <div>
@@ -77,7 +79,7 @@ const Subjects = () => {
           <AccordionContent>
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5">
-                <SubjectReportCard/>
+                <SubjectReportCard />
                 <Table />
               </div>
             </div>

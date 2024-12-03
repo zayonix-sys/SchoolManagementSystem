@@ -9,48 +9,57 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { RoleData } from "@/services/employeeRoleService";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import RoleListTable from "./role-table";
 import { Icon } from "@iconify/react";
 import AddRole from "./add-roles";
+import { RoleData } from "@/services/apis/employeeRoleService";
 
+interface EmployeeRoleProps {
+  roles: RoleData[];
+  refetch: () => void;
+}
 
-// This component allows you to view role details in a sheet.
-export default function ViewRole({
-  selectedRole,
-}: {
-  selectedRole: RoleData | null;
-}) {
+const ViewRole: React.FC<EmployeeRoleProps> = ({ roles, refetch }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleRefetch = () => {
+    refetch();
+  };
+
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-      <Button>
+        <Button>
           <span className="text-xl mr-1">
             <Icon icon="heroicons:building-library-solid" className="w-6 h-6 mr-2" />
           </span>
           Add/View Role
         </Button>
       </SheetTrigger>
+
       <SheetContent side="top">
         <SheetHeader>
-          <SheetTitle>Role
-          </SheetTitle>
-          {/* <div className="relative"> */}
-  <SheetDescription className="absolute top-0 right-4  p-4">
-    <AddRole />
-  </SheetDescription>
-{/* </div> */}
+          <SheetTitle>Role</SheetTitle>
+          <SheetDescription className="absolute top-0 right-4 p-4">
+            <AddRole refetch={handleRefetch} />
+          </SheetDescription>
         </SheetHeader>
+
         <div>
           <div className="py-6">
-            <RoleListTable />
+            <RoleListTable roles={roles} refetch={handleRefetch} />
           </div>
         </div>
+
         <SheetFooter>
-          <SheetClose asChild>footer content</SheetClose>
+          <SheetClose asChild>
+            <Button>Close</Button>
+          </SheetClose>
         </SheetFooter>
       </SheetContent>
     </Sheet>
   );
-}
+};
+
+export default ViewRole;

@@ -1,5 +1,4 @@
-"use client"; // Make sure this is at the very top
-
+"use client";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +7,7 @@ import { toast } from "sonner";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Sheet,
   SheetClose,
@@ -17,9 +17,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { RoleData, updateRole } from "@/services/employeeRoleService";
+import { RoleData, useAddRoleMutation } from "@/services/apis/employeeRoleService";
 
-// Define Zod schema for class form validation
+
+
+// Define Zod schema
 const roleSchema = z.object({
   roleName: z.string().min(1, "Role Name is required"),
   roleDescription: z.string().optional(),
@@ -27,31 +29,38 @@ const roleSchema = z.object({
 
 type RoleFormValues = z.infer<typeof roleSchema>;
 
-export default function EditRoles({ roleData }: { roleData: RoleData }) {
-  const { roleId, roleName, roleDescription } = roleData;
+export default function AddRole({ refetch }: { refetch: () => void }) {
+  const [addRole] = useAddRoleMutation();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<RoleFormValues>({
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<RoleFormValues>({
     resolver: zodResolver(roleSchema),
-    defaultValues: {
-      roleName,
-      roleDescription,
-    },
   });
 
   const onSubmit: SubmitHandler<RoleFormValues> = async (data) => {
     try {
-      const updatedRole = { ...data, roleId };
-      const response = await updateRole(updatedRole);
+      const response = await addRole(data as RoleData);
 
-      if (response.success) {
-        toast.success(`${updatedRole.roleName} Role Updated successfully!`);
+      if (response.data?.success) {
+        toast.success(
+          `${response.data?.data.roleName} Role Added successfully!`
+        );
         reset();
+        refetch();
       } else {
-        toast.error("Failed to update the Role");
+        console.error("Error:", response);
+        toast.error(
+          `Error: ${response.data?.message || "Something went wrong"}`
+        );
       }
     } catch (error) {
-      console.error("Request failed:", error);
-      toast.error("Request failed");
+      console.error("Request Failed:", error);
+      toast.error("Request Failed");
     }
   };
 
@@ -64,19 +73,21 @@ export default function EditRoles({ roleData }: { roleData: RoleData }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          className="h-7 w-7"
-        >
-          <Icon icon="heroicons:pencil" className="h-4 w-4" />
+        <Button>
+          <span className="text-xl mr-1">
+            <Icon icon="heroicons:building-library-solid" className="w-6 h-6 mr-2" />
+          </span>
+          Add Role
         </Button>
       </SheetTrigger>
       <SheetContent className="max-w-[736px]">
         <SheetHeader>
-          <SheetTitle>Edit Role</SheetTitle>
+          <SheetTitle>Add New Role</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-between" style={{ height: "calc(100vh - 80px)" }}>
+        <div
+          className="flex flex-col justify-between"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
           <div className="py-5">
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
@@ -87,27 +98,32 @@ export default function EditRoles({ roleData }: { roleData: RoleData }) {
                     placeholder="Role Name"
                     {...register("roleName")}
                   />
-                  {errors.roleName && <p className="text-destructive">{errors.roleName.message}</p>}
+                  {errors.roleName && (
+                    <p className="text-destructive">
+                      {errors.roleName.message}
+                    </p>
+                  )}
                 </div>
                 <div className="col-span-2">
-                  <Input
-                    type="text"
+                  <Textarea
                     placeholder="Role Description"
                     {...register("roleDescription")}
                   />
-                  {errors.roleDescription && <p className="text-destructive">{errors.roleDescription?.message}</p>}
+                  {errors.roleDescription && (
+                    <p className="text-destructive">
+                      {errors.roleDescription.message}
+                    </p>
+                  )}
                 </div>
                 <div className="col-span-2">
-                  <Button type="submit">Update</Button>
+                  <Button type="submit">Submit Form</Button>
                 </div>
               </div>
             </form>
           </div>
         </div>
         <SheetFooter>
-          <SheetClose asChild>
-            <Button variant="ghost">Close</Button>
-          </SheetClose>
+          <SheetClose asChild>footer content</SheetClose>
         </SheetFooter>
       </SheetContent>
     </Sheet>

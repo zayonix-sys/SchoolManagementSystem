@@ -3,6 +3,13 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import classroomApi from "./classroomService";
 import sectionApi from "./sectionService";
+import studentAttendanceApi from "./studentAttendanceService";
+import { empRoleApi } from "./employeeRoleService";
+import employeeApi from "./employeeService";
+import sponsorApi from "./sponsorService";
+import dashboardApi from "./dashboardService";
+import paymentApi from "./sponsorPaymentService";
+import sponsorshipApi from "./sponsorshipService";
 import studentApi from "./studentService";
 import userApi from "./userService";
 import userRoleApi from "./userRoleService";
@@ -21,7 +28,14 @@ const rootReducer = combineReducers({
   // auth: persistReducer(authPersistConfig, authReducer),
 
   [sectionApi.reducerPath]: sectionApi.reducer,
+  [studentAttendanceApi.reducerPath]: studentAttendanceApi.reducer,
   [classroomApi.reducerPath]: classroomApi.reducer,
+  [employeeApi.reducerPath]: employeeApi.reducer,
+  [empRoleApi.reducerPath]: empRoleApi.reducer,
+  [sponsorApi.reducerPath]: sponsorApi.reducer,
+  [sponsorshipApi.reducerPath]: sponsorshipApi.reducer,
+  [dashboardApi.reducerPath]: dashboardApi.reducer,
+  [paymentApi.reducerPath]: paymentApi.reducer,
   [studentApi.reducerPath]: studentApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
   [userRoleApi.reducerPath]: userRoleApi.reducer,
@@ -36,6 +50,14 @@ const store = configureStore({
       serializableCheck: false,
     })
       .concat(sectionApi.middleware)
+      .concat(classroomApi.middleware)
+      .concat(studentAttendanceApi.middleware)
+      .concat(employeeApi.middleware)
+      .concat(empRoleApi.middleware)
+      .concat(sponsorApi.middleware)
+      .concat(sponsorshipApi.middleware)
+      .concat(dashboardApi.middleware)
+      .concat(paymentApi.middleware)
       .concat(classroomApi.middleware)
       .concat(studentApi.middleware)
       .concat(userApi.middleware)
