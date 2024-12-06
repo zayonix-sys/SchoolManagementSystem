@@ -1146,6 +1146,10 @@ CREATE TABLE AuditTrails (
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
 
+
+
+--*****ALteration Script After Main Script For changes Based On our Requirment*****
+
 --ALTER Script 02-Dec-2024
 
 ALTER TABLE Students
@@ -1157,3 +1161,99 @@ FOREIGN KEY (SectionId) REFERENCES Sections(SectionId)
 
 --ALTER Script 03-Dec-2024
 exec sp_rename 'ClassroomAssignments.AssignmentId', 'ClassSectionAssignmentId' , 'Column'
+
+--Alter Sponsorship Table
+
+
+Alter Table SponsorShips
+drop column ClassId, StudentId;
+
+
+CREATE TABLE SponsorshipDetails (
+    SponsorshipDetailId INT PRIMARY KEY IDENTITY,
+	SponsorshipId INT,
+    StudentId INT,
+	ClassId INT,
+    Amount int,
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT NULL,
+	IsActive BIT DEFAULT 1
+
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (SponsorshipId) REFERENCES Sponsorships(SponsorshipId),
+    FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
+	FOREIGN KEY (ClassId) REFERENCES Classes(ClassId),
+);
+CREATE INDEX IDX_SponsorshipDetails_SponsorId ON SponsorshipDetails(SponsorshipId);
+
+--Dashboard Scripts for view Table
+USE school_management_sqldb
+GO
+
+/****** Object:  View [dbo].[vw_AdminDashboardSummaryCount]    Script Date: 11/8/2024 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE VIEW [dbo].[vw_TbaDashboardSummaryCount] AS
+SELECT 
+     Total counts
+    (SELECT COUNT(*) FROM Sponsors) AS TotalSponsors,
+    (SELECT COUNT(*) FROM Employees) AS TotalEmployees,
+    (SELECT COUNT(*) FROM Students) AS TotalStudents,
+    (SELECT COUNT(*) FROM Sponsorships) AS TotalStudentsSponsor,
+
+     Monthly data for sponsors, employees, and students
+    (SELECT COUNT(*) 
+        FROM Sponsors 
+        WHERE CreatedAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()
+    ) AS NewSponsorsThisMonth,
+
+    (SELECT COUNT(*) 
+        FROM Employees 
+        WHERE CreatedAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()
+    ) AS NewEmployeesThisMonth,
+
+    (SELECT COUNT(*) 
+        FROM Students 
+        WHERE CreatedAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()
+    ) AS NewStudentsThisMonth,
+	 (SELECT COUNT(*) 
+        FROM Sponsorships 
+        WHERE CreatedAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()
+    ) AS NewStudentsSponsoredThisMonth,
+
+    
+    -- Gender distribution among Employees and Students
+    (SELECT COUNT(*) FROM Employees WHERE Gender = 'Male') AS MaleEmployees,
+    (SELECT COUNT(*) FROM Employees WHERE Gender = 'Female') AS FemaleEmployees,
+    (SELECT COUNT(*) FROM Students WHERE Gender = 'Male') AS MaleStudents,
+    (SELECT COUNT(*) FROM Students WHERE Gender = 'Female') AS FemaleStudents
+--;
+--GO
+
+--Alter Sponsor Table
+
+Alter Table Sponsors
+drop column SponsorAddress
+
+ALTER TABLE Sponsors
+ADD Gender VARCHAR(10),
+    Occupation VARCHAR(100),
+    Nationality VARCHAR(50),
+    Country VARCHAR(70),
+    State VARCHAR(50),
+    City VARCHAR(100),
+    PostalCode INT,  
+    Address VARCHAR(250);
+
+
+	--ALteration In StudentAttendance Table
+	
+	alter Table StudentAttendance
+	Drop column CampusId;
