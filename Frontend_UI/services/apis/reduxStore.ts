@@ -25,6 +25,10 @@ import assignSubjectTeacherApi from "./assignSubjectTeacherService";
 import questionBankApi from "./qBankService";
 import examPaperApi from "./examPaperService";
 import examPaperPDFApi from "./examPaperPDFService";
+import timetableApi from "./timetableService";
+import periodApi from "./periodService";
+import examResultPDFApi from "./examResultPDFService";
+import examResultApi from "./examResultService";
 
 // Import or define your auth reducer
 // import authReducer from "./authSlice"; // Assuming your auth reducer is in authSlice.js
@@ -62,6 +66,10 @@ const rootReducer = combineReducers({
   [examApi.reducerPath]: examApi.reducer,
   [examPaperApi.reducerPath]: examPaperApi.reducer,
   [examPaperPDFApi.reducerPath]: examPaperPDFApi.reducer,
+  [examResultApi.reducerPath]: examResultApi.reducer,
+  [examResultPDFApi.reducerPath]: examResultPDFApi.reducer,
+  [timetableApi.reducerPath]: timetableApi.reducer,
+  [periodApi.reducerPath]: periodApi.reducer,
 });
 
 const store = configureStore({
@@ -96,7 +104,11 @@ const store = configureStore({
       .concat(questionBankApi.middleware)
       .concat(examApi.middleware)
       .concat(examPaperApi.middleware)
-      .concat(examPaperPDFApi.middleware),
+      .concat(examPaperPDFApi.middleware)
+      .concat(examResultApi.middleware)
+      .concat(examResultPDFApi.middleware)
+      .concat(timetableApi.middleware)
+      .concat(periodApi.middleware),
 });
 
 export const persistor = persistStore(store);
