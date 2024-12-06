@@ -17,15 +17,6 @@ namespace SchoolManagementSystem.Domain.Entities
         [Required]
         public int? MarksObtained { get; set; }
 
-        [Required]
-        public int? TotalMarksObtained { get; set; }
-
-        [Required]
-        public decimal? Percentage { get; set; }
-
-        [Required]
-        public string? Grade { get; set; }
-
         [ForeignKey("CreatedUser")]
         public int? CreatedBy { get; set; }
         public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;

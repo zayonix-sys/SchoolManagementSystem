@@ -60,24 +60,12 @@ namespace SchoolManagementSystem.Application.Services
             try
             {
                 var entities = _examResultMapper.MapToEntities(examResult);
-
                 if (entities != null)
                 {
                     foreach (var entity in entities)
                     {
-                        //var existingEntity = await _examResultRepository.GetByIdAsync(entity.ExamResultId);
-
-                        //if (existingEntity != null)
-                        //{
-                        //    await _examResultRepository.DeleteAsync(existingEntity);
-                        //}
                         await _examResultRepository.UpdateAsync(entity);
                     }
-
-                    //foreach (var entity in entities)
-                    //{
-                    //    await _examResultRepository.UpdateAsync(entity);
-                    //}
                 }
             }
             catch (Exception ex)
@@ -85,8 +73,6 @@ namespace SchoolManagementSystem.Application.Services
                 throw new Exception("An error occurred while updating Exam Result.", ex);
             }
         }
-
-
 
         public async Task DeleteExamResultAsync(int examResultId)
         {
@@ -105,7 +91,6 @@ namespace SchoolManagementSystem.Application.Services
             }
         }
 
-
         public async Task<List<ExamResultDTO>> GetAllExamResultsAsync()
         {
             try
@@ -118,7 +103,6 @@ namespace SchoolManagementSystem.Application.Services
                     );
                 var results = exams.Where(a => a.IsActive);
                 var resultDtos = results.Select(c => _examResultMapper.MapToDto(c)).ToList();
-
                 return resultDtos;
             }
             catch (Exception)

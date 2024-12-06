@@ -7,8 +7,5 @@ namespace SchoolManagementSystem.Application.DTOs
         public int? ExamPaperId { get; set; }
         public int StudentId { get; set; }
         public int? MarksObtained { get; set; }
-        public int? TotalMarksObtained { get; set; }
-        public decimal? Percentage { get; set; }
-        public string? Grade { get; set; }
     }
 }

@@ -12,20 +12,47 @@ import {
 } from "@/components/ui/select";
 import { StudentData, useFetchStudentByClassWiseQuery } from "@/services/apis/studentService";
 import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
-import StudentList from "./student-list";
+import AddResults from "./add-results";
+import { ExamPaperData, useFetchExamPapersQuery } from "@/services/apis/examPaperService";
 
 const Page = () => {
   const [classId, setClassId] = useState<number | null>(null);
-  console.log(classId);
-  const { data: students, refetch } = useFetchStudentByClassWiseQuery(classId ?? 0 );
+  const [examPaperId, setExamPaperId] = useState<number | null>(null);
+  const { data: students, refetch } = useFetchStudentByClassWiseQuery(classId ?? 0);
   const studentData = Array.isArray(students?.data) ? (students?.data as StudentData[]) : [];
 
-  const {data: classData, isLoading: classLoading, refetch: classRefetch, } = useFetchClassQuery();
+  const { data: classData, isLoading: classLoading, refetch: classRefetch, } = useFetchClassQuery();
   const classes = classData?.data as ClassData[];
+
+  const { data: examPaper, error: examPaperError, isLoading: examPaperLoading, refetch: examPaperRefetch, } = useFetchExamPapersQuery();
+  const examPapers = examPaper?.data as ExamPaperData[];
+
+  const examPaperData = (() => {
+    const filteredData = examPapers?.filter((item) => item.classId === classId) && examPapers|| [];
+
+    const uniqueSubjects = new Map<number, ExamPaperData>();
+
+    filteredData.forEach((item) => {
+      if (!uniqueSubjects.has(item.subjectId)) {
+        uniqueSubjects.set(item.subjectId, item);
+      }
+    });
+
+    return Array.from(uniqueSubjects.values());
+  })();
+
 
   const handleRefetch = () => {
     refetch();
     classRefetch();
+    examPaperRefetch();
+  };
+
+  const handleSubjectSelection = (subjectId: string) => {
+    const selectedPaper = examPaperData.find((paper) => paper.subjectId?.toString() === subjectId);
+    if (selectedPaper && selectedPaper.examPaperId !== undefined) {
+      setExamPaperId(selectedPaper.examPaperId); // Set the relevant examPaperId
+    }
   };
 
   return (
@@ -35,25 +62,44 @@ const Page = () => {
         <BreadcrumbItem className="text-primary">Students Results</BreadcrumbItem>
       </Breadcrumbs>
 
-      <div className="col-span-1 mb-4 mt-4">
-        <Label>Select Class</Label>
-        <Select onValueChange={(value) => setClassId(parseInt(value))}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Class" />
-          </SelectTrigger>
-          <SelectContent>
-            {classes?.map((cd) => (
-              <SelectItem key={cd.classId} value={cd.classId?.toString() || ""}>
-                {cd.className}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="col-span-1 mb-4 mt-4">
+          <Label>Select Class</Label>
+          <Select onValueChange={(value) => setClassId(parseInt(value))}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select Class" />
+            </SelectTrigger>
+            <SelectContent>
+              {classes?.map((cd) => (
+                <SelectItem key={cd.classId} value={cd.classId?.toString() || ""}>
+                  {cd.className}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="col-span-1 mb-4 mt-4">
+          <Label>Select Exam Paper</Label>
+          <Select onValueChange={handleSubjectSelection}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select Exam Paper" />
+            </SelectTrigger>
+            <SelectContent>
+              {examPaperData?.map((f) => (
+                <SelectItem key={f.subjectId} value={f.subjectId?.toString() || ""}>
+                  {f.subjectName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      <StudentList
+
+      <AddResults
         students={studentData}
-        classData={classes}
+        examPaperId={examPaperId}
         refetch={handleRefetch}
       />
     </div>

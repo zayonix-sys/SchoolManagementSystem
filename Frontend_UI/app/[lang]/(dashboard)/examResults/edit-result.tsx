@@ -19,9 +19,6 @@ const examDetailsSchema = z.object({
   examResultId: z.coerce.number().optional(),
   studentId: z.coerce.number().optional(),
   marksObtained: z.coerce.number().optional(),
-  totalMarksObtained: z.coerce.number().optional(),
-  percentage: z.coerce.number().optional(),
-  grade: z.string().optional(),
   examPaperId: z.coerce.number().optional(),
 });
 
@@ -64,7 +61,6 @@ const EditResult = ({
     defaultValues: {
       examDetails: examResultData.map((item) => ({
         marksObtained: item.examDetails?.[0]?.marksObtained || 0,
-        
       })),
     },
   });
@@ -95,8 +91,6 @@ const EditResult = ({
   const filteredData = examResultData.filter(
     (item) => item.examDetails?.find((item) => item.studentId === studentId && classId === classId)
   );
-  console.log("filtered data", filteredData)
-
 
   const onSubmit: SubmitHandler<ExamsResultsFormValues> = async (data) => {
     const examDetailsPayload = filteredData.map((item, index) => {
@@ -107,9 +101,6 @@ const EditResult = ({
         examResultId: item.examDetails?.[0]?.examResultId,
         examPaperId: item.examDetails?.[0]?.examPaperId,
         marksObtained,
-        totalMarksObtained,
-        percentage: percentage,
-        grade: grade,
       };
     });
 
@@ -119,7 +110,6 @@ const EditResult = ({
 
     try {
       const response = await updateExamResult(finalData);
-      console.log("Data", response)
       if (response.data?.success) {
         toast.success("Exam Results saved successfully!");
         reset();
@@ -182,7 +172,7 @@ const EditResult = ({
               <TableRow>
                 <TableCell className="font-bold">Grand Total</TableCell>
                 <TableCell className="font-bold">{totalMarks}</TableCell>
-                <TableCell className="font-bold">{totalMarksObtained}</TableCell>
+                <TableCell className="font-bold pe-20">{totalMarksObtained}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-bold">Percentage</TableCell>

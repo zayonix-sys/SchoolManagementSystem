@@ -18,30 +18,53 @@ import { Input } from "@/components/ui/input";
 import {
   StudentData,
 } from "@/services/apis/studentService";
-import { ClassData } from "@/services/apis/classService";
 import { useFetchExamResultPDFQuery } from "@/services/apis/examResultPDFService";
 import { toast } from "sonner";
+import { ExamPaperData } from "@/services/apis/examPaperService";
+import { z } from "zod";
+import { useAddExamResultMutation } from "@/services/apis/examResultService";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
 import ViewResult from "./view-result";
-import AddResult from "./add-result";
+
+const examDetailsSchema = z.object({
+  studentId: z.coerce.number().optional(),
+  examPaperId: z.coerce.number().optional(),
+  marksObtained: z.coerce.number().optional(),
+});
+
+const examResultsSchema = z.object({
+  examResultId: z.coerce.number().optional(),
+  examDetails: z.array(examDetailsSchema),
+  isActive: z.boolean().optional().default(true),
+});
 
 interface StudentListTableProps {
-  classData: ClassData[];
   students: StudentData[];
+  examPaperId: number | null;
   refetch: () => void;
 }
-const StudentList: React.FC<StudentListTableProps> = ({
+
+type ExamsResultsFormValues = z.infer<typeof examResultsSchema>;
+const AddResults: React.FC<StudentListTableProps> = ({
   students,
+  examPaperId,
   refetch,
-  classData,
+  
 }) => {
+
+  const [addExamResults] = useAddExamResultMutation();
+  const { register, handleSubmit, reset } = useForm<ExamsResultsFormValues>({
+    resolver: zodResolver(examResultsSchema),
+  });
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(false); 
   const [selectedStudent, setSelectedStudent] = useState<{ studentId: number; classId: number} | null>(null);
   const [viewDialog, setViewDialog] = useState<{studentId: number; classId: number} | null>(null);
   const [selectedStudentId, setSelectedStudentId] = useState<{studentId: number} | null>(null);
   const [dialogType, setDialogType] = useState<"add" | "view" | null>(null);
-  const {data: examResultPDFBlob, isLoading: isLoadingPDF, isError: isErrorPDF, error: ErrorPDF} = useFetchExamResultPDFQuery(
+  const {data: examResultPDFBlob, isError: isErrorPDF, error: ErrorPDF,} = useFetchExamResultPDFQuery(
     selectedStudentId !== null
         ? { studentId: selectedStudentId.studentId }
         : { studentId: 0 }, { skip: !selectedStudentId });  
@@ -55,7 +78,6 @@ const StudentList: React.FC<StudentListTableProps> = ({
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredStudents?.slice(indexOfFirstItem, indexOfLastItem );
-
   const totalPages = Math.ceil(filteredStudents?.length / itemsPerPage);
 
   useEffect(() => {
@@ -68,7 +90,6 @@ const StudentList: React.FC<StudentListTableProps> = ({
         document.body.appendChild(link); 
         link.click();
         document.body.removeChild(link); 
-
         URL.revokeObjectURL(pdfUrl);
     }
   }, [examResultPDFBlob, selectedStudentId]);
@@ -80,11 +101,10 @@ const StudentList: React.FC<StudentListTableProps> = ({
   }, [isErrorPDF])
 
   useEffect(() => {
-    console.log("Selected Student:", selectedStudent);
-    console.log("Dialog Type:", dialogType);
-  }, [selectedStudent, viewDialog,dialogType]);
+  }, [selectedStudent]);
 
   const handleViewDetails = (params: { studentId: number }) => {
+    event?.preventDefault();
     setSelectedStudentId({studentId: params.studentId});
 };
 
@@ -97,25 +117,43 @@ const StudentList: React.FC<StudentListTableProps> = ({
   };
 
   const handleViewResult = (studentId: number, classId: number) => {
+    event?.preventDefault();
     setViewDialog({ studentId, classId});
     setDialogType("view");
-  };
-
-  const handleCloseAddDialog = () => {
-    setSelectedStudent(null);
-    setDialogType(null);
   };
 
   const handleCloseViewDialog = () => {
     setViewDialog(null);
     setDialogType(null);
   };
-
-  const handleAddResult = (studentId: number, classId: number) => {
-    setSelectedStudent({ studentId, classId});
-    setDialogType("add");
-  };
   
+  const onSubmit: SubmitHandler<ExamsResultsFormValues> = async (data) => {
+    const examDetailsPayload = currentItems.map((item, index) => {
+      const marksObtained = data.examDetails[index]?.marksObtained || 0;
+      return {
+        studentId: students[index]?.studentId || 0,
+        examPaperId: examPaperId || 0,
+        marksObtained: marksObtained,
+      };
+    });
+    const finalData = {
+      ...data,
+      examDetails: examDetailsPayload,
+    };
+
+    try {
+      const response = await addExamResults(finalData);
+      if (response.data?.success) {
+        toast.success("Exam Results saved successfully!");
+        reset();
+        refetch();
+      } else {
+        toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
+      }
+    } catch (error) {
+      toast.error("Request failed");
+    }
+  };
   
   return (
     <>
@@ -129,21 +167,15 @@ const StudentList: React.FC<StudentListTableProps> = ({
         />
       </div>
       <Card className="overflow-x-auto">
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="font-semibold">GrNo</TableHead>
               <TableHead className="font-semibold">Full Name</TableHead>
-              <TableHead className="font-semibold">Email</TableHead>
-              <TableHead className="font-semibold">Phone Number</TableHead>
               <TableHead className="font-semibold">Gender</TableHead>
-              <TableHead className="font-semibold">Class Name</TableHead>
-              <TableHead className="font-semibold">Date of Birth</TableHead>
-              <TableHead className="font-semibold">Enrollment Date</TableHead>
               <TableHead className="font-semibold">Status</TableHead>
-              <TableHead className="text-center sticky right-0 bg-background drop-shadow-md">
-              Add Results
-              </TableHead>
+              <TableHead className="font-semibold">Marks Obtained</TableHead>
               <TableHead className="text-center sticky right-0 bg-background drop-shadow-md">
               View Results
               </TableHead>
@@ -154,18 +186,13 @@ const StudentList: React.FC<StudentListTableProps> = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentItems?.map((item) => (
+            {currentItems?.map((item, index) => (
               <TableRow key={item.email} className="hover:bg-muted">
                 <TableCell>{item.grNo}</TableCell>
                 <TableCell>
                   {item.firstName} {item.lastName}
                 </TableCell>
-                <TableCell>{item.email}</TableCell>
-                <TableCell>{item.phoneNumber}</TableCell>
                 <TableCell>{item.gender}</TableCell>
-                <TableCell>{item.className}</TableCell>
-                <TableCell>{item.dateOfBirth.toLocaleString()}</TableCell>
-                <TableCell>{item.enrollmentDate.toLocaleString()}</TableCell>
                 <TableCell>
                   <Badge
                     variant="outline"
@@ -175,21 +202,16 @@ const StudentList: React.FC<StudentListTableProps> = ({
                     {item.isActive ? "Active" : "Inactive"}
                   </Badge>
                 </TableCell>
+                  <TableCell>
+                    <Input
+                      type="number"
+                      {...register(`examDetails.${index}.marksObtained`)}
+                    />
+                  </TableCell>
 
-                <TableCell className="gap-3 justify-center bg-background drop-shadow-md">
+                <TableCell className="gap-3 text-center bg-background drop-shadow-md">
                   <Button
-                    size="icon"
-                    variant="outline"
-                    className=" h-7 w-7"
-                    color="secondary"
-                    onClick={() => handleAddResult(item.studentId, item.classId ?? 0)}
-                  >
-                    <Icon icon="heroicons:pencil" className=" h-4 w-4  " /> 
-                  </Button>
-                </TableCell>
-
-                <TableCell className="gap-3 justify-end bg-background drop-shadow-md">
-                  <Button
+                    type="button"
                     size="icon"
                     variant="outline"
                     className=" h-7 w-7"
@@ -200,8 +222,9 @@ const StudentList: React.FC<StudentListTableProps> = ({
                   </Button>
                 </TableCell>
 
-                <TableCell className="gap-3 bg-background drop-shadow-md">
+                <TableCell className="gap-3 text-center bg-background drop-shadow-md">
                   <Button
+                    type="button"
                     size="icon"
                     variant="outline"
                     className=" h-7 w-7"
@@ -216,6 +239,10 @@ const StudentList: React.FC<StudentListTableProps> = ({
             ))}
           </TableBody>
         </Table>
+        <Button type="submit" className="mt-4">
+            Submit
+          </Button>
+        </form>
       </Card>
       <div className="flex justify-between items-center mt-4">
         <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
@@ -227,17 +254,7 @@ const StudentList: React.FC<StudentListTableProps> = ({
         <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
           Next
         </Button>
-        
         <div>
-        {dialogType === "add" && selectedStudent && (
-        <AddResult 
-          studentId={selectedStudent?.studentId} 
-          classId={selectedStudent?.classId} 
-          onClose={handleCloseAddDialog} 
-          refetch={refetch}
-          dialogType={dialogType}
-        />
-        )}
         </div>
       </div>
       {dialogType === "view" && viewDialog && (
@@ -256,4 +273,4 @@ const StudentList: React.FC<StudentListTableProps> = ({
   );
 };
 
-export default StudentList;
+export default AddResults;

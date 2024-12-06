@@ -16,9 +16,6 @@ export interface ExamDetailsResultData {
   studentId?: number;
   examPaperId?: number;
   marksObtained?: number;
-  totalMarksObtained?: number;
-  percentage?: number;
-  grade?: string;
   }
 
 export const examResultApi = createApi({

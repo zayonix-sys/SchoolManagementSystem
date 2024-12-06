@@ -26,9 +26,6 @@ namespace SchoolManagementSystem.Application.Mappers
                     ExamPaperId = examDetail.ExamPaperId,
                     StudentId = examDetail.StudentId,
                     MarksObtained = examDetail.MarksObtained,
-                    TotalMarksObtained = examDetail.TotalMarksObtained,
-                    Percentage = examDetail.Percentage,
-                    Grade = examDetail.Grade,
                     IsActive = dto.IsActive
                 });
             }   
@@ -56,9 +53,6 @@ namespace SchoolManagementSystem.Application.Mappers
                 ExamPaperId = entity.ExamPaperId,
                 StudentId = entity.StudentId,
                 MarksObtained = entity.MarksObtained,
-                TotalMarksObtained = entity.TotalMarksObtained,
-                Percentage = entity.Percentage,
-                Grade = entity.Grade
             }
         }
             };

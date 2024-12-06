@@ -1,5 +1,4 @@
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import { z } from "zod";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -42,13 +41,36 @@ const ViewResult = ({ studentId, classId, onClose, refetch, className, firstName
   
   const examResults = examResultData.filter((item) => item.examDetails?.some((detail) => detail.studentId === studentId));
 
-  const marksObtained = examResults.find((item) => item.examDetails?.find((detail) => detail.marksObtained !== null));
+  // const marksObtained = examResults.find((item) => item.examDetails?.find((detail) => detail.marksObtained !== null));
 
-  const marks = examResults.find((item) => item.examDetails?.find((detail) => detail.totalMarksObtained !== null));
+  const calculateGrade = (percentage: number): string => {
+    if (percentage >= 95) return "A++";
+    if (percentage >= 90) return "A+";
+    if (percentage >= 85) return "A";
+    if (percentage >= 80) return "B++";
+    if (percentage >= 75) return "B+";
+    if (percentage >= 70) return "B";
+    if (percentage >= 60) return "C";
+    if (percentage >= 50) return "D";
+    if (percentage >= 40) return "E";
+    return "Fail";
+  };
 
-  const percentage = examResults.find((item) => item.examDetails?.find((detail) => detail.percentage !== null));
+  const grandTotalMarks = examResults.reduce(
+    (acc, item) => acc + (item.totalMarks || 0),
+    0
+  );
+  
+  const grandTotalMarksObtained = examResults.reduce(
+    (acc, item) =>
+      acc +
+      (item.examDetails?.find((detail) => detail.studentId === studentId)?.marksObtained || 0),
+    0
+  );
 
-  const grade = examResults.find((item) => item.examDetails?.find((detail) => detail.grade !== null));
+  const percentage = ((grandTotalMarksObtained / grandTotalMarks) * 100).toFixed(2);
+  const overallPercentage = parseFloat(percentage);
+  const grade = calculateGrade(overallPercentage); 
   
   const handleEditResult = (studentId: number, classId: number) => {
     setSelectedStudent({ studentId, classId});
@@ -88,7 +110,7 @@ const ViewResult = ({ studentId, classId, onClose, refetch, className, firstName
               <TableRow>
                 <TableHead className="text-left">Subject Name</TableHead>
                 <TableHead className="text-left">Total Marks</TableHead>
-                <TableHead>Marks Obtained</TableHead>
+                <TableHead className="text-center">Marks Obtained</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>          
@@ -102,19 +124,20 @@ const ViewResult = ({ studentId, classId, onClose, refetch, className, firstName
                 </TableRow>
               ))}
               <TableRow >
-                <TableCell className="font-bold">Total Marks Obtained</TableCell>
-                {marks && <TableCell className="font-bold float-left text-lg">{marks.examDetails?.find((detail) => detail.studentId === studentId)?.totalMarksObtained}</TableCell>}
+                <TableCell className="font-bold">Grand Total</TableCell>
+                <TableCell className="font-bold float-left text-lg">{grandTotalMarks}</TableCell>
+                <TableCell className="font-bold pe-20 text-lg">{grandTotalMarksObtained}</TableCell>
               </TableRow>
 
               <TableRow >
                 <TableCell className="font-bold">Percentage</TableCell>
-                {percentage && <TableCell className="font-bold float-left text-lg">{percentage.examDetails?.find((detail) => detail.studentId === studentId)?.percentage}%</TableCell>}
+                <TableCell className="font-bold float-left text-lg">{overallPercentage}%</TableCell>
               </TableRow>
 
               <TableRow >
                 <TableCell className="font-bold">Grade</TableCell>
-                {grade && <TableCell className="font-bold float-left text-lg">{grade.examDetails?.find((detail) => detail.studentId === studentId)?.grade}</TableCell>}
-              </TableRow>
+                <TableCell className="font-bold float-left text-lg">{grade}</TableCell>
+              </TableRow> 
               <Button
                 // variant="outline"
                 className="mt-4"

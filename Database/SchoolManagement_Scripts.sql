@@ -1158,10 +1158,16 @@ FOREIGN KEY (SectionId) REFERENCES Sections(SectionId)
 --ALTER Script 03-Dec-2024
 exec sp_rename 'ClassroomAssignments.AssignmentId', 'ClassSectionAssignmentId' , 'Column'
 
---ALTER Script 04-Dec-2024
+--ALTER Script 04-Dec-2024 -- Suffian
 
 ALTER TABLE ExamResults
 ADD TotalMarksObtained INT
 
 ALTER TABLE ExamResults
 DROP COLUMN ClassId
+
+--ALTER Script 06-Dec-2024 -- Suffian
+
+ALTER TABLE ExamResults
+DROP COLUMN TotalMarksObtained, Percentage, Grade 
+
