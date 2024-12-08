@@ -23,6 +23,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 ProfileImage = dto.ProfileImage,
                 CampusId = dto.CampusId,
                 ClassId = dto.ClassId,
+                SectionId = dto.SectionId,
                 IsActive = dto.IsActive,
 
             };
@@ -48,6 +49,8 @@ namespace SchoolManagementSystem.Application.Mappers
                 ProfileImage = entity.ProfileImage,
                 CampusId = entity.CampusId,
                 ClassId = entity.ClassId,
+                SectionId = entity.SectionId,
+                SectionName = entity.Section?.SectionName,
                 ClassName = entity.Class?.ClassName,
                 IsActive = entity.IsActive,
 

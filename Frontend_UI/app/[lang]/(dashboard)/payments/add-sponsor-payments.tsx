@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -24,99 +24,66 @@ import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   SponsorshipData,
   useFetchSponsorshipsQuery,
-  useFetchStudentBySponsorIdQuery,
 } from "@/services/apis/sponsorshipService";
 import { useAddSponsorPaymentMutation } from "@/services/apis/sponsorPaymentService";
-import { StudentData } from "@/services/apis/studentService";
 
 const paymentSchema = z.object({
-  amountPaid: z.string().min(1, "Please Enter Correct Amount"),
-  paymentMethod: z.string().min(1, "Payment method is required"),
-  sponsorshipId: z.array(z.number()).optional(), // Now accepting multiple sponsorship IDs
+  sponsorshipId: z.number().nonnegative("Sponsor is required"),
+  amountPaid: z
+    .number()
+    .positive("Amount must be greater than zero")
+    .min(1, "Minimum amount is 1"),
+  paymentMethod: z.string().nonempty("Payment method is required"),
 });
 
-type PaymentFormValues = z.infer<typeof paymentSchema>;
-type Student = {
-  studentId: number;
-  studentName: string;
-  totalFees: number;
-  paidAmount: number;
-  remainingAmount: number;
-  sponsorshipId: number; // Ensure sponsorshipId is part of student data
-};
+type SponsorPaymentFormValues = z.infer<typeof paymentSchema>;
 
-const AddPaymentForm: React.FC = () => {
-  const { data: sponsorships } = useFetchSponsorshipsQuery();
-  const sponsorship = sponsorships?.data as SponsorshipData[];
+interface PaymentProps {
+  refetch: () => void;
+  sponsorships: SponsorshipData[];
+}
+
+const AddPaymentForm: React.FC<PaymentProps> = ({ refetch,sponsorships }) => {
+ 
+  const sponsorship = sponsorships?.filter(
+    (value, index, self) =>
+      self.findIndex((item) => item.sponsorId === value.sponsorId) === index
+  );
+
   const [addSponsorPayment] = useAddSponsorPaymentMutation();
-  const [sponsorId, setSponsorId] = useState<number | null>(null);
-  const { data: students } = useFetchStudentBySponsorIdQuery(sponsorId || 0);
-  const [selectedSponsorshipIds, setSelectedSponsorshipIds] = useState<
-    number[]
-  >([]);
 
   const {
     register,
     handleSubmit,
-    reset,
     setValue,
     formState: { errors },
-  } = useForm<PaymentFormValues>({
+    reset,
+  } = useForm<SponsorPaymentFormValues>({
     resolver: zodResolver(paymentSchema),
+    defaultValues: {
+      sponsorshipId: 0,
+      amountPaid: 0,
+      paymentMethod: "",
+    },
   });
 
-  const handleSponsorSelection = async (Id: number) => {
-    setSponsorId(Id);
-  };
-
-  // Handle checkbox toggle for sponsorshipId selection
-  const handleCheckboxChange = (sponsorshipId: number) => {
-    setSelectedSponsorshipIds(
-      (prevSelected) =>
-        prevSelected.includes(sponsorshipId)
-          ? prevSelected.filter((id) => id !== sponsorshipId) // Deselect
-          : [...prevSelected, sponsorshipId] // Select
-    );
-  };
-
-  const onSubmit: SubmitHandler<PaymentFormValues> = async (data) => {
-    if (selectedSponsorshipIds.length === 0) {
-      toast.error("Please select at least one sponsorship.");
-      return;
-    }
-
-    // Convert amountPaid to a number
-    const numericAmountPaid = parseFloat(data.amountPaid);
-
-    if (isNaN(numericAmountPaid)) {
-      toast.error("Invalid amount. Please enter a valid number.");
-      return;
-    }
-
-    // Loop through each selected sponsorship ID and submit a payment
-    for (const sponsorshipId of selectedSponsorshipIds) {
-      const response = await addSponsorPayment({
-        ...data,
-        amountPaid: numericAmountPaid, // Convert to number
-        sponsorshipId, // Submit each sponsorship ID separately
-      });
-
-      if (response?.data?.success) {
-        toast.success(`Payment added successfully`);
+  const onSubmit: SubmitHandler<SponsorPaymentFormValues> = async (data) => {
+    try {
+      const response = await addSponsorPayment(data).unwrap();
+      if (response.success) {
+        toast.success("Payment added successfully!");
+        reset();
+        refetch();
       } else {
-        toast.error(
-          `Error adding payment: ${
-            response?.data?.message || "Something went wrong"
-          }`
-        );
+        toast.error(response.message || "Failed to add payment.");
       }
+    } catch (error) {
+      toast.error("An error occurred while adding the payment.");
     }
-
-    reset();
   };
 
   return (
@@ -137,29 +104,34 @@ const AddPaymentForm: React.FC = () => {
         </SheetHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Sponsor Selection */}
             <div className="flex flex-col gap-2 col-span-1">
               <Label>Select Sponsor</Label>
               <Select
                 onValueChange={(value) =>
-                  handleSponsorSelection(parseInt(value))
+                  setValue("sponsorshipId", parseInt(value))
                 }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Sponsor" />
                 </SelectTrigger>
                 <SelectContent>
-                  {sponsorship.map((item) => (
+                  {sponsorship?.map((item) => (
                     <SelectItem
-                      key={item.sponsorId}
-                      value={item?.sponsorId?.toString() ?? ""}
+                      key={item.sponsorshipId}
+                      value={item?.sponsorshipId?.toString() || ''}
                     >
                       {item.sponsorName}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {errors.sponsorshipId && (
+                <p className="text-destructive">{errors.sponsorshipId.message}</p>
+              )}
             </div>
 
+            {/* Amount Paid */}
             <div className="flex flex-col gap-2">
               <Label htmlFor="amountPaid">Enter Amount Paid</Label>
               <InputGroup merged>
@@ -167,10 +139,10 @@ const AddPaymentForm: React.FC = () => {
                   <Icon icon="mdi:money" />
                 </InputGroupText>
                 <Input
-                  type="text"
+                  type="number"
                   placeholder="Enter Amount Paid"
                   id="amountPaid"
-                  {...register("amountPaid")}
+                  {...register("amountPaid", { valueAsNumber: true })}
                 />
               </InputGroup>
               {errors.amountPaid && (
@@ -178,6 +150,7 @@ const AddPaymentForm: React.FC = () => {
               )}
             </div>
 
+            {/* Payment Method */}
             <div className="flex flex-col gap-2">
               <Label htmlFor="paymentMethod">Payment Method</Label>
               <Select
@@ -200,53 +173,7 @@ const AddPaymentForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Student Data Table with Checkbox */}
-          {students?.data?.length > 0 && (
-            <div className="mt-5">
-              <h3>Students for Selected Sponsor</h3>
-              <table className="min-w-full bg-white border border-gray-300">
-                <thead>
-                  <tr>
-                    <th className="py-2 px-4 border-b">Select</th>
-                    <th className="py-2 px-4 border-b">Student Name</th>
-                    <th className="py-2 px-4 border-b">Total Fees</th>
-                    <th className="py-2 px-4 border-b">Paid Amount</th>
-                    <th className="py-2 px-4 border-b">Remaining Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {students?.data?.map((student: any) => (
-                    <tr key={student.studentId}>
-                      <td className="py-2 px-4 border-b">
-                        <input
-                          type="checkbox"
-                          onChange={() =>
-                            handleCheckboxChange(student.sponsorshipId)
-                          }
-                          checked={selectedSponsorshipIds.includes(
-                            student.sponsorshipId
-                          )}
-                        />
-                      </td>
-                      <td className="py-2 px-4 border-b">
-                        {student.studentName}
-                      </td>
-                      <td className="py-2 px-4 border-b">
-                        {student.totalFees}
-                      </td>
-                      <td className="py-2 px-4 border-b">
-                        {student.paidAmount}
-                      </td>
-                      <td className="py-2 px-4 border-b">
-                        {student.remainingAmount}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
+          {/* Submit Button */}
           <div className="col-span-2 my-3">
             <Button type="submit">Submit Form</Button>
           </div>

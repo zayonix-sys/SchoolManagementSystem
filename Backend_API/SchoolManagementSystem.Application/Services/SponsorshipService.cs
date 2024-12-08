@@ -20,12 +20,13 @@ namespace SchoolManagementSystem.Application.Services
 
         }
 
-        public async Task AddSponsorshipAsync(SponsorshipDTO dto)
+        public async Task<int> AddSponsorshipAsync(SponsorshipDTO dto)
         {
             try
             {
                 var model = _mapper.MapToEntity(dto);
-                object value = await _sponsorshipRepository.AddAsync(model);
+                var sponsershipId = await _sponsorshipRepository.AddAsync(model);
+                return (int)sponsershipId;
             }
             catch (Exception)
             {

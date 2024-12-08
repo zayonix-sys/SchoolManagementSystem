@@ -73,6 +73,25 @@ namespace SchoolManagementSystem.Application.Services
 
         }
 
+        public async Task<List<StudentDTO>> GetAllStudentByClassAndSectionAsync(int? classId, int? sectionId)
+        {
+            try
+            {
+                var student = await _studentRepository.GetAllAsync(
+                    filter: a => a.ClassId == classId || a.SectionId == sectionId && a.IsActive,
+                    include: query => query
+                        .Include(c => c.Class)
+                        .Include(sc => sc.Section)
+                );
+                var studentDtos = student.Select(a => _mapper.MapToDto(a)).ToList();
+                return studentDtos;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("An error occurred while fetching attendance records.", ex);
+            }
+        }
+
         public async Task UpdateStudentAsync(Student std)
         {
             await _studentRepository.UpdateAsync(std);

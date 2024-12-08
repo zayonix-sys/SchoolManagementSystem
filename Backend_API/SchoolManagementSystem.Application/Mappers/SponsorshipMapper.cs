@@ -29,17 +29,12 @@ namespace SchoolManagementSystem.Application.Mappers
 
             return new SponsorshipDTO
             {
-                //SponsorshipId = entity.SponsorshipId,
+                SponsorshipId = entity.SponsorshipId,
                 Amount = entity.Amount,
                 Frequency = entity.Frequency,
                 StartDate = entity.StartDate,
                 SponsorId = entity.SponsorId,
                 CreatedBy = entity.CreatedBy,
-
-                //StudentName = entity.Student.FirstName,
-                //Gender = entity.Student.Gender,
-                //PhoneNumber = entity.Sponsor.PhoneNumber,
-                //ClassName = entity.Class?.ClassName,
                 SponsorName = entity?.Sponsor.SponsorName,
                 Details = entity?.SponsorshipDetails?.Select(x => new SponsorshipDetailDTO
                 {

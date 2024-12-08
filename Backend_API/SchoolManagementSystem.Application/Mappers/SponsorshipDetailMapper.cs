@@ -13,7 +13,7 @@ namespace SchoolManagementSystem.Application.Mappers
             {
 
                 Amount = dto.Amount,
-                //SponsorshipId = dto.SponsorshipId,
+                SponsorshipId = dto.SponsorshipId,
                 StudentId = dto.StudentId,
                 ClassId = dto.ClassId,
                 CreatedAt = dto.CreatedAt,
