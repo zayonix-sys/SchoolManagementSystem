@@ -52,7 +52,8 @@ namespace SchoolManagementSystem.Application.Services
             var users = await _userRepository.GetAllAsync(
                 include: query => query
                 .Include(r => r.UserRole)
-                .Include(c => c.Campus));
+                .Include(c => c.Campus)
+                .Include(p => p.Permissions));
             var activeUsers = users.Where(c => c.IsActive);
             var userDtos = activeUsers.Select(c => _mapper.MapToDto(c)).ToList();
             return userDtos;
@@ -78,13 +79,13 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task<UserDTO> ValidUser(LoginDTO dto)
         {
-            // Fetch the user by username, include related UserRole data if necessary
-            var user = (await _userRepository.GetAllAsync(
+            var users = await _userRepository.GetAllAsync(
                 include: query => query
                 .Include(r => r.UserRole)
-            ))
-            .FirstOrDefault(x => x.UserName == dto.UserName);
+                .Include(c => c.Campus)
+                .Include(p => p.Permissions));
 
+            var user = users.FirstOrDefault(x => x.Permissions.Any(p => p.IsActive));
 
             if (user == null)
             {
@@ -99,6 +100,7 @@ namespace SchoolManagementSystem.Application.Services
                 return null;
             }
 
+            user.Permissions = user.Permissions.Where(p => p.IsActive).ToList();
             return _mapper.MapToDto(user);
         }
     }

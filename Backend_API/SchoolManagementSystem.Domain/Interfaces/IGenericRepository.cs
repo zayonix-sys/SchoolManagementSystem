@@ -9,6 +9,11 @@ namespace SchoolManagementSystem.Domain.Interfaces
         Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null,
                                       Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null);
         Task<T> GetByIdAsync(int id);
+        Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate,
+            params Expression<Func<T, object>>[] includes);
+
+        // Find entity based on a predicate
+        Task<T> FindAsync(Expression<Func<T, bool>> predicate);
         Task<object> AddAsync(T entity);
         Task<object> UpdateAsync(T entity);
         Task<object> UpdateAsync(T entity, bool trackingOff);

@@ -13,13 +13,19 @@ import { Icon } from "@iconify/react";
 
 import UserPermissionListTable from "./user-permission-table";
 import AddUserPermission from "./add-user-permission-form";
-import { UserPermissionData } from "@/services/apis/userPermissionService";
+import {
+  useFetchUserPermissionsQuery,
+  UserPermissionData,
+} from "@/services/apis/userPermissionService";
 
-export default function ViewUserPermission({
-  selectedPermission,
-}: {
-  selectedPermission: UserPermissionData | null;
-}) {
+export default function ViewUserPermission() {
+  const { data: userPermissions, refetch } = useFetchUserPermissionsQuery();
+  const permissions = (userPermissions?.data as UserPermissionData[]) || [];
+
+  const handleRefetch = () => {
+    refetch();
+  };
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -38,13 +44,16 @@ export default function ViewUserPermission({
           <SheetTitle>User Permission</SheetTitle>
           {/* <div className="relative"> */}
           <SheetDescription className="absolute top-0 right-4  p-4">
-            <AddUserPermission />
+            <AddUserPermission refetch={handleRefetch} />
           </SheetDescription>
           {/* </div> */}
         </SheetHeader>
         <div>
           <div className="py-6">
-            <UserPermissionListTable />
+            <UserPermissionListTable
+              permissions={permissions}
+              refetch={handleRefetch}
+            />
           </div>
         </div>
         <SheetFooter>

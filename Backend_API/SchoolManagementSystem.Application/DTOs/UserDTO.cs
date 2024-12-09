@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SchoolManagementSystem.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace SchoolManagementSystem.Application.DTOs
 {
@@ -24,6 +25,8 @@ namespace SchoolManagementSystem.Application.DTOs
         public DateTime? CreatedAt { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
+
+        public List<UserPermissionDTO>? Permissions { get; set; } = new List<UserPermissionDTO>();
 
     }
 }

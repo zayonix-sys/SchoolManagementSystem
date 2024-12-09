@@ -15,6 +15,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SiteLogo } from "@/components/svg";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useLoginMutation } from "@/services/apis/userService";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "@/services/authSlice";
 
 const userSchema = z.object({
   username: z.string({ message: "Your username is invalid." }),
@@ -28,6 +30,7 @@ const LogInForm = () => {
   const [passwordType, setPasswordType] = React.useState<string>("password");
   const isDesktop2xl = useMediaQuery("(max-width: 1530px)");
   const [Login] = useLoginMutation();
+  const dispatch = useDispatch();
   // const { login } = useAuthContext();
 
   const togglePasswordType = () => {
@@ -52,34 +55,38 @@ const LogInForm = () => {
 
   const onSubmit: SubmitHandler<UserFormValues> = async (data) => {
     try {
-      // const userData = {
-      //   ...data,
-      //   userName: data.username,
-      //   password: data.password,
-      //   roleName: data.roleName,
-      // };
       const response = await Login(data);
 
       if (response?.data?.success) {
-        const token = response?.data?.data?.token;
-        const role = response?.data?.data?.roleId;
+        const token = response?.data?.data?.token ?? "";
+        const userRoleName = response?.data?.data?.roleName;
         const userId = response?.data?.data?.userId;
         const userName = response?.data?.data?.userName;
+        const permissions = response?.data?.data?.permissions;
         // const sessionTimeout = 15 * 60 * 1000; // 15 minutes
-        toast.success(`${data.username} logged in successfully!`);
-        // const expiryTime = new Date(
-        //   new Date().getTime() + sessionTimeout
-        // ).toISOString();
-        localStorage.setItem("authToken", token ?? "");
-        localStorage.setItem("userId", `${userId ?? 0}`);
-        localStorage.setItem("userName", userName ?? "");
-        // localStorage.setItem("authTokenExpiry", expiryTime);
-        localStorage.setItem("role", `${role ?? 0}`);
-        window.location.assign("/");
 
+        dispatch(
+          loginSuccess({
+            authtoken: token,
+            user: {
+              userId: userId ?? 0,
+              userFullName: userName ?? "",
+              userRoleName: userRoleName ?? "",
+            },
+            permissions:
+              (permissions ?? []).map((permission) => ({
+                ...permission,
+                entity: permission.entity ?? "", // provide a default value if entity is undefined
+                isActive: permission.isActive ?? false, // provide a default value if isActive is undefined
+              })) ?? [],
+          })
+        );
+        toast.success(`${data.username} logged in successfully!`);
+        window.location.assign("/");
         reset();
       } else {
         console.error("Error:", response);
+
         toast.error(
           `Error: ${response?.data?.message || "Something went wrong"}`
         );

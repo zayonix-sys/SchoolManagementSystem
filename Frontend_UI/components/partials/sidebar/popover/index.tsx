@@ -13,6 +13,8 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { usePathname } from "next/navigation";
 import AddBlock from "../common/add-block";
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reduxStore";
 
 const PopoverSidebar = ({ trans }: { trans: string }) => {
   const { collapsed, sidebarBg } = useSidebar();
@@ -20,6 +22,30 @@ const PopoverSidebar = ({ trans }: { trans: string }) => {
   const menus = menusConfig?.sidebarNav?.classic || [];
   const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
   const [activeMultiMenu, setMultiMenu] = useState<number | null>(null);
+
+  const permissions = useSelector((state: RootState) => state.auth.permissions);
+  const permittedEntities = permissions.map((permission) => permission.entity);
+
+  const filteredMenu = menus
+    .map((menu) => {
+      // Filter children in the current menu based on permitted entities
+      const filteredChildren = menu.child?.filter((child) =>
+        permittedEntities.includes(child.href ?? "")
+      );
+
+      // Return the menu only if it has matching children
+      if (filteredChildren && filteredChildren.length > 0) {
+        return { ...menu, child: filteredChildren };
+      }
+
+      return null; // Exclude menus with no matching children
+    })
+    .filter(Boolean); // Remove null values
+
+  console.log("filteredMenu", filteredMenu);
+
+  console.log("filteredMenu", filteredMenu);
+  console.log("withoutfilteredMenu", menus);
 
   const toggleSubmenu = (i: number) => {
     if (activeSubmenu === i) {
@@ -43,7 +69,7 @@ const PopoverSidebar = ({ trans }: { trans: string }) => {
   React.useEffect(() => {
     let subMenuIndex = null;
     let multiMenuIndex = null;
-    menus?.map((item: any, i: number) => {
+    filteredMenu?.map((item: any, i: number) => {
       if (item?.child) {
         item.child.map((childItem: any, j: number) => {
           if (isLocationMatch(childItem.href, locationName)) {
@@ -94,11 +120,11 @@ const PopoverSidebar = ({ trans }: { trans: string }) => {
             " space-y-2 text-center": collapsed,
           })}
         >
-          {menus.map((item, i) => (
+          {filteredMenu.map((item, i) => (
             <li key={`menu_key_${i}`}>
               {/* single menu  */}
 
-              {!item.child && !item.isHeader && (
+              {!item?.child && !item?.isHeader && (
                 <SingleMenuItem
                   item={item}
                   collapsed={collapsed}
@@ -107,12 +133,12 @@ const PopoverSidebar = ({ trans }: { trans: string }) => {
               )}
 
               {/* menu label */}
-              {item.isHeader && !item.child && !collapsed && (
+              {item?.isHeader && !item?.child && !collapsed && (
                 <MenuLabel item={item} trans={trans} />
               )}
 
               {/* sub menu */}
-              {item.child && (
+              {item?.child && (
                 <>
                   <SubMenuHandler
                     item={item}
@@ -130,7 +156,6 @@ const PopoverSidebar = ({ trans }: { trans: string }) => {
                       activeSubmenu={activeSubmenu}
                       item={item}
                       index={i}
-
                       trans={trans}
                     />
                   )}

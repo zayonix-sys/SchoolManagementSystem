@@ -17,19 +17,15 @@ namespace SchoolManagementSystem.Domain.Entities
         public int UserId { get; set; }
         [Required]
         [StringLength(50)]
-        public string Entity { get; set; }
+        public string? Entity { get; set; }
 
-        [Required]
-        public bool CanCreate { get; set; }
+        public bool? CanCreate { get; set; }
 
-        [Required]
-        public bool CanRead { get; set; }
+        public bool? CanRead { get; set; }
 
-        [Required]
-        public bool CanUpdate { get; set; }
+        public bool? CanUpdate { get; set; }
 
-        [Required]
-        public bool CanDelete { get; set; }
+        public bool? CanDelete { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
