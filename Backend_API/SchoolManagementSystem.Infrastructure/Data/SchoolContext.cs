@@ -84,6 +84,11 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
             modelBuilder.Entity<DashboardCountView>()
                           .HasNoKey();
+           modelBuilder.Entity<User>()
+            .HasMany(u => u.Permissions) // Navigation property in User
+            .WithOne(up => up.Users) // Navigation property in UserPermission
+            .HasForeignKey(up => up.UserId); // Foreign key in UserPermission
+
 
 
             // Map the entity to the SQL Server view

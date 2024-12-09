@@ -15,24 +15,37 @@ import { toast } from "sonner";
 import ConfirmationDialog from "../../common/confirmation-dialog";
 import {
   useDeleteUserPermissionMutation,
-  useFetchUserPermissionsQuery,
   UserPermissionData,
 } from "@/services/apis/userPermissionService";
 
-const UserPermissionListTable = () => {
+interface UserPermission {
+  permissions: UserPermissionData[];
+  refetch: () => void;
+}
+
+const UserPermissionListTable: React.FC<UserPermission> = ({
+  permissions,
+  refetch,
+}) => {
   const [filteredPermissions, setFilteredPermissions] = useState<
     UserPermissionData[]
   >([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: userPermissions, refetch } = useFetchUserPermissionsQuery();
   const [deleteUserPermission] = useDeleteUserPermissionMutation();
-  const permissions = (userPermissions?.data as UserPermissionData[]) || [];
   const [permissionToDelete, setPermissionToDelete] = useState<number | null>(
     null
   );
-  const itemsPerPage = 50;
+  const itemsPerPage = 7;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredPermissions?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const totalPages = Math.ceil(filteredPermissions?.length / itemsPerPage);
 
   useEffect(() => {
     const filtered = permissions.filter(
@@ -52,7 +65,13 @@ const UserPermissionListTable = () => {
   const handleCancelDelete = () => {
     setPermissionToDelete(null);
   };
+  const handlePreviousPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
 
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
   const handleDelete = async (id: number) => {
     try {
       await deleteUserPermission(id);
@@ -88,7 +107,7 @@ const UserPermissionListTable = () => {
         </TableHeader>
 
         <TableBody>
-          {filteredPermissions?.map((item) => (
+          {currentItems?.map((item) => (
             <TableRow key={item.permissionId} className="hover:bg-default-200">
               <TableCell className="p-2.5">{item.userName}</TableCell>
               <TableCell className="p-2.5">{item.roleName}</TableCell>
@@ -120,6 +139,17 @@ const UserPermissionListTable = () => {
           ))}
         </TableBody>
       </Table>
+      <div className="flex justify-between items-center mt-4">
+        <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
+          Previous
+        </Button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+          Next
+        </Button>
+      </div>
       {permissionToDelete !== null && (
         <ConfirmationDialog
           onDelete={() => handleDelete(permissionToDelete)}

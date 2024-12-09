@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ApiResponse } from "./apiResponse";
+import { UserPermissionData } from "./userPermissionService";
 export interface UserData {
   userId?: number;
   userName?: string;
@@ -9,6 +10,7 @@ export interface UserData {
   roleName?: string;
   campusId?: number;
   createdAt?: Date;
+  permissions?: UserPermissionData[];
 }
 
 export const userApi = createApi({

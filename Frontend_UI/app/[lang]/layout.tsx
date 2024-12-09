@@ -31,12 +31,12 @@ export default function RootLayout({
     <html lang={lang}>
       <AuthProvider>
         <TanstackProvider>
+          <ReduxProvider>
             <Providers>
-              <ReduxProvider>
-                <DirectionProvider lang={lang}>{children}</DirectionProvider>
-              </ReduxProvider>
-            </Providers>  
-          </TanstackProvider>
+              <DirectionProvider lang={lang}>{children}</DirectionProvider>
+            </Providers>
+          </ReduxProvider>
+        </TanstackProvider>
       </AuthProvider>
     </html>
   );
