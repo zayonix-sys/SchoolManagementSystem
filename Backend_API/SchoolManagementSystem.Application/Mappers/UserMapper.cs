@@ -23,7 +23,16 @@ namespace SchoolManagementSystem.Application.Mappers
                 UpdatedAt = entity.UpdatedAt,
                 UserId = entity.UserId,
                 RoleName = entity?.UserRole?.RoleName,
-                CampusName = entity.Campus?.CampusName
+                CampusName = entity.Campus?.CampusName,
+                Permissions = entity?.Permissions?.Select(per => new UserPermissionDTO
+                {
+                    PermissionId = per.PermissionId,
+                    Entity = per.Entity,
+                    UserId = per.UserId,
+                    IsActive = per.IsActive,
+                    CreatedBy = per.CreatedBy,
+                    CreatedAt = per.CreatedAt
+                }).ToList()
             };
         }
 

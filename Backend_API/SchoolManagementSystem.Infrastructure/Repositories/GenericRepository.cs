@@ -81,6 +81,25 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             return key;
         }
 
+
+        public async Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate,
+            params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+
+            // Apply eager loading for all included related entities
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.Where(predicate).ToListAsync();
+        }
+
+        public async Task<T> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.AsQueryable().FirstOrDefaultAsync(predicate);
+        }
         public async Task<object> UpdateAsync(T entity, bool trackingOff)
         {
             var entityType = entity.GetType();

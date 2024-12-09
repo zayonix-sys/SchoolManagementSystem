@@ -12,6 +12,8 @@ import SingleMenuItem from "./single-menu-item";
 import SubMenuHandler from "./sub-menu-handler";
 import NestedSubMenu from "../common/nested-menus";
 import AddBlock from "../common/add-block";
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reduxStore";
 const ClassicSidebar = ({ trans }: { trans: string }) => {
   const { sidebarBg } = useSidebar();
   const [activeSubmenu, setActiveSubmenu] = useState<number | null>(null);
@@ -20,6 +22,25 @@ const ClassicSidebar = ({ trans }: { trans: string }) => {
   const { collapsed, setCollapsed } = useSidebar();
   const { isRtl } = useThemeStore();
   const [hovered, setHovered] = useState<boolean>(false);
+
+  const permissions = useSelector((state: RootState) => state.auth.permissions);
+  const permittedEntities = permissions.map((permission) => permission.entity);
+
+  const filteredMenu = menus
+    .map((menu) => {
+      // Filter children in the current menu based on permitted entities
+      const filteredChildren = menu.child?.filter((child) =>
+        permittedEntities.includes(child.href ?? "")
+      );
+
+      // Return the menu only if it has matching children
+      if (filteredChildren && filteredChildren.length > 0) {
+        return { ...menu, child: filteredChildren };
+      }
+
+      return null; // Exclude menus with no matching children
+    })
+    .filter(Boolean); // Remove null values
 
   const toggleSubmenu = (i: number) => {
     if (activeSubmenu === i) {
@@ -43,7 +64,7 @@ const ClassicSidebar = ({ trans }: { trans: string }) => {
   React.useEffect(() => {
     let subMenuIndex = null;
     let multiMenuIndex = null;
-    menus?.map((item: any, i: number) => {
+    filteredMenu?.map((item: any, i: number) => {
       if (item?.child) {
         item.child.map((childItem: any, j: number) => {
           if (isLocationMatch(childItem.href, locationName)) {
@@ -98,11 +119,11 @@ const ClassicSidebar = ({ trans }: { trans: string }) => {
             "text-start": collapsed && hovered,
           })}
         >
-          {menus.map((item, i) => (
+          {filteredMenu.map((item, i) => (
             <li key={`menu_key_${i}`}>
               {/* single menu  */}
 
-              {!item.child && !item.isHeader && (
+              {!item?.child && !item?.isHeader && (
                 <SingleMenuItem
                   item={item}
                   collapsed={collapsed}
@@ -112,12 +133,12 @@ const ClassicSidebar = ({ trans }: { trans: string }) => {
               )}
 
               {/* menu label */}
-              {item.isHeader && !item.child && (!collapsed || hovered) && (
+              {item?.isHeader && !item?.child && (!collapsed || hovered) && (
                 <MenuLabel item={item} trans={trans} />
               )}
 
               {/* sub menu */}
-              {item.child && (
+              {item?.child && (
                 <>
                   <SubMenuHandler
                     item={item}
@@ -136,8 +157,6 @@ const ClassicSidebar = ({ trans }: { trans: string }) => {
                       activeSubmenu={activeSubmenu}
                       item={item}
                       index={i}
-
-
                       trans={trans}
                     />
                   )}

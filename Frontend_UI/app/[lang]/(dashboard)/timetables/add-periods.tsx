@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { addPeriod } from '@/services/periodService';
+import { useAddPeriodMutation } from '@/services/apis/periodService';
 
 const addPeriodSchema = z.object({
   periodId: z.coerce.number().optional(),
@@ -22,7 +22,8 @@ const addPeriodSchema = z.object({
 
 type AddPeriodFormValues = z.infer<typeof addPeriodSchema>;
 
-export default function AddPeriods() {
+export default function AddPeriods({refetch}: {refetch: () => void}) {
+  const [addPeriod] = useAddPeriodMutation();
   const {
     register,
     handleSubmit,
@@ -46,11 +47,12 @@ export default function AddPeriods() {
     try {
       const response = await addPeriod(formData);
 
-      if (response.success) {
+      if (response.data?.success) {
         toast.success('Period added successfully!');
+        refetch();
         reset();
       } else {
-        toast.error(response.message || "Something went wrong");
+        toast.error(response.data?.message || "Something went wrong");
       }
     } catch (error) {
       toast.error("Request Failed");

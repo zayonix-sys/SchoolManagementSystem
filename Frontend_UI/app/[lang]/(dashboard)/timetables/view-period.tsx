@@ -9,15 +9,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { PeriodsData } from "@/services/periodService";
 import PeriodsListTable from "./periods-table";
 import AddPeriods from "./add-periods";
+import { PeriodData } from "@/services/apis/periodService";
 
 
 export default function ViewPeriod({
   periods,
+  refetch,
 }: {
-  periods: PeriodsData[] | null;
+  periods: PeriodData[];
+  refetch: () => void;
 }) {
   return (
     <Sheet>
@@ -35,10 +37,10 @@ export default function ViewPeriod({
           <SheetTitle>Class Periods</SheetTitle>
         </SheetHeader>
         <div className="flex flex-row-reverse">
-          <AddPeriods />
+          <AddPeriods refetch={refetch} />
         </div>
         <div className="py-6">
-          <PeriodsListTable Periods={periods ?? []} />
+          <PeriodsListTable Periods={periods} refetch={refetch} />
         </div>
         <SheetFooter>
           <SheetClose asChild>footer content</SheetClose>

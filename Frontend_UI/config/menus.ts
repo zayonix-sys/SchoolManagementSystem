@@ -142,4 +142,3 @@ export const menusConfig = generateMenus(menuItems);
 export type ModernNavType = (typeof menusConfig.sidebarNav.modern)[number];
 export type ClassicNavType = (typeof menusConfig.sidebarNav.classic)[number];
 export type MainNavType = (typeof menusConfig.mainNav)[number];
-

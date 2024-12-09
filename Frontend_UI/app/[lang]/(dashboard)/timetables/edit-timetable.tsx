@@ -15,18 +15,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  fetchTimeTable,
-  TimeTableData,
-  updateTimeTable,
-} from "@/services/TimeTableService";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TimeTableData, useDeleteTimeTableMutation, useUpdateTimeTableMutation } from "@/services/apis/timetableService";
 import { AssignClassSubjectData } from "@/services/apis/assignClassSubjectService";
 
 const timetableSchema = z.object({
@@ -46,18 +36,14 @@ const timetableSchema = z.object({
 type TimeTableFormValues = z.infer<typeof timetableSchema>;
 
 interface EditTimeTableProps {
-  timetableData: TimeTableData[];
-  useSubjectData: AssignClassSubjectData[];
+  periodData: TimeTableData[];
+  assignSubject: AssignClassSubjectData[];
+  timetable: TimeTableData[];
+  refetch: () => void
 }
-const EditTimeTable: React.FC<EditTimeTableProps> = ({
-  timetableData,
-  useSubjectData,
-}) => {
-  const [timeTable, setTimeTable] = useState<TimeTableData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const { campusId, classId, subjectId, periodId, dayOfWeek } =
-    timetableData[0];
+const EditTimeTable: React.FC<EditTimeTableProps> = ({ periodData, assignSubject, timetable, refetch }) => {
+  const [updateTimeTable] = useUpdateTimeTableMutation();
+  const { campusId, classId, subjectId, periodId, dayOfWeek } = periodData[0];
 
   const {
     setValue,
@@ -68,7 +54,7 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({
   } = useForm<TimeTableFormValues>({
     resolver: zodResolver(timetableSchema),
     defaultValues: {
-      timetableId: timetableData[0].timetableId,
+      timetableId: periodData[0].timetableId,
       campusId,
       classId,
       subjectId,
@@ -80,40 +66,16 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({
   const subjectIdWatch = watch("subjectId");
   console.log("Current Subject ID:", subjectIdWatch);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [timetableResponse] = await Promise.all([fetchTimeTable()]);
-        setTimeTable(timetableResponse.data as TimeTableData[]);
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   const onSubmit: SubmitHandler<TimeTableFormValues> = async (data) => {
     console.log("Timetable Data:", data);
     try {
-      // const updatedTimeTable = { ...data, timetableId: timetableData[0].timetableId };
       const updatedTimeTable = { ...data };
 
       const response = await updateTimeTable(updatedTimeTable);
 
-      if (response.success) {
-        setTimeTable((prevTimeTable) =>
-          prevTimeTable.map((per) =>
-            per.subjectId === updatedTimeTable.subjectId
-              ? updatedTimeTable
-              : per
-          )
-        );
-
+      if (response.data?.success) {
         toast.success(`TimeTable Updated Successfully!`);
+        refetch();
         reset();
       } else {
         toast.error("Failed to update the Time Table");
@@ -160,7 +122,7 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({
                       <SelectValue placeholder="Select Campus" />
                     </SelectTrigger>
                     <SelectContent>
-                      {timetableData.map((campuses) => (
+                      {periodData.map((campuses) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={campuses.campusId}
@@ -190,7 +152,7 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({
                       <SelectValue placeholder="Select Class" />
                     </SelectTrigger>
                     <SelectContent>
-                      {timetableData.map((classes) => (
+                      {periodData.map((classes) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={classes.classId}
@@ -219,7 +181,7 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({
                       <SelectValue placeholder="Select Subject" />
                     </SelectTrigger>
                     <SelectContent>
-                      {timeTable
+                      {timetable
                         .map((tt) => ({
                           subjectName: tt.subjectName,
                           subjectId: tt.subjectId,
@@ -264,7 +226,7 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({
                       <SelectValue placeholder="Select Day of the Week" />
                     </SelectTrigger>
                     <SelectContent>
-                      {timetableData.map((day) => (
+                      {periodData.map((day) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={day.dayOfWeek}
@@ -294,7 +256,7 @@ const EditTimeTable: React.FC<EditTimeTableProps> = ({
                       <SelectValue placeholder="Select Period" />
                     </SelectTrigger>
                     <SelectContent>
-                      {timetableData.map((periods) => (
+                      {periodData.map((periods) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={periods.periodId}

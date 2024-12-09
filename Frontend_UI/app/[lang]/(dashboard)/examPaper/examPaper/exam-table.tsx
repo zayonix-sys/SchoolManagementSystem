@@ -18,7 +18,7 @@ import ConfirmationDialog from "../../common/confirmation-dialog";
 import EditExamPaper from "./edit-exampaper";
 import { QuestionsData } from "@/services/apis/qBankService";
 import { ExamPaperData, useDeleteExamPaperMutation } from "@/services/apis/examPaperService";
-import { ExamPaperPDFData, useFetchExamPaperPDFQuery } from "@/services/apis/examPaperPDFService";
+import { useFetchExamPaperPDFQuery } from "@/services/apis/examPaperPDFService";
 
 interface QuestionProps{
   questionBank: QuestionsData[];
@@ -108,12 +108,6 @@ const ExamPaperTable: React.FC<QuestionProps> = ({ questionBank, refetch, examPa
           }; 
         }
         toast.success("ExamPaper deleted successfully");
-        // examPaper((prevExamPapers) =>
-        //   prevExamPapers.filter(
-        //     (item) =>
-        //       !(item.classId === params.classId && item.subjectId === params.subjectId)
-        //   )
-        // );
         refetch();
       }
   
