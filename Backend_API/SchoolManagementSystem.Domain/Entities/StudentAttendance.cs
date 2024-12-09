@@ -12,9 +12,9 @@ namespace SchoolManagementSystem.Domain.Entities
         [ForeignKey("StudentId")]
         public int? StudentId { get; set; }
 
-        [Required]
-        [ForeignKey("CampusId")]
-        public int? CampusId { get; set; }
+        //[Required]
+        //[ForeignKey("CampusId")]
+        //public int? CampusId { get; set; }
 
         [Required]
         [ForeignKey("ClassId")]
@@ -25,7 +25,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public int? SectionId { get; set; }
 
         [Required]
-        public DateTime? AttendanceDate { get; set; }
+        public DateOnly? AttendanceDate { get; set; }
 
         [MaxLength(20)]
         public string? AttendanceStatus { get; set; }
@@ -45,7 +45,7 @@ namespace SchoolManagementSystem.Domain.Entities
         // Navigation Properties
 
         public Student? Student { get; set; }
-        public Campus? Campus { get; set; }
+        //public Campus? Campus { get; set; }
         public Class? Class { get; set; }
         public Section? Section { get; set; }
         public User? CreatedUser { get; set; }

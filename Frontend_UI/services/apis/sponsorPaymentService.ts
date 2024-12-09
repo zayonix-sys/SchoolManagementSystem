@@ -4,6 +4,7 @@ import { ApiResponse } from "./apiResponse";
 export interface PaymentData {
   paymentId?: number;
   sponsorshipId?: number;
+  sponsorshipDetailId?: number;
   sponsorId?: number;
   sponsorName?: string;
   firstName?: string;
@@ -12,6 +13,7 @@ export interface PaymentData {
   paymentDate?: string;
   amountPaid?: number;
   paymentMethod?: string;
+  totalPaid?: number;
   isActive?: boolean;
 }
 

@@ -13,7 +13,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public string ClassName { get; set; }
 
         [StringLength(255)]
-        public string ClassDescription { get; set; }
+        public string? ClassDescription { get; set; }
 
         [Required]
         public int Capacity { get; set; }

@@ -9,7 +9,7 @@
 
         public int? ClassId { get; set; }
         public int? StudentId { get; set; }
-        public string StudentName { get; set; }
+        public string? StudentName { get; set; }
         public string? ClassName { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int? CreatedBy { get; set; }

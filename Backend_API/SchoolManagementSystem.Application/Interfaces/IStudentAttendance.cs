@@ -8,10 +8,10 @@ namespace SchoolManagementSystem.Application.Interfaces
         Task<List<StudentAttendanceDTO>> GetAllStudentsAttendanceAsync();
         Task<StudentAttendanceDTO> GetStudentAttendanceByIdAsync(int stdId);
 
-        Task<List<StudentAttendanceDTO>> GetStudentAttendanceByClassSectionId(int classId, int sectionId);
         Task AddStudentAttendanceAsync(StudentAttendanceDTO dto);
         Task UpdateStudentAttendanceAsync(StudentAttendanceDTO dto);
         Task DeleteStudentAttendanceAsync(int attendanceId);
+        Task<List<StudentAttendanceDTO>> GetStudentAttendanceByClassSectionId(int classId, int sectionId, DateOnly attendanceDate);
 
     }
 }

@@ -165,7 +165,7 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDeleteConfirmation(item.sponsorId)}
+                    onClick={() => handleDeleteConfirmation(item.sponsorshipId)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>

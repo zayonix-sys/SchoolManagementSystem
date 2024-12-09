@@ -2,15 +2,18 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ApiResponse } from "./apiResponse";
 export interface StudentData {
   studentId: number;
-  grNo: number;
+  grNo?: number;
   firstName?: string;
   lastName?: string;
+  // studentName?: string;
+  sectionId?: number;
+  sectionName?: string;
   profileImage?: string | null;
   email?: string;
   gender?: string;
   phoneNumber?: string;
-  dateOfBirth: string | Date;
-  enrollmentDate: Date | string;
+  dateOfBirth?: string | Date;
+  enrollmentDate?: Date | string;
   className?: string;
   classId?: number | null;
   campusId?: number;
@@ -36,6 +39,10 @@ export const studentApi = createApi({
     fetchStudentByClassWise: builder.query<ApiResponse<StudentData>, number>({
       query: (id) => `GetStudentsClassWise?classId=${id}`,
     }),
+    fetchStudentByClassSection: builder.query<ApiResponse<StudentData[]>, { classId: number; sectionId?: number }>({
+      query: ({ classId, sectionId }) => `GetAllStudentByClassAndSection?classId=${classId}&sectionId=${sectionId}`,
+    }),
+    
     
     updateStudent: builder.mutation<ApiResponse<void>, StudentData>({
       query: (studentData) => ({
@@ -58,6 +65,7 @@ export const {
   useFetchStudentByClassWiseQuery,
   useUpdateStudentMutation,
   useDeleteStudentMutation,
+  useFetchStudentByClassSectionQuery,
 } = studentApi;
 
 export default studentApi;

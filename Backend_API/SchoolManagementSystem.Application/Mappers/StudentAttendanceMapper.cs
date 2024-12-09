@@ -14,7 +14,7 @@ namespace SchoolManagementSystem.Application.Mappers
 
 
                 StudentId = dto.StudentId,
-                CampusId = dto.CampusId,
+                //CampusId = dto.CampusId,
                 ClassId = dto.ClassId,
                 SectionId = dto.SectionId,
                 AttendanceDate = dto.AttendanceDate,
@@ -34,7 +34,7 @@ namespace SchoolManagementSystem.Application.Mappers
             {
                 AttendanceId = entity.AttendanceId,
                 StudentId = entity.StudentId,
-                CampusId = entity.CampusId,
+                //CampusId = entity.CampusId,
                 ClassId = entity.ClassId,
                 SectionId = entity.SectionId,
                 AttendanceDate = entity.AttendanceDate,
@@ -45,7 +45,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 GrNo = entity.Student.GrNo,
                 ClassName = entity.Class.ClassName,
                 SectionName = entity.Section.SectionName,
-                CampusName = entity.Campus.CampusName,
+                //CampusName = entity.Campus.CampusName,
 
 
 
