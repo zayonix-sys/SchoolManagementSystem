@@ -92,8 +92,9 @@ builder.Services.AddScoped<SponsorshipDetailMapper>();
 builder.Services.AddScoped<IExamPaperPDF, ExamPaperPdfService>();
 builder.Services.AddScoped<IExam, ExamService>();
 builder.Services.AddScoped<ExamMapper>();
-//builder.Services.AddScoped<IExamResult, ExamResultService>();
-//builder.Services.AddScoped<ExamResultMapper>();
+builder.Services.AddScoped<IExamResult, ExamResultService>();
+builder.Services.AddScoped<ExamResultMapper>();
+builder.Services.AddScoped<IExamResultPDF, ExamResultPdfService>();
 
 builder.Services.AddScoped<IStudentAttendance, StudentAttendanceService>();
 builder.Services.AddScoped<StudentAttendanceMapper>();

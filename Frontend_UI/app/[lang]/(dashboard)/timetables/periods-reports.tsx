@@ -3,16 +3,17 @@
 import { Docs } from "@/components/svg";
 import { Card } from "@/components/ui/card";
 import React, { Fragment } from "react";
-import { PeriodsData } from "@/services/periodService";
 import ViewPeriod from "./view-period";
+import { PeriodData } from "@/services/apis/periodService";
 
 interface PeriodsProps {
-  Periods: PeriodsData[];
+  Periods: PeriodData[];
+  refetch: () => void
 }
 
-export default function PeriodsReports({ Periods }: PeriodsProps) {
+export default function PeriodsReports({ Periods, refetch }: PeriodsProps) {
   
-  const periodCount = Periods.length.toString();
+  const periodCount = Periods?.length.toString();
 
   interface ReportItem {
     id: number;
@@ -50,7 +51,7 @@ export default function PeriodsReports({ Periods }: PeriodsProps) {
                <div className={"text-3xl font-semibold text-${item.color} mt-1"}>
               {item.count}
             </div>
-            {item.id === 1 && <ViewPeriod periods={Periods} />}
+            {item.id === 1 && <ViewPeriod periods={Periods} refetch={refetch} />}
             </div>
           </Card>
         ))
