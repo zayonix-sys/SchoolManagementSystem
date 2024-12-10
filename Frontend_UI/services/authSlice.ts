@@ -48,6 +48,7 @@ const authSlice = createSlice({
       state.permissions = action.payload.permissions;
       state.isAuthenticated = true;
       localStorage.setItem("authToken", action.payload.authtoken);
+      // localStorage.setItem("userFullName", action.payload.user.userFullName);
       localStorage.setItem(
         "userId",
         action.payload.user.userId?.toString() || ""

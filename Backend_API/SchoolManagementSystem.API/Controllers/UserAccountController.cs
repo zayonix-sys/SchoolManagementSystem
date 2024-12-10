@@ -93,16 +93,16 @@ namespace SchoolManagementSystem.API.Controllers
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateUser(UserDTO dto)
         {
-            _logger.LogInformation("Adding a new user  with name {userName}.", dto.UserName);
+            _logger.LogInformation("Adding a new user  with name {userName}.", dto.UserId);
             try
             {
                 await _userAccountService.UpdateUserAsync(dto);
-                _logger.LogInformation("Adding a new user  with name {UserName}.", dto.UserName);
+                _logger.LogInformation("Adding a new user  with name {userName}.", dto.UserId);
                 return Ok(ApiResponse<UserDTO>.SuccessResponse(dto, "user  Added successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while updating user  with ID {userId}.", dto.UserName);
+                _logger.LogError(ex, "An error occurred while updating user  with ID {userName}.", dto.UserId);
                 return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
             }
         }

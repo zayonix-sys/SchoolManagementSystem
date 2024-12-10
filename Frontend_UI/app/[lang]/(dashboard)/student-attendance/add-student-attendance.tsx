@@ -52,7 +52,7 @@ const AddStudentAttendance: React.FC<StudentAttendanceProps> = ({
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Set 10 items per page
-  const totalPages = Math.ceil(students.length / itemsPerPage);
+  const totalPages = Math.ceil(students?.length / itemsPerPage);
 
   const [attendance, setAttendance] = useState<Record<number, string>>({});
   const [existingAttendance, setExistingAttendance] = useState<Record<number, boolean>>({});
@@ -87,7 +87,7 @@ const AddStudentAttendance: React.FC<StudentAttendanceProps> = ({
     e.preventDefault();
 
     const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().slice(0, 10);
+    const formattedDate = currentDate?.toISOString().slice(0, 10);
 
     const attendanceEntries = students
       .filter((student) => !existingAttendance[student.studentId])
@@ -126,7 +126,7 @@ const AddStudentAttendance: React.FC<StudentAttendanceProps> = ({
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const currentStudents = students.slice(
+  const currentStudents = students?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
