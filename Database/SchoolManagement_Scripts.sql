@@ -412,19 +412,21 @@ CREATE TABLE Employees (
 CREATE INDEX IDX_Employees_RoleId ON Employees(RoleId);
 
 CREATE TABLE EmployeeAttendance (
-    AttendanceId INT PRIMARY KEY IDENTITY,
+    EmployeeAttendanceId INT PRIMARY KEY IDENTITY(1,1),
     EmployeeId INT,
-    AttendanceDate DATE,
-    AttendanceStatus NVARCHAR(20), -- e.g., "Present", "Absent"
-    CreatedAt DATETIME DEFAULT GETDATE(),
-    CreatedBy INT,
-    UpdatedAt DATETIME DEFAULT GETDATE(),
-    UpdatedBy INT,
-    IsActive BIT DEFAULT 1,
+	CampusId INT Null,
+    AttendanceDate DATE Default GetDate(),
+    AttendanceStatus NVARCHAR(20),
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT Null,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT Null,
+	IsActive BIT DEFAULT 1
 
-    FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
-    FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
-    FOREIGN KEY (EmployeeId) REFERENCES Employees(EmployeeId)
+	FOREIGN KEY (EmployeeId) REFERENCES Employees(EmployeeId),
+	FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId),
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
 CREATE INDEX IDX_EmployeeAttendance_EmployeeId ON EmployeeAttendance(EmployeeId);
 
@@ -675,10 +677,10 @@ CREATE INDEX IDX_ExamResults_StudentId ON ExamResults(StudentId);
 CREATE INDEX IDX_ExamResults_ExamId ON ExamResults(ExamId);
 
 CREATE TABLE Grades (
-    GradeId INT PRIMARY KEY IDENTITY,
+    GradeId INT PRIMARY KEY IDENTITY(1,1),
     StudentId INT,
 	SubjectId INT,
-    Grade NVARCHAR(5),
+    GradeName NVARCHAR(5),
     DateAwarded DATE,
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
@@ -1163,9 +1165,13 @@ FOREIGN KEY (SectionId) REFERENCES Sections(SectionId)
 exec sp_rename 'ClassroomAssignments.AssignmentId', 'ClassSectionAssignmentId' , 'Column'
 
 --ALTER Script 04-Dec-2024 -- Suffian
+ALTER TABLE ExamResults
+ADD CONSTRAINT FK_ExamResult_ExamPaperId
+FOREIGN KEY (ExamPaperId) REFERENCES ExamPaper(ExamPaperId)
 
 ALTER TABLE ExamResults
-ADD TotalMarksObtained INT
+ADD MarksObtained INT
+
 
 ALTER TABLE ExamResults
 DROP COLUMN ClassId
@@ -1201,7 +1207,6 @@ CREATE TABLE SponsorshipDetails (
 	FOREIGN KEY (ClassId) REFERENCES Classes(ClassId),
 );
 CREATE INDEX IDX_SponsorshipDetails_SponsorId ON SponsorshipDetails(SponsorshipId);
-
 --Dashboard Scripts for view Table
 USE school_management_sqldb
 GO

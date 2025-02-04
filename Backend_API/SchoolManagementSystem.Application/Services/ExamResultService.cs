@@ -79,7 +79,7 @@ namespace SchoolManagementSystem.Application.Services
             try
             {
                 var existingEntities = await _examResultRepository.GetByIdAsync(examResultId);
-                if(existingEntities != null)
+                if (existingEntities != null)
                 {
                     existingEntities.IsActive = false;
                     await _examResultRepository.UpdateAsync(existingEntities);
@@ -97,9 +97,31 @@ namespace SchoolManagementSystem.Application.Services
             {
                 var exams = await _examResultRepository.GetAllAsync(include: query => query
                     .Include(c => c.Student)
-                    .ThenInclude(c=> c.Class)
+                    .ThenInclude(c => c.Class)
                     .Include(c => c.ExamPaper)
-                    .ThenInclude(c=>c.Subject)
+                    .ThenInclude(c => c.Subject)
+                    );
+                var results = exams.Where(a => a.IsActive);
+                var resultDtos = results.Select(c => _examResultMapper.MapToDto(c)).ToList();
+                return resultDtos;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<ExamResultDTO>> GetExamResultsByClassAsync(int classId)
+        {
+            try
+            {
+                var exams = await _examResultRepository.GetAllAsync(
+                    filter: result => result.ExamPaper.ClassId == classId,
+                    include: query => query
+                    .Include(c => c.Student)
+                    .ThenInclude(c => c.Class)
+                    .Include(c => c.ExamPaper)
+                    .ThenInclude(c => c.Subject)
                     );
                 var results = exams.Where(a => a.IsActive);
                 var resultDtos = results.Select(c => _examResultMapper.MapToDto(c)).ToList();

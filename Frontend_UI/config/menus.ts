@@ -1,6 +1,6 @@
 import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation,  } from "@/components/svg";
 import useAuth from "@/hooks/use-auth";
-import { Coins, CoinsIcon } from "lucide-react";
+import { CalendarCheck2Icon, Coins, CoinsIcon } from "lucide-react";
 
 export interface MenuItemProps {
   title: string;
@@ -44,6 +44,11 @@ export const menuItems: MenuItemProps[] = [
         title: "Manage Employees",
         href: "/manage-employees",
         icon: Users,
+      },
+      {
+        title: "Employees Attendance",
+        href: "/employee-attendance",
+        icon: CalendarCheck2Icon,
       },
       {
         title: "Manage Sponsors",
@@ -97,6 +102,12 @@ export const menuItems: MenuItemProps[] = [
         href: "/examResults",
         icon: DocsCheck,
       },
+      {
+        title: "Grades",
+        href: "/manage-grades",
+        icon: Book,
+      },
+
       
     ],
   },

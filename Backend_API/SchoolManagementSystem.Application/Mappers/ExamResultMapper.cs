@@ -24,11 +24,11 @@ namespace SchoolManagementSystem.Application.Mappers
                 {
                     ExamResultId = examDetail.ExamResultId,
                     ExamPaperId = examDetail.ExamPaperId,
-                    StudentId = examDetail.StudentId,
+                    StudentId = (int)examDetail?.StudentId,
                     MarksObtained = examDetail.MarksObtained,
                     IsActive = dto.IsActive
                 });
-            }   
+            }
             return entities;
         }
 
@@ -37,13 +37,13 @@ namespace SchoolManagementSystem.Application.Mappers
             return new ExamResultDTO
             {
                 GrNo = entity.Student.GrNo,
-                DateOfBirth = entity.Student.DateOfBirth,
-                FirstName = entity.Student.FirstName,
-                LastName = entity.Student.LastName,
-                SubjectName = entity.ExamPaper.Subject.SubjectName,
-                ClassName = entity.ExamPaper.Class.ClassName,
-                TermName = entity.ExamPaper.TermName,
-                TotalMarks = entity.ExamPaper.TotalMarks,
+                DateOfBirth = entity.Student?.DateOfBirth,
+                FirstName = entity.Student?.FirstName,
+                LastName = entity.Student?.LastName,
+                SubjectName = entity.ExamPaper?.Subject?.SubjectName,
+                ClassName = entity.ExamPaper?.Class?.ClassName,
+                TermName = entity.ExamPaper?.TermName,
+                TotalMarks = entity.ExamPaper?.TotalMarks,
                 IsActive = entity.IsActive,
                 ExamDetails = new List<ExamDetailsResultDTO>
         {

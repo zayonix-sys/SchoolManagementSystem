@@ -42,7 +42,9 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<SponsorshipDetail> SponsorshipDetails { get; set; }
 
         public DbSet<StudentAttendance> StudentAttendance { get; set; }
-        //public DbSet<ExamResult> ExamResults { get; set; }
+        public DbSet<EmployeeAttendance> EmployeeAttendance { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -86,10 +88,10 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
             modelBuilder.Entity<DashboardCountView>()
                           .HasNoKey();
-           modelBuilder.Entity<User>()
-            .HasMany(u => u.Permissions) // Navigation property in User
-            .WithOne(up => up.Users) // Navigation property in UserPermission
-            .HasForeignKey(up => up.UserId); // Foreign key in UserPermission
+            modelBuilder.Entity<User>()
+             .HasMany(u => u.Permissions) // Navigation property in User
+             .WithOne(up => up.Users) // Navigation property in UserPermission
+             .HasForeignKey(up => up.UserId); // Foreign key in UserPermission
 
 
 
