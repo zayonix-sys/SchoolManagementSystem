@@ -318,16 +318,17 @@ CREATE TABLE StudentAcademic (
 	CampusId INT,
     ClassId INT,
     SectionId INT,
-    EnrollmentDate DATE,
-    AcademicYear NVARCHAR(10),  -- e.g., "2024-2025"
+	AcademicYear NVARCHAR(10),  -- e.g., "2024-2025"
     IsPromoted BIT DEFAULT 0,
-    PromotionDate DATE NULL,
+    PromotionDate DATETime Default GetDate() NULL,
     Remarks NVARCHAR(255) NULL,
     CreatedAt DATETIME DEFAULT GETDATE(),
     CreatedBy INT,
     UpdatedAt DATETIME DEFAULT GETDATE(),
     UpdatedBy INT,
-    IsActive BIT DEFAULT 1, -- Flag to indicate if this is the student's current enrollment
+    IsActive BIT DEFAULT 1, 
+	IsStudied BIT Default 0 Null,
+	-- Flag to indicate if this is the student's current enrollment
 
     FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
 	FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId),
@@ -342,7 +343,7 @@ CREATE INDEX IDX_StudentAcademicRecords_SectionId ON StudentAcademic(SectionId);
 CREATE INDEX IDX_StudentAcademicRecords_AcademicYear ON StudentAcademic(AcademicYear);
 
 CREATE TABLE StudentAttendance (
-    AttendanceId INT PRIMARY KEY IDENTITY,
+    AttendanceId INT PRIMARY KEY IDENTITY(1,1),
     StudentId INT,
 	CampusId INT,
 	ClassId INT,

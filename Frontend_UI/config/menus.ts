@@ -107,6 +107,11 @@ export const menuItems: MenuItemProps[] = [
         href: "/manage-grades",
         icon: Book,
       },
+      {
+        title: "Promoted Student",
+        href: "/student-academic",
+        icon: ClipBoard2,
+      },
 
       
     ],

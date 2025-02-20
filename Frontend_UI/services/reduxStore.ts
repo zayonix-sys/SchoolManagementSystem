@@ -32,6 +32,8 @@ import examResultApi from "./apis/examResultService";
 import examResultPDFApi from "./apis/examResultPDFService";
 import timetableApi from "./apis/timetableService";
 import periodApi from "./apis/periodService";
+import employeeAttendanceApi from "./apis/employeeAttendanceService";
+import studentAcademicApi from "./apis/studentAcademicService";
 
 // Import or define your auth reducer
 // import authReducer from "./authSlice"; // Assuming your auth reducer is in authSlice.js
@@ -52,6 +54,8 @@ const rootReducer = combineReducers({
   permission: persistReducer(permissionPersistConfig, permissionSlice),
   [sectionApi.reducerPath]: sectionApi.reducer,
   [studentAttendanceApi.reducerPath]: studentAttendanceApi.reducer,
+  [studentAcademicApi.reducerPath]: studentAcademicApi.reducer,
+  [employeeAttendanceApi.reducerPath]: employeeAttendanceApi.reducer,
   [classroomApi.reducerPath]: classroomApi.reducer,
   [employeeApi.reducerPath]: employeeApi.reducer,
   [empRoleApi.reducerPath]: empRoleApi.reducer,
@@ -90,6 +94,7 @@ const store = configureStore({
       .concat(sectionApi.middleware)
       .concat(classroomApi.middleware)
       .concat(studentAttendanceApi.middleware)
+      .concat(employeeAttendanceApi.middleware)
       .concat(employeeApi.middleware)
       .concat(empRoleApi.middleware)
       .concat(sponsorApi.middleware)
@@ -116,7 +121,8 @@ const store = configureStore({
       .concat(examResultApi.middleware)
       .concat(examResultPDFApi.middleware)
       .concat(timetableApi.middleware)
-      .concat(periodApi.middleware),
+      .concat(periodApi.middleware)
+      .concat(studentAcademicApi.middleware),
 });
 
 

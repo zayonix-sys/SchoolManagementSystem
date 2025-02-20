@@ -44,6 +44,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<StudentAttendance> StudentAttendance { get; set; }
         public DbSet<EmployeeAttendance> EmployeeAttendance { get; set; }
 
+        public DbSet<StudentAcademic> StudentAcademic { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

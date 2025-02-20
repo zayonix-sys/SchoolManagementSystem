@@ -1,6 +1,4 @@
-﻿using SchoolManagementSystem.Domain.Entities;
-
-namespace SchoolManagementSystem.Application.DTOs
+﻿namespace SchoolManagementSystem.Application.DTOs
 {
     public class EmployeeDTO
     {
@@ -17,7 +15,7 @@ namespace SchoolManagementSystem.Application.DTOs
         public string? EmergencyContact { get; set; }
         public string Qualifications { get; set; }
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
-        public int? CreatedBy { get; set; } = 1;
+        public int? CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; } = DateTime.Now;
         public int? UpdatedBy { get; set; } = 1;
         public bool IsActive { get; set; } = true;

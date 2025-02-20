@@ -80,6 +80,7 @@ namespace SchoolManagementSystem.Application.Services
         public async Task<UserDTO> ValidUser(LoginDTO dto)
         {
             var users = await _userRepository.GetAllAsync(
+                filter: user => user.UserName == dto.UserName,
                 include: query => query
                 .Include(r => r.UserRole)
                 .Include(c => c.Campus)

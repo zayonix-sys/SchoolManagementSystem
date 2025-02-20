@@ -8,18 +8,18 @@ namespace SchoolManagementSystem.Domain.Entities
         [Key]
         public int StudentId { get; set; }
 
-        [Required]
+
         public int? GrNo { get; set; }
 
-        [Required]
+
         [MaxLength(50)]
         public string? FirstName { get; set; }
 
-        [Required]
+
         [MaxLength(50)]
         public string? LastName { get; set; }
 
-        [Required]
+
         public DateOnly? DateOfBirth { get; set; }
 
         [Required]
@@ -34,22 +34,22 @@ namespace SchoolManagementSystem.Domain.Entities
         [MaxLength(15)]
         public string? PhoneNumber { get; set; }
 
-        [Required]
+
         public DateTime? EnrollmentDate { get; set; }
 
         [MaxLength(255)]
         public string? ProfileImage { get; set; }
 
-        [Required]
-        [ForeignKey("ClassId")]
-        public int? ClassId { get; set; }
+        //[Required]
+        //[ForeignKey("ClassId")]
+        //public int? ClassId { get; set; }
 
-        [ForeignKey("SectionId")]
-        public int? SectionId { get; set; }
+        //[ForeignKey("SectionId")]
+        //public int? SectionId { get; set; }
 
-        [Required]
-        [ForeignKey("CampusId")]
-        public int? CampusId { get; set; }
+        //[Required]
+        //[ForeignKey("CampusId")]
+        //public int? CampusId { get; set; }
 
         [Required]
         public bool IsActive { get; set; }
@@ -68,11 +68,12 @@ namespace SchoolManagementSystem.Domain.Entities
 
         // Navigation Properties
 
-        public Class? Class { get; set; }
-        public Section? Section { get; set; }
-        public Campus? Campus { get; set; }
+        //public Class? Class { get; set; }
+        //public Section? Section { get; set; }
+        //public Campus? Campus { get; set; }
         public User? CreatedUser { get; set; }
         public User? UpdatedUser { get; set; }
+        public StudentAcademic? Academic { get; set; }
 
     }
 }

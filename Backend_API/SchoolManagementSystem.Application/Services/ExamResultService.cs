@@ -97,7 +97,7 @@ namespace SchoolManagementSystem.Application.Services
             {
                 var exams = await _examResultRepository.GetAllAsync(include: query => query
                     .Include(c => c.Student)
-                    .ThenInclude(c => c.Class)
+                    .ThenInclude(c => c.Academic.Class)
                     .Include(c => c.ExamPaper)
                     .ThenInclude(c => c.Subject)
                     );
@@ -119,7 +119,7 @@ namespace SchoolManagementSystem.Application.Services
                     filter: result => result.ExamPaper.ClassId == classId,
                     include: query => query
                     .Include(c => c.Student)
-                    .ThenInclude(c => c.Class)
+                    .ThenInclude(c => c.Academic.Class)
                     .Include(c => c.ExamPaper)
                     .ThenInclude(c => c.Subject)
                     );

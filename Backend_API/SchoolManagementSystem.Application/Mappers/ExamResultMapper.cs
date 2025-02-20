@@ -42,6 +42,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 LastName = entity.Student?.LastName,
                 SubjectName = entity.ExamPaper?.Subject?.SubjectName,
                 ClassName = entity.ExamPaper?.Class?.ClassName,
+                ClassId = entity.Student.Academic.Class.ClassId,
                 TermName = entity.ExamPaper?.TermName,
                 TotalMarks = entity.ExamPaper?.TotalMarks,
                 IsActive = entity.IsActive,

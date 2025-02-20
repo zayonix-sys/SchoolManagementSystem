@@ -52,10 +52,11 @@ const AddStudentAttendance: React.FC<StudentAttendanceProps> = ({
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Set 10 items per page
-  const totalPages = Math.ceil(students.length / itemsPerPage);
+  const totalPages = Math.ceil(students?.length / itemsPerPage);
 
   const [attendance, setAttendance] = useState<Record<number, string>>({});
   const [existingAttendance, setExistingAttendance] = useState<Record<number, boolean>>({});
+  const [isSaving, setIsSaving] = useState(false);
   const [addAttendance] = useAddStudentAttendanceMutation();
   const { data: fetchedAttendance } = useFetchStudentAttendanceQuery();
 
@@ -126,7 +127,7 @@ const AddStudentAttendance: React.FC<StudentAttendanceProps> = ({
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const currentStudents = students.slice(
+  const currentStudents = students?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -187,7 +188,9 @@ const AddStudentAttendance: React.FC<StudentAttendanceProps> = ({
               </Button>
             </div>
             <div className="flex justify-end mt-4">
-              <Button type="submit">Submit Attendance</Button>
+              <Button type="submit" disabled={isSaving}>
+              {isSaving ? "Saving..." : "Submit Attendance"}
+              </Button>
             </div>
           </form>
         </div>
