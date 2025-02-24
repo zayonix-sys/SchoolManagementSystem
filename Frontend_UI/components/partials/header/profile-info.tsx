@@ -1,5 +1,4 @@
 "use client";
-import { useSession, signOut } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,9 +19,7 @@ import avatar5 from "@/public/images/avatar/avatar-5.jpg";
 import { useRouter } from "next/navigation";
 import useAuth from "@/hooks/use-auth";
 const ProfileInfo = () => {
-  const { userName, role } = useAuth(); 
-
-
+  const { userName, role } = useAuth();
 
   const router = useRouter();
   const handleLogout = () => {
@@ -80,7 +77,6 @@ const ProfileInfo = () => {
               name: "Settings",
               icon: "heroicons:paper-airplane",
               href: "/user-profile/settings",
-
             },
             {
               name: "Keyboard shortcuts",

@@ -36,7 +36,7 @@ const Page = () => {
         <BreadcrumbItem className="text-primary">Users</BreadcrumbItem>
       </Breadcrumbs>
       <div className="flex justify-end space-x-4 m-2">
-        <ViewUserPermission selectedPermission={null} />
+        <ViewUserPermission />
 
         <AddUser
           users={users}

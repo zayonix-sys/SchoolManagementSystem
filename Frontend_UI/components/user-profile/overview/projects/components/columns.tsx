@@ -19,12 +19,15 @@ import {
 } from "@/components/ui/tooltip";
 import { ColumnDef } from "@tanstack/react-table";
 
-const colors: Record<string, "success" | "warning" | "destructive" | "default"> = {
+const colors: Record<
+  string,
+  "success" | "warning" | "destructive" | "default"
+> = {
   completed: "success",
   review: "warning",
   "in progress": "default",
   cancelled: "destructive",
-}
+};
 interface ProjectData {
   title: string;
   status: string;
@@ -41,11 +44,21 @@ export const columns: ColumnDef<ProjectData>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2 max-w-[240px] truncate  ">
-          <Image src={row.original.projectImage} alt={row.getValue("title")} height={32} width={32} className="rounded" priority={true} />
-          <span className="text-sm font-medium text-default-900 whitespace-nowrap"> {row.getValue("title")}</span>
+          <Image
+            src={row.original.projectImage}
+            alt={row.getValue("title")}
+            height={32}
+            width={32}
+            className="rounded"
+            priority={true}
+          />
+          <span className="text-sm font-medium text-default-900 whitespace-nowrap">
+            {" "}
+            {row.getValue("title")}
+          </span>
         </div>
-      )
-    }
+      );
+    },
   },
   {
     accessorKey: "status",
@@ -61,8 +74,8 @@ export const columns: ColumnDef<ProjectData>[] = [
             {row.getValue("status")}
           </Badge>
         </div>
-      )
-    }
+      );
+    },
   },
 
   {

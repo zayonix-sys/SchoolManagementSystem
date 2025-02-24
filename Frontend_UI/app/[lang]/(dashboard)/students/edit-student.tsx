@@ -106,7 +106,9 @@ const EditStudent: React.FC<StudentProps> = ({
       gender,
       phoneNumber,
       dateOfBirth: studentData.dateOfBirth?.toString() as string | undefined,
-      enrollmentDate: new Date(enrollmentDate).toISOString().slice(0, 10),
+      enrollmentDate: new Date(studentData.dateOfBirth ?? "")
+        .toISOString()
+        .slice(0, 10),
       classId,
       isActive,
     },

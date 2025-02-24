@@ -2,7 +2,7 @@
 {
     public class SponsorshipDetailDTO
     {
-        public int? Amount { get; set; }
+        public decimal? Amount { get; set; }
         public int? SponsorshipId { get; set; }
 
         public string? SponsorName { get; set; }
