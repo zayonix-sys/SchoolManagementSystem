@@ -239,19 +239,22 @@ const AddResults: React.FC<StudentListTableProps> = ({
             ))}
           </TableBody>
         </Table>
-        <Button type="submit" className="mt-4">
+        <div className="flex justify-end mt-4 mb-2">
+
+        <Button type="submit" className="ml-auto mt-4">
             Submit
           </Button>
+        </div>
         </form>
       </Card>
       <div className="flex justify-between items-center mt-4">
         <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
           Previous
         </Button>
-        <span>
+        <span className="ml-auto">
           Page {currentPage} of {totalPages}
         </span>
-        <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+        <Button className="ml-auto" onClick={handleNextPage} disabled={currentPage === totalPages}>
           Next
         </Button>
         <div>

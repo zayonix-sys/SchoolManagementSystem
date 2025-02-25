@@ -36,7 +36,26 @@ public class ExamResultController : ControllerBase
         }
     }
 
-    
+
+    [HttpGet("[action]")]
+    public async Task<ActionResult<ApiResponse<IEnumerable<ExamResultDTO>>>> GetExamResultsByClass(int classId)
+    {
+        _logger.LogInformation("Fetching all Exams Results.");
+        try
+        {
+            var exams = await _examResultService.GetExamResultsByClassAsync(classId);
+            _logger.LogInformation("Successfully retrieved {Count} All Exams Results.", exams?.Count() ?? 0);
+
+            return Ok(ApiResponse<IEnumerable<ExamResultDTO>>.SuccessResponse(exams, "Exams Results retrieved successfully"));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while fetching Exams Results.");
+            return StatusCode(500, ApiResponse<IEnumerable<ExamResultDTO>>.ErrorResponse("Internal server error."));
+        }
+    }
+
+
     [HttpPost("[action]")]
     public async Task<ActionResult<ApiResponse<ExamResultDTO>>> AddExamResults([FromBody] ExamResultDTO dto)
     {

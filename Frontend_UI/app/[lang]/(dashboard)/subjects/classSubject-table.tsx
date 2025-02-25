@@ -57,9 +57,13 @@ const SubjectAssignTable = ({ classes, subject, refetch }: SubjectAssignmentProp
           isActive: assignment.isActive ?? false,
         };
       }
-      acc[assignment.classId ?? 0].subjects?.push(
-        ...associatedSubjects?.map((sub) => sub.subjectName)
-      );
+      if (acc[assignment.classId ?? 0] && Array.isArray(acc[assignment.classId ?? 0].subjects) && associatedSubjects?.length) {
+        acc[assignment.classId ?? 0].subjects.push(
+          ...associatedSubjects.map((sub) => sub.subjectName)
+        );
+      }
+      
+      
     }
     return acc;
   }, {} as Record<number, { classSubjectId?: number; classId?: number; className: string; subjects: string[]; isActive?: boolean }>);

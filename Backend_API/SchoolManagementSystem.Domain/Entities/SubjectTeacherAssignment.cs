@@ -18,7 +18,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("CreatedUser")]
-        public int? CreatedBy { get; set; } = 1;
+        public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
@@ -33,7 +33,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public Employee Employee { get; set; }
 
         public Subject Subject { get; set; }
-        public User CreatedUser { get; set; }
-        public User UpdatedUser { get; set; }
+        public User? CreatedUser { get; set; }
+        public User? UpdatedUser { get; set; }
     }
 }

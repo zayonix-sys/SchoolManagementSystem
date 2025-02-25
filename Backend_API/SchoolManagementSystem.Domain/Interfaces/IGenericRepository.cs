@@ -8,6 +8,7 @@ namespace SchoolManagementSystem.Domain.Interfaces
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null,
                                       Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null);
+
         Task<T> GetByIdAsync(int id);
         Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate,
             params Expression<Func<T, object>>[] includes);
