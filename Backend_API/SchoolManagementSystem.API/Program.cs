@@ -107,6 +107,9 @@ builder.Services.AddScoped<EmployeeAttendanceMapper>();
 builder.Services.AddScoped<IStudentAcademic, StudentAcademicService>();
 builder.Services.AddScoped<StudentAcademicMapper>();
 
+builder.Services.AddScoped<IAcademicYear, AcademicYearService>();
+builder.Services.AddScoped<AcademicYearMapper>();
+
 
 builder.Services.AddScoped<IPayment, PaymentService>();
 builder.Services.AddScoped<PaymentMapper>();

@@ -41,7 +41,9 @@ namespace SchoolManagementSystem.API.Controllers
 
         [HttpPost("[action]")]
         public async Task<ActionResult<ApiResponse<SubjectTeacherAssignmentDTO>>> AddSubjectTeacher([FromBody] SubjectTeacherAssignmentDTO dto)
-        {
+
+        
+       {
             _logger.LogInformation("Adding a new subject Teacher with Id {SubjectId} {EmployeeId}.", dto.SubjectId, dto.EmployeeId);
             try
             {

@@ -45,6 +45,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<EmployeeAttendance> EmployeeAttendance { get; set; }
 
         public DbSet<StudentAcademic> StudentAcademic { get; set; }
+        public DbSet<AcademicYear> AcademicYears { get; set; }
 
 
 

@@ -1208,6 +1208,32 @@ CREATE TABLE SponsorshipDetails (
 	FOREIGN KEY (ClassId) REFERENCES Classes(ClassId),
 );
 CREATE INDEX IDX_SponsorshipDetails_SponsorId ON SponsorshipDetails(SponsorshipId);
+
+Create Table AcademicYears(
+AcademicYearId INT Primary Key Identity (1,1),
+AcademicYearName nvarchar (12) Null,
+StartYear DateTime Default GetDate(),
+EndYear DateTime Default GetDate(),
+StudentId Int Null,
+StudentAcademicId int Null,
+ExamPaperId int Null,
+ExamResultId int Null,
+CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT Null,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT NULL,
+	IsActive BIT DEFAULT 1
+
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
+	FOREIGN KEY (StudentAcademicId) REFERENCES StudentAcademic(StudentAcademicId),
+	FOREIGN KEY (ExamPaperId) REFERENCES ExamPaper(ExamPaperId),
+	FOREIGN KEY (ExamResultId) REFERENCES ExamResults(ExamResultId),
+);
+
+
+
 --Dashboard Scripts for view Table
 USE school_management_sqldb
 GO
