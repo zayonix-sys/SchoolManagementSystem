@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SchoolManagementSystem.Domain.Entities
+﻿namespace SchoolManagementSystem.Domain.Entities
 {
     public class ApplicantApplicationView
     {
@@ -38,6 +32,8 @@ namespace SchoolManagementSystem.Domain.Entities
         public string ResidenceStatus { get; set; }
         public string City { get; set; }
         public string States { get; set; }
+
+
     }
 
 }

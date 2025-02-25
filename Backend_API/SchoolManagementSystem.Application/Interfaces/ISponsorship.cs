@@ -6,7 +6,7 @@ namespace SchoolManagementSystem.Application.Interfaces
     {
         Task<List<SponsorshipDTO>> GetAllSponsorshipsAsync();
         Task<SponsorshipDTO> GetSponsorshipByIdAsync(int sponsorshipId);
-        Task AddSponsorshipAsync(SponsorshipDTO dto);
+        Task<int> AddSponsorshipAsync(SponsorshipDTO dto);
         Task UpdateSponsorshipAsync(SponsorshipDTO dto);
         Task DeleteSponsorshipAsync(int sponsorshipId);
 

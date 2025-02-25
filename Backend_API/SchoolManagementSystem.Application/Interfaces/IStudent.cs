@@ -8,6 +8,8 @@ namespace SchoolManagementSystem.Application.Interfaces
         Task<List<Student>> GetAllStudentAsync();
         Task<List<StudentDTO>> GetAllStudentsAsync();
         Task<List<StudentDTO>> GetAllStudentClassWiseAsync(int? classId);
+        Task<List<StudentDTO>> GetAllStudentByClassAndSectionAsync(int? classId, int? sectionId);
+
         Task<StudentDTO> GetStudentByIdAsync(int stdId);
         Task AddStudentAsync(Student std);
         Task UpdateStudentAsync(Student std);

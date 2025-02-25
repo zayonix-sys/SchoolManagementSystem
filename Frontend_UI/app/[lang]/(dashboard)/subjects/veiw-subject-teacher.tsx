@@ -10,9 +10,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import SubjectTeacherTable from "./table-subject-teacher";
-import { EmployeesData } from "@/services/EmployeeService";
 import { SubjectTeacherData } from "@/services/apis/assignSubjectTeacherService";
 import { SubjectData } from "@/services/apis/subjectService";
+import { EmployeesData } from "@/services/apis/employeeService";
 
 export default function ViewSubjectTeacher({
   subjectTeacherData,

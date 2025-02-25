@@ -42,7 +42,12 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<SponsorshipDetail> SponsorshipDetails { get; set; }
 
         public DbSet<StudentAttendance> StudentAttendance { get; set; }
-        //public DbSet<ExamResult> ExamResults { get; set; }
+        public DbSet<EmployeeAttendance> EmployeeAttendance { get; set; }
+
+        public DbSet<StudentAcademic> StudentAcademic { get; set; }
+        public DbSet<AcademicYear> AcademicYears { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -86,12 +91,25 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
             modelBuilder.Entity<DashboardCountView>()
                           .HasNoKey();
-           modelBuilder.Entity<User>()
-            .HasMany(u => u.Permissions) // Navigation property in User
-            .WithOne(up => up.Users) // Navigation property in UserPermission
-            .HasForeignKey(up => up.UserId); // Foreign key in UserPermission
+            modelBuilder.Entity<User>()
+             .HasMany(u => u.Permissions) // Navigation property in User
+             .WithOne(up => up.Users) // Navigation property in UserPermission
+             .HasForeignKey(up => up.UserId); // Foreign key in UserPermission
 
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.Property(e => e.AmountPaid).HasPrecision(18, 2); // Specify precision and scale
+            });
 
+            modelBuilder.Entity<Sponsorship>(entity =>
+            {
+                entity.Property(e => e.Amount).HasPrecision(18, 2); // Specify precision and scale
+            });
+
+            modelBuilder.Entity<SponsorshipDetail>(entity =>
+            {
+                entity.Property(e => e.Amount).HasPrecision(18, 2); // Specify precision and scale
+            });
 
             // Map the entity to the SQL Server view
             modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");

@@ -42,12 +42,12 @@ namespace SchoolManagementSystem.API.Controllers
 
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetStudentAttendanceByClassSectionId(int classId, int sectionId)
+        public async Task<IActionResult> GetStudentAttendanceByClassSectionId(int classId, int sectionId, DateOnly attendanceDate)
         {
-            _logger.LogInformation("Fetching attendance for Class ID {ClassId} and Section ID {SectionId}.", classId, sectionId);
+            _logger.LogInformation("Fetching attendance for Class ID {ClassId} and Section ID {SectionId} and Date {AttendanceDate}.", classId, sectionId, attendanceDate);
             try
             {
-                var attendanceRecords = await _studentAttendanceService.GetStudentAttendanceByClassSectionId(classId, sectionId);
+                var attendanceRecords = await _studentAttendanceService.GetStudentAttendanceByClassSectionId(classId, sectionId, attendanceDate);
                 if (attendanceRecords == null)
                 {
                     _logger.LogWarning("No attendance records found for Class ID {ClassId} and Section ID {SectionId}.", classId, sectionId);
@@ -66,15 +66,19 @@ namespace SchoolManagementSystem.API.Controllers
 
         [HttpPost("[action]")]
 
-        public async Task<ActionResult<ApiResponse<StudentAttendance>>> AddStudentAttendance([FromBody] StudentAttendanceDTO dto)
+        public async Task<ActionResult<ApiResponse<StudentAttendance>>> AddStudentAttendance([FromBody] List<StudentAttendanceDTO> studentAttendanceDtos)
         {
 
-            _logger.LogInformation("Adding a new attendance with name {StudentName}.", dto.StudentId);
             try
             {
-                await _studentAttendanceService.AddStudentAttendanceAsync(dto);
-                _logger.LogInformation("Successfully added Student Attendance with ID {attendanceId}.", dto.AttendanceId);
-                return Ok(ApiResponse<StudentAttendanceDTO>.SuccessResponse(dto, "Attendance Added successfully"));
+                foreach (var student in studentAttendanceDtos)
+                {
+                    _logger.LogInformation("Adding a new attendance with name {StudentName}.", student.StudentId);
+                    await _studentAttendanceService.AddStudentAttendanceAsync(student);
+                    _logger.LogInformation("Successfully added Student Attendance with ID {attendanceId}.", student.AttendanceId);
+                }
+
+                return Ok(ApiResponse<List<StudentAttendanceDTO>>.SuccessResponse(studentAttendanceDtos, "Attendance Added successfully"));
             }
             catch (Exception ex)
             {

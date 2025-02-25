@@ -29,6 +29,7 @@ import {
 } from "@/services/apis/employeeService";
 import { CampusData } from "@/services/apis/campusService";
 import { RoleData } from "@/services/apis/employeeRoleService";
+import useAuth from "@/hooks/use-auth";
 
 interface EmployeeListTableProps {
   campuses: CampusData[];
@@ -71,8 +72,14 @@ const AddEmployee: React.FC<EmployeeListTableProps> = ({
     resolver: zodResolver(employeeSchema),
   });
 
+  const {userId} = useAuth();
+
   const onSubmit: SubmitHandler<EmployeeFormValues> = async (data) => {
     try {
+      const payload = {
+        ...data,
+        createdBy: userId || 0,
+      }
       const response = await addEmployee(data as EmployeesData).unwrap();
       if (response.success) {
         toast.success(

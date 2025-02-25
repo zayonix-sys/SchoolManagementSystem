@@ -81,9 +81,11 @@ public class SponsorshipController : ControllerBase
         _logger.LogInformation("Adding a new Sponsorship with {SponsorshipId}.", dto.SponsorName);
         try
         {
-            await _sponsorshipService.AddSponsorshipAsync(dto);
+            int sponsershipId = await _sponsorshipService.AddSponsorshipAsync(dto);
+
             foreach (var detail in dto.Details)
             {
+                detail.SponsorshipId = sponsershipId;
                 await _sponsorshipDetailService.AddSponsorshipDetailAsync(detail);
             }
             _logger.LogInformation("Successfully added Sponsorship with ID {SponsorshipId}.", dto.SponsorName);

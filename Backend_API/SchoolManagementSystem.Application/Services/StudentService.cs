@@ -52,25 +52,49 @@ namespace SchoolManagementSystem.Application.Services
             try
             {
                 var result = await _studentRepository.GetAllAsync(
-                    include: query => query.Include(c => c.Class)
+                    include: query => query.Include(s => s.Academic)
+                                           .ThenInclude(a => a.Class)
                 );
 
-
-                var activeStudents = result.Where(c => c.IsActive);
+                // Get only students who are active
+                var activeStudents = result.Where(s => s.IsActive).ToList();
 
                 if (!classId.HasValue || classId == 0)
                 {
-                    return activeStudents.Select(c => _mapper.MapToDto(c)).ToList();
+                    return activeStudents.Select(s => _mapper.MapToDto(s)).ToList();
                 }
 
-                var filteredStudents = activeStudents.Where(x => x.ClassId == classId.Value).ToList();
-                return filteredStudents.Select(c => _mapper.MapToDto(c)).ToList();
+                // Filter students where their academic record has the matching classId and is active
+                var filteredStudents = activeStudents
+                .Where(s => s.Academic != null && s.Academic.ClassId == classId && s.Academic.IsActive)
+                    .Select(s => _mapper.MapToDto(s))
+                     .ToList();
+                return filteredStudents;
             }
             catch (Exception)
             {
                 throw;
             }
+        }
 
+        public async Task<List<StudentDTO>> GetAllStudentByClassAndSectionAsync(int? classId, int? sectionId)
+        {
+            try
+            {
+                var student = await _studentRepository.GetAllAsync(
+                    filter: a => a.Academic.ClassId == classId || a.Academic.SectionId == sectionId && a.IsActive,
+                    include: query => query
+                        .Include(s => s.Academic)
+                        .Include(c => c.Academic.Class)
+                        .Include(sc => sc.Academic.Section)
+                );
+                var studentDtos = student.Select(a => _mapper.MapToDto(a)).ToList();
+                return studentDtos;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("An error occurred while fetching attendance records.", ex);
+            }
         }
 
         public async Task UpdateStudentAsync(Student std)
@@ -101,7 +125,7 @@ namespace SchoolManagementSystem.Application.Services
         public async Task<List<StudentDTO>> GetAllStudentsAsync()
         {
             var result = await _studentRepository.GetAllAsync(
-                 include: query => query.Include(c => c.Class)
+                 include: query => query.Include(c => c.Academic.Class)
                 );
             var activeStudents = result.Where(c => c.IsActive);
             var studentDtos = activeStudents.Select(c => _mapper.MapToDto(c)).ToList();

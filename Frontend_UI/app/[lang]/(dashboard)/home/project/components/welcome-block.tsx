@@ -3,17 +3,20 @@
 import React from "react";
 import Image from "next/image";
 import admin from "@/public/images/all-img/admin.png";
-import useAuth from "@/hooks/use-auth";
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reduxStore";
 
 const WelcomeBlock = () => {
-  const { userFullName, userRoleName } = useAuth();
+
+
+  const logUser = useSelector((state: RootState) => state.auth.user);
 
   return (
     <div className="w-full h-full bg-primary rounded-md flex p-6 relative">
       <div className="flex-1">
         <div className="text-lg md:text-2xl font-semibold text-primary-foreground mb-6">
           Welcome Back <br />
-          {userFullName}!
+          {logUser?.userFullName}!
         </div>
 
         <div className="flex flex-col gap-4 sm:flex-row">
@@ -26,7 +29,7 @@ const WelcomeBlock = () => {
                 User's Role{" "}
               </div>
               <div className="text-lg font-semibold text-primary-foreground">
-                {userRoleName}
+                {logUser?.userRoleName}
               </div>
             </div>
           </div>

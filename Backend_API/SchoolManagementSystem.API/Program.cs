@@ -16,12 +16,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost3000", builder =>
+    options.AddDefaultPolicy(policy =>
     {
-        builder.WithOrigins("http://localhost:3000")
-               .AllowAnyMethod()
-               .AllowAnyHeader()
-               .AllowCredentials();
+        policy.WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>())
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 
@@ -96,8 +96,20 @@ builder.Services.AddScoped<IExamResult, ExamResultService>();
 builder.Services.AddScoped<ExamResultMapper>();
 builder.Services.AddScoped<IExamResultPDF, ExamResultPdfService>();
 
+
 builder.Services.AddScoped<IStudentAttendance, StudentAttendanceService>();
 builder.Services.AddScoped<StudentAttendanceMapper>();
+
+
+builder.Services.AddScoped<IEmployeeAttendance, EmployeeAttendanceService>();
+builder.Services.AddScoped<EmployeeAttendanceMapper>();
+
+builder.Services.AddScoped<IStudentAcademic, StudentAcademicService>();
+builder.Services.AddScoped<StudentAcademicMapper>();
+
+builder.Services.AddScoped<IAcademicYear, AcademicYearService>();
+builder.Services.AddScoped<AcademicYearMapper>();
+
 
 builder.Services.AddScoped<IPayment, PaymentService>();
 builder.Services.AddScoped<PaymentMapper>();
@@ -147,19 +159,6 @@ builder.Services.AddSwaggerGen(c =>
 
 // builder.Services.AddAutoMapper(typeof(Program)); // Example for AutoMapper
 
-// Configure CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAllOrigins", builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
-});
-
-
-
 var app = builder.Build();
 
 // Seed the database with default data
@@ -177,13 +176,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Enable CORS
-app.UseCors("AllowAllOrigins");
-
 // Add custom error-handling middleware
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
-app.UseCors("AllowLocalhost3000");
+app.UseCors();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

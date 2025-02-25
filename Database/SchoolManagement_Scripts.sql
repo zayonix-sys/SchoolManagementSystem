@@ -318,16 +318,17 @@ CREATE TABLE StudentAcademic (
 	CampusId INT,
     ClassId INT,
     SectionId INT,
-    EnrollmentDate DATE,
-    AcademicYear NVARCHAR(10),  -- e.g., "2024-2025"
+	AcademicYear NVARCHAR(10),  -- e.g., "2024-2025"
     IsPromoted BIT DEFAULT 0,
-    PromotionDate DATE NULL,
+    PromotionDate DATETime Default GetDate() NULL,
     Remarks NVARCHAR(255) NULL,
     CreatedAt DATETIME DEFAULT GETDATE(),
     CreatedBy INT,
     UpdatedAt DATETIME DEFAULT GETDATE(),
     UpdatedBy INT,
-    IsActive BIT DEFAULT 1, -- Flag to indicate if this is the student's current enrollment
+    IsActive BIT DEFAULT 1, 
+	IsStudied BIT Default 0 Null,
+	-- Flag to indicate if this is the student's current enrollment
 
     FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
 	FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId),
@@ -342,7 +343,7 @@ CREATE INDEX IDX_StudentAcademicRecords_SectionId ON StudentAcademic(SectionId);
 CREATE INDEX IDX_StudentAcademicRecords_AcademicYear ON StudentAcademic(AcademicYear);
 
 CREATE TABLE StudentAttendance (
-    AttendanceId INT PRIMARY KEY IDENTITY,
+    AttendanceId INT PRIMARY KEY IDENTITY(1,1),
     StudentId INT,
 	CampusId INT,
 	ClassId INT,
@@ -412,19 +413,21 @@ CREATE TABLE Employees (
 CREATE INDEX IDX_Employees_RoleId ON Employees(RoleId);
 
 CREATE TABLE EmployeeAttendance (
-    AttendanceId INT PRIMARY KEY IDENTITY,
+    EmployeeAttendanceId INT PRIMARY KEY IDENTITY(1,1),
     EmployeeId INT,
-    AttendanceDate DATE,
-    AttendanceStatus NVARCHAR(20), -- e.g., "Present", "Absent"
-    CreatedAt DATETIME DEFAULT GETDATE(),
-    CreatedBy INT,
-    UpdatedAt DATETIME DEFAULT GETDATE(),
-    UpdatedBy INT,
-    IsActive BIT DEFAULT 1,
+	CampusId INT Null,
+    AttendanceDate DATE Default GetDate(),
+    AttendanceStatus NVARCHAR(20),
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT Null,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT Null,
+	IsActive BIT DEFAULT 1
 
-    FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
-    FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
-    FOREIGN KEY (EmployeeId) REFERENCES Employees(EmployeeId)
+	FOREIGN KEY (EmployeeId) REFERENCES Employees(EmployeeId),
+	FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId),
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
 CREATE INDEX IDX_EmployeeAttendance_EmployeeId ON EmployeeAttendance(EmployeeId);
 
@@ -675,10 +678,10 @@ CREATE INDEX IDX_ExamResults_StudentId ON ExamResults(StudentId);
 CREATE INDEX IDX_ExamResults_ExamId ON ExamResults(ExamId);
 
 CREATE TABLE Grades (
-    GradeId INT PRIMARY KEY IDENTITY,
+    GradeId INT PRIMARY KEY IDENTITY(1,1),
     StudentId INT,
 	SubjectId INT,
-    Grade NVARCHAR(5),
+    GradeName NVARCHAR(5),
     DateAwarded DATE,
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
@@ -1146,6 +1149,10 @@ CREATE TABLE AuditTrails (
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
 
+
+
+--*****ALteration Script After Main Script For changes Based On our Requirment*****
+
 --ALTER Script 02-Dec-2024
 
 ALTER TABLE Students
@@ -1159,9 +1166,13 @@ FOREIGN KEY (SectionId) REFERENCES Sections(SectionId)
 exec sp_rename 'ClassroomAssignments.AssignmentId', 'ClassSectionAssignmentId' , 'Column'
 
 --ALTER Script 04-Dec-2024 -- Suffian
+ALTER TABLE ExamResults
+ADD CONSTRAINT FK_ExamResult_ExamPaperId
+FOREIGN KEY (ExamPaperId) REFERENCES ExamPaper(ExamPaperId)
 
 ALTER TABLE ExamResults
-ADD TotalMarksObtained INT
+ADD MarksObtained INT
+
 
 ALTER TABLE ExamResults
 DROP COLUMN ClassId
@@ -1171,3 +1182,201 @@ DROP COLUMN ClassId
 ALTER TABLE ExamResults
 DROP COLUMN TotalMarksObtained, Percentage, Grade 
 
+--Alter Sponsorship Table
+
+
+Alter Table SponsorShips
+drop column ClassId, StudentId;
+
+
+CREATE TABLE SponsorshipDetails (
+    SponsorshipDetailId INT PRIMARY KEY IDENTITY,
+	SponsorshipId INT,
+    StudentId INT,
+	ClassId INT,
+    Amount int,
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT NULL,
+	IsActive BIT DEFAULT 1
+
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (SponsorshipId) REFERENCES Sponsorships(SponsorshipId),
+    FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
+	FOREIGN KEY (ClassId) REFERENCES Classes(ClassId),
+);
+CREATE INDEX IDX_SponsorshipDetails_SponsorId ON SponsorshipDetails(SponsorshipId);
+
+Create Table AcademicYears(
+AcademicYearId INT Primary Key Identity (1,1),
+AcademicYearName nvarchar (12) Null,
+StartYear DateTime Default GetDate(),
+EndYear DateTime Default GetDate(),
+StudentId Int Null,
+StudentAcademicId int Null,
+ExamPaperId int Null,
+ExamResultId int Null,
+CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT Null,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT NULL,
+	IsActive BIT DEFAULT 1
+
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
+	FOREIGN KEY (StudentAcademicId) REFERENCES StudentAcademic(StudentAcademicId),
+	FOREIGN KEY (ExamPaperId) REFERENCES ExamPaper(ExamPaperId),
+	FOREIGN KEY (ExamResultId) REFERENCES ExamResults(ExamResultId),
+);
+
+
+
+--Dashboard Scripts for view Table
+USE school_management_sqldb
+GO
+
+/****** Object:  View [dbo].[vw_AdminDashboardSummaryCount]    Script Date: 11/8/2024 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE VIEW [dbo].[vw_TbaDashboardSummaryCount] AS
+SELECT 
+     Total counts
+    (SELECT COUNT(*) FROM Sponsors) AS TotalSponsors,
+    (SELECT COUNT(*) FROM Employees) AS TotalEmployees,
+    (SELECT COUNT(*) FROM Students) AS TotalStudents,
+    (SELECT COUNT(*) FROM Sponsorships) AS TotalStudentsSponsor,
+
+     Monthly data for sponsors, employees, and students
+    (SELECT COUNT(*) 
+        FROM Sponsors 
+        WHERE CreatedAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()
+    ) AS NewSponsorsThisMonth,
+
+    (SELECT COUNT(*) 
+        FROM Employees 
+        WHERE CreatedAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()
+    ) AS NewEmployeesThisMonth,
+
+    (SELECT COUNT(*) 
+        FROM Students 
+        WHERE CreatedAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()
+    ) AS NewStudentsThisMonth,
+	 (SELECT COUNT(*) 
+        FROM Sponsorships 
+        WHERE CreatedAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()
+    ) AS NewStudentsSponsoredThisMonth,
+
+    
+    -- Gender distribution among Employees and Students
+    (SELECT COUNT(*) FROM Employees WHERE Gender = 'Male') AS MaleEmployees,
+    (SELECT COUNT(*) FROM Employees WHERE Gender = 'Female') AS FemaleEmployees,
+    (SELECT COUNT(*) FROM Students WHERE Gender = 'Male') AS MaleStudents,
+    (SELECT COUNT(*) FROM Students WHERE Gender = 'Female') AS FemaleStudents
+--;
+--GO
+
+--Alter Sponsor Table
+
+Alter Table Sponsors
+drop column SponsorAddress
+
+ALTER TABLE Sponsors
+ADD Gender VARCHAR(10),
+    Occupation VARCHAR(100),
+    Nationality VARCHAR(50),
+    Country VARCHAR(70),
+    State VARCHAR(50),
+    City VARCHAR(100),
+    PostalCode INT,  
+    Address VARCHAR(250);
+
+
+	--ALteration In StudentAttendance Table
+	
+	alter Table StudentAttendance
+	Drop column CampusId;
+
+-----------------Inventory Management-----------------
+
+CREATE TABLE InventoryCategories (
+    CategoryID INT PRIMARY KEY IDENTITY(1,1),
+    CategoryName NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(255),
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1,
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+);
+
+CREATE TABLE InventoryItems (
+    ItemID INT PRIMARY KEY IDENTITY(1,1),
+    ItemName NVARCHAR(100) NOT NULL,
+    CategoryID INT FOREIGN KEY REFERENCES InventoryCategories(CategoryID),
+    Description NVARCHAR(255),
+    UnitPrice DECIMAL(18, 2),
+    ReorderLevel INT DEFAULT 100,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1,
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+);
+
+CREATE TABLE InventoryStock (
+    StockID INT PRIMARY KEY IDENTITY(1,1),
+    ItemID INT FOREIGN KEY REFERENCES InventoryItems(ItemID),
+    Quantity INT NOT NULL,
+    TransactionType NVARCHAR(10) CHECK (TransactionType IN ('IN', 'OUT')), -- IN for stock in, OUT for stock out
+    TransactionDate DATETIME DEFAULT GETDATE(),
+    Remarks NVARCHAR(255),
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1,
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+);
+
+CREATE TABLE AssetAllocation (
+    AllocationID INT PRIMARY KEY IDENTITY(1,1),
+    ItemID INT FOREIGN KEY REFERENCES InventoryItems(ItemID),
+    AllocatedTo NVARCHAR(100), -- Could be a classroom
+    AllocatedBy NVARCHAR(100), -- Person who allocated the item
+    AllocationDate DATETIME DEFAULT GETDATE(),
+    ReturnDate DATETIME,
+    Remarks NVARCHAR(255), 
+    StatusID INT FOREIGN KEY REFERENCES InventoryStatus(StatusID),
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1,
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+);
+
+SELECT 
+    I.ItemName,
+    C.CategoryName,
+    I.TotalQuantity,
+    SUM(CASE WHEN S.TransactionType = 'IN' THEN S.Quantity ELSE 0 END) AS TotalStockIn,
+    SUM(CASE WHEN S.TransactionType = 'OUT' THEN S.Quantity ELSE 0 END) AS TotalStockOut,
+    (I.TotalQuantity + SUM(CASE WHEN S.TransactionType = 'IN' THEN S.Quantity ELSE 0 END) - 
+     SUM(CASE WHEN S.TransactionType = 'OUT' THEN S.Quantity ELSE 0 END)) AS CurrentStock
+FROM InventoryItems I
+LEFT JOIN InventoryStock S ON I.ItemID = S.ItemID
+LEFT JOIN InventoryCategories C ON I.CategoryID = C.CategoryID
+GROUP BY I.ItemName, C.CategoryName, I.TotalQuantity;

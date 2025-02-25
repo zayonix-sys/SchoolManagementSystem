@@ -10,7 +10,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public int? SponsorshipDetailId { get; set; }
 
         [Required]
-        public int? Amount { get; set; }
+        public decimal? Amount { get; set; }
 
         [ForeignKey("Sponsorship")]
         public int? SponsorshipId { get; set; }

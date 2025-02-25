@@ -14,31 +14,58 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
 import EditPaymentForm from "./edit-sponsor-payment";
-import { PaymentData, useDeleteSponsorPaymentMutation } from "@/services/apis/sponsorPaymentService";
+import {
+  PaymentData,
+  useDeleteSponsorPaymentMutation,
+} from "@/services/apis/sponsorPaymentService";
+import {
+  SponsorshipData,
+  SponsorshipDataDetails,
+} from "@/services/apis/sponsorshipService";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { AlertDialogHeader } from "@/components/ui/alert-dialog";
 
 interface PaymentListTableProps {
   payment: PaymentData[];
+  sponsorships: SponsorshipData[];
   refetch: () => void;
 }
 
-const PaymentListTable: React.FC<PaymentListTableProps> = ({ payment,refetch }) => {
-
-const [deleteSponsorPayment] = useDeleteSponsorPaymentMutation();
-
+const PaymentListTable: React.FC<PaymentListTableProps> = ({
+  payment,
+  refetch,
+  sponsorships,
+}) => {
+  const [deleteSponsorPayment] = useDeleteSponsorPaymentMutation();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [paymentToDelete, setPaymentToDelete] = useState<number | null>(null);
+  const [detailedSponsorship, setDetailedSponsorship] = useState<{
+    sponsorName?: string;
+    totalSponsorshipAmount?: number;
+    totalPaidAmount?: number;
+    remainingAmount?: number;
+    payments?: PaymentData[];
+  } | null>(null);
   const itemsPerPage = 20;
 
-  const filteredPayments = payment?.filter(
-    (payment) =>
-      payment?.sponsorName?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredPayments = payment?.filter((payment) =>
+    payment?.sponsorName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredPayments?.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredPayments?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const totalPages = Math.ceil(filteredPayments?.length / itemsPerPage);
 
@@ -75,6 +102,37 @@ const [deleteSponsorPayment] = useDeleteSponsorPaymentMutation();
     return date.toLocaleDateString();
   };
 
+  const handleViewDetails = (paymentItem: PaymentData) => {
+    const sponsorship = sponsorships.find(
+      (s) => s.sponsorshipId === paymentItem.sponsorshipId
+    );
+
+    if (sponsorship) {
+      const sponsorPayments = payment.filter(
+        (p) => p.sponsorshipId === sponsorship.sponsorshipId
+      );
+
+      const totalPaidAmount = sponsorPayments.reduce(
+        (sum, p) => sum + (p.amountPaid ?? 0),
+        0
+      );
+
+      const remainingAmount = (sponsorship?.amount ?? 0) - totalPaidAmount; // Allow negative values for overpayment
+
+      setDetailedSponsorship({
+        sponsorName: sponsorship.sponsorName,
+        totalSponsorshipAmount: sponsorship.amount,
+        totalPaidAmount,
+        remainingAmount,
+        payments: sponsorPayments,
+      });
+    }
+  };
+
+  const handleCloseDetails = () => {
+    setDetailedSponsorship(null);
+  };
+
   return (
     <>
       <div className="mb-4 flex justify-between items-center">
@@ -90,7 +148,7 @@ const [deleteSponsorPayment] = useDeleteSponsorPaymentMutation();
         <TableHeader>
           <TableRow>
             <TableHead className="h-10 p-2.5">Sponsor Name</TableHead>
-            <TableHead className="h-10 p-2.5">Student Name</TableHead>
+            <TableHead className="h-10 p-2.5">View Detail</TableHead>
             <TableHead className="h-10 p-2.5">Payment Date</TableHead>
             <TableHead className="h-10 p-2.5">Amount Paid</TableHead>
             <TableHead className="h-10 p-2.5">Payment Method</TableHead>
@@ -101,16 +159,22 @@ const [deleteSponsorPayment] = useDeleteSponsorPaymentMutation();
 
         <TableBody>
           {currentItems?.map((item) => (
-            <TableRow
-              key={item.paymentId}
-              className="hover:bg-default-200"
-             
-            >
+            <TableRow key={item.paymentId} className="hover:bg-default-200">
               <TableCell className="p-2.5">{item.sponsorName}</TableCell>
               <TableCell className="p-2.5">
-                {item.firstName} {item.lastName}
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-7 w-7"
+                  color="secondary"
+                  onClick={() => handleViewDetails(item as any)} // Show detailed view
+                >
+                  <Icon icon="heroicons:eye" className=" h-4 w-4" />
+                </Button>
               </TableCell>
-              <TableCell className="p-2.5">{formatDate(item.paymentDate || "")}</TableCell>
+              <TableCell className="p-2.5">
+                {formatDate(item.paymentDate || "")}
+              </TableCell>
               <TableCell className="p-2.5">{item.amountPaid}</TableCell>
               <TableCell className="p-2.5">{item.paymentMethod}</TableCell>
               <TableCell className="p-2.5">
@@ -157,6 +221,59 @@ const [deleteSponsorPayment] = useDeleteSponsorPaymentMutation();
           onCancel={handleCancelDelete}
         />
       )}
+      {/* Sponsorship Details Dialog */}
+      <Dialog open={!!detailedSponsorship} onOpenChange={handleCloseDetails}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sponsorship Details</DialogTitle>
+            <DialogClose />
+          </DialogHeader>
+          {detailedSponsorship && (
+            <div>
+              <h3>Sponsor: {detailedSponsorship.sponsorName}</h3>
+              <p>
+                <strong>Total Sponsorship Amount:</strong> $
+                {detailedSponsorship.totalSponsorshipAmount}
+              </p>
+              <p>
+                <strong>Total Paid Amount:</strong> $
+                {detailedSponsorship.totalPaidAmount}
+              </p>
+              <p>
+                <strong>Remaining Amount:</strong>{" "}
+                {detailedSponsorship?.remainingAmount != null && detailedSponsorship.remainingAmount < 0 ? (
+                  <span style={{ color: "red" }}>
+                    -${Math.abs(detailedSponsorship?.remainingAmount || 0)}
+                  </span>
+                ) : (
+                  `$${detailedSponsorship?.remainingAmount ?? 0} `
+                )}
+              </p>
+
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Payment Date</TableHead>
+                    <TableHead>Amount Paid</TableHead>
+                    <TableHead>Payment Method</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {detailedSponsorship?.payments?.map((payment) => (
+                    <TableRow key={payment.paymentId}>
+                      <TableCell>
+                        {formatDate(payment?.paymentDate || "")}
+                      </TableCell>
+                      <TableCell>${payment.amountPaid}</TableCell>
+                      <TableCell>{payment.paymentMethod}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
