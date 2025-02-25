@@ -6,9 +6,5 @@ namespace SchoolManagementSystem.Application.Interfaces
     {
         Task<byte[]> GeneratePdf(int classId, int subjectId);
 
-        //Task<ExamPaperDTO> GetExamPaperAsync(int classId);
-
-        //void PreviewPdf(ExamPaperDTO examPaper);
-
     }
 }

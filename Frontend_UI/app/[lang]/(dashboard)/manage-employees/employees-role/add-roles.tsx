@@ -18,6 +18,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { RoleData, useAddRoleMutation } from "@/services/apis/employeeRoleService";
+import useAuth from "@/hooks/use-auth";
 
 
 
@@ -42,9 +43,15 @@ export default function AddRole({ refetch }: { refetch: () => void }) {
     resolver: zodResolver(roleSchema),
   });
 
+  const {userId} = useAuth();
+
   const onSubmit: SubmitHandler<RoleFormValues> = async (data) => {
     try {
-      const response = await addRole(data as RoleData);
+      const payload = {
+        ...data,
+        createdBy: userId || 0,
+      }
+      const response = await addRole(payload as RoleData);
 
       if (response.data?.success) {
         toast.success(

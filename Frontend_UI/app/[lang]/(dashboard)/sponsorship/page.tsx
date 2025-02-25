@@ -10,7 +10,7 @@ import AddSponsorshipForm from './add-sponsorship'
 const Page = () => {
 
   const { data: sponsorData, isLoading:sponsorLoading, error:sponsorError, refetch } = useFetchSponsorsQuery();
-  const {data: sponsershipData, isLoading} = useFetchSponsorshipsQuery();
+  const {data: sponsershipData, isLoading, refetch:sponsorshipRefetch} = useFetchSponsorshipsQuery();
   const {data: sponsorshipDetailData, isLoading:sponsorshipLoading,error:sponsorshipError } = useFetchSponsorshipDetailQuery();
   const sponsor = sponsorData?.data as SponsorData[];
   const sponsorship = sponsershipData?.data as SponsorshipData[];
@@ -18,6 +18,7 @@ const Page = () => {
   
   const handleRefetch = () => {
     refetch();
+    sponsorshipRefetch();
   }
 
 

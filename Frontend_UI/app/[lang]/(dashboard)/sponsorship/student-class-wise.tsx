@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   SponsorshipData,
   SponsorshipDataDetails,
@@ -28,6 +28,7 @@ interface StudentListTableProps {
   sponsorship: SponsorshipData[];
   sponsorshipDetail: SponsorshipDataDetails[];
   students: StudentData[];
+  setStudents: Dispatch<SetStateAction<StudentData[]>>;
   selectedStudents: { studentId: number; classId: number | null }[];
   handleStudentSelectionChange: (selectedStudent: {
     studentId: number;
@@ -36,49 +37,58 @@ interface StudentListTableProps {
 }
 
 const ClassStudentListTable: React.FC<StudentListTableProps> = ({
-  // onStudentSelectionChange,
   sponsorship,
+  students,
+  setStudents,
   sponsorshipDetail,
-  // students,
-  // selectedStudents,
+  selectedStudents,
   handleStudentSelectionChange,
 }) => {
-  const { data: studentsData } = useFetchStudentQuery();
-  const students = (studentsData?.data as StudentData[]) || [];
-  const [selectedStudents, setSelectedStudents] = useState<
-    { studentId: number | null; classId: number | null }[]
-  >([]);
+  const { data: studentsData, isSuccess } = useFetchStudentQuery();
+  // const students = (studentsData?.data as StudentData[]) || [];
+  // const [selectedStudents, setSelectedStudents] = useState<
+  //   { studentId: number | null; classId: number | null }[]
+  // >([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
-  const handleCheckboxChange = (student: StudentData) => {
-    const isAlreadySelected = selectedStudents.some(
-      (s) => s.studentId === student?.studentId
-    );
-
-    const studentId = student?.studentId ?? null;
-
-    const updatedSelection = isAlreadySelected
-      ? selectedStudents.filter((s) => s.studentId !== studentId)
-      : [
-          ...selectedStudents,
-          { studentId: studentId, classId: student.classId ?? null },
-        ];
-
-    setSelectedStudents(updatedSelection);
-
-    // Ensure no null values are passed to onStudentSelectionChange
-    // onStudentSelectionChange(updatedSelection?.map(s => s.studentId).filter((id): id is number => id !== null));
-  };
+  useEffect(() => {
+    if (isSuccess) {
+      setStudents(studentsData?.data);
+    }
+  }, [isSuccess]);
 
   // Filter students by search query and exclude those with existing sponsorship
   const filteredStudents = students.filter(
     (student) =>
+      // Matches search query
       (student.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         student.lastName?.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      // Excludes students already sponsored
       !sponsorshipDetail?.some((s) => s?.studentId === student?.studentId)
   );
+
+  // Handle checkbox change
+  const handleCheckboxChange = (student: StudentData) => {
+    // const isAlreadySelected = selectedStudents.some(
+    //   (s) => s.studentId === student?.studentId
+    // );
+
+    // const updatedSelection = isAlreadySelected
+    //   ? selectedStudents.filter((s) => s.studentId !== student?.studentId)
+    //   : [
+    //       ...selectedStudents,
+    //       { studentId: student.studentId ?? null, classId: student.classId ?? null },
+    //     ];
+
+    // setSelectedStudents(updatedSelection);
+
+    handleStudentSelectionChange({
+      studentId: student.studentId ?? 0,
+      classId: student.classId ?? 0,
+    });
+  };
 
   // Paginate students
   const paginatedStudents = filteredStudents.slice(
@@ -130,10 +140,14 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                 <TableCell>{student.gender}</TableCell>
                 <TableCell>{student.className}</TableCell>
                 <TableCell>
-                  {new Date(student.dateOfBirth).toLocaleDateString()}
+                  {student.dateOfBirth
+                    ? new Date(student.dateOfBirth).toLocaleDateString()
+                    : ""}
                 </TableCell>
                 <TableCell>
-                  {new Date(student.enrollmentDate).toLocaleDateString()}
+                  {student.enrollmentDate
+                    ? new Date(student.enrollmentDate).toLocaleDateString()
+                    : ""}
                 </TableCell>
                 <TableCell>
                   <Badge
@@ -149,12 +163,12 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                     checked={selectedStudents.some(
                       (s) => s.studentId === student.studentId
                     )}
-                    onChange={() => {
+                    onChange={() =>
                       handleStudentSelectionChange({
                         studentId: student.studentId ?? 0,
                         classId: student.classId ?? 0,
-                      });
-                    }}
+                      })
+                    }
                   />
                 </TableCell>
               </TableRow>
@@ -164,6 +178,7 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
       </Card>
       <div className="flex justify-between mt-4">
         <button
+          type="button"
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
@@ -173,6 +188,7 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
           Page {currentPage} of {totalPages}
         </span>
         <button
+          type="button"
           onClick={() =>
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }

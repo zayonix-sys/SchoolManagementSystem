@@ -17,9 +17,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { fetchPeriods, PeriodsData, updatePeriod } from "@/services/periodService";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { PeriodData, useUpdatePeriodMutation } from "@/services/apis/periodService";
 
 // Define Zod schema for class form validation
 const periodSchema = z.object({
@@ -33,15 +33,15 @@ const periodSchema = z.object({
 type PeriodFormValues = z.infer<typeof periodSchema>;
 
 interface PeriodsProps {
-  PeriodsData: PeriodsData[];
+  periodItem: PeriodData[];
+  periodData: PeriodData[]; 
+  refetch: () => void
 }
 
-export default function EditPeriods({ PeriodsData }: PeriodsProps ) {
-  const [periods, setPeriods] = useState<PeriodsData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+export default function EditPeriods({ periodItem, periodData, refetch }: PeriodsProps ) {
+  const [updatePeriod] = useUpdatePeriodMutation();
 
-  const { periodId, periodName, startTime, endTime, isActive } = PeriodsData[0];
+  const { periodId, periodName, startTime, endTime, isActive } = periodItem[0];
 
   const { setValue, handleSubmit, reset, formState: { errors } } = useForm<PeriodFormValues>({
     resolver: zodResolver(periodSchema),
@@ -52,41 +52,19 @@ export default function EditPeriods({ PeriodsData }: PeriodsProps ) {
     },
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try{
-      const [periodsResponse ] = await Promise.all([
-        fetchPeriods(),
-        
-      ]);
-        setPeriods(periodsResponse.data as PeriodsData[]);
-        
-      } catch (err) {
-        setError(err as any);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchData();
-  }, []);
-
   const onSubmit: SubmitHandler<PeriodFormValues> = async (data) => {
      
     try {
       const updatedPeriod = { ...data, periodId };
       const response = await updatePeriod(updatedPeriod);
-
-      if (response.success) {
-
-        setPeriods((prevPeriods) =>
-          prevPeriods.map((per) =>
-            per.periodId === updatedPeriod.periodId ? updatedPeriod : per
-          )
-        );
-
+      if (response.data?.success) {
+        // setPeriods((prevPeriods) =>
+        //   prevPeriods.map((per) =>
+        //     per.periodId === updatedPeriod.periodId ? updatedPeriod : per
+        //   )
+        // );
         toast.success(`${updatedPeriod.periodName} Period Updated successfully!`);
+        refetch();
         reset();
       } else {
         toast.error("Failed to update the period");
@@ -134,7 +112,7 @@ export default function EditPeriods({ PeriodsData }: PeriodsProps ) {
                       <SelectValue placeholder="Select Period" />
                     </SelectTrigger>
                     <SelectContent>
-                      {PeriodsData.map((per) => (
+                      {periodItem?.map((per) => (
                         <SelectItem
                           className="hover:bg-default-300"
                           key={per.periodId}
@@ -165,7 +143,7 @@ export default function EditPeriods({ PeriodsData }: PeriodsProps ) {
                       <SelectValue placeholder="Select Period" />
                     </SelectTrigger>
                     <SelectContent>
-                      {periods
+                      {periodData
                       .map((per) => per.startTime)
                       .filter((value, index, self) => self.indexOf(value) === index)
                       .map((startTime) => (
@@ -200,7 +178,7 @@ export default function EditPeriods({ PeriodsData }: PeriodsProps ) {
                       <SelectValue placeholder="Select Period" />
                     </SelectTrigger>
                     <SelectContent>
-                      {periods
+                      {periodData
                         .map((per) => per.endTime)
                         .filter((value, index, self) => self.indexOf(value) === index) // Filter duplicates
                         .map((endTime) => (

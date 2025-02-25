@@ -2,6 +2,7 @@
 {
     public class SponsorshipDTO
     {
+        public int? SponsorshipId { get; set; }
         public decimal? Amount { get; set; }
         public int? Frequency { get; set; }
         public int? SponsorId { get; set; }

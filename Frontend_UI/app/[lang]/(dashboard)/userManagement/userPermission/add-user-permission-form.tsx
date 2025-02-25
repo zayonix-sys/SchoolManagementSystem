@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { number, z } from "zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Sheet,
   SheetClose,
@@ -42,16 +41,17 @@ const userPermissionSchema = z.object({
 });
 
 type UserPermissionFormValues = z.infer<typeof userPermissionSchema>;
-
-export default function AddUserPermission() {
+interface UserPermission {
+  refetch: () => void;
+}
+const AddUserPermission: React.FC<UserPermission> = ({ refetch }) => {
   const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
   const [roleId, setRoleId] = useState<number | undefined>();
   const [userId, setUserId] = useState<number | undefined>();
   const [selectedEntities, setSelectedEntities] = useState<string[]>([]);
   const [addUserPermission] = useAddUserPermissionMutation();
-  const { data: users, refetch } = useFetchUsersQuery();
-  const { data: userRole, refetch: refetchUserRoles } =
-    useFetchUserRolesQuery();
+  const { data: users } = useFetchUsersQuery();
+  const { data: userRole } = useFetchUserRolesQuery();
   const allUsers = (users?.data as UserData[]) || [];
   const roles = (userRole?.data as UserRoleData[]) || [];
 
@@ -92,6 +92,7 @@ export default function AddUserPermission() {
       if (response?.data?.success) {
         toast.success("User permission successfully!");
         reset();
+        refetch();
       } else {
         console.error("Error:", response);
         toast.error(
@@ -184,8 +185,14 @@ export default function AddUserPermission() {
                       >
                         <input
                           type="checkbox"
-                          checked={selectedEntities.includes(entity.title)}
-                          onChange={() => handleEntityChange(entity.title)}
+                          checked={
+                            entity?.href
+                              ? selectedEntities.includes(entity.href)
+                              : false
+                          }
+                          onChange={() =>
+                            entity.href && handleEntityChange(entity.href)
+                          }
                         />
                         <Label>{entity.title}</Label>
                       </div>
@@ -228,4 +235,6 @@ export default function AddUserPermission() {
       </SheetContent>
     </Sheet>
   );
-}
+};
+
+export default AddUserPermission;

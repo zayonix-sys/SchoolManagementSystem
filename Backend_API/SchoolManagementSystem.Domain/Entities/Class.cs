@@ -8,12 +8,12 @@ namespace SchoolManagementSystem.Domain.Entities
         [Key]
         public int? ClassId { get; set; }
 
-        [Required]
+
         [StringLength(50)]
-        public string ClassName { get; set; }
+        public string? ClassName { get; set; }
 
         [StringLength(255)]
-        public string ClassDescription { get; set; }
+        public string? ClassDescription { get; set; }
 
         [Required]
         public int Capacity { get; set; }
@@ -33,8 +33,8 @@ namespace SchoolManagementSystem.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         // Navigation properties
-        public User CreatedUser { get; set; }
-        public User UpdatedUser { get; set; }
+        public User? CreatedUser { get; set; }
+        public User? UpdatedUser { get; set; }
         public virtual ICollection<TimeTable>? TimeTables { get; set; }
     }
 }

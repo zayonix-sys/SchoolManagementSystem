@@ -1,74 +1,40 @@
 "use client";
 import { Breadcrumbs, BreadcrumbItem } from "@/components/ui/breadcrumbs";
-import { ClassData, deleteClass, fetchClasses } from "@/services/ClassService";
 import { useEffect, useState } from "react";
-import { CampusData, getCampuses } from "@/services/campusService";
 import AddTimeTable from "./add-timetable";
-import {
-  AssignSubjectData,
-  fetchAssignSubject,
-} from "@/services/assignSubjectService";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import AddPeriods from "./add-periods";
-import { fetchPeriods, PeriodsData } from "@/services/periodService";
 import ViewTimeTable from "./view-timetable";
-import SubjectReportCard from "../subjects/reports";
-import TimeTableReportCard from "../subjects/reports";
 import PeriodsReports from "./periods-reports";
+import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
+import { AssignClassSubjectData, useFetchClassSubjectQuery } from "@/services/apis/assignClassSubjectService";
+import { CampusData, useFetchCampusesQuery } from "@/services/apis/campusService";
+import { PeriodData, useFetchPeriodsQuery } from "@/services/apis/periodService";
+import { TimeTableData, useFetchTimeTableQuery } from "@/services/apis/timetableService";
 
 const TimeTables = () => {
-  const [classes, setClasses] = useState<ClassData[]>([]);
-  const [subjects, setSubjects] = useState<AssignSubjectData[]>([]);
-  const [campuses, setCampuses] = useState<CampusData[]>([]);
-  const [periods, setPeriods] = useState<PeriodsData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [classData, subjectData, campusesData, periodsData] =
-          await Promise.all([
-            fetchClasses(),
-            fetchAssignSubject(),
-            getCampuses(),
-            fetchPeriods(),
-          ]);
-
-        setClasses(classData.data as ClassData[]);
-        setSubjects(subjectData.data as AssignSubjectData[]);
-        setCampuses(campusesData.data as CampusData[]);
-        setPeriods(periodsData.data as PeriodsData[]);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-  const handleDelete = async (id: number) => {
-    const isConfirmed = confirm("Are you sure you want to delete this campus?");
-
-    if (isConfirmed) {
-      try {
-        await deleteClass(id);
-        alert("Class deleted successfully");
-      } catch (error) {
-        console.error("Error deleting class:", error);
-        alert("Failed to delete class");
-      }
-    } else {
-      alert("Deletion cancelled");
-    }
-  };
+  const {data: classData, isLoading: classLoading, refetch: classRefetch} = useFetchClassQuery();
+  const classes = classData?.data as ClassData[];
+  const {data: assignSubjectData, isLoading: assignSubjectLoading, refetch: assignSubjectRefetch} = useFetchClassSubjectQuery();
+  const assignSubject = assignSubjectData?.data as AssignClassSubjectData[];
+  const {data: campusData, isLoading: campusLoading, isError: campusError, refetch: campusesRefetch} = useFetchCampusesQuery();
+  const campuses = campusData?.data as CampusData[];
+  const {data:periodData, isLoading: periodLoading, refetch: periodRefetch} = useFetchPeriodsQuery();
+  const periods = periodData?.data as PeriodData[];
+  const {data: timeTable, refetch: refetchTimeTable} = useFetchTimeTableQuery();
+  const timeTableData = timeTable?.data as TimeTableData[];
+ 
+  const handleRefetch = () => {
+    classRefetch();
+    assignSubjectRefetch();
+    campusesRefetch();
+    periodRefetch();
+    refetchTimeTable();
+  }
 
   return (
     <div>
@@ -80,9 +46,10 @@ const TimeTables = () => {
         <div className="flex justify-end space-x-4">
           <AddTimeTable
             classes={classes}
-            subject={subjects}
+            subject={assignSubject}
             campus={campuses}
             periods={periods}
+            refetch={handleRefetch}
           />
         </div>
       </div>
@@ -98,21 +65,21 @@ const TimeTables = () => {
           <AccordionContent>
             <div className="col-span-12 md:col-span-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5">
-                <PeriodsReports Periods={periods} />
+                <PeriodsReports Periods={periods} refetch={handleRefetch}/>
               </div>
             </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
 
-      {classes.length > 0 && (
+      {classes?.length > 0 && (
         <Accordion
           type="single"
           collapsible
           className="w-full border rounded-md divide-y mt-5"
           defaultValue={`item-${classes[0].classId}`}
         >
-          {classes.map((classItem) => (
+          {classes?.map((classItem) => (
             <AccordionItem
               key={classItem.classId}
               value={`item-${classItem.classId}`}
@@ -123,9 +90,11 @@ const TimeTables = () => {
               </AccordionTrigger>
               <AccordionContent>
                 <ViewTimeTable
-                  className={classItem.className}
-                  subjectData={subjects}
+                  className={classItem.className as string}
+                  subjectData={assignSubject}
                   periodsData={periods}
+                  timeTable={timeTableData}
+                  refetch={handleRefetch}
                 />
               </AccordionContent>
             </AccordionItem>

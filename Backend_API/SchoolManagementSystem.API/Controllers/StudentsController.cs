@@ -81,6 +81,38 @@ namespace SchoolManagementSystem.API.Controllers
             }
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAllStudentByClassAndSectionAsync(int? classId, int? sectionId)
+        {
+            _logger.LogInformation("Fetching attendance for Class ID {ClassId} and Section ID {SectionId}.", classId, sectionId);
+            try
+            {
+                var Records = await _studentService.GetAllStudentByClassAndSectionAsync(classId, sectionId);
+                if (Records == null)
+                {
+                    _logger.LogWarning("No Student records found for Class ID {ClassId} and Section ID {SectionId}.", classId, sectionId);
+                    return NotFound(ApiResponse<object>.ErrorResponse("No Student records found for the specified class and section."));
+                }
+
+                _logger.LogInformation("Successfully retrieved Student records for Class ID {ClassId} and Section ID {SectionId}.", classId, sectionId);
+                return Ok(ApiResponse<IEnumerable<StudentDTO>>.SuccessResponse(Records, "Student records retrieved successfully."));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching Student for Class ID {ClassId} and Section ID {SectionId}.", classId, sectionId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
+            }
+        }
+
+
+
+
+
+
+
+
+
+
         [HttpPost]
         public async Task<ActionResult<Student>> AddStudent(Student student)
         {

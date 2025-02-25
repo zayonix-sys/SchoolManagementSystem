@@ -33,5 +33,7 @@ namespace SchoolManagementSystem.Domain.Entities
         // Navigation properties
         public UserRole? UserRole { get; set; }
         public Campus? Campus { get; set; }
+
+        public ICollection<UserPermission>? Permissions { get; set; }
     }
 }

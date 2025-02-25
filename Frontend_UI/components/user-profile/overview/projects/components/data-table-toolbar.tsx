@@ -8,10 +8,11 @@ import Link from "next/link";
 import { Table } from "@tanstack/react-table";
 
 export function DataTableToolbar<TData>({ table }: { table: Table<TData> }) {
-
   return (
     <div className="flex items-center flex-wrap gap-4 ">
-      <div className="text-lg font-medium text-default-800 flex-1">My Project</div>
+      <div className="text-lg font-medium text-default-800 flex-1">
+        My Project
+      </div>
       <div className="flex-none relative">
         <Search className="absolute top-1/2 -translate-y-1/2 left-3 w-3 h-3 text-default-500" />
         <Input
@@ -28,6 +29,5 @@ export function DataTableToolbar<TData>({ table }: { table: Table<TData> }) {
         <Link href="#">View All Project</Link>
       </Button>
     </div>
-
   );
 }

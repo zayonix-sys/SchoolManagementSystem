@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -43,6 +43,10 @@ const sponsorshipSchema = z.object({
     .optional(),
   frequency: z.string().min(1, "Frequency is required").optional(),
   sponsorId: z.number().optional(),
+  // details:z.object({
+  //   classId: z.number().optional(),
+  //   studentId: z.number().optional(),
+  // }).array()
 });
 
 type SponsorshipFormValues = z.infer<typeof sponsorshipSchema>;
@@ -92,22 +96,25 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
     studentId: number;
     classId: number;
   }) => {
-    setSelectedStudents((prevSelectedStudents) => {
-      const studentExists = prevSelectedStudents.some(
-        (s) => s.studentId === selectedStudent.studentId
-      );
+    // console.log("selectedStudent", selectedStudent);
 
-      if (studentExists) {
-        // Deselect the student
-        return prevSelectedStudents.filter(
-          (s) => s.studentId !== selectedStudent.studentId
-        );
-      } else {
-        // Add the student to selected list
-        return [...prevSelectedStudents, selectedStudent];
-      }
-    });
-    console.log("Selected Students:", selectedStudents);
+    const studentExists = selectedStudents.some(
+      (s) => s.studentId === selectedStudent.studentId
+    );
+    
+    // console.log("studentExists", studentExists);
+    
+    if (studentExists) {
+      // Deselect the student
+      setSelectedStudents(selectedStudents.filter(
+        (s) => s.studentId !== selectedStudent.studentId
+      ))
+    } else {
+      
+      setSelectedStudents([...selectedStudents, selectedStudent]);
+    }
+
+    
   };
 
   const onSubmit: SubmitHandler<SponsorshipFormValues> = async (data) => {
@@ -115,6 +122,8 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
       toast.error("Please select a sponsor");
       return;
     }
+    // console.log("students", students)
+    // console.log("selectedStudents", selectedStudents)
 
     let details = selectedStudents.map((selectedStudent) => {
       // Find the student object matching the selectedStudent.studentId
@@ -122,18 +131,22 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
         (s) => s.studentId === selectedStudent.studentId
       );
 
+      var perStudentAmount = totalExpense/selectedStudents.length;
       // Return an object only if a match is found
       return student
         ? {
             studentId: selectedStudent.studentId,
             classId: selectedStudent.classId,
-            amount: 20, // Replace with the correct amount calculation
+            amount: perStudentAmount, // Replace with the correct amount calculation
           }
         : null; // If no match is found, return null
     });
 
+    // console.log("details", details)
+
     // Filter out null values
     details = details.filter((detail) => detail !== null);
+    // console.log("filtered details", details)
 
     //   const perStudentAmount = fixedAmountPerStudent * frequency;
     //   if(student){
@@ -167,7 +180,7 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
       frequency,
       details,
     };
-    console.log(combineData);
+    // console.log(combineData);
 
     try {
       const response = await addSponsorship(
@@ -237,7 +250,7 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
                 <InputGroupText>
                   <Icon icon="mdi:currency-usd" />
                 </InputGroupText>
-                <Input type="text" value={totalExpense} readOnly />
+                <Input type="text" placeholder="Student Per Sponsorship 1500" value={totalExpense} readOnly />
               </InputGroup>
             </div>
 
@@ -267,6 +280,7 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
             <div className="col-span-2">
               <ClassStudentListTable
                 students={students}
+                setStudents={setStudents}
                 selectedStudents={selectedStudents}
                 sponsorship={sponsorship}
                 sponsorshipDetail={sponsorshipDetail}

@@ -1,7 +1,14 @@
 /** @type {import('next').NextConfig} */
 
-
 const nextConfig = {
+  // Enable experimental features for the app directory (Next.js 13+)
+  experimental: {
+    appDir: true,
+  },
+
+  // Enable standalone mode for deployment
+  output: "standalone",
+
   webpack(config) {
     // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>
@@ -9,7 +16,7 @@ const nextConfig = {
     );
 
     config.module.rules.push(
-      // Reapply the existing rule, but only for svg imports ending in ?url
+      // Reapply the existing rule, but only for SVG imports ending in ?url
       {
         ...fileLoaderRule,
         test: /\.svg$/i,
@@ -19,7 +26,7 @@ const nextConfig = {
       {
         test: /\.svg$/i,
         issuer: fileLoaderRule.issuer,
-        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+        resourceQuery: { not: [...fileLoaderRule.resourceQuery.not, /url/] }, // Exclude if *.svg?url
         use: ["@svgr/webpack"],
       }
     );
@@ -29,6 +36,8 @@ const nextConfig = {
 
     return config;
   },
+
+  // Define allowed remote image patterns
   images: {
     remotePatterns: [
       {
@@ -49,7 +58,9 @@ const nextConfig = {
       },
     ],
   },
-};
 
+  // Ensure consistent routing
+  trailingSlash: false,
+};
 
 module.exports = nextConfig;
