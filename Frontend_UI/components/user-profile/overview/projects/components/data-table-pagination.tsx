@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,10 @@ export function DataTablePagination<TData>({ table }: { table: Table<TData> }) {
           disabled={!table.getCanPreviousPage()}
           className="h-7 w-7 bg-default-100 dark:bg-default-50 text-default-800 rounded-md hover:bg-default-200 "
         >
-          <Icon icon="heroicons:chevron-left" className="w-3 h-3 rtl:rotate-180" />
+          <Icon
+            icon="heroicons:chevron-left"
+            className="w-3 h-3 rtl:rotate-180"
+          />
         </Button>
 
         {table.getPageOptions().map((page, pageIdx) => (
@@ -28,13 +31,16 @@ export function DataTablePagination<TData>({ table }: { table: Table<TData> }) {
             key={`project-data-table-${pageIdx}`}
             onClick={() => table.setPageIndex(pageIdx)}
             size="icon"
-            className={cn("h-7 w-7 p-0 font-medium bg-default-100 dark:bg-default-50 dark:hover:bg-default-200 text-default-600 rounded-md hover:bg-default-200", {
-              "bg-primary text-primary-foreground": table.getState().pagination.pageIndex === pageIdx,
-            })}
+            className={cn(
+              "h-7 w-7 p-0 font-medium bg-default-100 dark:bg-default-50 dark:hover:bg-default-200 text-default-600 rounded-md hover:bg-default-200",
+              {
+                "bg-primary text-primary-foreground":
+                  table.getState().pagination.pageIndex === pageIdx,
+              }
+            )}
           >
             {page + 1}
           </Button>
-
         ))}
 
         <Button
@@ -43,7 +49,10 @@ export function DataTablePagination<TData>({ table }: { table: Table<TData> }) {
           size="icon"
           className="h-7 w-7  bg-default-100 dark:bg-default-50 text-default-800 rounded-md hover:bg-default-200"
         >
-          <Icon icon="heroicons:chevron-right" className="w-3 h-3 rtl:rotate-180" />
+          <Icon
+            icon="heroicons:chevron-right"
+            className="w-3 h-3 rtl:rotate-180"
+          />
         </Button>
       </div>
     </div>

@@ -54,10 +54,10 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
   const itemsPerPage = 4;
 
   useEffect(() => {
-    if(isSuccess){
-      setStudents(studentsData?.data)
+    if (isSuccess) {
+      setStudents(studentsData?.data);
     }
-  }, [isSuccess])
+  }, [isSuccess]);
 
   // Filter students by search query and exclude those with existing sponsorship
   const filteredStudents = students.filter(
@@ -140,10 +140,14 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                 <TableCell>{student.gender}</TableCell>
                 <TableCell>{student.className}</TableCell>
                 <TableCell>
-                  {new Date(student.dateOfBirth).toLocaleDateString()}
+                  {student.dateOfBirth
+                    ? new Date(student.dateOfBirth).toLocaleDateString()
+                    : ""}
                 </TableCell>
                 <TableCell>
-                  {new Date(student.enrollmentDate).toLocaleDateString()}
+                  {student.enrollmentDate
+                    ? new Date(student.enrollmentDate).toLocaleDateString()
+                    : ""}
                 </TableCell>
                 <TableCell>
                   <Badge
@@ -159,10 +163,12 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                     checked={selectedStudents.some(
                       (s) => s.studentId === student.studentId
                     )}
-                    onChange={() => handleStudentSelectionChange({
-                      studentId: student.studentId ?? 0, 
-                      classId: student.classId ?? 0
-                    })}
+                    onChange={() =>
+                      handleStudentSelectionChange({
+                        studentId: student.studentId ?? 0,
+                        classId: student.classId ?? 0,
+                      })
+                    }
                   />
                 </TableCell>
               </TableRow>
@@ -172,7 +178,7 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
       </Card>
       <div className="flex justify-between mt-4">
         <button
-        type="button"
+          type="button"
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
@@ -182,7 +188,7 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
           Page {currentPage} of {totalPages}
         </span>
         <button
-        type="button"
+          type="button"
           onClick={() =>
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
@@ -194,6 +200,5 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
     </div>
   );
 };
-
 
 export default ClassStudentListTable;

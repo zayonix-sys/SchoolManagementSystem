@@ -96,7 +96,20 @@ namespace SchoolManagementSystem.Infrastructure.Data
              .WithOne(up => up.Users) // Navigation property in UserPermission
              .HasForeignKey(up => up.UserId); // Foreign key in UserPermission
 
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.Property(e => e.AmountPaid).HasPrecision(18, 2); // Specify precision and scale
+            });
 
+            modelBuilder.Entity<Sponsorship>(entity =>
+            {
+                entity.Property(e => e.Amount).HasPrecision(18, 2); // Specify precision and scale
+            });
+
+            modelBuilder.Entity<SponsorshipDetail>(entity =>
+            {
+                entity.Property(e => e.Amount).HasPrecision(18, 2); // Specify precision and scale
+            });
 
             // Map the entity to the SQL Server view
             modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");

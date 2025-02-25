@@ -1302,3 +1302,81 @@ ADD Gender VARCHAR(10),
 	
 	alter Table StudentAttendance
 	Drop column CampusId;
+
+-----------------Inventory Management-----------------
+
+CREATE TABLE InventoryCategories (
+    CategoryID INT PRIMARY KEY IDENTITY(1,1),
+    CategoryName NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(255),
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1,
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+);
+
+CREATE TABLE InventoryItems (
+    ItemID INT PRIMARY KEY IDENTITY(1,1),
+    ItemName NVARCHAR(100) NOT NULL,
+    CategoryID INT FOREIGN KEY REFERENCES InventoryCategories(CategoryID),
+    Description NVARCHAR(255),
+    UnitPrice DECIMAL(18, 2),
+    ReorderLevel INT DEFAULT 100,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1,
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+);
+
+CREATE TABLE InventoryStock (
+    StockID INT PRIMARY KEY IDENTITY(1,1),
+    ItemID INT FOREIGN KEY REFERENCES InventoryItems(ItemID),
+    Quantity INT NOT NULL,
+    TransactionType NVARCHAR(10) CHECK (TransactionType IN ('IN', 'OUT')), -- IN for stock in, OUT for stock out
+    TransactionDate DATETIME DEFAULT GETDATE(),
+    Remarks NVARCHAR(255),
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1,
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+);
+
+CREATE TABLE AssetAllocation (
+    AllocationID INT PRIMARY KEY IDENTITY(1,1),
+    ItemID INT FOREIGN KEY REFERENCES InventoryItems(ItemID),
+    AllocatedTo NVARCHAR(100), -- Could be a classroom
+    AllocatedBy NVARCHAR(100), -- Person who allocated the item
+    AllocationDate DATETIME DEFAULT GETDATE(),
+    ReturnDate DATETIME,
+    Remarks NVARCHAR(255), 
+    StatusID INT FOREIGN KEY REFERENCES InventoryStatus(StatusID),
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1,
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+);
+
+SELECT 
+    I.ItemName,
+    C.CategoryName,
+    I.TotalQuantity,
+    SUM(CASE WHEN S.TransactionType = 'IN' THEN S.Quantity ELSE 0 END) AS TotalStockIn,
+    SUM(CASE WHEN S.TransactionType = 'OUT' THEN S.Quantity ELSE 0 END) AS TotalStockOut,
+    (I.TotalQuantity + SUM(CASE WHEN S.TransactionType = 'IN' THEN S.Quantity ELSE 0 END) - 
+     SUM(CASE WHEN S.TransactionType = 'OUT' THEN S.Quantity ELSE 0 END)) AS CurrentStock
+FROM InventoryItems I
+LEFT JOIN InventoryStock S ON I.ItemID = S.ItemID
+LEFT JOIN InventoryCategories C ON I.CategoryID = C.CategoryID
+GROUP BY I.ItemName, C.CategoryName, I.TotalQuantity;

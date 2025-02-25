@@ -85,6 +85,20 @@ namespace SchoolManagementSystem.Application.Services
                 .Include(r => r.UserRole)
                 .Include(c => c.Campus)
                 .Include(p => p.Permissions));
+            //           var users = await _userRepository.FindAllAsync(
+            //         x => x.UserName == dto.UserName && x.IsActive,
+            //         include: query => query
+            //        .Include(r => r.UserRole)
+            //        .Include(c => c.Campus)
+            //        .Include(p => p.Permissions)
+            //);
+
+            //var users = await _userRepository.FindAllAsync(
+             //x => x.UserName == dto.UserName && x.IsActive,
+               //u => u.UserRole,
+                //p => p.Permissions,
+                //c => c.Campus
+                //);
 
             var user = users.FirstOrDefault(x => x.Permissions.Any(p => p.IsActive));
 

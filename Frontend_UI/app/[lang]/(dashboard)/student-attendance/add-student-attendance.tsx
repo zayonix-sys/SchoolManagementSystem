@@ -88,7 +88,7 @@ const AddStudentAttendance: React.FC<StudentAttendanceProps> = ({
     e.preventDefault();
 
     const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().slice(0, 10);
+    const formattedDate = currentDate?.toISOString().slice(0, 10);
 
     const attendanceEntries = students
       .filter((student) => !existingAttendance[student.studentId])

@@ -1,7 +1,19 @@
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import React, { useState, useEffect } from "react";
 
 const EditStudentAttendance = () => {
@@ -15,7 +27,7 @@ const EditStudentAttendance = () => {
     { id: "2", name: "Class 2" },
   ];
 
-  const sections = {
+  const sections: { [key: string]: { id: string; name: string }[] } = {
     "1": [
       { id: "A", name: "Section A" },
       { id: "B", name: "Section B" },
@@ -31,11 +43,36 @@ const EditStudentAttendance = () => {
     if (classId && sectionId) {
       // Simulate API call with mock data
       const mockData = [
-        { id: 1, gRNO: 101, studentName: "John Doe", status: "Present", classId: "1", sectionId: "A" },
-        { id: 2, gRNO: 102, studentName: "Jane Smith", status: "Absent", classId: "1", sectionId: "A" },
-        { id: 3, gRNO: 103, studentName: "Alice Johnson", status: "Present", classId: "1", sectionId: "A" },
+        {
+          id: 1,
+          gRNO: 101,
+          studentName: "John Doe",
+          status: "Present",
+          classId: "1",
+          sectionId: "A",
+        },
+        {
+          id: 2,
+          gRNO: 102,
+          studentName: "Jane Smith",
+          status: "Absent",
+          classId: "1",
+          sectionId: "A",
+        },
+        {
+          id: 3,
+          gRNO: 103,
+          studentName: "Alice Johnson",
+          status: "Present",
+          classId: "1",
+          sectionId: "A",
+        },
       ];
-      setAttendanceData(mockData.filter((item) => item.classId === classId && item.sectionId === sectionId));
+      setAttendanceData(
+        mockData.filter(
+          (item) => item.classId === classId && item.sectionId === sectionId
+        )
+      );
     }
   }, [classId, sectionId]);
 
@@ -51,7 +88,9 @@ const EditStudentAttendance = () => {
 
   const handleStatusChange = (id: number, newStatus: string) => {
     setAttendanceData((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item))
+      prev.map((item) =>
+        item.id === id ? { ...item, status: newStatus } : item
+      )
     );
   };
 
@@ -88,11 +127,12 @@ const EditStudentAttendance = () => {
             <SelectValue placeholder="Select Section" />
           </SelectTrigger>
           <SelectContent>
-            {sections[classId]?.map((section) => (
-              <SelectItem key={section.id} value={section.id}>
-                {section.name}
-              </SelectItem>
-            ))}
+            {classId &&
+              sections[classId]?.map((section: any) => (
+                <SelectItem key={section.id} value={section.id}>
+                  {section.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>
@@ -113,12 +153,20 @@ const EditStudentAttendance = () => {
             <TableBody>
               {attendanceData.map((item, index) => (
                 <TableRow key={item.id} className="text-center">
-                  <TableCell className="px-4 py-2 border">{index + 1}</TableCell>
-                  <TableCell className="px-4 py-2 border">{item.gRNO}</TableCell>
-                  <TableCell className="px-4 py-2 border">{item.studentName}</TableCell>
+                  <TableCell className="px-4 py-2 border">
+                    {index + 1}
+                  </TableCell>
+                  <TableCell className="px-4 py-2 border">
+                    {item.gRNO}
+                  </TableCell>
+                  <TableCell className="px-4 py-2 border">
+                    {item.studentName}
+                  </TableCell>
                   <TableCell className="px-4 py-2 border">
                     <Select
-                      onValueChange={(value) => handleStatusChange(item.id, value)}
+                      onValueChange={(value) =>
+                        handleStatusChange(item.id, value)
+                      }
                       defaultValue={item.status}
                     >
                       <SelectTrigger>
@@ -144,7 +192,9 @@ const EditStudentAttendance = () => {
       )}
 
       {(!classId || !sectionId) && (
-        <p className="text-gray-500 mt-4">Please select a class and section to edit attendance data.</p>
+        <p className="text-gray-500 mt-4">
+          Please select a class and section to edit attendance data.
+        </p>
       )}
     </div>
   );

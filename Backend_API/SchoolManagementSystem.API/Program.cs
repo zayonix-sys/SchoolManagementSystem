@@ -16,12 +16,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost3000", builder =>
+    options.AddDefaultPolicy(policy =>
     {
-        builder.WithOrigins("http://localhost:3000")
-               .AllowAnyMethod()
-               .AllowAnyHeader()
-               .AllowCredentials();
+        policy.WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>())
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 
@@ -159,19 +159,6 @@ builder.Services.AddSwaggerGen(c =>
 
 // builder.Services.AddAutoMapper(typeof(Program)); // Example for AutoMapper
 
-// Configure CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAllOrigins", builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
-});
-
-
-
 var app = builder.Build();
 
 // Seed the database with default data
@@ -189,13 +176,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Enable CORS
-app.UseCors("AllowAllOrigins");
-
 // Add custom error-handling middleware
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
-app.UseCors("AllowLocalhost3000");
+app.UseCors();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
