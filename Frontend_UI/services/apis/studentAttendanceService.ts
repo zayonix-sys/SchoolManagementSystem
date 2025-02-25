@@ -4,7 +4,7 @@ import { ApiResponse } from "./apiResponse";
 export interface StudentAttendanceData{ 
 
   attendanceId?: number;
-  attendanceDate?: Date;
+  attendanceDate?: string | Date;
   attendanceStatus?: string;
   studentName?: string;
   className?: string;
@@ -12,12 +12,8 @@ export interface StudentAttendanceData{
   studentId?: number;
   grNo?: number;
   classId?: number;
-  campusId?: number;
+  // campusId?: number;
   sectionId?: number;
-  createdBy?: number;
-  createdAt?: Date;
-  updatedBy?: number;
-  updatedAt?: Date
   isActive?: boolean;
 
 
@@ -43,10 +39,10 @@ export const studentAttendanceApi = createApi({
     fetchStudentAttendanceById: builder.query<ApiResponse<StudentAttendanceData>, number>({
       query: (id) => `GetStudentAttendanceById/${id}`,
     }),
-    fetchStudentAttendanceByClassSectionId: builder.query<ApiResponse<StudentAttendanceData[]>, { classId: number; sectionId: number}>({
-      query: ({ classId, sectionId }) => `GetStudentAttendanceByClassSectionId?classId=${classId}&sectionId=${sectionId}`,
+    fetchStudentAttendanceByClassSectionId: builder.query<ApiResponse<StudentAttendanceData[]>, { classId: number; sectionId: number, attendanceDate: string | Date}>({
+      query: ({ classId, sectionId, attendanceDate }) => `GetStudentAttendanceByClassSectionId?classId=${classId}&sectionId=${sectionId}&attendanceDate=${attendanceDate}`,
     }),
-    addStudentAttendance: builder.mutation<ApiResponse<StudentAttendanceData>, StudentAttendanceData>({
+    addStudentAttendance: builder.mutation<ApiResponse<StudentAttendanceData>, StudentAttendanceData[]>({
       query: (studentAttendanceData) => ({
         url: "AddStudentAttendance",
         method: "POST",

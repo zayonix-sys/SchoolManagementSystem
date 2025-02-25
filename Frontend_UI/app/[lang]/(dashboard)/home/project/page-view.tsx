@@ -46,11 +46,16 @@ const ProjectPageView = ({ trans }: ProjectPageViewProps) => {
           <div className="col-span-12">
             <Card>
               <CardHeader className="mb-0 border-none pt-6 pl-7 pb-0 flex-row flex-wrap items-center justify-between gap-4">
-                <CardTitle className="whitespace-nowrap">Report Chart</CardTitle>
+                <CardTitle className="whitespace-nowrap">
+                  Report Chart
+                </CardTitle>
                 <div className="w-[170px]">
                   <Select>
                     <SelectTrigger className="text-default-500 bg-transparent dark:bg-transparent">
-                      <Icon icon="heroicons:calendar-days" className="w-4 h-4" />
+                      <Icon
+                        icon="heroicons:calendar-days"
+                        className="w-4 h-4"
+                      />
                       <SelectValue placeholder="Select Date" />
                     </SelectTrigger>
                     <SelectContent>
@@ -69,8 +74,7 @@ const ProjectPageView = ({ trans }: ProjectPageViewProps) => {
           </div>
         </div>
         <div className="col-span-12 2xl:col-span-4">
-          
-            {/* <ProjectBudget /> */}
+          {/* <ProjectBudget /> */}
         </div>
       </div>
 
@@ -79,9 +83,9 @@ const ProjectPageView = ({ trans }: ProjectPageViewProps) => {
           {/* <OverdueTask /> */}
         </div>
       </div>
-        <div className="col-span-12 lg:col-span-6 xl:col-span-7">
+      <div className="col-span-12 lg:col-span-6 xl:col-span-7">
         <TopContributer />
-        </div>
+      </div>
     </div>
   );
 };

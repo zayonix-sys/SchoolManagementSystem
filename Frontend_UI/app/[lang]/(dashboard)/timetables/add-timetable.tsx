@@ -1,32 +1,19 @@
 "use client";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { z } from "zod";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { addTimeTable } from "@/services/TimeTableService";
-import { PeriodsData } from "@/services/periodService";
-import { ClassData } from "@/services/apis/classService";
-import { CampusData } from "@/services/apis/campusService";
-import { AssignClassSubjectData } from "@/services/apis/assignClassSubjectService";
+import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { z } from 'zod';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ClassData } from '@/services/apis/classService';
+import { CampusData } from '@/services/apis/campusService';
+import { AssignClassSubjectData } from '@/services/apis/assignClassSubjectService';
+import { PeriodData } from '@/services/apis/periodService';
+import { useAddTimeTableMutation } from '@/services/apis/timetableService';
 
 const addTimeTableSchema = z.object({
   timetableId: z.coerce.number().optional(),
@@ -38,7 +25,7 @@ const addTimeTableSchema = z.object({
   startTime: z.string().optional(),
   endTime: z.string().optional(),
   periodName: z.string().optional(),
-  subjectName: z.string().optional(),
+  subjectName: z.string().optional()
 });
 
 type AddTimeTableFormValues = z.infer<typeof addTimeTableSchema>;
@@ -47,15 +34,12 @@ interface TimeTableProps {
   classes: ClassData[];
   campus: CampusData[];
   subject: AssignClassSubjectData[];
-  periods: PeriodsData[];
+  periods: PeriodData[];
+  refetch: () => void;
 }
 
-export default function AddTimeTable({
-  classes,
-  campus,
-  subject,
-  periods,
-}: TimeTableProps) {
+export default function AddTimeTable({ classes, campus, subject, periods, refetch }: TimeTableProps) {
+  const [addTimeTable] = useAddTimeTableMutation();
   const {
     register,
     handleSubmit,
@@ -69,21 +53,19 @@ export default function AddTimeTable({
 
   const selectedClassId = watch("classId");
 
-  // Filter subjects by the selected class ID
-  const filteredClassSubjects = subject.filter(
-    (assignSubject) =>
-      assignSubject.classId === selectedClassId && assignSubject.isActive
+  const filteredClassSubjects = subject?.filter(
+    (assignSubject) => assignSubject.classId === selectedClassId && assignSubject.isActive
   );
 
   const onSubmit: SubmitHandler<AddTimeTableFormValues> = async (data) => {
     try {
       const response = await addTimeTable(data);
-
-      if (response.success) {
-        toast.success("Time Table added successfully!");
+      if (response.data?.success) {
+        toast.success('Time Table added successfully!');
         reset();
+        refetch();
       } else {
-        toast.error(response.message || "Something went wrong");
+        toast.error(response.data?.message || "Something went wrong");
       }
     } catch (error) {
       toast.error("Request Failed");
@@ -120,11 +102,8 @@ export default function AddTimeTable({
                     <SelectValue placeholder="Select Campus" />
                   </SelectTrigger>
                   <SelectContent>
-                    {campus.map((campusData) => (
-                      <SelectItem
-                        key={campusData?.campusId ?? ""}
-                        value={campusData?.campusId?.toString() ?? ""}
-                      >
+                    {campus?.map((campusData) => (
+                      <SelectItem key={campusData?.campusId ?? ''} value={campusData?.campusId?.toString() ?? ''}>
                         {campusData.campusName}
                       </SelectItem>
                     ))}
@@ -146,11 +125,8 @@ export default function AddTimeTable({
                     <SelectValue placeholder="Select Class" />
                   </SelectTrigger>
                   <SelectContent>
-                    {classes.map((classData) => (
-                      <SelectItem
-                        key={classData?.classId ?? ""}
-                        value={classData?.classId?.toString() ?? ""}
-                      >
+                    {classes?.map((classData) => (
+                      <SelectItem key={classData?.classId ?? ''} value={classData?.classId?.toString() ?? ''}>
                         {classData.className}
                       </SelectItem>
                     ))}
@@ -194,11 +170,8 @@ export default function AddTimeTable({
                     <SelectValue placeholder="Select Periods" />
                   </SelectTrigger>
                   <SelectContent>
-                    {periods.map((periodData) => (
-                      <SelectItem
-                        key={periodData?.periodId ?? ""}
-                        value={periodData?.periodId?.toString() ?? ""}
-                      >
+                    {periods?.map((periodData) => (
+                      <SelectItem key={periodData?.periodId ?? ''} value={periodData?.periodId?.toString() ?? ''}>
                         {periodData.periodName}
                       </SelectItem>
                     ))}
@@ -220,11 +193,8 @@ export default function AddTimeTable({
                     <SelectValue placeholder="Select Subject" />
                   </SelectTrigger>
                   <SelectContent>
-                    {filteredClassSubjects.map((subjectData) => (
-                      <SelectItem
-                        key={subjectData?.classSubjectId}
-                        value={subjectData.subjectIds?.toString() || ""}
-                      >
+                    {filteredClassSubjects?.map((subjectData) => (
+                      <SelectItem key={subjectData?.classSubjectId} value={subjectData.subjectIds?.toString() || ''}>
                         {subjectData.subjectName}
                       </SelectItem>
                     ))}

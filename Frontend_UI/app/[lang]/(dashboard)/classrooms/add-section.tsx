@@ -22,10 +22,12 @@ import {
   useAddSectionMutation,
 } from "@/services/apis/sectionService";
 import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
+import useAuth from "@/hooks/use-auth";
 
 const sectionSchema = z.object({
   sectionName: z.string().min(1, "Section Name is required"),
   capacity: z.number().min(1, "Capacity is required").max(999),
+  createdBy: z.number().optional(),
 });
 
 type SectionFormValues = z.infer<typeof sectionSchema>;
@@ -42,9 +44,15 @@ export default function AddSection({ refetch }: { refetch: () => void }) {
     resolver: zodResolver(sectionSchema),
   });
 
+  const {userId} = useAuth();
+
   const onSubmit: SubmitHandler<SectionFormValues> = async (data) => {
     try {
-      const response = await addSection(data as SectionData);
+      const payload = {
+        ...data,
+        createdBy: userId || 0,
+      }
+      const response = await addSection(payload as SectionData);
       if (response.data?.success) {
         toast.success(
           `${response.data?.data.sectionName} Section Added successfully!`

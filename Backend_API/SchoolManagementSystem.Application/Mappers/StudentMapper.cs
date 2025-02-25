@@ -21,8 +21,9 @@ namespace SchoolManagementSystem.Application.Mappers
                 DateOfBirth = dto.DateOfBirth,
                 EnrollmentDate = dto.EnrollmentDate,
                 ProfileImage = dto.ProfileImage,
-                CampusId = dto.CampusId,
-                ClassId = dto.ClassId,
+                //CampusId = dto.CampusId,
+                //ClassId = dto.ClassId,
+                //SectionId = dto.SectionId,
                 IsActive = dto.IsActive,
 
             };
@@ -46,9 +47,11 @@ namespace SchoolManagementSystem.Application.Mappers
                 DateOfBirth = entity.DateOfBirth,
                 EnrollmentDate = entity.EnrollmentDate,
                 ProfileImage = entity.ProfileImage,
-                CampusId = entity.CampusId,
-                ClassId = entity.ClassId,
-                ClassName = entity.Class?.ClassName,
+                CampusId = entity.Academic?.CampusId,
+                ClassId = entity.Academic?.ClassId,
+                SectionId = entity.Academic?.SectionId,
+                SectionName = entity.Academic.Section?.SectionName,
+                ClassName = entity.Academic.Class?.ClassName,
                 IsActive = entity.IsActive,
 
 

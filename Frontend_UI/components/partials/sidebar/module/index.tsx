@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { cn, isLocationMatch, getDynamicPath, translate } from "@/lib/utils";
-import { menusConfig, ModernNavType, } from "@/config/menus";
+import { menusConfig, ModernNavType } from "@/config/menus";
 import SingleIconMenu from "./single-icon-menu";
 import { useRouter, usePathname } from "next/navigation";
 import { useSidebar, useThemeStore } from "@/store";
@@ -16,6 +16,8 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import MenuOverlayPortal from "./MenuOverlayPortal";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reduxStore";
 
 const ModuleSidebar = ({ trans }: { trans: any }) => {
   const menus = menusConfig?.sidebarNav?.modern || [];
@@ -31,15 +33,32 @@ const ModuleSidebar = ({ trans }: { trans: any }) => {
   const isDesktop = useMediaQuery("(min-width: 1280px)");
   const isMobile = useMediaQuery("(min-width: 768px)");
 
-  // location
+  const permissions = useSelector((state: RootState) => state.auth.permissions);
+  const permittedEntities = permissions.map((permission) => permission.entity);
+
+  const filteredMenu = menus
+    .map((menu) => {
+      // Filter children in the current menu based on permitted entities
+      const filteredChildren = menu.child?.filter((child) =>
+        permittedEntities.includes(child.href ?? "")
+      );
+
+      // Return the menu only if it has matching children
+      if (filteredChildren && filteredChildren.length > 0) {
+        return { ...menu, child: filteredChildren };
+      }
+
+      return null; // Exclude menus with no matching children
+    })
+    .filter(Boolean); // Remove null values
 
   const pathname = usePathname();
   const locationName = getDynamicPath(pathname);
 
   const toggleSubMenu = (index: number) => {
     setActiveIndex(index);
-    if (menus[index].child) {
-      setCurrentSubMenu(menus[index].child);
+    if (filteredMenu[index]?.child) {
+      setCurrentSubMenu(filteredMenu[index]?.child);
       setSubmenu(false);
       setCollapsed(false);
       if (!isDesktop) {
@@ -51,7 +70,7 @@ const ModuleSidebar = ({ trans }: { trans: any }) => {
 
       if (!isDesktop) {
         // when location match need to close the sub menu
-        if (isLocationMatch(menus[index].title, locationName)) {
+        if (isLocationMatch(filteredMenu[index]?.title, locationName)) {
           setSubmenu(false);
         }
       }
@@ -81,7 +100,11 @@ const ModuleSidebar = ({ trans }: { trans: any }) => {
     setSubmenu(false);
     setCollapsed(false);
   }
-  function setActiveNestedMenu(menuIndex: number, nestedMenuIndex: number, childMenu: any) {
+  function setActiveNestedMenu(
+    menuIndex: number,
+    nestedMenuIndex: number,
+    childMenu: any
+  ) {
     setActiveIndex(menuIndex);
     setNestedIndex(nestedMenuIndex);
     setCurrentSubMenu(childMenu);
@@ -91,14 +114,14 @@ const ModuleSidebar = ({ trans }: { trans: any }) => {
   //
   const getMenuTitle = () => {
     if (activeIndex !== null) {
-      return menus[activeIndex].title;
+      return filteredMenu[activeIndex]?.title;
     }
     return "";
   };
 
   useEffect(() => {
     let isMenuMatched = false;
-    menus.forEach((item: any, i: number) => {
+    filteredMenu.forEach((item: any, i: number) => {
       if (item?.href) {
         if (isLocationMatch(item.href, locationName)) {
           isMenuMatched = true;
@@ -134,7 +157,6 @@ const ModuleSidebar = ({ trans }: { trans: any }) => {
           });
         }
       });
-
     });
     if (!isMenuMatched) {
       setSubmenu(false);
@@ -159,13 +181,12 @@ const ModuleSidebar = ({ trans }: { trans: any }) => {
         >
           <div className=" pt-4 ">
             <Link href="/">
-
               <SiteLogo className=" mx-auto text-primary h-15 w-14" />
             </Link>
           </div>
           {/* end logo */}
           <ScrollArea className=" pt-6 grow ">
-            {menus.map((item, i) => (
+            {filteredMenu.map((item, i) => (
               <div
                 key={i}
                 onClick={() => toggleSubMenu(i)}
@@ -201,7 +222,9 @@ const ModuleSidebar = ({ trans }: { trans: any }) => {
             ></div>
           )}
           <h2 className="text-lg  bg-transparent   z-50   font-semibold  flex gap-4 items-center   text-default-700 sticky top-0 py-4  px-4   capitalize ">
-            <span className=" block ">{translate(getMenuTitle(), trans)}</span>
+            <span className=" block ">
+              {translate(getMenuTitle() || "", trans)}
+            </span>
             {!isDesktop && (
               <Button
                 size="icon"

@@ -13,10 +13,11 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
 import { toast } from "sonner";
-import { deletePeriod, PeriodsData } from "@/services/periodService";
+import { PeriodData, useDeletePeriodMutation } from "@/services/apis/periodService";
 
 interface PeriodsProps {
-  Periods: PeriodsData[];
+  Periods: PeriodData[];
+  refetch: () => void
 }
 
 const formatTime = (time: string) => {
@@ -31,16 +32,17 @@ const formatTime = (time: string) => {
   });
 };
 
-const PeriodsListTable: React.FC<PeriodsProps> = ({Periods}) => {
+const PeriodsListTable: React.FC<PeriodsProps> = ({Periods, refetch}) => {
   const [periodsToDelete, setPeriodsToDelete] = useState<number | null>(null);
-  const [filteredPeriods, setFilteredPeriods] = useState<PeriodsData[]>([]);
+  const [filteredPeriods, setFilteredPeriods] = useState<PeriodData[]>([]);
+  const [deletePeriod] = useDeletePeriodMutation();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 10;
 
   useEffect(() => {
-    const filtered = Periods.filter((ps) =>
+    const filtered = Periods?.filter((ps) =>
       ps.periodName.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredPeriods(filtered);
@@ -48,7 +50,7 @@ const PeriodsListTable: React.FC<PeriodsProps> = ({Periods}) => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = Periods.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = Periods?.slice(indexOfFirstItem, indexOfLastItem);
 
   const sortedPeriods = [...Periods].sort((a, b) => {
     // Extract the number from the periodName (e.g., "1st Period" -> 1, "2nd Period" -> 2)
@@ -64,7 +66,7 @@ const PeriodsListTable: React.FC<PeriodsProps> = ({Periods}) => {
     return indexA - indexB;
   });
 
-  const totalPages = Math.ceil(Periods.length / itemsPerPage);
+  const totalPages = Math.ceil(Periods?.length / itemsPerPage);
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -85,6 +87,7 @@ const PeriodsListTable: React.FC<PeriodsProps> = ({Periods}) => {
     try {
       await deletePeriod(id);
       toast.success("Period deleted successfully");
+      refetch();
       setPeriodsToDelete(null); 
     } catch (error) {
       console.error("Error deleting a Period:", error);
@@ -115,7 +118,7 @@ const PeriodsListTable: React.FC<PeriodsProps> = ({Periods}) => {
         </TableHeader>
 
         <TableBody>
-          {sortedPeriods.map((item) => (
+          {sortedPeriods?.map((item) => (
             <TableRow
               key={item.periodId}
               className="hover:bg-default-200"
@@ -136,7 +139,7 @@ const PeriodsListTable: React.FC<PeriodsProps> = ({Periods}) => {
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  {/* <EditPeriods PeriodsData={[item]} /> */}
+                  {/* <EditPeriods periodItem={[item]} periodData={Periods} refetch={refetch} /> */}
 
                   <Button
                     size="icon"

@@ -1,6 +1,4 @@
-﻿using SchoolManagementSystem.Domain.Entities;
-
-namespace SchoolManagementSystem.Application.DTOs
+﻿namespace SchoolManagementSystem.Application.DTOs
 {
     public class ApplicantDTO
     {

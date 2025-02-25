@@ -22,8 +22,12 @@ const Page = () => {
   const { data: students, refetch } = useFetchStudentByClassWiseQuery(
     classId ?? 0
   );
+
+  // Ensure we only have unique students
   const studentData = Array.isArray(students?.data)
-    ? (students?.data as StudentData[])
+    ? Array.from(
+        new Map(students.data.map((s) => [s.studentId, s])).values()
+      ) // ✅ Ensures only one student per ID
     : [];
 
   const {

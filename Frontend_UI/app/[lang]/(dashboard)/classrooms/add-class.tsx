@@ -18,11 +18,13 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useAddClassMutation } from "@/services/apis/classService";
+import useAuth from "@/hooks/use-auth";
 
 const classSchema = z.object({
   className: z.string().min(1, "Class Name is required"),
   capacity: z.number().min(1, "Capacity is required").max(999),
   classDescription: z.string().optional(),
+  createdBy: z.number().optional(),
 });
 
 type ClassFormValues = z.infer<typeof classSchema>;
@@ -33,6 +35,8 @@ interface ClassProps {
 export default function AddClass({refetch}: ClassProps) {
   const [addClass] = useAddClassMutation();
 
+  const {userId} = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -41,10 +45,16 @@ export default function AddClass({refetch}: ClassProps) {
   } = useForm<ClassFormValues>({
     resolver: zodResolver(classSchema),
   });
-
+  
   const onSubmit: SubmitHandler<ClassFormValues> = async (data) => {
+    
     try {
-      const response = await addClass(data);
+      const payload = {
+        ...data,
+        createdBy: userId || 0,
+      }
+      const response = await addClass(payload);
+      
       if (response?.data?.success) {
         const className = Array.isArray(response.data?.data)
           ? response.data?.data[0].className 
