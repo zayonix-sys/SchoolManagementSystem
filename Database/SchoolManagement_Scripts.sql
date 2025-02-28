@@ -1277,7 +1277,7 @@ CREATE TABLE InventoryCategories (
     CategoryID INT PRIMARY KEY IDENTITY(1,1),
     CategoryName NVARCHAR(100) NOT NULL,
     Description NVARCHAR(255),
-	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedAt DATETIME2 DEFAULT GETDATE(),
 	CreatedBy INT,
 	UpdatedAt DATETIME NULL,
 	UpdatedBy INT,
@@ -1339,12 +1339,11 @@ CREATE TABLE AssetAllocation (
 SELECT 
     I.ItemName,
     C.CategoryName,
-    I.TotalQuantity,
     SUM(CASE WHEN S.TransactionType = 'IN' THEN S.Quantity ELSE 0 END) AS TotalStockIn,
     SUM(CASE WHEN S.TransactionType = 'OUT' THEN S.Quantity ELSE 0 END) AS TotalStockOut,
-    (I.TotalQuantity + SUM(CASE WHEN S.TransactionType = 'IN' THEN S.Quantity ELSE 0 END) - 
+    (SUM(CASE WHEN S.TransactionType = 'IN' THEN S.Quantity ELSE 0 END) - 
      SUM(CASE WHEN S.TransactionType = 'OUT' THEN S.Quantity ELSE 0 END)) AS CurrentStock
 FROM InventoryItems I
 LEFT JOIN InventoryStock S ON I.ItemID = S.ItemID
 LEFT JOIN InventoryCategories C ON I.CategoryID = C.CategoryID
-GROUP BY I.ItemName, C.CategoryName, I.TotalQuantity;
+GROUP BY I.ItemName, C.CategoryName;

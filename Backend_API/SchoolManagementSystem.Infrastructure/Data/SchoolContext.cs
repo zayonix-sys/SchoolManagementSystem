@@ -42,6 +42,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<SponsorshipDetail> SponsorshipDetails { get; set; }
 
         public DbSet<StudentAttendance> StudentAttendance { get; set; }
+        public DbSet<InventoryCategory> InventoryCategories { get; set; }
+        public DbSet<InventoryItem> InventoryItems { get; set; }
         //public DbSet<ExamResult> ExamResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -94,6 +96,11 @@ namespace SchoolManagementSystem.Infrastructure.Data
             modelBuilder.Entity<Payment>(entity =>
             {
                 entity.Property(e => e.AmountPaid).HasPrecision(18, 2); // Specify precision and scale
+            });
+
+            modelBuilder.Entity<InventoryItem>(entity =>
+            {
+                entity.Property(e => e.UnitPrice).HasPrecision(18, 2); // Specify precision and scale
             });
 
             modelBuilder.Entity<Sponsorship>(entity =>

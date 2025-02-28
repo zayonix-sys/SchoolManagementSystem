@@ -59,6 +59,14 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             {
                 keyProperty = entityType.GetProperty("AttendanceId");
             }
+            else if (entityType.Name == "InventoryCategory")
+            {
+                keyProperty = entityType.GetProperty("CategoryId");
+            }
+            else if (entityType.Name == "InventoryItem")
+            {
+                keyProperty = entityType.GetProperty("ItemId");
+            }
             else if (entityType.Name == "UserPermission")
             {
                 keyProperty = entityType.GetProperty("PermissionId");
@@ -125,6 +133,14 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             else if (entityType.Name == "UserPermission")
             {
                 keyProperty = entityType.GetProperty("PermissionId");
+            }
+            else if (entityType.Name == "InventoryCategory")
+            {
+                keyProperty = entityType.GetProperty("CategoryId");
+            }
+            else if (entityType.Name == "InventoryItem")
+            {
+                keyProperty = entityType.GetProperty("ItemId");
             }
             else
             {

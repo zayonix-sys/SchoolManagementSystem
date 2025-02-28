@@ -32,6 +32,8 @@ import examResultApi from "./apis/examResultService";
 import examResultPDFApi from "./apis/examResultPDFService";
 import timetableApi from "./apis/timetableService";
 import periodApi from "./apis/periodService";
+import inventoryCategoryApi from "./apis/inventoryCategoryService";
+import inventoryItemApi from "./apis/inventoryItemService";
 
 // Import or define your auth reducer
 // import authReducer from "./authSlice"; // Assuming your auth reducer is in authSlice.js
@@ -79,6 +81,8 @@ const rootReducer = combineReducers({
   [examResultPDFApi.reducerPath]: examResultPDFApi.reducer,
   [timetableApi.reducerPath]: timetableApi.reducer,
   [periodApi.reducerPath]: periodApi.reducer,
+  [inventoryCategoryApi.reducerPath]: inventoryCategoryApi.reducer,
+  [inventoryItemApi.reducerPath]: inventoryItemApi.reducer,
 });
 
 const store = configureStore({
@@ -116,9 +120,10 @@ const store = configureStore({
       .concat(examResultApi.middleware)
       .concat(examResultPDFApi.middleware)
       .concat(timetableApi.middleware)
-      .concat(periodApi.middleware),
+      .concat(periodApi.middleware)
+      .concat(inventoryCategoryApi.middleware)
+      .concat(inventoryItemApi.middleware),
 });
-
 
 export const persistor = persistStore(store);
 
