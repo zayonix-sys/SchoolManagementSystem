@@ -19,6 +19,7 @@ import {
   useFetchCampusesQuery,
 } from "@/services/apis/campusService";
 import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
+import useAuth from "@/hooks/use-auth";
 
 const applicantSchema = z.object({
   applicantId: z.number().optional(),
@@ -49,7 +50,7 @@ const applicantSchema = z.object({
   admissionDecisionDate: z.string().optional(),
   remarks: z.string().optional(),
   // createdAt: z.string().optional(),
-  // createdBy: z.number().optional(),
+  createdBy: z.number().optional(),
   // updatedAt: z.string().optional(),
   // updatedBy: z.number().optional(),
   // isActive: z.boolean().optional().default(true),
@@ -81,10 +82,17 @@ const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
       gender: "male",
     },
   });
+  const {userId} = useAuth();
+
 
   const onSubmit: SubmitHandler<ApplicantFormValues> = async (data) => {
     try {
-      const response = await addApplicant(data);
+      const payload = {...data,
+        createdBy: userId || 0,
+      }
+      console.log(userId,"userid");
+      
+      const response = await addApplicant(payload);
       if (response?.data?.success) {
         toast.success(`${data?.firstName} Added successfully!`);
         reset();

@@ -318,16 +318,17 @@ CREATE TABLE StudentAcademic (
 	CampusId INT,
     ClassId INT,
     SectionId INT,
-    EnrollmentDate DATE,
-    AcademicYear NVARCHAR(10),  -- e.g., "2024-2025"
+	AcademicYear NVARCHAR(10),  -- e.g., "2024-2025"
     IsPromoted BIT DEFAULT 0,
-    PromotionDate DATE NULL,
+    PromotionDate DATETime Default GetDate() NULL,
     Remarks NVARCHAR(255) NULL,
     CreatedAt DATETIME DEFAULT GETDATE(),
     CreatedBy INT,
     UpdatedAt DATETIME DEFAULT GETDATE(),
     UpdatedBy INT,
-    IsActive BIT DEFAULT 1, -- Flag to indicate if this is the student's current enrollment
+    IsActive BIT DEFAULT 1, 
+	IsStudied BIT Default 0 Null,
+	-- Flag to indicate if this is the student's current enrollment
 
     FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
 	FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId),
@@ -342,7 +343,7 @@ CREATE INDEX IDX_StudentAcademicRecords_SectionId ON StudentAcademic(SectionId);
 CREATE INDEX IDX_StudentAcademicRecords_AcademicYear ON StudentAcademic(AcademicYear);
 
 CREATE TABLE StudentAttendance (
-    AttendanceId INT PRIMARY KEY IDENTITY,
+    AttendanceId INT PRIMARY KEY IDENTITY(1,1),
     StudentId INT,
 	CampusId INT,
 	ClassId INT,
@@ -412,19 +413,21 @@ CREATE TABLE Employees (
 CREATE INDEX IDX_Employees_RoleId ON Employees(RoleId);
 
 CREATE TABLE EmployeeAttendance (
-    AttendanceId INT PRIMARY KEY IDENTITY,
+    EmployeeAttendanceId INT PRIMARY KEY IDENTITY(1,1),
     EmployeeId INT,
-    AttendanceDate DATE,
-    AttendanceStatus NVARCHAR(20), -- e.g., "Present", "Absent"
-    CreatedAt DATETIME DEFAULT GETDATE(),
-    CreatedBy INT,
-    UpdatedAt DATETIME DEFAULT GETDATE(),
-    UpdatedBy INT,
-    IsActive BIT DEFAULT 1,
+	CampusId INT Null,
+    AttendanceDate DATE Default GetDate(),
+    AttendanceStatus NVARCHAR(20),
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT Null,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT Null,
+	IsActive BIT DEFAULT 1
 
-    FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
-    FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
-    FOREIGN KEY (EmployeeId) REFERENCES Employees(EmployeeId)
+	FOREIGN KEY (EmployeeId) REFERENCES Employees(EmployeeId),
+	FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId),
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
 CREATE INDEX IDX_EmployeeAttendance_EmployeeId ON EmployeeAttendance(EmployeeId);
 
@@ -675,10 +678,10 @@ CREATE INDEX IDX_ExamResults_StudentId ON ExamResults(StudentId);
 CREATE INDEX IDX_ExamResults_ExamId ON ExamResults(ExamId);
 
 CREATE TABLE Grades (
-    GradeId INT PRIMARY KEY IDENTITY,
+    GradeId INT PRIMARY KEY IDENTITY(1,1),
     StudentId INT,
 	SubjectId INT,
-    Grade NVARCHAR(5),
+    GradeName NVARCHAR(5),
     DateAwarded DATE,
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
@@ -1163,9 +1166,13 @@ FOREIGN KEY (SectionId) REFERENCES Sections(SectionId)
 exec sp_rename 'ClassroomAssignments.AssignmentId', 'ClassSectionAssignmentId' , 'Column'
 
 --ALTER Script 04-Dec-2024 -- Suffian
+ALTER TABLE ExamResults
+ADD CONSTRAINT FK_ExamResult_ExamPaperId
+FOREIGN KEY (ExamPaperId) REFERENCES ExamPaper(ExamPaperId)
 
 ALTER TABLE ExamResults
-ADD TotalMarksObtained INT
+ADD MarksObtained INT
+
 
 ALTER TABLE ExamResults
 DROP COLUMN ClassId
@@ -1201,6 +1208,31 @@ CREATE TABLE SponsorshipDetails (
 	FOREIGN KEY (ClassId) REFERENCES Classes(ClassId),
 );
 CREATE INDEX IDX_SponsorshipDetails_SponsorId ON SponsorshipDetails(SponsorshipId);
+
+Create Table AcademicYears(
+AcademicYearId INT Primary Key Identity (1,1),
+AcademicYearName nvarchar (12) Null,
+StartYear DateTime Default GetDate(),
+EndYear DateTime Default GetDate(),
+StudentId Int Null,
+StudentAcademicId int Null,
+ExamPaperId int Null,
+ExamResultId int Null,
+CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT Null,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT NULL,
+	IsActive BIT DEFAULT 1
+
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
+	FOREIGN KEY (StudentAcademicId) REFERENCES StudentAcademic(StudentAcademicId),
+	FOREIGN KEY (ExamPaperId) REFERENCES ExamPaper(ExamPaperId),
+	FOREIGN KEY (ExamResultId) REFERENCES ExamResults(ExamResultId),
+);
+
+
 
 --Dashboard Scripts for view Table
 USE school_management_sqldb

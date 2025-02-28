@@ -56,6 +56,7 @@ const AddStudentAttendance: React.FC<StudentAttendanceProps> = ({
 
   const [attendance, setAttendance] = useState<Record<number, string>>({});
   const [existingAttendance, setExistingAttendance] = useState<Record<number, boolean>>({});
+  const [isSaving, setIsSaving] = useState(false);
   const [addAttendance] = useAddStudentAttendanceMutation();
   const { data: fetchedAttendance } = useFetchStudentAttendanceQuery();
 
@@ -187,7 +188,9 @@ const AddStudentAttendance: React.FC<StudentAttendanceProps> = ({
               </Button>
             </div>
             <div className="flex justify-end mt-4">
-              <Button type="submit">Submit Attendance</Button>
+              <Button type="submit" disabled={isSaving}>
+              {isSaving ? "Saving..." : "Submit Attendance"}
+              </Button>
             </div>
           </form>
         </div>

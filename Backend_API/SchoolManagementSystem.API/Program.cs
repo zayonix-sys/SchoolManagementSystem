@@ -92,8 +92,22 @@ builder.Services.AddScoped<ExamMapper>();
 builder.Services.AddScoped<IExamResult, ExamResultService>();
 builder.Services.AddScoped<ExamResultMapper>();
 builder.Services.AddScoped<IExamResultPDF, ExamResultPdfService>();
+
+
 builder.Services.AddScoped<IStudentAttendance, StudentAttendanceService>();
 builder.Services.AddScoped<StudentAttendanceMapper>();
+
+
+builder.Services.AddScoped<IEmployeeAttendance, EmployeeAttendanceService>();
+builder.Services.AddScoped<EmployeeAttendanceMapper>();
+
+builder.Services.AddScoped<IStudentAcademic, StudentAcademicService>();
+builder.Services.AddScoped<StudentAcademicMapper>();
+
+builder.Services.AddScoped<IAcademicYear, AcademicYearService>();
+builder.Services.AddScoped<AcademicYearMapper>();
+
+
 builder.Services.AddScoped<IPayment, PaymentService>();
 builder.Services.AddScoped<PaymentMapper>();
 builder.Services.AddScoped<IUserRoles, UserRolesService>();

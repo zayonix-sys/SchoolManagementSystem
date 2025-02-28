@@ -1,5 +1,4 @@
 ﻿using LinqKit;
-using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
@@ -13,15 +12,17 @@ namespace SchoolManagementSystem.Application.Services
         private readonly IGenericRepository<Applicant> _applicantRepository;
         private readonly IGenericRepository<AdmissionApplication> _applicationRepository;
         private readonly IStudent _studentRepository;
+        private readonly IStudentAcademic _studentAcademicRepository;
         private readonly IGenericRepository<ApplicantApplicationView> _applicationApplicationRepository;
         private readonly ApplicantMapper _mapper;
         private readonly ApplicationMapper _mapperApplication;
         private readonly ApplicantApplicationMapper _mapperApplicantApplication;
 
-        public ApplicantService(IGenericRepository<Applicant> genericRepository, 
-            IGenericRepository<AdmissionApplication> applicationRepository, 
+        public ApplicantService(IGenericRepository<Applicant> genericRepository,
+            IGenericRepository<AdmissionApplication> applicationRepository,
             IGenericRepository<ApplicantApplicationView> applicantApplicationRepository,
             IStudent studentRepository,
+            IStudentAcademic studentAcademicRepository,
             ApplicantMapper applicantMapper, ApplicationMapper mapperApplication, ApplicantApplicationMapper applicantApplicationMapper)
         {
             _applicantRepository = genericRepository;
@@ -31,6 +32,7 @@ namespace SchoolManagementSystem.Application.Services
             _mapperApplication = mapperApplication;
             _mapperApplicantApplication = applicantApplicationMapper;
             _studentRepository = studentRepository;
+            _studentAcademicRepository = studentAcademicRepository;
         }
 
         public async Task<int> AddApplicantAsync(ApplicantDTO dto)
@@ -90,7 +92,6 @@ namespace SchoolManagementSystem.Application.Services
         public async Task ApplicationStatus(ApplicationUpdateStatusDTO dto)
         {
             var app = await _applicationRepository.GetByIdAsync(dto.ApplicationId);
-
             var applicantEntities = await _applicationApplicationRepository.GetAllAsync();
             var applicationData = applicantEntities.FirstOrDefault(x => x.ApplicationId == dto.ApplicationId);
 
@@ -109,6 +110,7 @@ namespace SchoolManagementSystem.Application.Services
                 {
                     if (dto.ApplicationStatus == "Approved")
                     {
+                        // Create new student record
                         Student newStudent = new Student
                         {
                             GrNo = applicationData.ApplicationId,
@@ -119,17 +121,37 @@ namespace SchoolManagementSystem.Application.Services
                             Email = applicationData.Email,
                             PhoneNumber = applicationData.PhoneNumber,
                             EnrollmentDate = DateTime.Now,
+                            //ClassId = applicationData.AppliedClassId,
+                            //SectionId = dto.SectionId,
+                            //CampusId = applicationData.CampusId,
+                            IsActive = true,
+
+                        };
+
+                        // Save student first to get the StudentId
+                        await _studentRepository.AddStudentAsync(newStudent);
+
+                        // Create corresponding student academic record
+                        StudentAcademicDTO studentAcademic = new()
+                        {
+                            StudentId = newStudent.StudentId, // Now StudentId is available
                             ClassId = applicationData.AppliedClassId,
                             SectionId = dto.SectionId,
                             CampusId = applicationData.CampusId,
+                            Remarks = "new student",
+                            PromotionDate = DateTime.UtcNow,
+                            AcademicYear = $"{DateTime.UtcNow.Year}-{DateTime.UtcNow.Year + 1}",
                             IsActive = true,
-                            CreatedBy = 1,
+                            IsPromoted = false,
+                            IsStudied = false,
+                            CreatedBy = 2012,
+                            CreatedAt = DateTime.UtcNow
                         };
 
-                        await _studentRepository.AddStudentAsync(newStudent);
+                        await _studentAcademicRepository.AddStudentAcademicAsync(studentAcademic);
                     }
                 }
-                else 
+                else
                 {
                     if (dto.ApplicationStatus == "Rejected")
                     {
@@ -139,13 +161,32 @@ namespace SchoolManagementSystem.Application.Services
                     else if (dto.ApplicationStatus == "Approved")
                     {
                         studentData.IsActive = true;
-                        studentData.SectionId = dto.SectionId;
+                        //studentAcademic.SectionId = dto.SectionId;
                         await _studentRepository.UpdateStudentAsync(studentData);
+
+                        // Check if student academic record exists
+                        var studentAcademicData = await _studentAcademicRepository.GetByStudentIdAsync(studentData.StudentId);
+                        if (studentAcademicData == null)
+                        {
+                            StudentAcademicDTO studentAcademic = new()
+                            {
+                                StudentId = studentData.StudentId,
+                                ClassId = applicationData.AppliedClassId,
+                                SectionId = dto.SectionId,
+                                CampusId = applicationData.CampusId,
+                                IsActive = true,
+                                IsPromoted = false,
+                                IsStudied = false,
+                                CreatedBy = 2012,
+                                CreatedAt = DateTime.UtcNow
+                            };
+
+                            await _studentAcademicRepository.AddStudentAcademicAsync(studentAcademic);
+                        }
                     }
                 }
             }
         }
-
 
     }
 }

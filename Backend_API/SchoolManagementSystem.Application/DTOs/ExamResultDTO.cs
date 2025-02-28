@@ -9,7 +9,8 @@ namespace SchoolManagementSystem.Application.DTOs
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? SubjectName { get; set; }
-        public string? ClassName { get; set; } 
+        public string? ClassName { get; set; }
+        public int? ClassId { get; set; }
         public string? TermName { get; set; }
         public int? TotalMarks { get; set; }
 
