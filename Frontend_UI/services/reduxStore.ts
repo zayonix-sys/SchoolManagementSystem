@@ -127,7 +127,7 @@ const store = configureStore({
       .concat(timetableApi.middleware)
       .concat(periodApi.middleware)
       .concat(inventoryCategoryApi.middleware)
-      .concat(inventoryItemApi.middleware),
+      .concat(inventoryItemApi.middleware)
       .concat(studentAcademicApi.middleware),
 });
 

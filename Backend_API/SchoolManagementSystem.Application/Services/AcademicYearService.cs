@@ -79,7 +79,7 @@ namespace SchoolManagementSystem.Application.Services
             {
                 // Fetch all academic years with the given academic year
                 var academicYears = await _academicYearRepository.GetAllAsync(
-                    include: query => query.Where(a => a.AcademicYear == academicYear)
+                    //include: query => query.Where(a => a.AcademicYear == academicYear)
                 );
 
                 // Map the entities to DTOs

@@ -1,5 +1,4 @@
 import { DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation, List, ListFill, Cart, ClipBoard } from "@/components/svg";
-import { Coins, CoinsIcon } from "lucide-react";
 import useAuth from "@/hooks/use-auth";
 import { CalendarCheck2Icon, Coins, CoinsIcon } from "lucide-react";
 
