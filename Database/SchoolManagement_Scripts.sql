@@ -1309,7 +1309,7 @@ CREATE TABLE InventoryCategories (
     CategoryID INT PRIMARY KEY IDENTITY(1,1),
     CategoryName NVARCHAR(100) NOT NULL,
     Description NVARCHAR(255),
-	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedAt DATETIME2 DEFAULT GETDATE(),
 	CreatedBy INT,
 	UpdatedAt DATETIME NULL,
 	UpdatedBy INT,
@@ -1324,6 +1324,7 @@ CREATE TABLE InventoryItems (
     CategoryID INT FOREIGN KEY REFERENCES InventoryCategories(CategoryID),
     Description NVARCHAR(255),
     UnitPrice DECIMAL(18, 2),
+    StatusID INT FOREIGN KEY REFERENCES InventoryStatus(StatusID),
     ReorderLevel INT DEFAULT 100,
     CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
@@ -1334,7 +1335,7 @@ CREATE TABLE InventoryItems (
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
 
-CREATE TABLE InventoryStock (
+CREATE TABLE InventoryStocks (
     StockID INT PRIMARY KEY IDENTITY(1,1),
     ItemID INT FOREIGN KEY REFERENCES InventoryItems(ItemID),
     Quantity INT NOT NULL,
@@ -1349,6 +1350,26 @@ CREATE TABLE InventoryStock (
 	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
+
+CREATE TABLE InventoryPurchases (
+    PurchaseID INT PRIMARY KEY IDENTITY(1,1),
+    ItemID INT FOREIGN KEY REFERENCES InventoryItems(ItemID),
+    SupplierName NVARCHAR(100) NOT NULL, -- Supplier or vendor name
+    Quantity INT NOT NULL,
+    UnitPrice DECIMAL(18,2) NOT NULL, -- Price per unit at the time of purchase
+    TotalCost AS (Quantity * UnitPrice) PERSISTED, -- Calculated field for total cost
+    PurchaseDate DATETIME DEFAULT GETDATE(),
+    InvoiceNumber NVARCHAR(50), -- Invoice or receipt number
+    Remarks NVARCHAR(255),
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    CreatedBy INT,
+    UpdatedAt DATETIME NULL,
+    UpdatedBy INT,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+    FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId)
+);
+
 
 CREATE TABLE AssetAllocation (
     AllocationID INT PRIMARY KEY IDENTITY(1,1),
@@ -1368,15 +1389,16 @@ CREATE TABLE AssetAllocation (
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
 
+CREATE VIEW vw_InventoryStockSummary AS
 SELECT 
+    I.ItemID,
     I.ItemName,
     C.CategoryName,
-    I.TotalQuantity,
     SUM(CASE WHEN S.TransactionType = 'IN' THEN S.Quantity ELSE 0 END) AS TotalStockIn,
     SUM(CASE WHEN S.TransactionType = 'OUT' THEN S.Quantity ELSE 0 END) AS TotalStockOut,
-    (I.TotalQuantity + SUM(CASE WHEN S.TransactionType = 'IN' THEN S.Quantity ELSE 0 END) - 
+    (SUM(CASE WHEN S.TransactionType = 'IN' THEN S.Quantity ELSE 0 END) - 
      SUM(CASE WHEN S.TransactionType = 'OUT' THEN S.Quantity ELSE 0 END)) AS CurrentStock
 FROM InventoryItems I
-LEFT JOIN InventoryStock S ON I.ItemID = S.ItemID
+LEFT JOIN InventoryStocks S ON I.ItemID = S.ItemID
 LEFT JOIN InventoryCategories C ON I.CategoryID = C.CategoryID
-GROUP BY I.ItemName, C.CategoryName, I.TotalQuantity;
+GROUP BY I.ItemID, I.ItemName, C.CategoryName;

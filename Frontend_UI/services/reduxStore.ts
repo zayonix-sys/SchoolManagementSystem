@@ -32,8 +32,12 @@ import examResultApi from "./apis/examResultService";
 import examResultPDFApi from "./apis/examResultPDFService";
 import timetableApi from "./apis/timetableService";
 import periodApi from "./apis/periodService";
+import inventoryCategoryApi from "./apis/inventoryCategoryService";
+import inventoryItemApi from "./apis/inventoryItemService";
 import employeeAttendanceApi from "./apis/employeeAttendanceService";
 import studentAcademicApi from "./apis/studentAcademicService";
+import inventoryStockApi from "./apis/inventoryStockService";
+import inventoryStatusApi from "./apis/inventoryStatusService";
 
 // Import or define your auth reducer
 // import authReducer from "./authSlice"; // Assuming your auth reducer is in authSlice.js
@@ -83,6 +87,10 @@ const rootReducer = combineReducers({
   [examResultPDFApi.reducerPath]: examResultPDFApi.reducer,
   [timetableApi.reducerPath]: timetableApi.reducer,
   [periodApi.reducerPath]: periodApi.reducer,
+  [inventoryCategoryApi.reducerPath]: inventoryCategoryApi.reducer,
+  [inventoryItemApi.reducerPath]: inventoryItemApi.reducer,
+  [inventoryStockApi.reducerPath]: inventoryStockApi.reducer,
+  [inventoryStatusApi.reducerPath]: inventoryStatusApi.reducer,
 });
 
 const store = configureStore({
@@ -122,9 +130,12 @@ const store = configureStore({
       .concat(examResultPDFApi.middleware)
       .concat(timetableApi.middleware)
       .concat(periodApi.middleware)
-      .concat(studentAcademicApi.middleware),
+      .concat(inventoryCategoryApi.middleware)
+      .concat(inventoryItemApi.middleware)
+      .concat(studentAcademicApi.middleware)
+      .concat(inventoryStockApi.middleware)
+      .concat(inventoryStatusApi.middleware),
 });
-
 
 export const persistor = persistStore(store);
 
