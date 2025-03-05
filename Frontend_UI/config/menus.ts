@@ -1,4 +1,4 @@
-import { Cart, ClipBoard, DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation,  } from "@/components/svg";
+import { DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation, List, ListFill, Cart, ClipBoard } from "@/components/svg";
 import useAuth from "@/hooks/use-auth";
 import { CalendarCheck2Icon, Coins, CoinsIcon } from "lucide-react";
 
@@ -60,6 +60,11 @@ export const menuItems: MenuItemProps[] = [
         href: "/sponsorship",
         icon: Donation,
       },
+      {
+        title: "Manage Inventories",
+        href: "/manage-inventories",
+        icon: ListFill,
+      }
      
     ],
   },

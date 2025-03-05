@@ -59,7 +59,6 @@ builder.Services.AddScoped<ApplicantApplicationMapper>();
 builder.Services.AddScoped<TimeTableViewMapper>();
 builder.Services.AddScoped<IQuestionBank, QuestionBankService>();
 builder.Services.AddScoped<QuestionBankMapper>();
-
 builder.Services.AddScoped<IEmployee, EmployeeService>();
 builder.Services.AddScoped<EmployeeMapper>();
 builder.Services.AddScoped<IEmployeeRoles, EmployeeRolesService>();
@@ -72,7 +71,6 @@ builder.Services.AddScoped<ITimeTable, TimeTableService>();
 builder.Services.AddScoped<TimeTableMapper>();
 builder.Services.AddScoped<IPeriod, PeriodService>();
 builder.Services.AddScoped<PeriodMapper>();
-
 builder.Services.AddScoped<IStudent, StudentService>();
 builder.Services.AddScoped<StudentMapper>();
 builder.Services.AddScoped<ISubject, SubjectService>();
@@ -88,7 +86,6 @@ builder.Services.AddScoped<ISponsorship, SponsorshipService>();
 builder.Services.AddScoped<SponsorshipMapper>();
 builder.Services.AddScoped<ISponsorshipDetail, SponsorshipDetailService>();
 builder.Services.AddScoped<SponsorshipDetailMapper>();
-
 builder.Services.AddScoped<IExamPaperPDF, ExamPaperPdfService>();
 builder.Services.AddScoped<IExam, ExamService>();
 builder.Services.AddScoped<ExamMapper>();
@@ -117,11 +114,17 @@ builder.Services.AddScoped<IUserRoles, UserRolesService>();
 builder.Services.AddScoped<UserRoleMapper>();
 builder.Services.AddScoped<IUserPermission, UserPermissionService>();
 builder.Services.AddScoped<UserPermissionMapper>();
-
 builder.Services.AddScoped<IDashboardCountView, DashboardCountViewService>();
 builder.Services.AddScoped<DashboardCountViewMapper>();
-
-
+builder.Services.AddScoped<IInventoryCategories, InventoryCategoryService>();
+builder.Services.AddScoped<InventoryCategoryMapper>();
+builder.Services.AddScoped<IInventoryItems, InventoryItemService>();
+builder.Services.AddScoped<InventoryItemMapper>();
+builder.Services.AddScoped<IInventoryStocks, InventoryStockService>();
+builder.Services.AddScoped<InventoryStockMapper>();
+builder.Services.AddScoped<InventoryStockViewMapper>();
+builder.Services.AddScoped<IInventoryStatus, InventoryStatusService>();
+builder.Services.AddScoped<InventoryStatusMapper>();
 
 
 
