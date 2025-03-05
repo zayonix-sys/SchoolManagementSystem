@@ -4,10 +4,8 @@
     {
         public int ItemId { get; set; }
         public string ItemName { get; set; }
-        public int StatusId { get; set; }
         public int CategoryId { get; set; }
         public string? CategoryName { get; set; }
-        public string? StatusName { get; set; }
         public string Description { get; set; }
         public decimal UnitPrice { get; set; }
         public int TotalQuantity { get; set; }

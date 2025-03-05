@@ -31,10 +31,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 
 const inventoryStockSchema = z.object({
   itemId: z.number().int("Item is required"),
   quantity: z.number().int("Quantity is required"),
+  statusId: z.number().int("Status is required"),
   transactionType: z.string().nonempty("Transaction type is required"),
   transactionDate: z
     .string()
@@ -51,12 +53,23 @@ type InventoryStockFormValues = z.infer<typeof inventoryStockSchema>;
 interface StockListTableProps {
   stockData: InventoryStockData;
   items: InventoryItemData[];
+  status: InventoryStatusData[];
 }
-const EditItem: React.FC<StockListTableProps> = ({ stockData, items }) => {
+const EditItem: React.FC<StockListTableProps> = ({
+  stockData,
+  items,
+  status,
+}) => {
   const [updateItem] = useUpdateInventoryStockMutation();
   const loggedUser = useSelector((state: RootState) => state.auth.user);
-  const { itemId, quantity, transactionType, transactionDate, remarks } =
-    stockData;
+  const {
+    itemId,
+    quantity,
+    statusId,
+    transactionType,
+    transactionDate,
+    remarks,
+  } = stockData;
 
   const {
     register,
@@ -69,6 +82,7 @@ const EditItem: React.FC<StockListTableProps> = ({ stockData, items }) => {
     defaultValues: {
       itemId,
       quantity,
+      statusId,
       transactionType,
       transactionDate,
       remarks,
@@ -142,6 +156,34 @@ const EditItem: React.FC<StockListTableProps> = ({ stockData, items }) => {
                   </Select>
                   {errors.itemId && (
                     <p className="text-destructive">{errors.itemId.message}</p>
+                  )}
+                </div>
+                <div className="col-span-2">
+                  <Select
+                    defaultValue={statusId?.toString() ?? ""}
+                    onValueChange={(value) =>
+                      setValue("statusId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {status?.map((status) => (
+                        <SelectItem
+                          className="hover:bg-default-300"
+                          key={status.statusId}
+                          value={status.statusId?.toString() ?? ""}
+                        >
+                          {status.statusName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.statusId && (
+                    <p className="text-destructive">
+                      {errors.statusId.message}
+                    </p>
                   )}
                 </div>
                 <div className="col-span-2">

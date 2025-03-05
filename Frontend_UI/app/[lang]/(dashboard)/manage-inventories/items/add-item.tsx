@@ -36,7 +36,6 @@ import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 const inventoryItemSchema = z.object({
   itemName: z.string().nonempty("Item Name is required"),
   categoryId: z.number().int("Category is required"),
-  statusId: z.number().int("Status is required"),
   description: z.string().nonempty("Description is required"),
   unitPrice: z.number().int("Unit Price is required"),
   totalQuantity: z.number().int("Quantity is required"),
@@ -46,9 +45,8 @@ const inventoryItemSchema = z.object({
 type InventoryItemFormValues = z.infer<typeof inventoryItemSchema>;
 interface ItemsProps {
   categories: InventoryCategoryData[];
-  status: InventoryStatusData[];
 }
-const AddItem: React.FC<ItemsProps> = ({ categories, status }) => {
+const AddItem: React.FC<ItemsProps> = ({ categories }) => {
   const [addItem] = useAddInventoryItemMutation();
   const loggedUser = useSelector((state: RootState) => state.auth.user);
   const {
@@ -156,33 +154,6 @@ const AddItem: React.FC<ItemsProps> = ({ categories, status }) => {
                   {errors.categoryId && (
                     <p className="text-destructive">
                       {errors.categoryId.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <Select
-                    onValueChange={(value) =>
-                      setValue("statusId", parseInt(value))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {status?.map((category) => (
-                        <SelectItem
-                          className="hover:bg-default-300"
-                          key={category.statusId}
-                          value={category.statusId?.toString() ?? ""}
-                        >
-                          {category.statusName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.statusId && (
-                    <p className="text-destructive">
-                      {errors.statusId.message}
                     </p>
                   )}
                 </div>
