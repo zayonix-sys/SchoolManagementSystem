@@ -50,6 +50,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
         public DbSet<InventoryCategory> InventoryCategories { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<InventoryStock> InventoryStocks { get; set; }
+        public DbSet<InventoryStatus> InventoryStatus { get; set; }
         //public DbSet<ExamResult> ExamResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -91,6 +93,9 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
             modelBuilder.Entity<TimeTableView>()
                 .HasNoKey();
+            
+            modelBuilder.Entity<InventoryStockView>()
+                .HasNoKey();
 
             modelBuilder.Entity<DashboardCountView>()
                           .HasNoKey();
@@ -123,6 +128,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
             modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
             modelBuilder.Entity<TimeTableView>().ToView("TimeTableView");
             modelBuilder.Entity<DashboardCountView>().ToView("DashboardCountViews");
+            modelBuilder.Entity<InventoryStockView>().ToView("vw_InventoryStockSummary");
 
             base.OnModelCreating(modelBuilder);
         }

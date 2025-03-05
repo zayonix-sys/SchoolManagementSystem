@@ -78,12 +78,12 @@ namespace SchoolManagementSystem.Application.Services
             try
             {
                 // Fetch all academic years with the given academic year
-                var academicYears = await _academicYearRepository.GetAllAsync(
-                    //include: query => query.Where(a => a.AcademicYear == academicYear)
-                );
+                var academicYears = await _academicYearRepository.GetAllAsync();
+
+                var academic = academicYears.Where(a => a.AcademicYearName == academicYear && a.IsActive);
 
                 // Map the entities to DTOs
-                var academicYearDtos = academicYears.Select(a => _mapper.MapToDto(a)).ToList();
+                var academicYearDtos = academic.Select(a => _mapper.MapToDto(a)).ToList();
                 return academicYearDtos;
             }
             catch (Exception ex)

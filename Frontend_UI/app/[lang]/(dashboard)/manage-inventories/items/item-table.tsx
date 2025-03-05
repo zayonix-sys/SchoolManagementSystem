@@ -21,12 +21,20 @@ import {
   InventoryItemData,
   useDeleteInventoryItemMutation,
 } from "@/services/apis/inventoryItemService";
+import { InventoryCategoryData } from "@/services/apis/inventoryCategoryService";
+import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 
 interface ItemListTableProps {
   items: InventoryItemData[];
+  categories: InventoryCategoryData[];
+  status: InventoryStatusData[];
 }
 
-const ItemListTable: React.FC<ItemListTableProps> = ({ items }) => {
+const ItemListTable: React.FC<ItemListTableProps> = ({
+  items,
+  categories,
+  status,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
@@ -35,20 +43,18 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items }) => {
   const [deleteItem] = useDeleteInventoryItemMutation();
 
   // Apply search filter and pagination
-  const filteredCategories = (items ?? []).filter(
+  const filteredItems = (items ?? []).filter(
     (item) =>
       item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item?.categoryName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item?.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredCategories.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredCategories?.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredItems?.length / itemsPerPage);
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -116,7 +122,10 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items }) => {
               <TableCell className="p-2.5">{item.itemName}</TableCell>
               <TableCell className="p-2.5">{item.categoryName}</TableCell>
               <TableCell className="p-2.5"> {item.description}</TableCell>
-              <TableCell className="p-2.5"> {item.unitPrice}</TableCell>
+              <TableCell className="p-2.5">
+                {" "}
+                {item.unitPrice.toFixed(2)}
+              </TableCell>
               <TableCell className="p-2.5"> {item.totalQuantity}</TableCell>
               <TableCell className="p-2.5">
                 {item?.createdAt
@@ -126,15 +135,25 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items }) => {
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
-                  color={item.isActive ? "success" : "destructive"}
+                  color={
+                    item.statusName === "In Use"
+                      ? "success"
+                      : item.statusName === "Repair"
+                      ? "destructive"
+                      : "default"
+                  }
                   className="capitalize"
                 >
-                  {item.isActive ? "Active" : "Inactive"}
+                  {item.statusName}
                 </Badge>
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditItem itemData={item} />
+                  <EditItem
+                    itemData={item}
+                    categories={categories}
+                    status={status}
+                  />
                   <Button
                     size="icon"
                     variant="outline"

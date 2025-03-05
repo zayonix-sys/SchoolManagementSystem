@@ -8,16 +8,24 @@ import { InventoryCategoryData } from "@/services/apis/inventoryCategoryService"
 import { InventoryItemData } from "@/services/apis/inventoryItemService";
 import ViewItems from "./items/view-items";
 import { Icon } from "@iconify/react";
+import { InventoryStockData } from "@/services/apis/inventoryStockService";
+import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
+import ViewStocks from "./stocks/view-stocks";
 
 const ReportsCard = ({
   categories,
   items,
+  stocks,
+  status,
 }: {
   categories: InventoryCategoryData[];
   items: InventoryItemData[];
+  stocks: InventoryStockData[];
+  status: InventoryStatusData[];
 }) => {
   const categoriesCount = categories?.length.toString();
   const itemsCount = items?.length.toString();
+  const stocksCount = stocks?.length.toString();
   interface ReportItem {
     id: number;
     name: string;
@@ -45,7 +53,7 @@ const ReportsCard = ({
       icon: (
         <Icon
           icon="heroicons:rectangle-stack-solid"
-          className="w-6 h-6 mr-2 text-info"
+          className="w-6 h-6 text-info"
         />
       ),
       color: "destructive",
@@ -58,7 +66,7 @@ const ReportsCard = ({
       icon: (
         <Icon
           icon="heroicons:cube-solid"
-          className="w-6 h-6 mr-2 text-warning-700"
+          className="w-6 h-6 text-warning-700"
         />
       ),
       color: "destructive",
@@ -66,9 +74,14 @@ const ReportsCard = ({
     {
       id: 3,
       name: "No. of Inventory Stocks",
-      count: (categoriesCount ? categoriesCount : 0).toString(),
+      count: (stocksCount ? stocksCount : 0).toString(),
       rate: "8.2",
-      icon: <Docs className="w-6 h-6 text-info" />,
+      icon: (
+        <Icon
+          icon="heroicons:clipboard-document-list-solid"
+          className="w-6 h-6"
+        />
+      ),
       color: "info",
     },
   ];
@@ -99,7 +112,17 @@ const ReportsCard = ({
               />
             )}
             {item.id === 2 && (
-              <ViewItems selectedItem={items as InventoryItemData[]} />
+              <ViewItems
+                selectedItem={items as InventoryItemData[]}
+                categories={categories as InventoryCategoryData[]}
+                status={status as InventoryStatusData[]}
+              />
+            )}
+            {item.id === 3 && (
+              <ViewStocks
+                selectedStocks={stocks as InventoryStockData[]}
+                items={items as InventoryItemData[]}
+              />
             )}
           </div>
         </Card>

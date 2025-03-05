@@ -18,6 +18,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 CategoryId = entity.CategoryId,
                 CategoryName = entity?.InventoryCategories?.CategoryName,
                 ItemName = entity.ItemName,
+                StatusName = entity?.InventoryStatus?.StatusName,
                 ReorderLevel = entity.ReorderLevel,
                 TotalQuantity = entity.TotalQuantity,
                 UnitPrice = entity.UnitPrice,
@@ -41,6 +42,7 @@ namespace SchoolManagementSystem.Application.Mappers
             {
                 ItemId = dto.ItemId,
                 CategoryId = dto.CategoryId,
+                StatusId = dto.StatusId,
                 ItemName = dto.ItemName,
                 ReorderLevel = dto.ReorderLevel,
                 TotalQuantity = dto.TotalQuantity,

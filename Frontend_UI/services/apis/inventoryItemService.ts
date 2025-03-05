@@ -4,8 +4,10 @@ import { ApiResponse } from "./apiResponse";
 export interface InventoryItemData {
   itemId?: number,
   categoryId?: number,
+  statusId?: number,
   itemName: string,
   categoryName?: string,
+  statusName?: string,
   unitPrice: number,
   totalQuantity: number,
   reorderLevel?: number,

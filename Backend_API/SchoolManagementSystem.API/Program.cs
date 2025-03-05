@@ -120,6 +120,12 @@ builder.Services.AddScoped<IInventoryCategories, InventoryCategoryService>();
 builder.Services.AddScoped<InventoryCategoryMapper>();
 builder.Services.AddScoped<IInventoryItems, InventoryItemService>();
 builder.Services.AddScoped<InventoryItemMapper>();
+builder.Services.AddScoped<IInventoryStocks, InventoryStockService>();
+builder.Services.AddScoped<InventoryStockMapper>();
+builder.Services.AddScoped<InventoryStockViewMapper>();
+builder.Services.AddScoped<IInventoryStatus, InventoryStatusService>();
+builder.Services.AddScoped<InventoryStatusMapper>();
+
 
 
 // Add controllers

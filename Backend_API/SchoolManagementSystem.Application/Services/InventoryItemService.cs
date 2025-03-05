@@ -1,4 +1,5 @@
-﻿using SchoolManagementSystem.Application.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
@@ -35,7 +36,9 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task<List<InventoryItemDTO>> GetAllInventoryItemsAsync()
         {
-            var inventoryItem = await _inventoryItemRepository.GetAllAsync();
+            var inventoryItem = await _inventoryItemRepository.GetAllAsync(
+                include: query => query.Include(x => x.InventoryCategories).Include(x => x.InventoryStatus)
+                );
             var activeInventoryItem = inventoryItem.Where(c => c.IsActive).ToList();
 
             var list = activeInventoryItem.Select(_mapper.MapToDto).ToList();

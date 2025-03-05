@@ -11,6 +11,9 @@ namespace SchoolManagementSystem.Domain.Entities
 
         [ForeignKey(nameof(InventoryCategories))]
         public int CategoryId { get; set; }
+        
+        [ForeignKey(nameof(InventoryStatus))]
+        public int StatusId { get; set; }
         public string Description { get; set; }
         public decimal UnitPrice { get; set; }
         public int TotalQuantity { get; set; }
@@ -21,6 +24,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
         public InventoryCategory? InventoryCategories { get; set; }
+        public InventoryStatus? InventoryStatus { get; set; }
 
     }
 }

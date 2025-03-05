@@ -22,10 +22,20 @@ import {
 } from "@/services/apis/inventoryItemService";
 import { useSelector } from "react-redux";
 import { RootState } from "@/services/reduxStore";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { InventoryCategoryData } from "@/services/apis/inventoryCategoryService";
+import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 
 const inventoryItemSchema = z.object({
   itemName: z.string().nonempty("Item Name is required"),
   categoryId: z.number().int("Category is required"),
+  statusId: z.number().int("Status is required"),
   description: z.string().nonempty("Description is required"),
   unitPrice: z.number().int("Unit Price is required"),
   totalQuantity: z.number().int("Quantity is required"),
@@ -36,13 +46,20 @@ type InventoryItemFormValues = z.infer<typeof inventoryItemSchema>;
 
 interface ItemListTableProps {
   itemData: InventoryItemData;
+  categories: InventoryCategoryData[];
+  status: InventoryStatusData[];
 }
-const EditItem: React.FC<ItemListTableProps> = ({ itemData }) => {
+const EditItem: React.FC<ItemListTableProps> = ({
+  itemData,
+  categories,
+  status,
+}) => {
   const [updateItem] = useUpdateInventoryItemMutation();
   const loggedUser = useSelector((state: RootState) => state.auth.user);
   const {
     itemId,
     itemName,
+    statusId,
     categoryId,
     description,
     unitPrice,
@@ -54,12 +71,14 @@ const EditItem: React.FC<ItemListTableProps> = ({ itemData }) => {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<InventoryItemFormValues>({
     resolver: zodResolver(inventoryItemSchema),
     defaultValues: {
       itemName,
       categoryId,
+      statusId,
       description,
       unitPrice,
       totalQuantity,
@@ -136,14 +155,58 @@ const EditItem: React.FC<ItemListTableProps> = ({ itemData }) => {
                   )}
                 </div>
                 <div>
-                  <Input
-                    type="number"
-                    placeholder="Category ID"
-                    {...register("categoryId", { valueAsNumber: true })}
-                  />
+                  <Select
+                    defaultValue={categoryId?.toString() ?? ""}
+                    onValueChange={(value) =>
+                      setValue("categoryId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((category) => (
+                        <SelectItem
+                          className="hover:bg-default-300"
+                          key={category.categoryId}
+                          value={category.categoryId?.toString() ?? ""}
+                        >
+                          {category.categoryName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {errors.categoryId && (
                     <p className="text-destructive">
                       {errors.categoryId.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <Select
+                    defaultValue={statusId?.toString() ?? ""}
+                    onValueChange={(value) =>
+                      setValue("statusId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {status?.map((status) => (
+                        <SelectItem
+                          className="hover:bg-default-300"
+                          key={status.statusId}
+                          value={status.statusId?.toString() ?? ""}
+                        >
+                          {status.statusName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.statusId && (
+                    <p className="text-destructive">
+                      {errors.statusId.message}
                     </p>
                   )}
                 </div>

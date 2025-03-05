@@ -8,20 +8,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import ItemListTable from "./item-table";
+import { InventoryStockData } from "@/services/apis/inventoryStockService";
+import StockListTable from "./stock-table";
 import { InventoryItemData } from "@/services/apis/inventoryItemService";
-import { InventoryCategoryData } from "@/services/apis/inventoryCategoryService";
-import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 
 // This component allows you to view class details in a sheet.
-export default function ViewItems({
-  selectedItem,
-  categories,
-  status,
+export default function ViewStocks({
+  selectedStocks,
+  items,
 }: {
-  selectedItem: InventoryItemData[] | null;
-  categories: InventoryCategoryData[];
-  status: InventoryStatusData[];
+  selectedStocks: InventoryStockData[] | null;
+  items: InventoryItemData[];
 }) {
   return (
     <Sheet>
@@ -40,10 +37,9 @@ export default function ViewItems({
         </SheetHeader>
         <div>
           <div className="py-6">
-            <ItemListTable
-              items={selectedItem as InventoryItemData[]}
-              categories={categories}
-              status={status}
+            <StockListTable
+              stocks={selectedStocks as InventoryStockData[]}
+              items={items}
             />
           </div>
         </div>

@@ -22,11 +22,21 @@ import {
 } from "@/services/apis/inventoryItemService";
 import { useSelector } from "react-redux";
 import { RootState } from "@/services/reduxStore";
+import { InventoryCategoryData } from "@/services/apis/inventoryCategoryService";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 
 // Define Zod schema
 const inventoryItemSchema = z.object({
   itemName: z.string().nonempty("Item Name is required"),
   categoryId: z.number().int("Category is required"),
+  statusId: z.number().int("Status is required"),
   description: z.string().nonempty("Description is required"),
   unitPrice: z.number().int("Unit Price is required"),
   totalQuantity: z.number().int("Quantity is required"),
@@ -34,14 +44,18 @@ const inventoryItemSchema = z.object({
 });
 
 type InventoryItemFormValues = z.infer<typeof inventoryItemSchema>;
-
-const AddItem = () => {
+interface ItemsProps {
+  categories: InventoryCategoryData[];
+  status: InventoryStatusData[];
+}
+const AddItem: React.FC<ItemsProps> = ({ categories, status }) => {
   const [addItem] = useAddInventoryItemMutation();
   const loggedUser = useSelector((state: RootState) => state.auth.user);
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<InventoryItemFormValues>({
     resolver: zodResolver(inventoryItemSchema),
@@ -119,14 +133,56 @@ const AddItem = () => {
                   )}
                 </div>
                 <div>
-                  <Input
-                    type="number"
-                    placeholder="Item ID"
-                    {...register("categoryId", { valueAsNumber: true })}
-                  />
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("categoryId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((category) => (
+                        <SelectItem
+                          className="hover:bg-default-300"
+                          key={category.categoryId}
+                          value={category.categoryId?.toString() ?? ""}
+                        >
+                          {category.categoryName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {errors.categoryId && (
                     <p className="text-destructive">
                       {errors.categoryId.message}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("statusId", parseInt(value))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {status?.map((category) => (
+                        <SelectItem
+                          className="hover:bg-default-300"
+                          key={category.statusId}
+                          value={category.statusId?.toString() ?? ""}
+                        >
+                          {category.statusName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.statusId && (
+                    <p className="text-destructive">
+                      {errors.statusId.message}
                     </p>
                   )}
                 </div>
