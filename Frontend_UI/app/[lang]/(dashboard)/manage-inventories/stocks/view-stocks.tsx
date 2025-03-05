@@ -11,14 +11,17 @@ import {
 import { InventoryStockData } from "@/services/apis/inventoryStockService";
 import StockListTable from "./stock-table";
 import { InventoryItemData } from "@/services/apis/inventoryItemService";
+import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 
 // This component allows you to view class details in a sheet.
 export default function ViewStocks({
   selectedStocks,
   items,
+  status,
 }: {
   selectedStocks: InventoryStockData[] | null;
   items: InventoryItemData[];
+  status: InventoryStatusData[];
 }) {
   return (
     <Sheet>
@@ -40,6 +43,7 @@ export default function ViewStocks({
             <StockListTable
               stocks={selectedStocks as InventoryStockData[]}
               items={items}
+              status={status}
             />
           </div>
         </div>

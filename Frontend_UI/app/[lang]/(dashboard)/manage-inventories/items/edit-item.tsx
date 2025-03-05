@@ -35,7 +35,6 @@ import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 const inventoryItemSchema = z.object({
   itemName: z.string().nonempty("Item Name is required"),
   categoryId: z.number().int("Category is required"),
-  statusId: z.number().int("Status is required"),
   description: z.string().nonempty("Description is required"),
   unitPrice: z.number().int("Unit Price is required"),
   totalQuantity: z.number().int("Quantity is required"),
@@ -47,13 +46,8 @@ type InventoryItemFormValues = z.infer<typeof inventoryItemSchema>;
 interface ItemListTableProps {
   itemData: InventoryItemData;
   categories: InventoryCategoryData[];
-  status: InventoryStatusData[];
 }
-const EditItem: React.FC<ItemListTableProps> = ({
-  itemData,
-  categories,
-  status,
-}) => {
+const EditItem: React.FC<ItemListTableProps> = ({ itemData, categories }) => {
   const [updateItem] = useUpdateInventoryItemMutation();
   const loggedUser = useSelector((state: RootState) => state.auth.user);
   const {
@@ -78,7 +72,6 @@ const EditItem: React.FC<ItemListTableProps> = ({
     defaultValues: {
       itemName,
       categoryId,
-      statusId,
       description,
       unitPrice,
       totalQuantity,
@@ -179,34 +172,6 @@ const EditItem: React.FC<ItemListTableProps> = ({
                   {errors.categoryId && (
                     <p className="text-destructive">
                       {errors.categoryId.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <Select
-                    defaultValue={statusId?.toString() ?? ""}
-                    onValueChange={(value) =>
-                      setValue("statusId", parseInt(value))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {status?.map((status) => (
-                        <SelectItem
-                          className="hover:bg-default-300"
-                          key={status.statusId}
-                          value={status.statusId?.toString() ?? ""}
-                        >
-                          {status.statusName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.statusId && (
-                    <p className="text-destructive">
-                      {errors.statusId.message}
                     </p>
                   )}
                 </div>

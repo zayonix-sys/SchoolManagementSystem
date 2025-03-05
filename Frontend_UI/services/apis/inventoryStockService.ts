@@ -8,6 +8,8 @@ export interface InventoryStockData {
   currentStock?: number,
   totalStockIn?: number,
   totalStockOut?: number,
+  statusId?: number,
+  statusName?: string,
   quantity?: number,
   transactionType?: string,
   transactionDate?: string,
