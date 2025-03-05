@@ -27,14 +27,9 @@ import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 interface ItemListTableProps {
   items: InventoryItemData[];
   categories: InventoryCategoryData[];
-  status: InventoryStatusData[];
 }
 
-const ItemListTable: React.FC<ItemListTableProps> = ({
-  items,
-  categories,
-  status,
-}) => {
+const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
@@ -135,25 +130,15 @@ const ItemListTable: React.FC<ItemListTableProps> = ({
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
-                  color={
-                    item.statusName === "In Use"
-                      ? "success"
-                      : item.statusName === "Repair"
-                      ? "destructive"
-                      : "default"
-                  }
+                  color={item.isActive ? "success" : "destructive"}
                   className="capitalize"
                 >
-                  {item.statusName}
+                  {item.isActive ? "Active" : "Inactive"}
                 </Badge>
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditItem
-                    itemData={item}
-                    categories={categories}
-                    status={status}
-                  />
+                  <EditItem itemData={item} categories={categories} />
                   <Button
                     size="icon"
                     variant="outline"
