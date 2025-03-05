@@ -1318,6 +1318,16 @@ CREATE TABLE InventoryCategories (
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
 
+CREATE TABLE InventoryStatus (
+    StatusID INT PRIMARY KEY IDENTITY(1,1),  -- Auto-incrementing primary key
+    StatusName NVARCHAR(50) NOT NULL UNIQUE,  -- Status name (e.g., In Use, Repair, Discard)
+    CreatedAt DATETIME DEFAULT GETDATE(),  -- Timestamp for creation
+    CreatedBy INT NOT NULL,  -- User who created the entry
+    UpdatedAt DATETIME NULL,  -- Timestamp for last update
+    UpdatedBy INT NULL,  -- User who last updated the entry
+    IsActive BIT DEFAULT 1  -- Active status (1 = Active, 0 = Inactive)
+);
+
 CREATE TABLE InventoryItems (
     ItemID INT PRIMARY KEY IDENTITY(1,1),
     ItemName NVARCHAR(100) NOT NULL,
@@ -1388,6 +1398,13 @@ CREATE TABLE AssetAllocation (
 	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
+
+INSERT INTO InventoryStatus (StatusName, CreatedAt, CreatedBy, IsActive)
+VALUES 
+    ('In Use', '2025-02-21 16:41:22.157', 1, 1),
+    ('Repair', '2025-02-21 16:41:22.157', 1, 1),
+    ('Discard', '2025-02-21 16:41:22.157', 1, 1);
+
 
 CREATE VIEW vw_InventoryStockSummary AS
 SELECT 

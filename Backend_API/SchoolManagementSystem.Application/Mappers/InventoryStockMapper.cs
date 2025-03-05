@@ -18,6 +18,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 ItemName = entity?.InventoryItems?.ItemName,
                 Quantity = entity.Quantity,
                 Remarks = entity.Remarks,
+                StatusName = entity?.InventoryStatus?.StatusName,
                 StockId = entity.StockId,
                 TransactionDate = entity.TransactionDate,
                 TransactionType = entity.TransactionType,
@@ -40,7 +41,8 @@ namespace SchoolManagementSystem.Application.Mappers
             {
                 StockId = dto.StockId,
                 Quantity = dto.Quantity,
-                TransactionType= dto.TransactionType,
+                StatusId = dto.StatusId,
+                TransactionType = dto.TransactionType,
                 TransactionDate= dto.TransactionDate,
                 Remarks = dto.Remarks,
                 ItemId = dto.ItemId,

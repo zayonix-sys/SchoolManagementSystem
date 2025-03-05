@@ -10,6 +10,9 @@ namespace SchoolManagementSystem.Domain.Entities
         
         [ForeignKey(nameof(InventoryItems))]
         public int ItemId { get; set; }
+
+        [ForeignKey(nameof(InventoryStatus))]
+        public int StatusId { get; set; }
         public int Quantity { get; set; }
         public string TransactionType { get; set; }
         public DateTime TransactionDate { get; set; }
@@ -20,6 +23,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public DateTime? UpdatedAt { get; set; }
         public int? UpdatedBy { get; set; }
         public InventoryItem? InventoryItems { get; set; }
+        public InventoryStatus? InventoryStatus { get; set; }
 
     }
 }
