@@ -1324,7 +1324,6 @@ CREATE TABLE InventoryItems (
     CategoryID INT FOREIGN KEY REFERENCES InventoryCategories(CategoryID),
     Description NVARCHAR(255),
     UnitPrice DECIMAL(18, 2),
-    StatusID INT FOREIGN KEY REFERENCES InventoryStatus(StatusID),
     ReorderLevel INT DEFAULT 100,
     CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
@@ -1342,6 +1341,7 @@ CREATE TABLE InventoryStocks (
     TransactionType NVARCHAR(10) CHECK (TransactionType IN ('IN', 'OUT')), -- IN for stock in, OUT for stock out
     TransactionDate DATETIME DEFAULT GETDATE(),
     Remarks NVARCHAR(255),
+    StatusID INT FOREIGN KEY REFERENCES InventoryStatus(StatusID),
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
 	UpdatedAt DATETIME NULL,
