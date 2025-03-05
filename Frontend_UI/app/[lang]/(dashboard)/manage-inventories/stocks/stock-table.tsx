@@ -11,19 +11,25 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 
-import EditItem from "./edit-stock";
+// import EditItem from "./edit-stock";
 import {
   InventoryStockData,
   useDeleteInventoryStockMutation,
 } from "@/services/apis/inventoryStockService";
 import { InventoryItemData } from "@/services/apis/inventoryItemService";
+import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 
 interface StockListTableProps {
   stocks: InventoryStockData[];
   items: InventoryItemData[];
+  status: InventoryStatusData[];
 }
 
-const StockListTable: React.FC<StockListTableProps> = ({ stocks, items }) => {
+const StockListTable: React.FC<StockListTableProps> = ({
+  stocks,
+  items,
+  status,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -86,7 +92,7 @@ const StockListTable: React.FC<StockListTableProps> = ({ stocks, items }) => {
               <TableCell className="p-2.5">{item.currentStock}</TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditItem stockData={item} items={items} />
+                  {/* <EditItem stockData={item} items={items} status={status} /> */}
                 </div>
               </TableCell>
             </TableRow>

@@ -37,7 +37,7 @@ namespace SchoolManagementSystem.Application.Services
         public async Task<List<InventoryItemDTO>> GetAllInventoryItemsAsync()
         {
             var inventoryItem = await _inventoryItemRepository.GetAllAsync(
-                include: query => query.Include(x => x.InventoryCategories).Include(x => x.InventoryStatus)
+                include: query => query.Include(x => x.InventoryCategories)
                 );
             var activeInventoryItem = inventoryItem.Where(c => c.IsActive).ToList();
 
