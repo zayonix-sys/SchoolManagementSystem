@@ -125,6 +125,8 @@ builder.Services.AddScoped<InventoryStockMapper>();
 builder.Services.AddScoped<InventoryStockViewMapper>();
 builder.Services.AddScoped<IInventoryStatus, InventoryStatusService>();
 builder.Services.AddScoped<InventoryStatusMapper>();
+builder.Services.AddScoped<IInventoryPurchase, InventoryPurchaseService>();
+builder.Services.AddScoped<InventoryPurchaseMapper>();
 
 
 
