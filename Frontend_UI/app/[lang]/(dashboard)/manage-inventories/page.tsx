@@ -21,6 +21,8 @@ import {
   useFetchInventoryStatusQuery,
 } from "@/services/apis/inventoryStatusService";
 import AddStock from "./stocks/add-stock";
+import { InventoryPurchaseData, useFetchInventoryPurchasesQuery } from "@/services/apis/inventoryPurchaseService";
+import AddPurchase from "./purchases/add-purchase";
 
 const page = () => {
   const { data: categoriesData } = useFetchInventoryCategoriesQuery();
@@ -31,6 +33,8 @@ const page = () => {
   const stocks = stocksData?.data as InventoryStockData[];
   const { data: inventoryStatusData } = useFetchInventoryStatusQuery();
   const inventoryStatus = inventoryStatusData?.data as InventoryStatusData[];
+  const { data: inventoryPurchaseData } = useFetchInventoryPurchasesQuery();
+  const purchases = inventoryPurchaseData?.data as InventoryPurchaseData[];
 
   return (
     <div>
@@ -42,6 +46,7 @@ const page = () => {
         <AddCategory />
         <AddItem categories={categories} />
         <AddStock items={items} status={inventoryStatus} />
+        <AddPurchase items={items} />
       </div>
       <div className="col-span-12 md:col-span-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5">
@@ -50,6 +55,7 @@ const page = () => {
             items={items}
             stocks={stocks}
             status={inventoryStatus}
+            purchases={purchases}
           />
         </div>
       </div>

@@ -11,21 +11,26 @@ import { Icon } from "@iconify/react";
 import { InventoryStockData } from "@/services/apis/inventoryStockService";
 import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 import ViewStocks from "./stocks/view-stocks";
+import { InventoryPurchaseData } from "@/services/apis/inventoryPurchaseService";
+import ViewPurchases from "./purchases/view-purchases";
 
 const ReportsCard = ({
   categories,
   items,
   stocks,
   status,
+  purchases,
 }: {
   categories: InventoryCategoryData[];
   items: InventoryItemData[];
   stocks: InventoryStockData[];
   status: InventoryStatusData[];
+  purchases: InventoryPurchaseData[];
 }) => {
   const categoriesCount = categories?.length.toString();
   const itemsCount = items?.length.toString();
   const stocksCount = stocks?.length.toString();
+  const purchasesCount = purchases?.length.toString();
   interface ReportItem {
     id: number;
     name: string;
@@ -84,6 +89,20 @@ const ReportsCard = ({
       ),
       color: "info",
     },
+    {
+      id: 4,
+      name: "No. of Purchases",
+      // count:"10",
+      count: (purchasesCount ? purchasesCount : 0).toString(),
+      rate: "8.2",
+      icon: (
+        <Icon
+          icon="heroicons:shopping-bag"
+          className="w-6 h-6 text-info"
+        />
+      ),
+      color: "destructive",
+    },
   ];
   return (
     <Fragment>
@@ -122,6 +141,12 @@ const ReportsCard = ({
                 selectedStocks={stocks as InventoryStockData[]}
                 items={items as InventoryItemData[]}
                 status={status as InventoryStatusData[]}
+              />
+            )}
+            {item.id === 4 && (
+              <ViewPurchases
+                selectedPurchase={purchases as InventoryPurchaseData[]}
+                items={items as InventoryItemData[]}
               />
             )}
           </div>

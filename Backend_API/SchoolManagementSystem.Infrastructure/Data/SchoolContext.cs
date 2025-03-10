@@ -52,6 +52,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<InventoryStock> InventoryStocks { get; set; }
         public DbSet<InventoryStatus> InventoryStatus { get; set; }
+        public DbSet<InventoryPurchase> InventoryPurchases { get; set; }
         //public DbSet<ExamResult> ExamResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
