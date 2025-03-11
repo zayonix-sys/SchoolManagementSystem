@@ -46,6 +46,9 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
         public DbSet<StudentAcademic> StudentAcademic { get; set; }
         public DbSet<AcademicYear> AcademicYears { get; set; }
+        public DbSet<Parent> Parents { get; set; }
+        public DbSet<StudentParent> StudentParent { get; set; }
+
 
 
         public DbSet<InventoryCategory> InventoryCategories { get; set; }

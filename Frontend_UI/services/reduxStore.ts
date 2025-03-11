@@ -36,6 +36,7 @@ import inventoryCategoryApi from "./apis/inventoryCategoryService";
 import inventoryItemApi from "./apis/inventoryItemService";
 import employeeAttendanceApi from "./apis/employeeAttendanceService";
 import studentAcademicApi from "./apis/studentAcademicService";
+import parentApi from "./apis/parentService";
 import inventoryStockApi from "./apis/inventoryStockService";
 import inventoryStatusApi from "./apis/inventoryStatusService";
 
@@ -68,6 +69,7 @@ const rootReducer = combineReducers({
   [dashboardApi.reducerPath]: dashboardApi.reducer,
   [paymentApi.reducerPath]: paymentApi.reducer,
   [studentApi.reducerPath]: studentApi.reducer,
+  [parentApi.reducerPath]: parentApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
   [userRoleApi.reducerPath]: userRoleApi.reducer,
   [userPermissionApi.reducerPath]: userPermissionApi.reducer,
@@ -110,6 +112,7 @@ const store = configureStore({
       .concat(dashboardApi.middleware)
       .concat(paymentApi.middleware)
       .concat(studentApi.middleware)
+      .concat(parentApi.middleware)
       .concat(userApi.middleware)
       .concat(userRoleApi.middleware)
       .concat(userPermissionApi.middleware)

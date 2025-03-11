@@ -107,6 +107,11 @@ builder.Services.AddScoped<StudentAcademicMapper>();
 builder.Services.AddScoped<IAcademicYear, AcademicYearService>();
 builder.Services.AddScoped<AcademicYearMapper>();
 
+builder.Services.AddScoped<IParent, ParentService>();
+builder.Services.AddScoped<ParentMapper>();
+
+builder.Services.AddScoped<IStudentParent, StudentParentService>();
+builder.Services.AddScoped<StudentParentMapper>();
 
 builder.Services.AddScoped<IPayment, PaymentService>();
 builder.Services.AddScoped<PaymentMapper>();

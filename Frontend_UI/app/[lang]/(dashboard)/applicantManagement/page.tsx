@@ -11,6 +11,7 @@ import {
   SectionData,
   useFetchSectionQuery,
 } from "@/services/apis/sectionService";
+import { ParentData, useFetchParentsQuery } from "@/services/apis/parentService";
 
 const Applicants = () => {
   const { data: sections } = useFetchSectionQuery();
@@ -23,6 +24,8 @@ const Applicants = () => {
   } = useGetApplicantsQuery();
   const applicants =
     (applicantsData?.data as ApplicantApplicationDetail[]) || [];
+  // const {data: parentData } = useFetchParentsQuery();
+  // const parents = (parentData?.data as ParentData[]) || [];
 
   if (isLoading) {
     return <div>Loading...</div>; // Show loading state
@@ -53,6 +56,7 @@ const Applicants = () => {
         applicants={applicants}
         refetch={handleRefetch}
         sectionData={sectionData}
+        // parents={parents}
       />
     </div>
   );

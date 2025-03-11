@@ -208,10 +208,10 @@ CREATE TABLE Applicants (
 	FormBNumber NVARCHAR(15) NULL,
     DateOfBirth DATE,
     Gender NVARCHAR(10),
-    Email NVARCHAR(100) UNIQUE,
-    PhoneNumber NVARCHAR(15),
-    ApplicantAddress NVARCHAR(255),
-    Nationality NVARCHAR(50),
+    --Email NVARCHAR(100) UNIQUE,
+    --PhoneNumber NVARCHAR(15),
+    --ApplicantAddress NVARCHAR(255),
+    --Nationality NVARCHAR(50),
     ApplicationDate DATE DEFAULT GETDATE(),
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
@@ -895,15 +895,24 @@ CREATE TABLE FeeAdjustments (
 
 CREATE TABLE Parents (
     ParentId INT PRIMARY KEY IDENTITY,
-    FirstName NVARCHAR(50),
-    LastName NVARCHAR(50),
+    FirstName NVARCHAR(50) Null,
+	MiddleName NVARCHAR(50) Null,
+	LastName NVARCHAR(50) Null,
+	MotherTongue NVARCHAR(50) Null,
+	State NVARCHAR(50) Null,
     Email NVARCHAR(100) UNIQUE,
-    PhoneNumber NVARCHAR(15),
-    ParentAddress NVARCHAR(255),
+	MotherTongue NvarChar (100)NUll,
+    PhoneNumber NVARCHAR(15) Null,
+    SourceOfIncome Nvarchar(50) Null,
+	Dependent NvarChar (50) Null,
+    Occupation nvarchar (50) null,
+    Nationality Nvarchar (50) null,
+    ResidenceStatus Nvarchar (50)Null, 
+    ParentAddress NVARCHAR(255) Null,
 	CreatedAt DATETIME DEFAULT GETDATE(),
-	CreatedBy INT,
+	CreatedBy INT Null,
 	UpdatedAt DATETIME NULL,
-	UpdatedBy INT,
+	UpdatedBy INT Null,
 	IsActive BIT DEFAULT 1
 
 	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
@@ -911,21 +920,23 @@ CREATE TABLE Parents (
 );
 
 CREATE TABLE StudentParent (
-    StudentId INT,
+    StudentParentId INT PRIMARY KEY IDENTITY,
+    StudentId INT Null,
+	ApplicantId Int Null,
     ParentId INT,
-    PRIMARY KEY (StudentId, ParentId),
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
 	UpdatedAt DATETIME NULL,
-	UpdatedBy INT,
+	UpdatedBy INT Null,
 	IsActive BIT DEFAULT 1
 
 	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
     FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
     FOREIGN KEY (ParentId) REFERENCES Parents(ParentId),
+    FOREIGN KEY (ApplicantId) REFERENCES Applicants(ApplicantId),
 );
-CREATE INDEX IDX_StudentParent_StudentId ON Students(StudentId);
+--CREATE INDEX IDX_StudentParent_StudentId ON Students(StudentId);
 
 CREATE TABLE ParentFeedback (
     FeedbackId INT PRIMARY KEY IDENTITY,
@@ -1302,6 +1313,51 @@ ADD Gender VARCHAR(10),
 	
 	alter Table StudentAttendance
 	Drop column CampusId;
+
+
+	--Applicant parent Application View Script 
+	USE [school_management_sqldb]
+GO
+
+/****** Object:  View [dbo].[vw_ApplicantDetails]    Script Date: 3/11/2025 11:30:34 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER VIEW [dbo].[vw_ApplicantDetails]
+AS
+SELECT al.ApplicationId, al.ApplicantId, al.ApplicationStatus, al.CampusId, cp.CampusName, al.AdmissionDecisionDate, al.Remarks, al.ClassId AS AppliedClassId, rac.ClassName AS AppliedClassName, ap.ClassId AS LastClassId, 
+                  lac.ClassName AS LastAttendedClassName, ap.FirstName, ap.LastName, ap.FormBNumber, ap.DateOfBirth, ap.Gender,
+				 p.FirstName As ParentFirstName, 
+				 p.MiddleName As ParentMiddleName, 
+					p.LastName As ParentLastName, 
+					p.PhoneNumber, 
+					p.Email, 
+					p.Occupation, 
+					p.SourceOfIncome, 
+					p.Dependent, 
+					p.MotherTongue, 
+					p.ParentAddress,
+					p.ResidenceStatus,
+					p.Nationality
+				  
+FROM     dbo.Applications AS al INNER JOIN
+                  dbo.Campuses AS cp ON al.CampusId = cp.CampusId INNER JOIN
+                  dbo.Classes AS rac ON al.ClassId = rac.ClassId INNER JOIN
+                  dbo.Applicants AS ap ON ap.ApplicantId = al.ApplicantId INNER JOIN
+                  dbo.Classes AS lac ON ap.ClassId = lac.ClassId LEFT JOIN
+				  dbo.StudentParent as sp ON sp.ApplicantId = al.ApplicantId LEFT JOIN
+				  dbo.Parents as p ON p.ParentId = sp.ParentId
+
+
+GO
+
+
+
+
+
 
 -----------------Inventory Management-----------------
 
