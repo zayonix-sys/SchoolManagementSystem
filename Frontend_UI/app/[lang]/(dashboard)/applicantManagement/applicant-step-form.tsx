@@ -19,7 +19,8 @@ import {
   useFetchCampusesQuery,
 } from "@/services/apis/campusService";
 import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
-import useAuth from "@/hooks/use-auth";
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reduxStore";
 
 const applicantSchema = z.object({
   applicantId: z.number().optional(),
@@ -77,6 +78,7 @@ const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
   const { data: campusData } = useFetchCampusesQuery();
   const campuses = (campusData?.data as CampusData[]) || [];
 
+  const loggedUser = useSelector((state: RootState) => state.auth.user);
   const {
     register,
     handleSubmit,
@@ -89,12 +91,12 @@ const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
       gender: "male",
     },
   });
-  const { userId } = useAuth();
 
   const onSubmit: SubmitHandler<ApplicantFormValues> = async (data) => {
     try {
-      const payload = { ...data, createdBy: userId || 0 };
-      console.log(userId, "userId");
+      const payload = { ...data, 
+         createdBy: loggedUser?.userId,
+       };
 
       const response = await addApplicant(payload);
       if (response?.data?.success) {
@@ -484,19 +486,6 @@ const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
                   </p>
                 )}
               </div>
-              {/* <div className="col-span-12 md:col-span-6 lg:col-span-3">
-                <label className="text-default-600">Mother Tongue</label>
-                <Input
-                  type="text"
-                  placeholder="Mother Tongue"
-                  {...register("motherTounge")}
-                />
-                {errors.motherTounge && (
-                  <p className="text-destructive">
-                    {errors.motherTounge.message}
-                  </p>
-                )}
-              </div> */}
             </>
           </div>
 
