@@ -1475,3 +1475,26 @@ FROM InventoryItems I
 LEFT JOIN InventoryStocks S ON I.ItemID = S.ItemID
 LEFT JOIN InventoryCategories C ON I.CategoryID = C.CategoryID
 GROUP BY I.ItemID, I.ItemName, C.CategoryName;
+
+--Alter Scripts--
+ALTER TABLE AssetAllocation
+ALTER COLUMN AllocatedBy INT;
+
+ALTER TABLE AssetAllocation
+ADD CONSTRAINT FK_AssetAllocation_AllocatedBy
+FOREIGN KEY (AllocatedBy) REFERENCES Users(UserId);
+
+ALTER TABLE AssetAllocation
+DROP COLUMN ReturnDate
+
+ALTER TABLE AssetAllocation
+ADD AllocatedLocation NVARCHAR(100)
+
+ALTER TABLE AssetAllocation
+ADD Quantity INT
+
+-- Step 1: Drop the default constraint
+ALTER TABLE AssetAllocation DROP CONSTRAINT DF__AssetAllo__Alloc__257187A8;
+
+-- Step 2: Alter the column type
+ALTER TABLE AssetAllocation ALTER COLUMN AllocationDate DATE;

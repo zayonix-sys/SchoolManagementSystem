@@ -39,7 +39,7 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task<List<InventoryStatusDTO>> GetAllInventoryStatusAsync()
         {
-            var inventoryStatus = await _inventoryStatusRepository.GetAllAsync();
+            var inventoryStatus = await _inventoryStatusRepository.GetAllAsync(x => x.IsActive);
             var list = inventoryStatus.Select(_mapper.MapToDto).ToList();
             return list;
         }

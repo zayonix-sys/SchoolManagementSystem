@@ -2,7 +2,6 @@
 using SchoolManagementSystem.API.Models;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
-using SchoolManagementSystem.Application.Services;
 using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.API.Controllers

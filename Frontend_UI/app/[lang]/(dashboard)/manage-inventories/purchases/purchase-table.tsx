@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,42 +14,51 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-
-import EditItem from "./edit-item";
 import ConfirmationDialog from "../../common/confirmation-dialog";
 import {
-  InventoryItemData,
-  useDeleteInventoryItemMutation,
-} from "@/services/apis/inventoryItemService";
-import { InventoryCategoryData } from "@/services/apis/inventoryCategoryService";
-import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
+  InventoryPurchaseData,
+  useDeleteInventoryPurchaseMutation,
+} from "@/services/apis/inventoryPurchaseService";
+import EditPurchase from "./edit-purchase";
+import { InventoryItemData } from "@/services/apis/inventoryItemService";
+import { log } from "console";
 
-interface ItemListTableProps {
+interface PurchaseListTableProps {
+  purchases: InventoryPurchaseData[];
   items: InventoryItemData[];
-  categories: InventoryCategoryData[];
 }
 
-const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
+const PurchaseListTable: React.FC<PurchaseListTableProps> = ({
+  purchases,
+  items,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
-  const itemsPerPage = 8;
+  const [purchaseToDelete, setPurchaseToDelete] = useState<number | null>(null);
+  const itemsPerPage = 20;
 
-  const [deleteItem] = useDeleteInventoryItemMutation();
+  const [deletePurchase] = useDeleteInventoryPurchaseMutation();
 
   // Apply search filter and pagination
-  const filteredItems = (items ?? []).filter(
-    (item) =>
-      item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item?.categoryName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item?.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredPurchases = (purchases ?? []).filter(
+    (purchase) =>
+      purchase?.supplierName
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      purchase?.invoiceNumber
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      purchase?.itemName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredPurchases.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
-  const totalPages = Math.ceil(filteredItems?.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredPurchases?.length / itemsPerPage);
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -60,21 +69,20 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
   };
 
   const handleDeleteConfirmation = (id: number) => {
-    setItemToDelete(id);
+    setPurchaseToDelete(id);
   };
 
   const handleCancelDelete = () => {
-    setItemToDelete(null);
+    setPurchaseToDelete(null);
   };
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteItem(id);
-      toast.success("Item deleted successfully");
-      setItemToDelete(null);
+      await deletePurchase(id);
+      toast.success("Purchase deleted successfully");
+      setPurchaseToDelete(null);
     } catch (error) {
-      console.error("Error deleting Item:", error);
-      toast.error("Failed to delete Item");
+      toast.error("Failed to delete Purchase");
     }
   };
 
@@ -82,12 +90,13 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
   };
+
   return (
     <>
       <div className="mb-4 flex justify-between items-center">
         <Input
           type="text"
-          placeholder="Search by Item Name or Description"
+          placeholder="Search by Category Name or Description"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border p-2 rounded m-2"
@@ -96,14 +105,13 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-            <TableHead className="h-10 p-2.5">Tag No.</TableHead>
+            <TableHead className="h-10 p-2.5">Supplier Name</TableHead>
             <TableHead className="h-10 p-2.5">Item Name</TableHead>
-            <TableHead className="h-10 p-2.5">Category</TableHead>
-            <TableHead className="h-10 p-2.5">Desccription</TableHead>
-            <TableHead className="h-10 p-2.5">Price</TableHead>
+            <TableHead className="h-10 p-2.5">Invoice Number</TableHead>
             <TableHead className="h-10 p-2.5">Quantity</TableHead>
+            <TableHead className="h-10 p-2.5">Unit Price</TableHead>
             <TableHead className="h-10 p-2.5">Total Cost</TableHead>
-            <TableHead className="h-10 p-2.5">Created Date</TableHead>
+            <TableHead className="h-10 p-2.5">Purchase Date</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
             <TableHead className="h-10 p-2.5 text-center">Action</TableHead>
           </TableRow>
@@ -112,38 +120,33 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
         <TableBody>
           {currentItems.map((item) => (
             <TableRow
-              key={item.itemId}
+              key={item.purchaseId}
               className="hover:bg-default-200"
-              // data-state={selectedRows.includes(item.itemId!) && "selected"}
+              // data-state={selectedRows.includes(item.categoryId!) && "selected"}
             >
-              <TableCell className="p-2.5">
-                {`0000${item.itemId}-${
-                  item.createdAt
-                    ? new Date(item.createdAt).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })
-                    : ""
-                }`}
-              </TableCell>
+              <TableCell className="p-2.5">{item.supplierName}</TableCell>
               <TableCell className="p-2.5">{item.itemName}</TableCell>
-              <TableCell className="p-2.5">{item.categoryName}</TableCell>
-              <TableCell className="p-2.5"> {item.description}</TableCell>
+              <TableCell className="p-2.5"> {item.invoiceNumber}</TableCell>
+              <TableCell className="p-2.5"> {item.quantity}</TableCell>
               <TableCell className="p-2.5">
                 {" "}
-                {item.unitPrice.toFixed(2)}
+                {item.unitPrice?.toFixed(2)}
               </TableCell>
-              <TableCell className="p-2.5"> {item.totalQuantity}</TableCell>
               <TableCell className="p-2.5">
                 {" "}
-                {(item.unitPrice * item.totalQuantity).toFixed(2)}
+                {item.totalCost?.toFixed(2)}
               </TableCell>
               <TableCell className="p-2.5">
+                {" "}
+                {item.purchaseDate
+                  ? new Date(item.purchaseDate).toLocaleDateString()
+                  : ""}
+              </TableCell>
+              {/* <TableCell className="p-2.5">
                 {item?.createdAt
                   ? formatDate(item.createdAt)
                   : "No Created Date"}
-              </TableCell>
+              </TableCell> */}
               <TableCell className="p-2.5">
                 <Badge
                   variant="outline"
@@ -153,15 +156,15 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
                   {item.isActive ? "Active" : "Inactive"}
                 </Badge>
               </TableCell>
-              <TableCell className="p-2.5 flex justify-center">
+              <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditItem itemData={item} categories={categories} />
+                  <EditPurchase purchaseData={item} items={items} />
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDeleteConfirmation(item.itemId!)}
+                    onClick={() => handleDeleteConfirmation(item.purchaseId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -182,9 +185,9 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
           Next
         </Button>
       </div>
-      {itemToDelete !== null && (
+      {purchaseToDelete !== null && (
         <ConfirmationDialog
-          onDelete={() => handleDelete(itemToDelete)}
+          onDelete={() => handleDelete(purchaseToDelete)}
           onCancel={handleCancelDelete}
         />
       )}
@@ -192,4 +195,4 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
   );
 };
 
-export default ItemListTable;
+export default PurchaseListTable;

@@ -38,6 +38,24 @@ namespace SchoolManagementSystem.API.Controllers
         }
 
         [HttpGet("[action]")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<InventoryStockDTO>>>> GetInventoryStocksByItemId(int itemId)
+        {
+            _logger.LogInformation("Fetching all InventoryStocks By ItemId.");
+            try
+            {
+                var inventoryStocks = await _inventoryStockService.GetInventoryStocksByItemIdAsync(itemId);
+                _logger.LogInformation("Successfully retrieved {Count} InventoryStocks.", inventoryStocks?.Count() ?? 0);
+
+                return Ok(ApiResponse<IEnumerable<InventoryStockDTO>>.SuccessResponse(inventoryStocks, "InventoryStocks retrieved successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching all InventoryStocks.");
+                return StatusCode(500, ApiResponse<IEnumerable<InventoryStockDTO>>.ErrorResponse("Internal server error."));
+            }
+        }
+
+        [HttpGet("[action]")]
         public async Task<ActionResult<InventoryStock>> GetInventoryStockById(int id)
         {
             _logger.LogInformation("Fetching InventoryStock with ID {InventoryStockId}.", id);

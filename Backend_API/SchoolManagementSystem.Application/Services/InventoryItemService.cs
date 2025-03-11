@@ -11,17 +11,42 @@ namespace SchoolManagementSystem.Application.Services
     {
         private readonly IGenericRepository<InventoryItem> _inventoryItemRepository;
         private readonly InventoryItemMapper _mapper;
+        private readonly IGenericRepository<InventoryStatus> _statusRepository;
+        private readonly IGenericRepository<InventoryStock> _stockRepository;
 
-        public InventoryItemService(IGenericRepository<InventoryItem> genericRepository, InventoryItemMapper itemMapper)
+        public InventoryItemService(
+            IGenericRepository<InventoryItem> genericRepository,
+            InventoryItemMapper itemMapper,
+            IGenericRepository<InventoryStatus> statusRepository,
+            IGenericRepository<InventoryStock> stockRepository
+            )
         {
             _inventoryItemRepository = genericRepository;
             _mapper = itemMapper;
+            _statusRepository = statusRepository;
+            _stockRepository = stockRepository;
         }
 
         public async Task AddInventoryItemAsync(InventoryItemDTO dto)
         {
             var model = _mapper.MapToEntity(dto);
             await _inventoryItemRepository.AddAsync(model);
+            
+            var status = await _statusRepository.FindAsync(x => x.StatusName == "In Stock");
+
+            var stockData = new InventoryStock
+            {
+                ItemId = model.ItemId,
+                Quantity = model.TotalQuantity,
+                TransactionType = "IN",
+                TransactionDate = DateTime.UtcNow,
+                Remarks = model.Description,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = model.CreatedBy,
+                StatusId = status.StatusId,
+                IsActive = true,
+            };
+            await _stockRepository.AddAsync(stockData);
         }
 
         public async Task DeleteInventoryItemAsync(int itemId)
