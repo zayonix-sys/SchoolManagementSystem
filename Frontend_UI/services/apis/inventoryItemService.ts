@@ -29,7 +29,7 @@ export const inventoryItemApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Item"],
+  tagTypes: ["Item", "Stock"],
 
   endpoints: (builder) => ({
     fetchInventoryItems: builder.query<ApiResponse<InventoryItemData[]>, void>({
@@ -46,7 +46,7 @@ export const inventoryItemApi = createApi({
         method: "POST",
         body: inventoryItemData,
       }),
-      invalidatesTags: ["Item"],
+      invalidatesTags: ["Item", "Stock"],
     }),
     updateInventoryItem: builder.mutation<ApiResponse<void>, InventoryItemData>({
       query: (inventoryItemData) => ({
@@ -54,14 +54,14 @@ export const inventoryItemApi = createApi({
         method: "PUT",
         body: inventoryItemData,
       }),
-      invalidatesTags: ["Item"],
+      invalidatesTags: ["Item", "Stock"],
     }),
     deleteInventoryItem: builder.mutation<ApiResponse<void>, number>({
       query: (id) => ({
         url: `DeleteInventoryItem?inventoryItemId=${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Item"],
+      invalidatesTags: ["Item", "Stock"],
     }),
   }),
 });

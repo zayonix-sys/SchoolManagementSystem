@@ -29,47 +29,110 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task AddInventoryStockAsync(InventoryStockDTO dto)
         {
-            var model = _mapper.MapToEntity(dto);
-            await _inventoryStockRepository.AddAsync(model);
+            try
+            {
+                var model = _mapper.MapToEntity(dto);
+                await _inventoryStockRepository.AddAsync(model);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task DeleteInventoryStockAsync(int stockId)
         {
-            var inventoryStock = await _inventoryStockRepository.GetByIdAsync(stockId);
-            if (inventoryStock != null)
+            try
             {
-                inventoryStock.IsActive = false;
-                await _inventoryStockRepository.UpdateAsync(inventoryStock);
+                var inventoryStock = await _inventoryStockRepository.GetByIdAsync(stockId);
+                if (inventoryStock != null)
+                {
+                    inventoryStock.IsActive = false;
+                    await _inventoryStockRepository.UpdateAsync(inventoryStock);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
 
         public async Task<List<InventoryStockViewDTO>> GetAllInventoryStocksAsync()
         {
-            var inventoryStock = await _stockView.GetAllAsync();
-            var list = inventoryStock.Select(_stockViewMapper.MapToDto).ToList();
-            return list;
+            try
+            {
+                var inventoryStock = await _stockView.GetAllAsync();
+                var list = inventoryStock.Select(_stockViewMapper.MapToDto).ToList();
+                return list;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<InventoryStockDTO>> GetInventoryStocksByItemIdAsync(int itemId)
+        {
+            try
+            {
+                var inventoryStocks = await _inventoryStockRepository.GetAllAsync(
+                    x => x.IsActive,
+                    include: query => query
+                    .Include(x => x.InventoryStatus)
+                    .Include(x => x.InventoryItems)
+                    );
+
+                var filteredStocks = inventoryStocks.Where(x => x.ItemId == itemId).ToList();
+                var list = filteredStocks.Select(_mapper.MapToDto).ToList();
+                return list;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<InventoryStockDTO> GetInventoryStockByIdAsync(int stockId)
         {
-            var response = await _inventoryStockRepository.GetByIdAsync(stockId);
-            return _mapper.MapToDto(response);
+            try
+            {
+                var response = await _inventoryStockRepository.GetByIdAsync(stockId);
+                return _mapper.MapToDto(response);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
+
 
         public async Task UpdateInventoryStockAsync(InventoryStockDTO dto)
         {
-            var existingEntity = await _inventoryStockRepository.GetByIdAsync(dto.ItemId);
-
-            if (existingEntity == null)
+            try
             {
-                throw new KeyNotFoundException("Inventory category not found.");
-            }
+                var existingEntity = await _inventoryStockRepository.GetByIdAsync(dto.ItemId);
 
-            var result = _mapper.MapToEntity(dto);
-            result.CreatedAt = existingEntity.CreatedAt;
-            result.CreatedBy = existingEntity.CreatedBy;
-            result.UpdatedAt = DateTime.UtcNow;
-            await _inventoryStockRepository.UpdateAsync(result);
+                if (existingEntity == null)
+                {
+                    throw new KeyNotFoundException("Inventory Stock not found.");
+                }
+
+                var result = _mapper.MapToEntity(dto);
+                result.CreatedAt = existingEntity.CreatedAt;
+                result.CreatedBy = existingEntity.CreatedBy;
+                result.UpdatedAt = DateTime.UtcNow;
+                await _inventoryStockRepository.UpdateAsync(result);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
     }

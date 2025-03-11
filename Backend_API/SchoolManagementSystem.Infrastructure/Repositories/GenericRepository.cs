@@ -83,6 +83,10 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             {
                 keyProperty = entityType.GetProperty("PermissionId");
             }
+            else if (entityType.Name == "AssetAllocation")
+            {
+                keyProperty = entityType.GetProperty("AllocationId");
+            }
             else
             {
                 // Use default convention: ClassName + "Id"
@@ -165,6 +169,10 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             else if (entityType.Name == "InventoryStatus")
             {
                 keyProperty = entityType.GetProperty("StatusId");
+            }
+            else if (entityType.Name == "AssetAllocation")
+            {
+                keyProperty = entityType.GetProperty("AllocationId");
             }
             else
             {

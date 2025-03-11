@@ -15,41 +15,38 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
-import EditItem from "./edit-item";
+import EditStatus from "./edit-status";
 import ConfirmationDialog from "../../common/confirmation-dialog";
 import {
-  InventoryItemData,
-  useDeleteInventoryItemMutation,
-} from "@/services/apis/inventoryItemService";
-import { InventoryCategoryData } from "@/services/apis/inventoryCategoryService";
-import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
+  InventoryStatusData,
+  useDeleteInventoryStatusMutation,
+} from "@/services/apis/inventoryStatusService";
 
-interface ItemListTableProps {
-  items: InventoryItemData[];
-  categories: InventoryCategoryData[];
+interface StatusListTableProps {
+  statuses: InventoryStatusData[];
 }
 
-const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
+const StatusListTable: React.FC<StatusListTableProps> = ({ statuses }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
+  const [statusToDelete, setStatusToDelete] = useState<number | null>(null);
   const itemsPerPage = 8;
 
-  const [deleteItem] = useDeleteInventoryItemMutation();
+  const [deleteStatus] = useDeleteInventoryStatusMutation();
 
   // Apply search filter and pagination
-  const filteredItems = (items ?? []).filter(
-    (item) =>
-      item?.itemName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item?.categoryName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item?.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCategories = (statuses ?? []).filter((status) =>
+    status?.statusName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredCategories.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
-  const totalPages = Math.ceil(filteredItems?.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredCategories?.length / itemsPerPage);
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -60,21 +57,21 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
   };
 
   const handleDeleteConfirmation = (id: number) => {
-    setItemToDelete(id);
+    setStatusToDelete(id);
   };
 
   const handleCancelDelete = () => {
-    setItemToDelete(null);
+    setStatusToDelete(null);
   };
 
   const handleDelete = async (id: number) => {
     try {
-      await deleteItem(id);
-      toast.success("Item deleted successfully");
-      setItemToDelete(null);
+      await deleteStatus(id);
+      toast.success("Status deleted successfully");
+      setStatusToDelete(null);
     } catch (error) {
-      console.error("Error deleting Item:", error);
-      toast.error("Failed to delete Item");
+      console.error("Error deleting Status:", error);
+      toast.error("Failed to delete Status");
     }
   };
 
@@ -87,7 +84,7 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
       <div className="mb-4 flex justify-between items-center">
         <Input
           type="text"
-          placeholder="Search by Item Name or Description"
+          placeholder="Search by Status Name or Description"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border p-2 rounded m-2"
@@ -96,13 +93,7 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-            <TableHead className="h-10 p-2.5">Tag No.</TableHead>
-            <TableHead className="h-10 p-2.5">Item Name</TableHead>
-            <TableHead className="h-10 p-2.5">Category</TableHead>
-            <TableHead className="h-10 p-2.5">Desccription</TableHead>
-            <TableHead className="h-10 p-2.5">Price</TableHead>
-            <TableHead className="h-10 p-2.5">Quantity</TableHead>
-            <TableHead className="h-10 p-2.5">Total Cost</TableHead>
+            <TableHead className="h-10 p-2.5">Status Name</TableHead>
             <TableHead className="h-10 p-2.5">Created Date</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
             <TableHead className="h-10 p-2.5 text-center">Action</TableHead>
@@ -112,33 +103,11 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
         <TableBody>
           {currentItems.map((item) => (
             <TableRow
-              key={item.itemId}
+              key={item.statusId}
               className="hover:bg-default-200"
-              // data-state={selectedRows.includes(item.itemId!) && "selected"}
+              // data-state={selectedRows.includes(item.statusId!) && "selected"}
             >
-              <TableCell className="p-2.5">
-                {`0000${item.itemId}-${
-                  item.createdAt
-                    ? new Date(item.createdAt).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })
-                    : ""
-                }`}
-              </TableCell>
-              <TableCell className="p-2.5">{item.itemName}</TableCell>
-              <TableCell className="p-2.5">{item.categoryName}</TableCell>
-              <TableCell className="p-2.5"> {item.description}</TableCell>
-              <TableCell className="p-2.5">
-                {" "}
-                {item.unitPrice.toFixed(2)}
-              </TableCell>
-              <TableCell className="p-2.5"> {item.totalQuantity}</TableCell>
-              <TableCell className="p-2.5">
-                {" "}
-                {(item.unitPrice * item.totalQuantity).toFixed(2)}
-              </TableCell>
+              <TableCell className="p-2.5">{item.statusName}</TableCell>
               <TableCell className="p-2.5">
                 {item?.createdAt
                   ? formatDate(item.createdAt)
@@ -155,13 +124,13 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-center">
                 <div className="flex gap-3">
-                  <EditItem itemData={item} categories={categories} />
+                  <EditStatus statusData={item} />
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
-                    onClick={() => handleDeleteConfirmation(item.itemId!)}
+                    onClick={() => handleDeleteConfirmation(item.statusId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
@@ -182,9 +151,9 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
           Next
         </Button>
       </div>
-      {itemToDelete !== null && (
+      {statusToDelete !== null && (
         <ConfirmationDialog
-          onDelete={() => handleDelete(itemToDelete)}
+          onDelete={() => handleDelete(statusToDelete)}
           onCancel={handleCancelDelete}
         />
       )}
@@ -192,4 +161,4 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
   );
 };
 
-export default ItemListTable;
+export default StatusListTable;

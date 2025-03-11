@@ -128,6 +128,8 @@ builder.Services.AddScoped<InventoryStatusMapper>();
 builder.Services.AddScoped<IInventoryPurchase, InventoryPurchaseService>();
 builder.Services.AddScoped<InventoryPurchaseMapper>();
 
+builder.Services.AddScoped<IAssetAllocation, AssetAllocationService>();
+builder.Services.AddScoped<AssetAllocationMapper>();
 
 
 // Add controllers
