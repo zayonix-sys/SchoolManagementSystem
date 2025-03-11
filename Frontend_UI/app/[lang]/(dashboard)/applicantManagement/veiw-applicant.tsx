@@ -27,17 +27,20 @@ import {
   useDeleteApplicantMutation,
 } from "@/services/apis/applicantService";
 import { SectionData } from "@/services/apis/sectionService";
+import { ParentData } from "@/services/apis/parentService";
 
 interface ApplicantListTableProps {
   applicants: ApplicantApplicationDetail[];
   refetch: () => void;
   sectionData: SectionData[];
+  // parents: ParentData[];
 }
 
 const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
   applicants,
   refetch,
   sectionData,
+  // parents,
 }) => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,6 +68,8 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
   );
 
   const totalPages = Math.ceil(filteredApplicants?.length / itemsPerPage);
+
+  
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -167,6 +172,7 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
                     refetch={refetch}
                     sectionData={sectionData}
                     classId={item.appliedClassId}
+                    applicantId={item.applicantId}
                   />
                   <Button
                     size="icon"
@@ -259,6 +265,10 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
                   {detailedApplicant.firstName} {detailedApplicant.lastName}
                 </div>
                 <div className="flex flex-col">
+                  <span className="font-bold">Parent Name: </span>
+                  {detailedApplicant.parentFirstName} {detailedApplicant.parentMiddleName} {detailedApplicant.parentLastName}
+                </div>
+                <div className="flex flex-col">
                   <span className="font-bold">Form B Number: </span>
                   {detailedApplicant.formBNumber}
                 </div>
@@ -279,10 +289,26 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
                   {detailedApplicant.phoneNumber}
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-bold">Address: </span>
-                  {detailedApplicant.applicantAddress}
+                  <span className="font-bold">Nationality: </span>
+                  {detailedApplicant.nationality}
                 </div>
                 <div className="flex flex-col">
+                  <span className="font-bold">Address: </span>
+                  {detailedApplicant.parentAddress}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Occupation: </span>
+                  {detailedApplicant.occupation}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Income: </span>
+                  {detailedApplicant.sourceOfIncome}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold">Dependent: </span>
+                  {detailedApplicant.dependent}
+                </div>
+                {/* <div className="flex flex-col">
                   <span className="font-bold">City: </span>
                   {detailedApplicant.city}
                 </div>
@@ -290,7 +316,7 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
                 <div className="flex flex-col">
                   <span className="font-bold">States: </span>
                   {detailedApplicant.states}
-                </div>
+                </div> */}
                 <div className="flex flex-col">
                   <span className="font-bold">Residence Status: </span>
                   {detailedApplicant.residenceStatus}
@@ -298,7 +324,7 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
 
                 <div className="flex flex-col">
                   <span className="font-bold">Mother Tongue </span>
-                  {detailedApplicant.motherTounge}
+                  {detailedApplicant.motherTongue}
                 </div>
               </div>
             </div>
