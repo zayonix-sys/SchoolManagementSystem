@@ -42,7 +42,12 @@ namespace SchoolManagementSystem.Application.Mappers
             throw new NotImplementedException();
         }
 
-        public Applicant MapToEntity(ApplicantDTO dto)
+		public List<Applicant> MapToEntities(IEnumerable<ApplicantDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Applicant MapToEntity(ApplicantDTO dto)
         {
             if (dto == null)
             {

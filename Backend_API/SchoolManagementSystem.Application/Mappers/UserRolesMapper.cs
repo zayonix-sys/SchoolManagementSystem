@@ -36,5 +36,10 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             throw new NotImplementedException();
         }
-    }
+
+		public List<UserRole> MapToEntities(IEnumerable<UserRolesDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
