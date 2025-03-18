@@ -113,6 +113,9 @@ builder.Services.AddScoped<ParentMapper>();
 builder.Services.AddScoped<IStudentParent, StudentParentService>();
 builder.Services.AddScoped<StudentParentMapper>();
 
+builder.Services.AddScoped<IParentFeedback, ParentFeedbackService>();
+builder.Services.AddScoped<ParentFeedbackMapper>();
+
 builder.Services.AddScoped<IPayment, PaymentService>();
 builder.Services.AddScoped<PaymentMapper>();
 builder.Services.AddScoped<IUserRoles, UserRolesService>();

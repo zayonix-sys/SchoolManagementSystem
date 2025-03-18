@@ -1,6 +1,6 @@
-import { DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation, List, ListFill, Cart, ClipBoard } from "@/components/svg";
+import { DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation, List, ListFill, Cart, ClipBoard, Note } from "@/components/svg";
 import useAuth from "@/hooks/use-auth";
-import { CalendarCheck2Icon, Coins, CoinsIcon } from "lucide-react";
+import { CalendarCheck2Icon, Clapperboard, Coins, CoinsIcon } from "lucide-react";
 
 export interface MenuItemProps {
   title: string;
@@ -116,6 +116,11 @@ export const menuItems: MenuItemProps[] = [
         title: "Promoted Student",
         href: "/student-academic",
         icon: ClipBoard2,
+      },
+      {
+        title: "Parents Feedback",
+        href: "/parent-feedback",
+        icon: Note,
       },
 
       

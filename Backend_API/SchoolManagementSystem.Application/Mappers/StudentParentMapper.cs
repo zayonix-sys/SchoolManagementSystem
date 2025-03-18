@@ -31,6 +31,8 @@ namespace SchoolManagementSystem.Application.Mappers
                 StudentParentId = entity.StudentParentId,
                 ParentId = entity.ParentId,
                 StudentId = entity.StudentId,
+                ParentName = entity.Parent.FirstName + " " + entity.Parent.LastName,
+                StudentName = entity.Student.FirstName + " " + entity.Student.LastName,
                 ApplicantId = entity.ApplicantId,
                 CreatedBy = entity.CreatedBy,
                 IsActive = entity.IsActive = true,

@@ -35,8 +35,6 @@ namespace SchoolManagementSystem.Domain.Entities
         public string? Remarks { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        [Required]
         public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }

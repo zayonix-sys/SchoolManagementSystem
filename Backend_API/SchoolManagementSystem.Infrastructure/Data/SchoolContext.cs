@@ -48,6 +48,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<AcademicYear> AcademicYears { get; set; }
         public DbSet<Parent> Parents { get; set; }
         public DbSet<StudentParent> StudentParent { get; set; }
+        public DbSet<ParentFeedback> ParentFeedback { get; set; }
+
 
 
 
@@ -99,7 +101,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
             modelBuilder.Entity<TimeTableView>()
                 .HasNoKey();
-            
+
             modelBuilder.Entity<InventoryStockView>()
                 .HasNoKey();
 

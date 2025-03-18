@@ -41,6 +41,8 @@ import inventoryStockApi from "./apis/inventoryStockService";
 import inventoryStatusApi from "./apis/inventoryStatusService";
 import inventoryPurchaseApi from "./apis/inventoryPurchaseService";
 import assetsAllocationApi from "./apis/assetsAllocationService";
+import parentFeedbackApi from "./apis/parentFeedbackService";
+import studentParentApi from "./apis/studentParentService";
 
 // Import or define your auth reducer
 // import authReducer from "./authSlice"; // Assuming your auth reducer is in authSlice.js
@@ -91,12 +93,15 @@ const rootReducer = combineReducers({
   [examResultPDFApi.reducerPath]: examResultPDFApi.reducer,
   [timetableApi.reducerPath]: timetableApi.reducer,
   [periodApi.reducerPath]: periodApi.reducer,
+  [parentFeedbackApi.reducerPath]: parentFeedbackApi.reducer,
+  [studentParentApi.reducerPath]: studentParentApi.reducer,
   [inventoryCategoryApi.reducerPath]: inventoryCategoryApi.reducer,
   [inventoryItemApi.reducerPath]: inventoryItemApi.reducer,
   [inventoryStockApi.reducerPath]: inventoryStockApi.reducer,
   [inventoryStatusApi.reducerPath]: inventoryStatusApi.reducer,
   [inventoryPurchaseApi.reducerPath]: inventoryPurchaseApi.reducer,
   [assetsAllocationApi.reducerPath]: assetsAllocationApi.reducer,
+
 });
 
 const store = configureStore({
@@ -143,7 +148,9 @@ const store = configureStore({
       .concat(inventoryStockApi.middleware)
       .concat(inventoryPurchaseApi.middleware)
       .concat(inventoryStatusApi.middleware)
-      .concat(assetsAllocationApi.middleware),
+      .concat(assetsAllocationApi.middleware)
+      .concat(studentParentApi.middleware)
+      .concat(parentFeedbackApi.middleware),
 });
 
 export const persistor = persistStore(store);
