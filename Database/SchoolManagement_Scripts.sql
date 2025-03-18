@@ -1311,7 +1311,7 @@ CREATE TABLE AssetAllocation (
 );
 
 -- VIEWS --
-
+GO
 CREATE VIEW vw_TbaDashboardSummaryCount AS
 SELECT 
      --Total counts
@@ -1340,6 +1340,9 @@ SELECT
         WHERE CreatedAt BETWEEN DATEADD(MONTH, -1, GETDATE()) AND GETDATE()
     ) AS NewStudentsSponsoredThisMonth
 
+GO
+
+GO
 CREATE VIEW vw_InventoryStockSummary AS
 SELECT 
     I.ItemID,
@@ -1353,7 +1356,9 @@ FROM InventoryItems I
 LEFT JOIN InventoryStocks S ON I.ItemID = S.ItemID
 LEFT JOIN InventoryCategories C ON I.CategoryID = C.CategoryID
 GROUP BY I.ItemID, I.ItemName, C.CategoryName;
+GO
 
+GO
 CREATE VIEW [dbo].[vw_ApplicantDetails]
 AS
 SELECT al.ApplicationId, al.ApplicantId, al.ApplicationStatus, al.CampusId, cp.CampusName, al.AdmissionDecisionDate, al.Remarks, al.ClassId AS AppliedClassId, rac.ClassName AS AppliedClassName,
@@ -1380,7 +1385,7 @@ FROM     dbo.Applications AS al INNER JOIN
 GO
 
 -- STORED PROCEDURES --
-
+GO
 CREATE PROCEDURE InsertItemDetails 
     @ItemID INT,
     @Quantity INT,
@@ -1404,3 +1409,4 @@ BEGIN
         SET @Counter = @Counter + 1;
     END;
 END;
+GO
