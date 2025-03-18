@@ -1396,18 +1396,52 @@ BEGIN
     SET NOCOUNT ON;
 
     DECLARE @Counter INT = 1;
-    DECLARE @TagNumber VARCHAR(50);
-    
+    DECLARE @LastTagNumber INT;
+    DECLARE @NewTagNumber INT;
+
+    -- Get the last TagNumber for the given ItemID
+    SELECT @LastTagNumber = MAX(CAST(TagNumber AS INT))
+    FROM ItemDetail
+    WHERE ItemID = @ItemID;
+
+    -- If no previous TagNumber exists, start from 10001
+    IF @LastTagNumber IS NULL
+        SET @LastTagNumber = 10000;
+
     WHILE @Counter <= @Quantity
     BEGIN
-        -- Generate TagNumber: ItemID + padded serial number
-        SET @TagNumber = CAST(@ItemID AS VARCHAR) + RIGHT('0000' + CAST(@Counter AS VARCHAR), 4);
+        -- Increment TagNumber
+        SET @NewTagNumber = @LastTagNumber + @Counter;
 
         -- Insert into ItemDetails table
         INSERT INTO ItemDetail (ItemID, TagNumber, StatusID, CreatedAt, CreatedBy, IsActive)
-        VALUES (@ItemID, @TagNumber, 1, GETDATE(), @CreatedBy, 1); -- StatusID = 1 (In Stock)
+        VALUES (@ItemID, @NewTagNumber, 1, GETDATE(), @CreatedBy, 1); -- StatusID = 1 (In Stock)
 
         SET @Counter = @Counter + 1;
     END;
+END;
+GO
+
+GO
+CREATE PROCEDURE UpdateItemStatus
+    @ItemID INT,
+    @StatusID INT,
+    @Quantity INT,
+    @UpdatedBy INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Update the first @Quantity rows where StatusID = 1 for the given ItemID
+    UPDATE ItemDetail
+    SET StatusID = @StatusID,
+        UpdatedAt = GETDATE(),
+        UpdatedBy = @UpdatedBy
+    WHERE ItemDetailID IN (
+        SELECT TOP (@Quantity) ItemDetailID
+        FROM ItemDetail
+        WHERE ItemID = @ItemID AND StatusID = 1
+        ORDER BY ItemDetailID ASC
+    );
 END;
 GO

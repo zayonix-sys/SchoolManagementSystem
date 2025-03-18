@@ -4,6 +4,7 @@ using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
 using SchoolManagementSystem.Domain.Interfaces;
+using SchoolManagementSystem.Infrastructure.Data;
 
 namespace SchoolManagementSystem.Application.Services
 {
@@ -12,37 +13,59 @@ namespace SchoolManagementSystem.Application.Services
         private readonly IGenericRepository<AssetAllocation> _assetAllocationRepository;
         private readonly IGenericRepository<InventoryStock> _inventoryStockRepository;
         private readonly AssetAllocationMapper _mapper;
+        private readonly SchoolContext _dbContext;
 
         public AssetAllocationService(
             IGenericRepository<AssetAllocation> genericRepository,
             IGenericRepository<InventoryStock> inventoryStockRepository,
-            AssetAllocationMapper assetsMapper
+            AssetAllocationMapper assetsMapper,
+            SchoolContext dbContext
             )
         {
             _assetAllocationRepository = genericRepository;
             _inventoryStockRepository = inventoryStockRepository;
             _mapper = assetsMapper;
+            _dbContext = dbContext;
         }
 
         public async Task AllocateAssetAsync(AssetAllocationDTO dto)
         {
-            var model = _mapper.MapToEntity(dto);
-            await _assetAllocationRepository.AddAsync(model);
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
-            var stockData = new InventoryStock
+            try
             {
-                ItemId = dto.ItemId,
-                Quantity = dto.Quantity,
-                StatusId = dto.StatusId,
-                Remarks = "Allocated To " + dto.AllocatedLocation,
-                TransactionType = "OUT",
-                TransactionDate = DateTime.UtcNow,
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = dto.CreatedBy,
-                IsActive = true,
-            };
+                var model = _mapper.MapToEntity(dto);
+                await _assetAllocationRepository.AddAsync(model);
 
-            await _inventoryStockRepository.AddAsync(stockData);
+                var stockData = new InventoryStock
+                {
+                    ItemId = dto.ItemId,
+                    Quantity = dto.Quantity,
+                    StatusId = dto.StatusId,
+                    Remarks = "Allocated To " + dto.AllocatedLocation,
+                    TransactionType = "OUT",
+                    TransactionDate = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = dto.CreatedBy,
+                    IsActive = true,
+                };
+
+                await _inventoryStockRepository.AddAsync(stockData);
+
+                // Call the stored procedure to generate tag numbers
+                await _dbContext.Database.ExecuteSqlRawAsync(
+                    "EXEC UpdateItemStatus @p0, @p1, @p2, @p3",
+                    model.ItemId, model.StatusId, model.Quantity, model.UpdatedBy
+                );
+
+                // Commit transaction if everything is successful
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync(); // Rollback on error
+                throw;
+            }
         }
 
         public async Task DeleteAllocatedAssetAsync(int allocationId)
