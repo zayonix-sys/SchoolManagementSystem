@@ -1226,6 +1226,7 @@ CREATE TABLE InventoryItems (
     ItemName NVARCHAR(100) NOT NULL,
     CategoryID INT FOREIGN KEY REFERENCES InventoryCategories(CategoryID),
     Description NVARCHAR(255),
+	TotalQuantity INT,
     UnitPrice DECIMAL(18, 2),
     ReorderLevel INT DEFAULT 100,
     CreatedAt DATETIME DEFAULT GETDATE(),
