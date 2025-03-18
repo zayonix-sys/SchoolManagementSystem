@@ -24,6 +24,7 @@
         public int? SectionId { get; set; }
 
         public int? CampusId { get; set; }
+        public string? CampusName { get; set; }
 
         public bool IsActive { get; set; } = true;
 

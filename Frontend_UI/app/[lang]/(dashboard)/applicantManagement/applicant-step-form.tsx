@@ -94,13 +94,13 @@ const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
 
   const onSubmit: SubmitHandler<ApplicantFormValues> = async (data) => {
     try {
-      const payload = { ...data, 
-         createdBy: loggedUser?.userId,
-       };
+      const payload = { ...data, createdBy: loggedUser?.userId };
 
       const response = await addApplicant(payload);
       if (response?.data?.success) {
-        toast.success(`${data?.firstName} ${data?.parentFirstName}Added successfully!`);
+        toast.success(
+          `${data?.firstName} ${data?.parentFirstName} Added successfully!`
+        );
         reset();
         refetch();
       } else {
@@ -323,7 +323,9 @@ const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
                   {...register("sourceOfIncome")}
                 />
                 {errors.sourceOfIncome && (
-                  <p className="text-destructive">{errors.sourceOfIncome?.message}</p>
+                  <p className="text-destructive">
+                    {errors.sourceOfIncome?.message}
+                  </p>
                 )}
               </div>
               <div className="col-span-12 md:col-span-6 lg:col-span-3">

@@ -66,6 +66,7 @@ const mapFormDataToDto = (data: any) => {
     occupation: data.occupation,
     nationality: data.nationality,
     sourceOfIncome: data.sourceOfIncome,
+    createdBy: data.createdBy,
 
     // city: data.city,
     motherTongue: data.motherTongue,

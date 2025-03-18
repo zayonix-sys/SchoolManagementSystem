@@ -17,7 +17,6 @@ import {
   DialogClose,
   DialogContent,
   DialogTitle,
-  DialogTrigger,
   DialogHeader,
 } from "@/components/ui/dialog";
 
@@ -48,9 +47,7 @@ const ApplicationDropdown: React.FC<ApplicantProps> = ({
     id: number,
     status: string,
     sectionId?: number,
-    applicantId?: number,
-    
-
+    applicantId?: number
   ) => {
     try {
       setLoading(true);
@@ -58,8 +55,7 @@ const ApplicationDropdown: React.FC<ApplicantProps> = ({
         id: applicationId,
         status,
         sectionId: sectionId ?? 0,
-        applicantId: applicantId?? 0,
-
+        applicantId: applicantId ?? 0,
       });
       toast.success(response?.data?.message);
       refetch();
@@ -136,7 +132,7 @@ const ApplicationDropdown: React.FC<ApplicantProps> = ({
                         applicationId,
                         "Approved",
                         parseInt(selectedSectionId),
-                        applicantId,
+                        applicantId
                       );
                     }
                   }}

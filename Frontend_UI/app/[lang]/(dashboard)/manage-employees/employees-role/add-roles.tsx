@@ -17,10 +17,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { RoleData, useAddRoleMutation } from "@/services/apis/employeeRoleService";
+import {
+  RoleData,
+  useAddRoleMutation,
+} from "@/services/apis/employeeRoleService";
 import useAuth from "@/hooks/use-auth";
-
-
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reduxStore";
 
 // Define Zod schema
 const roleSchema = z.object({
@@ -32,7 +35,7 @@ type RoleFormValues = z.infer<typeof roleSchema>;
 
 export default function AddRole({ refetch }: { refetch: () => void }) {
   const [addRole] = useAddRoleMutation();
-
+  const loggedUser = useSelector((state: RootState) => state.auth.user);
 
   const {
     register,
@@ -43,20 +46,16 @@ export default function AddRole({ refetch }: { refetch: () => void }) {
     resolver: zodResolver(roleSchema),
   });
 
-  const {userId} = useAuth();
-
   const onSubmit: SubmitHandler<RoleFormValues> = async (data) => {
     try {
       const payload = {
         ...data,
-        createdBy: userId || 0,
-      }
+        createdBy: loggedUser?.userId,
+      };
       const response = await addRole(payload as RoleData);
 
       if (response.data?.success) {
-        toast.success(
-          `${response.data?.data.roleName} Role Added successfully!`
-        );
+        toast.success(`${response.data?.data.roleName} Added successfully!`);
         reset();
         refetch();
       } else {
@@ -82,7 +81,10 @@ export default function AddRole({ refetch }: { refetch: () => void }) {
       <SheetTrigger asChild>
         <Button>
           <span className="text-xl mr-1">
-            <Icon icon="heroicons:building-library-solid" className="w-6 h-6 mr-2" />
+            <Icon
+              icon="heroicons:building-library-solid"
+              className="w-6 h-6 mr-2"
+            />
           </span>
           Add Role
         </Button>

@@ -55,6 +55,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<InventoryStock> InventoryStocks { get; set; }
         public DbSet<InventoryStatus> InventoryStatus { get; set; }
+        public DbSet<ItemDetail> ItemDetail { get; set; }
         public DbSet<InventoryPurchase> InventoryPurchases { get; set; }
         public DbSet<AssetAllocation> AssetAllocation { get; set; }
         //public DbSet<ExamResult> ExamResults { get; set; }

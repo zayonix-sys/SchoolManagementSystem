@@ -3,10 +3,12 @@ import { ApiResponse } from "./apiResponse";
 
 export interface InventoryItemData {
   itemId?: number,
+  itemDetailId?: number,
   categoryId?: number,
   statusId?: number,
   itemName: string,
   categoryName?: string,
+  tagNumber?: string,
   statusName?: string,
   unitPrice: number,
   totalQuantity: number,
@@ -36,7 +38,10 @@ export const inventoryItemApi = createApi({
       query: () => "GetInventoryItems",
       providesTags: ["Item"],
     }),
-    
+    fetchInventoryItemDetailsByItemId: builder.query<ApiResponse<InventoryItemData[]>, number>({
+      query: (id) => `GetItemDetailsByItemId?itemId=${id}`,
+      providesTags: ["Item", "Stock"],
+    }),
     fetchInventoryItemById: builder.query<ApiResponse<InventoryItemData>, number>({
       query: (id) => `GetInventoryItemById?id=${id}`,
     }),
@@ -56,6 +61,16 @@ export const inventoryItemApi = createApi({
       }),
       invalidatesTags: ["Item", "Stock"],
     }),
+
+    updateItemDetailStatus: builder.mutation<ApiResponse<void>, {itemDetailId: number; statusId: number}>({
+      query: ({itemDetailId, statusId}) => ({
+        url: "UpdateItemDetailStatus",
+        method: "PUT",
+        body: { itemDetailId, statusId},
+      }),
+      invalidatesTags: ["Item", "Stock"],
+    }),
+
     deleteInventoryItem: builder.mutation<ApiResponse<void>, number>({
       query: (id) => ({
         url: `DeleteInventoryItem?inventoryItemId=${id}`,
@@ -68,9 +83,11 @@ export const inventoryItemApi = createApi({
 
 export const {
 useFetchInventoryItemsQuery,
+useFetchInventoryItemDetailsByItemIdQuery,
 useFetchInventoryItemByIdQuery,
 useAddInventoryItemMutation,
 useUpdateInventoryItemMutation,
+useUpdateItemDetailStatusMutation,
 useDeleteInventoryItemMutation,
 } = inventoryItemApi;
 
