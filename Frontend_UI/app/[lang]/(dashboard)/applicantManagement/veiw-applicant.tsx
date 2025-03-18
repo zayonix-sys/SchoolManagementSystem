@@ -69,8 +69,6 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
 
   const totalPages = Math.ceil(filteredApplicants?.length / itemsPerPage);
 
-  
-
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
@@ -213,7 +211,7 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
 
       {/* Detailed Applicant View in Dialog */}
       <Dialog open={!!detailedApplicant} onOpenChange={handleCloseDetails}>
-        <DialogContent className="max-w-screen-sm mx-auto">
+        <DialogContent className="max-w-screen-sm mx-auto" size="lg">
           <DialogHeader>
             <DialogTitle className="text-xl font-large">
               Applicant Details
@@ -266,7 +264,9 @@ const ApplicantListTable: React.FC<ApplicantListTableProps> = ({
                 </div>
                 <div className="flex flex-col">
                   <span className="font-bold">Parent Name: </span>
-                  {detailedApplicant.parentFirstName} {detailedApplicant.parentMiddleName} {detailedApplicant.parentLastName}
+                  {detailedApplicant.parentFirstName}{" "}
+                  {detailedApplicant.parentMiddleName}{" "}
+                  {detailedApplicant.parentLastName}
                 </div>
                 <div className="flex flex-col">
                   <span className="font-bold">Form B Number: </span>

@@ -47,10 +47,9 @@ namespace SchoolManagementSystem.Application.Mappers
                 DateOfBirth = entity.DateOfBirth,
                 EnrollmentDate = entity.EnrollmentDate,
                 ProfileImage = entity.ProfileImage,
-                CampusId = entity.Academic?.CampusId,
-                ClassId = entity.Academic?.ClassId,
+                CampusName = entity.Academic?.Campus?.CampusName,
                 SectionId = entity.Academic?.SectionId,
-                SectionName = entity.Academic.Section?.SectionName,
+                SectionName = entity.Academic?.Section?.SectionName,
                 ClassName = entity.Academic.Class?.ClassName,
                 IsActive = entity.IsActive,
 

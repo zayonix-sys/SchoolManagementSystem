@@ -37,7 +37,7 @@ namespace SchoolManagementSystem.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [Required]
-        public int CreatedBy { get; set; }
+        public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 

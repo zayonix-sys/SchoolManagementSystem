@@ -133,7 +133,7 @@ namespace SchoolManagementSystem.Application.Services
                                          a.Section.SectionId == dto.SectionId &&
                                          a.Campus.CampusId == dto.CampusId &&
                                          a.IsActive &&
-                                         a.ClassSectionAssignmentId != dto.ClassSectionAssignmentId); // Exclude the current assignment
+                                         a.AssignmentId != dto.AssignmentId); // Exclude the current assignment
 
                 if (existingAssignment != null)
                 {

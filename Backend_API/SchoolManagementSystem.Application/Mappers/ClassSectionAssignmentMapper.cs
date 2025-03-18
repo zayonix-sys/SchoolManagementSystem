@@ -9,7 +9,7 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             return new ClassSectionAssignment
             {
-                ClassSectionAssignmentId = dto.ClassSectionAssignmentId,
+                AssignmentId = dto.AssignmentId,
                 CampusId = dto.CampusId,
                 ClassId = dto.ClassId,
                 SectionId = dto.SectionId,
@@ -21,7 +21,7 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             return new ClassSectionAssignmentDTO
             {
-                ClassSectionAssignmentId = entity.ClassSectionAssignmentId,
+                AssignmentId = entity.AssignmentId,
                 CampusId = entity.CampusId,
                 ClassroomId = entity.ClassroomId,
                 ClassId = entity.ClassId,

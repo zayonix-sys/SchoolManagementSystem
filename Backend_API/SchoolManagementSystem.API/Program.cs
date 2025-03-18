@@ -125,6 +125,7 @@ builder.Services.AddScoped<IInventoryCategories, InventoryCategoryService>();
 builder.Services.AddScoped<InventoryCategoryMapper>();
 builder.Services.AddScoped<IInventoryItems, InventoryItemService>();
 builder.Services.AddScoped<InventoryItemMapper>();
+builder.Services.AddScoped<ItemDetailMapper>();
 builder.Services.AddScoped<IInventoryStocks, InventoryStockService>();
 builder.Services.AddScoped<InventoryStockMapper>();
 builder.Services.AddScoped<InventoryStockViewMapper>();
@@ -246,15 +247,65 @@ void SeedDefaultData(SchoolContext context)
 
     if (!context.Users.Any())
     {
+        var password = "password";
         var defaultUser = new User
         {
             UserName = "Super Admin",
-            PasswordHash = "password", // Properly hash the password
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password), // Properly hash the password
             RoleId = adminRoleId,
             CampusId = Convert.ToInt32(campusId),
             CreatedAt = DateTime.Now,
         };
         context.Users.Add(defaultUser);
+        context.SaveChanges();
+    }
+
+    if (!context.UserPermissions.Any())
+    {
+        var userId = context.Users.Select(c => c.UserId).FirstOrDefault();
+        context.UserPermissions.AddRange(new[]
+        {
+            new UserPermission
+            {
+                UserId = userId,
+                RoleId = adminRoleId,
+                Entity = "/",
+                CanCreate = true,
+                CanDelete = true,
+                CanRead = true,
+                CanUpdate = true,
+                CreatedBy = userId,
+                IsActive = true,
+                CreatedAt = DateTime.Now,
+            },
+            new UserPermission
+            {
+                UserId = userId,
+                RoleId = adminRoleId,
+                Entity = "/userManagement",
+                CanCreate = true,
+                CanDelete = true,
+                CanRead = true,
+                CanUpdate = true,
+                CreatedBy = userId,
+                IsActive = true,
+                CreatedAt = DateTime.Now,
+            }
+        });
+        context.SaveChanges();
+    }
+
+    if (!context.InventoryStatus.Any()) 
+    {
+        var userId = context.Users.Select(c => c.UserId).FirstOrDefault();
+        var defaultStatus = new InventoryStatus
+        {
+            StatusName = "In Stock",
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            CreatedBy = userId,
+        };
+        context.InventoryStatus.Add(defaultStatus);
         context.SaveChanges();
     }
 }

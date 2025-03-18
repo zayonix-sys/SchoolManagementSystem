@@ -87,7 +87,7 @@ namespace SchoolManagementSystem.Application.Services
                 ResidenceStatus = dto.ResidenceStatus,
                 ParentAddress = dto.ParentAddress,
                 Dependent = dto.Dependent,
-                CreatedBy = 2012,
+                CreatedBy = dto.CreatedBy,
                 CreatedAt = DateTime.UtcNow,
                 IsActive = true,
             };

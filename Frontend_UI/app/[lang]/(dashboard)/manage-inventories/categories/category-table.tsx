@@ -99,6 +99,7 @@ const CategoryListTable: React.FC<CategoryListTableProps> = ({
       <Table className="text-left">
         <TableHeader>
           <TableRow>
+            <TableHead className="h-10 p-2.5">Category Code</TableHead>
             <TableHead className="h-10 p-2.5">Category Name</TableHead>
             <TableHead className="h-10 p-2.5">Description</TableHead>
             <TableHead className="h-10 p-2.5">Created Date</TableHead>
@@ -114,6 +115,10 @@ const CategoryListTable: React.FC<CategoryListTableProps> = ({
               className="hover:bg-default-200"
               // data-state={selectedRows.includes(item.categoryId!) && "selected"}
             >
+              <TableCell className="p-2.5">
+                {item.categoryName.substring(0, 2).toUpperCase()}
+              </TableCell>
+
               <TableCell className="p-2.5">{item.categoryName}</TableCell>
               <TableCell className="p-2.5"> {item.description}</TableCell>
               <TableCell className="p-2.5">

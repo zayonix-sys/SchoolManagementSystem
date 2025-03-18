@@ -157,6 +157,7 @@ const ReportsCard = ({
               <ViewItems
                 selectedItem={items as InventoryItemData[]}
                 categories={categories as InventoryCategoryData[]}
+                status={status as InventoryStatusData[]}
               />
             )}
             {item.id === 3 && (

@@ -11,7 +11,11 @@ import {
   SectionData,
   useFetchSectionQuery,
 } from "@/services/apis/sectionService";
-import { ParentData, useFetchParentsQuery } from "@/services/apis/parentService";
+import {
+  ParentData,
+  useFetchParentsQuery,
+} from "@/services/apis/parentService";
+import { useEffect } from "react";
 
 const Applicants = () => {
   const { data: sections } = useFetchSectionQuery();

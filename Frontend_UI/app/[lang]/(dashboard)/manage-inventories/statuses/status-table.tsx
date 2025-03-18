@@ -124,16 +124,20 @@ const StatusListTable: React.FC<StatusListTableProps> = ({ statuses }) => {
               </TableCell>
               <TableCell className="p-2.5 flex justify-center">
                 <div className="flex gap-3">
-                  <EditStatus statusData={item} />
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="h-7 w-7"
-                    color="secondary"
-                    onClick={() => handleDeleteConfirmation(item.statusId!)}
-                  >
-                    <Icon icon="heroicons:trash" className="h-4 w-4" />
-                  </Button>
+                  {item.statusName !== "In Stock" && (
+                    <>
+                      <EditStatus statusData={item} />
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-7 w-7"
+                        color="secondary"
+                        onClick={() => handleDeleteConfirmation(item.statusId!)}
+                      >
+                        <Icon icon="heroicons:trash" className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
                 </div>
               </TableCell>
             </TableRow>
