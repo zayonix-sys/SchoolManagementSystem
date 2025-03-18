@@ -4,6 +4,7 @@ using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
 using SchoolManagementSystem.Domain.Interfaces;
+using SchoolManagementSystem.Infrastructure.Data;
 
 namespace SchoolManagementSystem.Application.Services
 {
@@ -13,30 +14,44 @@ namespace SchoolManagementSystem.Application.Services
         private readonly InventoryStockMapper _mapper;
         private readonly IGenericRepository<InventoryStockView> _stockView;
         private readonly InventoryStockViewMapper _stockViewMapper;
+        private readonly SchoolContext _dbContext;
 
         public InventoryStockService(
             IGenericRepository<InventoryStock> genericRepository, 
             InventoryStockMapper stockMapper, 
             IGenericRepository<InventoryStockView> stockView,
-            InventoryStockViewMapper stockViewMapper
+            InventoryStockViewMapper stockViewMapper,
+            SchoolContext dbContext
             )
         {
             _inventoryStockRepository = genericRepository;
             _mapper = stockMapper;
             _stockView = stockView;
             _stockViewMapper = stockViewMapper;
+            _dbContext = dbContext;
         }
 
         public async Task AddInventoryStockAsync(InventoryStockDTO dto)
         {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
             try
             {
                 var model = _mapper.MapToEntity(dto);
                 await _inventoryStockRepository.AddAsync(model);
-            }
-            catch (Exception)
-            {
 
+                // Call the stored procedure to generate tag numbers
+                await _dbContext.Database.ExecuteSqlRawAsync(
+                    "EXEC InsertItemDetails @p0, @p1, @p2",
+                    model.ItemId, model.Quantity, model.CreatedBy
+                );
+
+                // Commit transaction if everything is successful
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync(); // Rollback on error
                 throw;
             }
         }
