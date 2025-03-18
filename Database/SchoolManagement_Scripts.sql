@@ -1313,7 +1313,7 @@ CREATE TABLE AssetAllocation (
 
 -- VIEWS --
 GO
-CREATE VIEW vw_TbaDashboardSummaryCount AS
+CREATE VIEW DashboardCountView AS
 SELECT 
      --Total counts
     (SELECT COUNT(*) FROM Sponsors) AS TotalSponsors,
