@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SchoolManagementSystem.Infrastructure.Data
 {
@@ -73,6 +74,18 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
             modelBuilder.Entity<Admission>()
                 .HasOne(a => a.Student);
+
+            modelBuilder.Entity<AdmissionApplication>()
+            .HasOne(a => a.Class)
+            .WithMany()
+            .HasForeignKey(a => a.AppliedClassId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<AdmissionApplication>()
+                .HasOne(a => a.Class)
+                .WithMany()
+                .HasForeignKey(a => a.LastClassId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<AdmissionApplication>()
                 .HasIndex(a => a.ApplicationId);
