@@ -67,7 +67,6 @@ namespace SchoolManagementSystem.Application.Services
                 Gender = dto.Gender,
                 //MotherTounge = dto.MotherTounge,
                 //States = dto.States,
-                ClassId = dto.LastClassId
             };
 
             var applicant = await _applicantRepository.AddAsync(newApplicant);

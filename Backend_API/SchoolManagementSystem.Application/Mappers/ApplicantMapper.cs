@@ -32,7 +32,6 @@ namespace SchoolManagementSystem.Application.Mappers
                 //UpdatedAt = entity.UpdatedAt,
                 //UpdatedBy = entity.UpdatedBy,
                 //IsActive = entity.IsActive,
-                LastClassId = entity.ClassId,
 
             };
         }
@@ -51,7 +50,6 @@ namespace SchoolManagementSystem.Application.Mappers
 
             return new Applicant
             {
-                ClassId = dto.LastClassId,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 FormBNumber = dto.FormBNumber,

@@ -17,7 +17,7 @@
 
         // Last Attended Class Details
         public int LastClassId { get; set; }
-        public string LastAttendedClassName { get; set; }
+        public string LastClassName { get; set; }
 
         // Applicant Personal Details
         public string FirstName { get; set; }
