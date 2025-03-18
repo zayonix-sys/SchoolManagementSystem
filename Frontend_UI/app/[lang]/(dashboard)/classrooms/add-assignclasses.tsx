@@ -24,7 +24,10 @@ import {
 } from "@/components/ui/select";
 import { SectionData } from "@/services/apis/sectionService";
 import { ClassData } from "@/services/apis/classService";
-import { ClassAssignData, useAddClassAssignmentMutation } from "@/services/apis/assignClassService";
+import {
+  ClassAssignData,
+  useAddClassAssignmentMutation,
+} from "@/services/apis/assignClassService";
 import { CampusData } from "@/services/apis/campusService";
 
 const assignclassesSchema = z.object({
@@ -77,12 +80,14 @@ export default function AddAssignClasses({
         const className = Array.isArray(response.data?.data)
           ? response.data?.data[0].className
           : response.data?.data.classId;
-        toast.success(`${className}Class Assigned successfully!`);
+        toast.success(`${className} Class Assigned successfully!`);
         reset();
         refetch();
       } else {
         console.error("Error:", response);
-        toast.error(`Error: ${response.data?.message || "Something went wrong"}`);
+        toast.error(
+          `Error: ${response.data?.message || "Something went wrong"}`
+        );
       }
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || "Request Failed";
@@ -235,7 +240,7 @@ export default function AddAssignClasses({
                     </p>
                   )}
                 </div>
-                
+
                 <div className="col-span-2">
                   <Button type="submit">Submit Form</Button>
                 </div>

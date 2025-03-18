@@ -13,7 +13,8 @@ namespace SchoolManagementSystem.Application.Services
         private readonly ISection _sectionRepository;
         private readonly ClassSectionAssignmentMapper _mapper;
 
-        public ClassSectionAssignmentService(IGenericRepository<ClassSectionAssignment> genericRepository, 
+        public ClassSectionAssignmentService(
+            IGenericRepository<ClassSectionAssignment> genericRepository,  
             ISection sectionRepository,
             ClassSectionAssignmentMapper classSectionAssignmentMapper)
 
@@ -28,6 +29,16 @@ namespace SchoolManagementSystem.Application.Services
         {
             try
             {
+                var existingSection = await _sectionRepository.GetSectionByIdAsync(classroom.SectionId);
+
+                if (existingSection == null)
+                {
+                    throw new KeyNotFoundException("Section not found.");
+                }
+
+                existingSection.ClassId = classroom.ClassId;
+                await _sectionRepository.UpdateSectionAsync(existingSection);
+
                 var assignments = await _classSectionAssignmentRepository.GetAllAsync(
                     include: query => query
                     .Include(a => a.Classroom)
