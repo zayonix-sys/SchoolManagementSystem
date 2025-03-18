@@ -16,7 +16,8 @@ namespace SchoolManagementSystem.Application.Mappers
             {
                 ApplicantId = entity.ApplicantId,
                 CampusId = entity.CampusId,
-                AdmissionClassId = entity.ClassId,
+                AppliedClassId = entity.AppliedClassId,
+                LastClassId = entity.LastClassId,
                 AdmissionDecisionDate = entity.AdmissionDecisionDate,
                 ApplicationStatus = entity.ApplicationStatus,
                 Remarks = entity.Remarks,
@@ -40,7 +41,8 @@ namespace SchoolManagementSystem.Application.Mappers
                 ApplicationId = dto.ApplicationId,
                 ApplicantId = Convert.ToInt32(dto.ApplicantId),
                 CampusId = dto.CampusId,
-                ClassId = dto.AdmissionClassId,
+                AppliedClassId = dto.AppliedClassId,
+                LastClassId = dto.LastClassId,
                 AdmissionDecisionDate = dto.AdmissionDecisionDate,
                 ApplicationStatus = dto.ApplicationStatus,
                 Remarks = dto.Remarks

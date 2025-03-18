@@ -50,9 +50,7 @@ const applicantSchema = z.object({
   // states: z.string().min(1, "State is required"),
   phoneNumber: z.string().max(15, "Phone number must be 15 characters long"),
   lastClassId: z.number().min(1, "Last Class Attended is required"),
-  admissionClassId: z
-    .number()
-    .min(1, "Admission Required In Class is required"),
+  appliedClassId: z.number().min(1, "Admission Required In Class is required"),
   campusId: z.number().min(1, "Campus is required"),
   applicationId: z.number().optional(),
   applicationStatus: z.string().optional().default("Pending"),
@@ -464,7 +462,7 @@ const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
                 <label className="text-default-600">Admission Class</label>
                 <Select
                   onValueChange={(value) =>
-                    setValue("admissionClassId", Number(value))
+                    setValue("appliedClassId", Number(value))
                   }
                 >
                   <SelectTrigger>
@@ -482,9 +480,9 @@ const ApplicantStepForm: React.FC<ApplicantProp> = ({ refetch }) => {
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.admissionClassId && (
+                {errors.appliedClassId && (
                   <p className="text-destructive">
-                    {errors.admissionClassId.message}
+                    {errors.appliedClassId.message}
                   </p>
                 )}
               </div>

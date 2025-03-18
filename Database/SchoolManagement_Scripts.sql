@@ -179,6 +179,7 @@ CREATE TABLE ClassSectionAssignments (
     ClassId INT,
     SectionId INT,
     ClassroomId INT,
+	CampusId INT,
 	Capacity INT,
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
@@ -189,6 +190,7 @@ CREATE TABLE ClassSectionAssignments (
 	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
     FOREIGN KEY (ClassId) REFERENCES Classes(ClassId),
+	FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId),
     FOREIGN KEY (SectionId) REFERENCES Sections(SectionId),
     FOREIGN KEY (ClassroomId) REFERENCES Classrooms(ClassroomId),
 );
@@ -225,7 +227,8 @@ CREATE TABLE Applications (
     ApplicationId INT PRIMARY KEY IDENTITY,
     ApplicantId INT,
 	CampusId INT,
-    ClassId INT,
+    AppliedClassId INT,
+	LastClassId INT NULL,
     ApplicationStatus NVARCHAR(50),  -- e.g., "Pending", "Approved", "Rejected"
     AdmissionDecisionDate DATE NULL,
     Remarks NVARCHAR(255),
@@ -237,7 +240,8 @@ CREATE TABLE Applications (
 
 	FOREIGN KEY (ApplicantId) REFERENCES Applicants(ApplicantId),
 	FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId),
-	FOREIGN KEY (ClassId) REFERENCES Classes(ClassId),
+	FOREIGN KEY (AppliedClassId) REFERENCES Classes(ClassId),
+	FOREIGN KEY (LastClassId) REFERENCES Classes(ClassId),
 	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
@@ -1362,7 +1366,9 @@ GO
 GO
 CREATE VIEW [dbo].[vw_ApplicantDetails]
 AS
-SELECT al.ApplicationId, al.ApplicantId, al.ApplicationStatus, al.CampusId, cp.CampusName, al.AdmissionDecisionDate, al.Remarks, al.ClassId AS AppliedClassId, rac.ClassName AS AppliedClassName,
+SELECT al.ApplicationId, al.ApplicantId, al.ApplicationStatus, al.CampusId, cp.CampusName, 
+al.AdmissionDecisionDate, al.Remarks, al.AppliedClassId, app.ClassName AS AppliedClassName,
+al.LastClassId, rac.ClassName AS LastClassName,
                   ap.FirstName, ap.LastName, ap.FormBNumber, ap.DateOfBirth, ap.Gender,
 				 p.FirstName As ParentFirstName, 
 				 p.MiddleName As ParentMiddleName, 
@@ -1379,7 +1385,8 @@ SELECT al.ApplicationId, al.ApplicantId, al.ApplicationStatus, al.CampusId, cp.C
 				  
 FROM     dbo.Applications AS al INNER JOIN
                   dbo.Campuses AS cp ON al.CampusId = cp.CampusId INNER JOIN
-                  dbo.Classes AS rac ON al.ClassId = rac.ClassId INNER JOIN
+                  dbo.Classes AS rac ON al.LastClassId = rac.ClassId INNER JOIN
+				  dbo.Classes AS app ON al.AppliedClassId = app.ClassId INNER JOIN
                   dbo.Applicants AS ap ON ap.ApplicantId = al.ApplicantId INNER JOIN
 				  dbo.StudentParent as sp ON sp.ApplicantId = al.ApplicantId LEFT JOIN
 				  dbo.Parents as p ON p.ParentId = sp.ParentId

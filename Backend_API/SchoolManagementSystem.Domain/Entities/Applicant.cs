@@ -20,10 +20,6 @@ namespace SchoolManagementSystem.Domain.Entities
 
         public DateOnly? DateOfBirth { get; set; }
 
-        [ForeignKey("ClassId")]
-        public int? ClassId { get; set; }
-        public virtual Class Class { get; set; }
-
         [MaxLength(10)]
         public string? Gender { get; set; }
 

@@ -12,7 +12,8 @@ namespace SchoolManagementSystem.Application.DTOs
         public int ApplicationId { get; set; }
         public int? ApplicantId { get; set; }
         public int? CampusId { get; set; }
-        public int? AdmissionClassId { get; set; }
+        public int? AppliedClassId { get; set; }
+        public int? LastClassId { get; set; }
         public string ApplicationStatus { get; set; }
         public DateOnly? AdmissionDecisionDate { get; set; }
         public string? Remarks { get; set; }

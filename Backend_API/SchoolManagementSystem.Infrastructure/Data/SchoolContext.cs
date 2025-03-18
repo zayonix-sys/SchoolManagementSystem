@@ -133,7 +133,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
             // Map the entity to the SQL Server view
             modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
             modelBuilder.Entity<TimeTableView>().ToView("TimeTableView");
-            modelBuilder.Entity<DashboardCountView>().ToView("DashboardCountViews");
+            modelBuilder.Entity<DashboardCountView>().ToView("DashboardCountView");
             modelBuilder.Entity<InventoryStockView>().ToView("vw_InventoryStockSummary");
 
             base.OnModelCreating(modelBuilder);
