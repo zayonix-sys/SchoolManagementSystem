@@ -410,7 +410,6 @@ CREATE INDEX IDX_Employees_RoleId ON Employees(RoleId);
 CREATE TABLE EmployeeAttendance (
     EmployeeAttendanceId INT PRIMARY KEY IDENTITY(1,1),
     EmployeeId INT,
-	CampusId INT Null,
     AttendanceDate DATE Default GetDate(),
     AttendanceStatus NVARCHAR(20),
 	CreatedAt DATETIME DEFAULT GETDATE(),
@@ -420,7 +419,6 @@ CREATE TABLE EmployeeAttendance (
 	IsActive BIT DEFAULT 1
 
 	FOREIGN KEY (EmployeeId) REFERENCES Employees(EmployeeId),
-	FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId),
 	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
 );
@@ -597,10 +595,27 @@ CREATE TABLE SubjectTeachers (
 CREATE INDEX IDX_SubjectTeachers_SubjectId ON SubjectTeachers(SubjectId);
 CREATE INDEX IDX_SubjectTeachers_EmployeeId ON SubjectTeachers(EmployeeId);
 
+CREATE TABLE [Periods] (
+    PeriodId INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    PeriodName NVARCHAR(50) NULL,
+    StartTime TIME(7) NULL,
+    EndTime TIME(7) NULL,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    CreatedBy INT,
+    UpdatedAt DATETIME NULL,
+    UpdatedBy INT,
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+    FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId)
+);
+
+
 CREATE TABLE Timetables (
     TimetableId INT PRIMARY KEY IDENTITY,
 	CampusId INT,
     SubjectId INT,
+	ClassId INT,
+	PeriodId INT,
     DayOfWeek NVARCHAR(10),
     StartTime TIME,
     EndTime TIME,
@@ -612,6 +627,8 @@ CREATE TABLE Timetables (
 	IsActive BIT DEFAULT 1
 
 	FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId),
+	FOREIGN KEY (ClassId) REFERENCES Classes(ClassId),
+	FOREIGN KEY (PeriodId) REFERENCES [Periods](PeriodId),
 	FOREIGN KEY (SubjectId) REFERENCES Subjects(SubjectId),
 	FOREIGN KEY (ClassroomId) REFERENCES Classrooms(ClassroomId),
 	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
@@ -620,16 +637,62 @@ CREATE TABLE Timetables (
     
 );
 CREATE INDEX IDX_Timetables_CampusId ON Campuses(CampusId);
+CREATE INDEX IDX_Timetables_ClassId ON Classes(ClassId);
+CREATE INDEX IDX_Timetables_PeriodId ON Periods(PeriodId);
 CREATE INDEX IDX_Timetables_SubjectId ON Timetables(SubjectId);
 CREATE INDEX IDX_Timetables_ClassroomId ON Timetables(ClassroomId);
 
 ---------- Exam Management ----------
+
+CREATE TABLE QuestionsBank (
+    QuestionBankId INT PRIMARY KEY IDENTITY,
+    ClassId INT,
+	SubjectId INT,
+	QuestionType NVARCHAR(50),
+	Questions NVARCHAR(255),
+	Marks INT,
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1
+    
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+    FOREIGN KEY (ClassId) REFERENCES Classes(ClassId),
+	FOREIGN KEY (SubjectId) REFERENCES Subjects(SubjectId)
+);
+
+CREATE TABLE ExamPaper (
+    ExamPaperId INT PRIMARY KEY IDENTITY,
+	ClassId INT,
+    SubjectId INT,
+	QuestionId INT,
+	TotalMarks INT,
+	TermName NVARCHAR(30),
+	WrittenMarks INT,
+	DictationMarks INT,
+	OralMarks INT,
+	CopyMarks INT,
+	CreatedAt DATETIME DEFAULT GETDATE(),
+	CreatedBy INT,
+	UpdatedAt DATETIME NULL,
+	UpdatedBy INT,
+	IsActive BIT DEFAULT 1
+
+	FOREIGN KEY (ClassId) REFERENCES Classes(ClassId),
+	FOREIGN KEY (SubjectId) REFERENCES Subjects(SubjectId),
+	FOREIGN KEY (QuestionId) REFERENCES QuestionsBank(QuestionBankId),
+	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+);
 
 CREATE TABLE Exams (
     ExamId INT PRIMARY KEY IDENTITY,
 	CampusId INT,
     SubjectId INT,
     ClassId INT,
+	ExamPaperId INT,
     ExamDate DATE,
     StartTime TIME,
     EndTime TIME,
@@ -644,6 +707,7 @@ CREATE TABLE Exams (
 	IsActive BIT DEFAULT 1
 
 	FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId),
+	FOREIGN KEY (ExamPaperId) REFERENCES ExamPaper(ExamPaperId),
 	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
     FOREIGN KEY (SubjectId) REFERENCES Subjects(SubjectId),
@@ -657,6 +721,7 @@ CREATE TABLE ExamResults (
     ExamResultId INT PRIMARY KEY IDENTITY,
     StudentId INT,
 	MarksObtained INT,
+	ExamPaperId INT,
     ExamId INT,
     Score DECIMAL(5,2),
 	CreatedAt DATETIME DEFAULT GETDATE(),
@@ -667,6 +732,7 @@ CREATE TABLE ExamResults (
 
 	FOREIGN KEY (CreatedBy) REFERENCES Users(UserId),
 	FOREIGN KEY (UpdatedBy) REFERENCES Users(UserId),
+	FOREIGN KEY (ExamPaperId) REFERENCES ExamPaper(ExamPaperId),
     FOREIGN KEY (StudentId) REFERENCES Students(StudentId),
     FOREIGN KEY (ExamId) REFERENCES Exams(ExamId),
 );
@@ -1451,4 +1517,34 @@ BEGIN
         ORDER BY ItemDetailID ASC
     );
 END;
+GO
+
+GO
+
+CREATE VIEW [dbo].[TimetableView] AS
+SELECT 
+    tt.TimetableId,
+    tt.CampusId,
+    c.CampusName,
+    tt.ClassId,
+    cl.ClassName,
+    tt.SubjectId,
+    s.SubjectName,
+    tt.PeriodId,
+    p.PeriodName,
+    p.StartTime,
+    p.EndTime,
+    tt.DayOfWeek
+FROM 
+    Timetables tt
+INNER JOIN 
+    Campuses c ON tt.CampusId = c.CampusId
+INNER JOIN 
+    Classes cl ON tt.ClassId = cl.ClassId
+INNER JOIN 
+    Subjects s ON tt.SubjectId = s.SubjectId
+INNER JOIN 
+    Periods p ON tt.PeriodId = p.PeriodId
+WHERE 
+    tt.IsActive = 1
 GO
