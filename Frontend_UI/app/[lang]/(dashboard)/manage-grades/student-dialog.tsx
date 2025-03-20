@@ -10,7 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ClassData, useFetchClassQuery } from "@/services/apis/classService";
-import { SectionData, useFetchSectionQuery } from "@/services/apis/sectionService";
+import {
+  SectionData,
+  useFetchSectionQuery,
+} from "@/services/apis/sectionService";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -19,7 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { StudentAcademicData, useFetchStudentAcademicQuery, usePromoteStudentAcademicMutation } from "@/services/apis/studentAcademicService";
+import {
+  StudentAcademicData,
+  useFetchStudentAcademicQuery,
+  usePromoteStudentAcademicMutation,
+} from "@/services/apis/studentAcademicService";
 import useAuth from "@/hooks/use-auth";
 import { toast } from "sonner";
 
@@ -29,9 +36,9 @@ interface StudentDialogProps {
   studentName: string;
   studentClassName?: string | null;
   grade: string;
+  campusId: number;
   studentId: number;
   studentAcademicId?: number | null;
-  
 }
 
 const StudentDialog: React.FC<StudentDialogProps> = ({
@@ -41,8 +48,8 @@ const StudentDialog: React.FC<StudentDialogProps> = ({
   studentClassName,
   grade,
   studentId,
+  campusId,
   studentAcademicId,
-  
 }) => {
   const { register, handleSubmit, control, setValue, watch, reset } = useForm();
   const classId = watch("classId");
@@ -53,12 +60,12 @@ const StudentDialog: React.FC<StudentDialogProps> = ({
 
   const { data: sectionData } = useFetchSectionQuery();
   const sections = (sectionData?.data as SectionData[]) || [];
-  const filteredSections = sections.filter((sec) => sec.classId === Number(classId));
+  const filteredSections = sections.filter(
+    (sec) => sec.classId === Number(classId)
+  );
 
-  const { data } = useFetchStudentAcademicQuery();
-  
   console.log("StudentAcademic", studentAcademicId);
-  
+
   // Mutation hook
   const [promoteStudent, { isLoading }] = usePromoteStudentAcademicMutation();
 
@@ -70,15 +77,15 @@ const StudentDialog: React.FC<StudentDialogProps> = ({
   // Generate academic year dynamically
   const currentYear = new Date().getFullYear();
   const academicYear = `${currentYear}-${currentYear + 1}`;
-  
+
   // Get userId from auth
   const { userId } = useAuth();
 
-  const onSubmit = async (data:   any) => {
+  const onSubmit = async (data: any) => {
     const payload: StudentAcademicData = {
       studentAcademicId: studentAcademicId,
       studentId,
-      campusId: 9,
+      campusId: campusId,
       classId: Number(data.classId),
       sectionId: Number(data.sectionId),
       academicYear,
@@ -138,7 +145,10 @@ const StudentDialog: React.FC<StudentDialogProps> = ({
                     </SelectTrigger>
                     <SelectContent>
                       {classes.map((cls) => (
-                        <SelectItem key={cls.classId} value={cls.classId?.toString() || ""}>
+                        <SelectItem
+                          key={cls.classId}
+                          value={cls.classId?.toString() || ""}
+                        >
                           {cls.className}
                         </SelectItem>
                       ))}
@@ -160,7 +170,10 @@ const StudentDialog: React.FC<StudentDialogProps> = ({
                     </SelectTrigger>
                     <SelectContent>
                       {filteredSections.map((sec) => (
-                        <SelectItem key={sec.sectionId} value={sec.sectionId?.toString() || ""}>
+                        <SelectItem
+                          key={sec.sectionId}
+                          value={sec.sectionId?.toString() || ""}
+                        >
                           {sec.sectionName}
                         </SelectItem>
                       ))}
