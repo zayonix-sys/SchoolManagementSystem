@@ -805,7 +805,9 @@ CREATE TABLE Sponsorships (
     SponsorshipId INT PRIMARY KEY IDENTITY,
     SponsorId INT,
     Amount DECIMAL(10,2),
-    Schedule NVARCHAR(50), -- Monthly, Quarterly, etc.
+	Frequency INT,
+	StartDate Date,
+    --Schedule NVARCHAR(50), -- Monthly, Quarterly, etc.
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
 	UpdatedAt DATETIME NULL,
