@@ -1,4 +1,5 @@
-﻿using SchoolManagementSystem.Application.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Domain.Entities;
@@ -52,10 +53,36 @@ namespace SchoolManagementSystem.Application.Services
             return studentParentDtos;
         }
 
+
+
+        public async Task<List<StudentParentDTO>> GetStudentsByParentIdAsync(int parentId)
+        {
+            try
+            {
+                // Fetch students related to the given parentId
+                var result = await _studentParentRepository.GetAllAsync(
+                    include: query => query
+                    .Include(sp => sp.Student)
+                    .Include(p => p.Parent)
+                    );
+
+                var filter = result.Where(x => x.ParentId == parentId);
+                var res = filter.Select(x => _mapper.MapToDto(x)).ToList();
+
+                return res;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
         public async Task UpdateStudentParentAsync(StudentParentDTO dto)
         {
             var model = _mapper.MapToEntity(dto);
             await _studentParentRepository.UpdateAsync(model);
+
         }
     }
 }
