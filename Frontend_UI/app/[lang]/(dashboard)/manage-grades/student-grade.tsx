@@ -97,8 +97,6 @@ const StudentGrade: React.FC<GradesProps> = ({ classId, refetch, studentClassNam
       (record) => record.studentId === studentId
     );
 
-    console.log("Selected Student ID:", studentId);
-    console.log("Matched Academic Record:", studentAcademic);
 
     setSelectedStudent({
       studentName: `${result.firstName} ${result.lastName}`,
