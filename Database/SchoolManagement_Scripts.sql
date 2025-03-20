@@ -1472,21 +1472,21 @@ BEGIN
 
     DECLARE @Counter INT = 1;
     DECLARE @LastTagNumber INT;
-    DECLARE @NewTagNumber INT;
+    DECLARE @NewTagNumber NVARCHAR(50);
 
     -- Get the last TagNumber for the given ItemID
-    SELECT @LastTagNumber = MAX(CAST(TagNumber AS INT))
+    SELECT @LastTagNumber = MAX(CAST(RIGHT(TagNumber, 4) AS INT))
     FROM ItemDetail
     WHERE ItemID = @ItemID;
 
-    -- If no previous TagNumber exists, start from 10001
+    -- If no previous TagNumber exists, start from 1
     IF @LastTagNumber IS NULL
-        SET @LastTagNumber = 10000;
+        SET @LastTagNumber = 0;
 
     WHILE @Counter <= @Quantity
     BEGIN
-        -- Increment TagNumber
-        SET @NewTagNumber = @LastTagNumber + @Counter;
+        -- Increment TagNumber and format it properly
+        SET @NewTagNumber = CAST(@ItemID AS NVARCHAR(10)) + RIGHT('000' + CAST(@LastTagNumber + @Counter AS NVARCHAR(4)), 4);
 
         -- Insert into ItemDetails table
         INSERT INTO ItemDetail (ItemID, TagNumber, StatusID, CreatedAt, CreatedBy, IsActive)
