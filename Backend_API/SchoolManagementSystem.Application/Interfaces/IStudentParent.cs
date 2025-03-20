@@ -9,5 +9,7 @@ namespace SchoolManagementSystem.Application.Interfaces
         Task UpdateStudentParentAsync(StudentParentDTO dto);
         Task DeleteStudentParentAsync(int studentParentId);
 
+        Task<List<StudentParentDTO>> GetStudentsByParentIdAsync(int parentId);
+
     }
 }

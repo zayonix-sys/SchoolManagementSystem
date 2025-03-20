@@ -132,5 +132,29 @@ namespace SchoolManagementSystem.Application.Services
                 throw;
             }
         }
+
+        public async Task<List<ExamResultDTO>> GetExamResultsByClassTermYearExamPaperAsync(int? classId, DateTime? year, int? examPaperId, string? termName)
+        {
+
+            try
+            {
+                var examResult = await _examResultRepository.GetAllAsync(
+                    filter: result => result.ExamPaper.ClassId == classId || result.ExamPaperId == examPaperId || result.CreatedAt == year || result.ExamPaper.TermName == termName,
+
+                    include: query => query
+                    .Include(c => c.Student)
+                    .ThenInclude(c => c.Academic.Class)
+                    .Include(c => c.ExamPaper)
+                    .ThenInclude(c => c.Subject)
+                    );
+                var results = examResult.Where(a => a.IsActive);
+                var resultDtos = results.Select(c => _examResultMapper.MapToDto(c)).ToList();
+                return resultDtos;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

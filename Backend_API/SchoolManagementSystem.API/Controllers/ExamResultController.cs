@@ -127,5 +127,25 @@ public class ExamResultController : ControllerBase
             _logger.LogError(ex, "An error occurred while deleting Exam Result with ID {ExamResultId}.", examResultId);
             return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
         }
+
     }
+
+    [HttpGet("[action]")]
+    public async Task<ActionResult<ApiResponse<IEnumerable<ExamResultDTO>>>> GetExamResultsByClassTermYearAsync(int? classId, DateTime? year, int? examPaperId, string? termName)
+    {
+        _logger.LogInformation("Fetching all Exams Results.");
+        try
+        {
+            var exams = await _examResultService.GetExamResultsByClassTermYearExamPaperAsync(classId, year, examPaperId, termName);
+            _logger.LogInformation("Successfully retrieved {Count} All Exams Results.", exams?.Count() ?? 0);
+
+            return Ok(ApiResponse<IEnumerable<ExamResultDTO>>.SuccessResponse(exams, "Exams Results retrieved successfully"));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while fetching Exams Results.");
+            return StatusCode(500, ApiResponse<IEnumerable<ExamResultDTO>>.ErrorResponse("Internal server error."));
+        }
+    }
+
 }
