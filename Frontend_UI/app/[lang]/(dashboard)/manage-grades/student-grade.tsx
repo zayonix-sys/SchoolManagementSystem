@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -28,6 +28,7 @@ interface StudentAcademicRecord {
   studentAcademicId: number;
   studentId: number;
   classId: number;
+  campusId: number;
   sectionId: number;
   academicYear: string;
 }
@@ -38,12 +39,17 @@ interface GradesProps {
   studentClassName?: string | null;
 }
 
-const StudentGrade: React.FC<GradesProps> = ({ classId, refetch, studentClassName }) => {
+const StudentGrade: React.FC<GradesProps> = ({
+  classId,
+  refetch,
+  studentClassName,
+}) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<{
     studentName: string;
     grade: string;
     studentId: number;
+    campusId: number;
     studentAcademicId: number | null;
   } | null>(null);
 
@@ -51,7 +57,8 @@ const StudentGrade: React.FC<GradesProps> = ({ classId, refetch, studentClassNam
   const { data: studentAcademicData } = useFetchStudentAcademicQuery();
 
   const examResultData = data?.data as ExamResultData[];
-  const studentAcademicRecords = studentAcademicData?.data as StudentAcademicRecord[];
+  const studentAcademicRecords =
+    studentAcademicData?.data as StudentAcademicRecord[];
 
   const uniqueStudents =
     examResultData?.reduce((acc, result) => {
@@ -66,7 +73,8 @@ const StudentGrade: React.FC<GradesProps> = ({ classId, refetch, studentClassNam
         };
       }
       acc[result.grNo].totalMarks += result.totalMarks || 0;
-      acc[result.grNo].marksObtained += result.examDetails?.[0]?.marksObtained || 0;
+      acc[result.grNo].marksObtained +=
+        result.examDetails?.[0]?.marksObtained || 0;
       acc[result.grNo].examDetails.push(...(result.examDetails || []));
       return acc;
     }, {} as Record<string, any>) || {};
@@ -97,12 +105,14 @@ const StudentGrade: React.FC<GradesProps> = ({ classId, refetch, studentClassNam
       (record) => record.studentId === studentId
     );
 
-
     setSelectedStudent({
       studentName: `${result.firstName} ${result.lastName}`,
       grade: calculateGrade((result.marksObtained / result.totalMarks) * 100),
+      campusId: studentAcademic?.campusId ?? 0,
       studentId,
-      studentAcademicId: studentAcademic ? studentAcademic.studentAcademicId : null,
+      studentAcademicId: studentAcademic
+        ? studentAcademic.studentAcademicId
+        : null,
     });
 
     setIsDialogOpen(true);
@@ -128,7 +138,9 @@ const StudentGrade: React.FC<GradesProps> = ({ classId, refetch, studentClassNam
             <TableBody>
               {uniqueExamResults.map((result) => {
                 const percentage = result.totalMarks
-                  ? ((result.marksObtained / result.totalMarks) * 100).toFixed(2)
+                  ? ((result.marksObtained / result.totalMarks) * 100).toFixed(
+                      2
+                    )
                   : "0.00";
 
                 const overallPercentage = parseFloat(percentage);
@@ -138,12 +150,18 @@ const StudentGrade: React.FC<GradesProps> = ({ classId, refetch, studentClassNam
                 return (
                   <TableRow key={result.grNo}>
                     <TableCell>{result.grNo}</TableCell>
-                    <TableCell>{result.firstName} {result.lastName}</TableCell>
+                    <TableCell>
+                      {result.firstName} {result.lastName}
+                    </TableCell>
                     <TableCell>{result.totalMarks}</TableCell>
                     <TableCell>{result.marksObtained}</TableCell>
                     <TableCell>{percentage}%</TableCell>
                     <TableCell>{grade}</TableCell>
-                    <TableCell className={`font-medium ${status === "Pass" ? "text-green-600" : "text-red-600"}`}>
+                    <TableCell
+                      className={`font-medium ${
+                        status === "Pass" ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
                       {status}
                     </TableCell>
                     <TableCell>
@@ -168,6 +186,7 @@ const StudentGrade: React.FC<GradesProps> = ({ classId, refetch, studentClassNam
           studentClassName={studentClassName}
           studentId={selectedStudent.studentId}
           studentAcademicId={selectedStudent.studentAcademicId ?? 0}
+          campusId={selectedStudent.campusId ?? 0}
         />
       )}
     </>

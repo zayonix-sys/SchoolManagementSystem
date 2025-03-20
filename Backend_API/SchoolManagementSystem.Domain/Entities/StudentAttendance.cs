@@ -45,7 +45,6 @@ namespace SchoolManagementSystem.Domain.Entities
         // Navigation Properties
 
         public Student? Student { get; set; }
-        //public Campus? Campus { get; set; }
         public Class? Class { get; set; }
         public Section? Section { get; set; }
         public User? CreatedUser { get; set; }

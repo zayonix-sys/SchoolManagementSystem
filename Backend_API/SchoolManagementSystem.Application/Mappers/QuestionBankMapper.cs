@@ -17,7 +17,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 QuestionType = dto.QuestionType,
                 Questions = dto.Questions,
                 Marks = dto.Marks,                
-                CreatedAt = dto.CreatedAt,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = dto.CreatedBy,
             };
         }

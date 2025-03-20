@@ -14,22 +14,38 @@ import { toast } from "sonner";
 import ConfirmationDialog from "../../common/confirmation-dialog";
 import EditQuestions from "./edit-question";
 import dynamic from "next/dynamic";
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Icon } from "@iconify/react";
-import { QuestionsData, useDeleteQuestionMutation } from "@/services/apis/qBankService";
+import {
+  QuestionsData,
+  useDeleteQuestionMutation,
+} from "@/services/apis/qBankService";
 
-const ReactQuill = dynamic(() => import('react-quill'), {
+const ReactQuill = dynamic(() => import("react-quill"), {
   ssr: false,
 });
 
-
-const QuestionsTable = ({Questions, refetch}:{Questions: QuestionsData[], refetch: () => void}) => { 
+const QuestionsTable = ({
+  Questions,
+  refetch,
+}: {
+  Questions: QuestionsData[];
+  refetch: () => void;
+}) => {
   const [deleteQuestion] = useDeleteQuestionMutation();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
   const [questionToDelete, setQuestionToDelete] = useState<number | null>(null);
-  const [detailQuestion, setDetailQuestion] = useState<QuestionsData | null>(null);
+  const [detailQuestion, setDetailQuestion] = useState<QuestionsData | null>(
+    null
+  );
   const itemsPerPage = 7;
   const [isClient, setIsClient] = useState(false);
 
@@ -37,15 +53,18 @@ const QuestionsTable = ({Questions, refetch}:{Questions: QuestionsData[], refetc
     setIsClient(true);
   }, []);
 
-  const filteredQuestions = Questions.filter((q) =>
+  const filteredQuestions = Questions?.filter((q) =>
     q.subjectName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredQuestions.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredQuestions?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
-  const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredQuestions?.length / itemsPerPage);
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -83,7 +102,6 @@ const QuestionsTable = ({Questions, refetch}:{Questions: QuestionsData[], refetc
     setDetailQuestion(null);
   };
 
-
   return (
     <>
       <div className="mb-4 flex justify-between items-center">
@@ -109,20 +127,20 @@ const QuestionsTable = ({Questions, refetch}:{Questions: QuestionsData[], refetc
         </TableHeader>
 
         <TableBody>
-          {currentItems.map((item) => {
-            console.log(item.questions);
+          {currentItems?.map((item) => {
             return (
-              
-            <TableRow
-              key={item.questionBankId}
-              className="hover:bg-default-200"
-              data-state={selectedRows.includes(item.questionBankId!) && "selected" }
-            >
-              <TableCell className="p-2.5 ">{item.className}</TableCell>
-              <TableCell className="p-2.5 ">{item.subjectName}</TableCell>
-              <TableCell className="p-2.5 ">{item.questionType}</TableCell>
-               <TableCell className="p-2.5 w-[20rem] text-center">
-               <Button
+              <TableRow
+                key={item.questionBankId}
+                className="hover:bg-default-200"
+                data-state={
+                  selectedRows.includes(item.questionBankId!) && "selected"
+                }
+              >
+                <TableCell className="p-2.5 ">{item.className}</TableCell>
+                <TableCell className="p-2.5 ">{item.subjectName}</TableCell>
+                <TableCell className="p-2.5 ">{item.questionType}</TableCell>
+                <TableCell className="p-2.5 w-[20rem] text-center">
+                  <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
@@ -130,41 +148,43 @@ const QuestionsTable = ({Questions, refetch}:{Questions: QuestionsData[], refetc
                     onClick={() => handleViewDetails(item)} // Show detailed view
                   >
                     <Icon icon="heroicons:eye" className=" h-4 w-4" />
-                 </Button>
-                <p
-                style={{fontSize: "10px"}}
-                >View Question</p>
-              </TableCell>
-              <TableCell className="p-2.5 text-center">{item.marks}</TableCell>
-              <TableCell className="p-2.5 text-center">
-                <Badge
-                  variant="outline"
-                  color={item.isActive ? "success" : "destructive"}
-                  className="capitalize "
-                >
-                  {item.isActive ? "Active" : "Inactive"}
-                </Badge>
-              </TableCell>
-
-              <TableCell className=" flex justify-center">
-                <div className="flex gap-3">
-                  <EditQuestions question={[item]} refetch={refetch}/>
-
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="h-7 w-7"
-                    color="secondary"
-                    onClick={() => handleDeleteConfirmation(item.questionBankId!)}
-                  >
-                    <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          );
+                  <p style={{ fontSize: "10px" }}>View Question</p>
+                </TableCell>
+                <TableCell className="p-2.5 text-center">
+                  {item.marks}
+                </TableCell>
+                <TableCell className="p-2.5 text-center">
+                  <Badge
+                    variant="outline"
+                    color={item.isActive ? "success" : "destructive"}
+                    className="capitalize "
+                  >
+                    {item.isActive ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell>
+
+                <TableCell className=" flex justify-center">
+                  <div className="flex gap-3">
+                    <EditQuestions question={[item]} refetch={refetch} />
+
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="h-7 w-7"
+                      color="secondary"
+                      onClick={() =>
+                        handleDeleteConfirmation(item.questionBankId!)
+                      }
+                    >
+                      <Icon icon="heroicons:trash" className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
           })}
-        {/* )} */}
+          {/* )} */}
         </TableBody>
       </Table>
       <div className="flex justify-between items-center mt-4">
@@ -189,18 +209,16 @@ const QuestionsTable = ({Questions, refetch}:{Questions: QuestionsData[], refetc
           </DialogHeader>
 
           {detailQuestion && (
-              <ReactQuill
-                value={detailQuestion.questions} 
-                readOnly={true} 
-                modules={{
-                  toolbar: false, 
-                }}
-              />
-            )  
-            }
-              
+            <ReactQuill
+              value={detailQuestion.questions}
+              readOnly={true}
+              modules={{
+                toolbar: false,
+              }}
+            />
+          )}
         </DialogContent>
-        </Dialog>
+      </Dialog>
 
       {questionToDelete !== null && (
         <ConfirmationDialog
