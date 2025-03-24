@@ -2,10 +2,22 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useAddParentFeedbackMutation } from "@/services/apis/parentFeedbackService";
-import { useFetchParentsQuery, ParentData } from "@/services/apis/parentService";
-import { useFetchStudentByParentIdQuery, StudentParentData } from "@/services/apis/studentParentService";
+import {
+  useFetchParentsQuery,
+  ParentData,
+} from "@/services/apis/parentService";
+import {
+  useFetchStudentByParentIdQuery,
+  StudentParentData,
+} from "@/services/apis/studentParentService";
 import { RootState } from "@/services/reduxStore";
 import { Icon } from "@iconify/react";
 import React, { useState } from "react";
@@ -20,14 +32,15 @@ const AddFeedback = () => {
   const { data: parent } = useFetchParentsQuery();
   const parentData = parent?.data as ParentData[];
 
-  const { data: studentParent } = useFetchStudentByParentIdQuery(selectedParentId ?? 0);
+  const { data: studentParent } = useFetchStudentByParentIdQuery(
+    selectedParentId ?? 0
+  );
   const studentParentData = studentParent?.data as StudentParentData[];
 
   const loggedUser = useSelector((state: RootState) => state.auth.user);
   const [addFeedback] = useAddParentFeedbackMutation();
-  
-  const dateSubmitted = new Date().toISOString().split("T")[0]; 
 
+  const dateSubmitted = new Date().toISOString().split("T")[0];
 
   // Handle Form Submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,12 +74,11 @@ const AddFeedback = () => {
       console.error("Request Failed:", error);
       toast.error("Request Failed");
     }
-    
+
     console.log(selectedParentId, "parentId:");
     console.log(studentId, "studentId:");
     console.log(feedback, "feedback:");
   };
-
 
   return (
     <Sheet>
@@ -80,10 +92,16 @@ const AddFeedback = () => {
         <SheetHeader>
           <SheetTitle>Add Parent Feedback</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-between" style={{ height: "calc(100vh - 80px)" }}>
+        <div
+          className="flex flex-col justify-between"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
           <div className="py-5">
             <hr />
-            <form onSubmit={handleSubmit} className="p-4 bg-white rounded-lg shadow-md">
+            <form
+              onSubmit={handleSubmit}
+              className="p-4 bg-white rounded-lg shadow-md"
+            >
               <h2 className="text-xl font-semibold mb-4">Add Feedback</h2>
 
               {/* Parent and Student Dropdowns */}
@@ -93,23 +111,24 @@ const AddFeedback = () => {
                   <SearchableSelect
                     options={parentData?.map((pd) => ({
                       label: `${pd?.firstName} ${pd?.lastName}`,
-                      // value: pd.firstName?.toString() || "" || pd.lastName?.toString() || "",
-                      value: pd?.parentId?.toString() || 0,
+                      value: pd?.parentId?.toString() || "", // Convert parentId to string
                     }))}
-                    onValueChange={(value) => setSelectedParentId(parseInt(value) || null)}
-                    
+                    onValueChange={(value) =>
+                      setSelectedParentId(parseInt(value) || null)
+                    }
                   />
-                  
                 </div>
-                  
+
                 <div className="w-1/2">
                   <Label>Select Student</Label>
                   <SearchableSelect
-                    options={studentParentData?.map((sd) => ({
-                      label: sd?.studentName,
-                      value: sd.studentId?.toString() || "",
+                    options={parentData?.map((pd) => ({
+                      label: (pd?.firstName || "") + " " + (pd?.lastName || ""), // Provide a default value if label is undefined
+                      value: pd?.parentId?.toString() || "",
                     }))}
-                    onValueChange={(value) => setStudentId(parseInt(value) || null)}
+                    onValueChange={(value) =>
+                      setStudentId(parseInt(value) || null)
+                    }
                     disabled={!selectedParentId}
                   />
                 </div>
