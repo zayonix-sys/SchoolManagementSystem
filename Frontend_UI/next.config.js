@@ -4,7 +4,6 @@ const nextConfig = {
   // Enable experimental features for the app directory (Next.js 13+)
   experimental: {
     appDir: true,
-    optimizeCss: true,
   },
 
   // Enable standalone mode for deployment
