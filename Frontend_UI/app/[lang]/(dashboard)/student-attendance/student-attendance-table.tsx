@@ -94,15 +94,13 @@ const StudentAttendance: React.FC<StudentAttendanceProps> = ({
                     <Badge
                       variant="outline"
                       color={
-                        item.attendanceStatus === "present"
+                        item.attendanceStatus === "Present"
                           ? "success"
                           : "destructive"
                       }
                       className="capitalize"
                     >
-                      {item.attendanceStatus === "present"
-                        ? "Present"
-                        : "Absent"}
+                      {item.attendanceStatus === "Present" ? "Present" : "Absent"}
                     </Badge>
                   </TableCell>
                   <TableCell>

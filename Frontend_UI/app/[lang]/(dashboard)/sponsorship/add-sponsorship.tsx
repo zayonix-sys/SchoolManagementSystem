@@ -34,6 +34,8 @@ import {
 import { SponsorData } from "@/services/apis/sponsorService";
 import { StudentData } from "@/services/apis/studentService";
 import ClassStudentListTable from "./student-class-wise";
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reduxStore";
 
 const sponsorshipSchema = z.object({
   amount: z.string().min(1, "Please Enter Correct Amount").optional(),
@@ -89,6 +91,7 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
   } = useForm<SponsorshipFormValues>({
     resolver: zodResolver(sponsorshipSchema),
   });
+  const loggedUser = useSelector((state: RootState) => state.auth.user);
 
   const handleFrequencyChange = (value: string) => setFrequency(Number(value));
 
@@ -129,6 +132,7 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
       // Find the student object matching the selectedStudent.studentId
       const student = students.find(
         (s) => s.studentId === selectedStudent.studentId
+
       );
 
       var perStudentAmount = totalExpense/selectedStudents.length;
@@ -179,6 +183,7 @@ const AddSponsorshipForm: React.FC<SponsorshipListTableProps> = ({
       ), // Ensuring startDate is always a string
       frequency,
       details,
+      createdBy: loggedUser?.userId,
     };
     // console.log(combineData);
 

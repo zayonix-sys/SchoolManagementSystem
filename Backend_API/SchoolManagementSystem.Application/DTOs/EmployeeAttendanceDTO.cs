@@ -9,7 +9,7 @@
 
         public int? EmployeeId { get; set; }
 
-        public int? CampusId { get; set; }
+        //public int? CampusId { get; set; }
 
         public string? CampusName { get; set; }
         public string? EmployeeName { get; set; }

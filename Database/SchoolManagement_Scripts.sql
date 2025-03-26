@@ -795,12 +795,12 @@ CREATE TABLE Sponsors (
 );
 
 CREATE TABLE Sponsorships (
-    SponsorshipId INT PRIMARY KEY IDENTITY,
-    SponsorId INT,
-    Amount DECIMAL(10,2),
+  SponsorshipId INT PRIMARY KEY IDENTITY,
+  SponsorId INT,
+  Amount DECIMAL(10,2),
 	Frequency VARCHAR(50),
 	StartDate Date,
-    Schedule NVARCHAR(50), -- Monthly, Quarterly, etc.
+  Schedule NVARCHAR(50), -- Monthly, Quarterly, etc.
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
 	UpdatedAt DATETIME NULL,

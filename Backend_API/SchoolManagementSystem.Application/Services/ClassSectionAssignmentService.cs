@@ -22,7 +22,7 @@ namespace SchoolManagementSystem.Application.Services
             _classSectionAssignmentRepository = genericRepository;
             _mapper = classSectionAssignmentMapper;
             _sectionRepository = sectionRepository;
-     
+
         }
 
         public async Task AddClassSectionAssignmentAsync(ClassSectionAssignmentDTO classroom)
@@ -46,7 +46,7 @@ namespace SchoolManagementSystem.Application.Services
                     .Include(a => a.Section)
                     .Include(a => a.Campus)
                 );
-                
+
                 // Check if the same section is already assigned to the same classroom in the same campus
                 var existingAssignment = assignments
                     .FirstOrDefault(a => a.Classroom.ClassroomId == classroom.ClassroomId &&
@@ -136,7 +136,7 @@ namespace SchoolManagementSystem.Application.Services
                     .Include(a => a.Class)
                     .Include(a => a.Section)
                     .Include(a => a.Campus)
-                ); 
+                );
 
                 // Check if the same section is already assigned to the same classroom in the same campus
                 var existingAssignment = assignments

@@ -45,6 +45,7 @@ namespace SchoolManagementSystem.Application.Mappers
                 ProfileImage = entity.ProfileImage,
                 CampusName = entity.Academic?.Campus?.CampusName,
                 SectionId = entity.Academic?.SectionId,
+                ClassId = entity.Academic.ClassId,
                 SectionName = entity.Academic?.Section?.SectionName,
                 ClassName = entity.Academic.Class?.ClassName,
                 IsActive = entity.IsActive,
