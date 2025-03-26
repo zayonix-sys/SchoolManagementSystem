@@ -46,7 +46,7 @@ export const classAssignApi = createApi({
     }),
     deleteClassAssignment: builder.mutation<ApiResponse<void>, number>({
       query: (id) => ({
-        url: `DeleteClassSectionAssignment?classId=${id}`,
+        url: `DeleteClassSectionAssignment?assignmentId=${id}`,
         method: "DELETE",
       }),
     }),

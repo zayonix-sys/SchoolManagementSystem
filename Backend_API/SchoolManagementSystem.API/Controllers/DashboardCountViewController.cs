@@ -26,7 +26,7 @@ namespace SchoolManagementSystem.API.Controllers
             try
             {
                 var counts = await _dashboardCountView.GetDasboardCountViewAsync();
-                //_logger.LogInformation("Successfully retrieved {Count} Counts.", counts?.Count() ?? 0);
+                _logger.LogInformation("Successfully retrieved {Count} Counts.");
 
                 return Ok(ApiResponse<DashboardCountViewDTO>.SuccessResponse(counts, "counts retrieved successfully"));
             }

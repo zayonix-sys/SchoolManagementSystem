@@ -11,21 +11,33 @@ import { Icon } from "@iconify/react";
 import { InventoryStockData } from "@/services/apis/inventoryStockService";
 import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 import ViewStocks from "./stocks/view-stocks";
+import { AssetAllocationData } from "@/services/apis/assetsAllocationService";
+import ViewAllocatedAssets from "./assets-allocation/view-allocated-assets";
+import { InventoryPurchaseData } from "@/services/apis/inventoryPurchaseService";
+import ViewPurchases from "./purchases/view-purchases";
+import ViewStatuses from "./statuses/view-statuses";
 
 const ReportsCard = ({
   categories,
   items,
   stocks,
   status,
+  allocatedAssets,
+  purchases,
 }: {
   categories: InventoryCategoryData[];
   items: InventoryItemData[];
   stocks: InventoryStockData[];
   status: InventoryStatusData[];
+  purchases: InventoryPurchaseData[];
+  allocatedAssets: AssetAllocationData[];
 }) => {
   const categoriesCount = categories?.length.toString();
+  const statusesCount = status?.length.toString();
   const itemsCount = items?.length.toString();
   const stocksCount = stocks?.length.toString();
+  const allocatedAssetsCount = allocatedAssets?.length.toString();
+  const purchasesCount = purchases?.length.toString();
   interface ReportItem {
     id: number;
     name: string;
@@ -47,7 +59,6 @@ const ReportsCard = ({
     {
       id: 1,
       name: "No. of Categories",
-      // count:"10",
       count: (categoriesCount ? categoriesCount : 0).toString(),
       rate: "8.2",
       icon: (
@@ -84,6 +95,37 @@ const ReportsCard = ({
       ),
       color: "info",
     },
+    {
+      id: 4,
+      name: "No. of Statuses",
+      count: (statusesCount ? statusesCount : 0).toString(),
+      rate: "8.2",
+      icon: <Icon icon="heroicons:tag" className="w-6 h-6 text-warning" />,
+      color: "destructive",
+    },
+    {
+      id: 5,
+      name: "No. of Purchases",
+      count: (purchasesCount ? purchasesCount : 0).toString(),
+      rate: "8.2",
+      icon: (
+        <Icon icon="heroicons:shopping-bag" className="w-6 h-6 text-info" />
+      ),
+      color: "destructive",
+    },
+    {
+      id: 6,
+      name: "No. of Allocated Assets",
+      count: (allocatedAssetsCount ? allocatedAssetsCount : 0).toString(),
+      rate: "8.2",
+      icon: (
+        <Icon
+          icon="heroicons:clipboard-document-check-solid"
+          className="w-6 h-6 text-blue-700"
+        />
+      ),
+      color: "info",
+    },
   ];
   return (
     <Fragment>
@@ -115,11 +157,28 @@ const ReportsCard = ({
               <ViewItems
                 selectedItem={items as InventoryItemData[]}
                 categories={categories as InventoryCategoryData[]}
+                status={status as InventoryStatusData[]}
               />
             )}
             {item.id === 3 && (
               <ViewStocks
                 selectedStocks={stocks as InventoryStockData[]}
+                items={items as InventoryItemData[]}
+                status={status as InventoryStatusData[]}
+              />
+            )}
+            {item.id === 4 && (
+              <ViewStatuses status={status as InventoryStatusData[]} />
+            )}
+            {item.id === 5 && (
+              <ViewPurchases
+                selectedPurchase={purchases as InventoryPurchaseData[]}
+                items={items as InventoryItemData[]}
+              />
+            )}
+            {item.id === 6 && (
+              <ViewAllocatedAssets
+                allocatedAssets={allocatedAssets as AssetAllocationData[]}
                 items={items as InventoryItemData[]}
                 status={status as InventoryStatusData[]}
               />

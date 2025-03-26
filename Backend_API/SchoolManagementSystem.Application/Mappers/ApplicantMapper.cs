@@ -20,20 +20,19 @@ namespace SchoolManagementSystem.Application.Mappers
                 FormBNumber = entity.FormBNumber,
                 DateOfBirth = entity.DateOfBirth,
                 Gender = entity.Gender,
-                Email = entity.Email,
-                PhoneNumber = entity.PhoneNumber,
-                ApplicantAddress = entity.ApplicantAddress,
-                ResidenceStatus = entity.ResidenceStatus,
-                City = entity.City,
-                MotherTounge = entity.MotherTounge,
-                States = entity.States,
+                //Email = entity.Email,
+                //PhoneNumber = entity.PhoneNumber,
+                //ApplicantAddress = entity.ApplicantAddress,
+                //ResidenceStatus = entity.ResidenceStatus,
+                //City = entity.City,
+                //MotherTounge = entity.MotherTounge,
+                //States = entity.States,
                 //CreatedAt = entity.CreatedAt,
                 //CreatedBy = entity.CreatedBy,
                 //UpdatedAt = entity.UpdatedAt,
                 //UpdatedBy = entity.UpdatedBy,
                 //IsActive = entity.IsActive,
-                LastClassId = entity.ClassId,
-                
+
             };
         }
 
@@ -51,21 +50,20 @@ namespace SchoolManagementSystem.Application.Mappers
 
             return new Applicant
             {
-                ClassId = dto.LastClassId,
-                FirstName = dto.FirstName, 
+                FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 FormBNumber = dto.FormBNumber,
                 DateOfBirth = dto.DateOfBirth,
                 Gender = dto.Gender,
-                Email = dto.Email,
-                PhoneNumber = dto.PhoneNumber,
-                ApplicantAddress = dto.ApplicantAddress,
-                ResidenceStatus = dto.ResidenceStatus,
-                City = dto.City,
+                //Email = dto.Email,
+                //PhoneNumber = dto.PhoneNumber,
+                //ApplicantAddress = dto.ApplicantAddress,
+                //ResidenceStatus = dto.ResidenceStatus,
+                //City = dto.City,
                 //IsActive= dto.IsActive,
                 ApplicantId = dto.ApplicantId,
-                MotherTounge= dto.MotherTounge,
-                States= dto.States
+                //MotherTounge = dto.MotherTounge,
+                //States = dto.States
             };
 
         }

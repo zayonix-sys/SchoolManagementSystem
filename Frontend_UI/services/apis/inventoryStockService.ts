@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ApiResponse } from "./apiResponse";
 
 export interface InventoryStockData {
+  stockId?: number,
   itemId?: number,
   itemName?: string,
   categoryName?: string,
@@ -39,6 +40,11 @@ export const inventoryStockApi = createApi({
       query: () => "GetInventoryStocks",
       providesTags: ["Stock"],
     }),
+
+    fetchInventoryStocksByItemId: builder.query<ApiResponse<InventoryStockData[]>, number>({
+      query: (itemId) => `GetInventoryStocksByItemId?itemId=${itemId}`,
+      providesTags: ["Stock"],
+    }),
     
     fetchInventoryStockById: builder.query<ApiResponse<InventoryStockData>, number>({
       query: (id) => `GetInventoryStockById?id=${id}`,
@@ -71,6 +77,7 @@ export const inventoryStockApi = createApi({
 
 export const {
 useFetchInventoryStocksQuery,
+useFetchInventoryStocksByItemIdQuery,
 useFetchInventoryStockByIdQuery,
 useAddInventoryStockMutation,
 useUpdateInventoryStockMutation,

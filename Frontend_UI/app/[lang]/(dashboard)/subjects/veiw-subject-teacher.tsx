@@ -13,6 +13,7 @@ import SubjectTeacherTable from "./table-subject-teacher";
 import { SubjectTeacherData } from "@/services/apis/assignSubjectTeacherService";
 import { SubjectData } from "@/services/apis/subjectService";
 import { EmployeesData } from "@/services/apis/employeeService";
+import { useEffect } from "react";
 
 export default function ViewSubjectTeacher({
   subjectTeacherData,

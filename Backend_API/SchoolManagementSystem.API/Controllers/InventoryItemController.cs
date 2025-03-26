@@ -2,7 +2,6 @@
 using SchoolManagementSystem.API.Models;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
-using SchoolManagementSystem.Application.Services;
 using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.API.Controllers
@@ -35,6 +34,24 @@ namespace SchoolManagementSystem.API.Controllers
             {
                 _logger.LogError(ex, "An error occurred while fetching all InventoryItems.");
                 return StatusCode(500, ApiResponse<IEnumerable<InventoryItemDTO>>.ErrorResponse("Internal server error."));
+            }
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<ItemDetailDTO>>>> GetItemDetailsByItemId(int itemId)
+        {
+            _logger.LogInformation("Fetching all InventoryItems.");
+            try
+            {
+                var inventoryItems = await _inventoryItemService.GetItemDetailsByItemIdAsync(itemId);
+                _logger.LogInformation("Successfully retrieved {Count} InventoryItems.", inventoryItems?.Count() ?? 0);
+
+                return Ok(ApiResponse<IEnumerable<ItemDetailDTO>>.SuccessResponse(inventoryItems, "InventoryItems retrieved successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching all InventoryItems.");
+                return StatusCode(500, ApiResponse<IEnumerable<ItemDetailDTO>>.ErrorResponse("Internal server error."));
             }
         }
 
@@ -82,12 +99,29 @@ namespace SchoolManagementSystem.API.Controllers
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateInventoryItem([FromBody] InventoryItemDTO dto)
         {
-            _logger.LogInformation("Updating InventoryItem with ID {InventoryItemId}.", dto.CategoryId);
+            _logger.LogInformation("Updating InventoryItem with ID {InventoryItemId}.", dto.ItemId);
             try
             {
                 await _inventoryItemService.UpdateInventoryItemAsync(dto);
                 _logger.LogInformation("Successfully updated inventoryItem with ID {ItemId}.", dto.ItemId);
                 return Ok(ApiResponse<InventoryItemDTO>.SuccessResponse(dto, "InventoryItem updated successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating InventoryItem with ID {InventoryItemId}.", dto.ItemId);
+                return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
+            }
+        }
+
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateItemDetailStatus([FromBody] ItemDetailDTO dto)
+        {
+            _logger.LogInformation("Updating InventoryItem with ID {InventoryItemId}.", dto);
+            try
+            {
+                await _inventoryItemService.UpdateItemDetailStatusAsync(dto);
+                _logger.LogInformation("Successfully updated inventoryItem with ID {ItemId}.", dto.ItemDetailId);
+                return Ok(ApiResponse<ItemDetailDTO>.SuccessResponse(dto, "InventoryItem updated successfully"));
             }
             catch (Exception ex)
             {
