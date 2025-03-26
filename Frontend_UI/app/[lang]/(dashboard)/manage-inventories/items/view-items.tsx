@@ -17,9 +17,11 @@ import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 export default function ViewItems({
   selectedItem,
   categories,
+  status,
 }: {
   selectedItem: InventoryItemData[] | null;
   categories: InventoryCategoryData[];
+  status: InventoryStatusData[];
 }) {
   return (
     <Sheet>
@@ -41,6 +43,7 @@ export default function ViewItems({
             <ItemListTable
               items={selectedItem as InventoryItemData[]}
               categories={categories}
+              status={status}
             />
           </div>
         </div>

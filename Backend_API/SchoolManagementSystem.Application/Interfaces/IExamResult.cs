@@ -10,5 +10,6 @@ namespace SchoolManagementSystem.Application.Interfaces
         Task DeleteExamResultAsync(int examResultId);
 
         Task<List<ExamResultDTO>> GetExamResultsByClassAsync(int classId);
+        Task<List<ExamResultDTO>> GetExamResultsByClassTermYearExamPaperAsync(int? classId, DateTime? year, int? examPaper, string? termName);
     }
 }

@@ -15,7 +15,10 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../../common/confirmation-dialog";
-import { InventoryPurchaseData, useDeleteInventoryPurchaseMutation } from "@/services/apis/inventoryPurchaseService";
+import {
+  InventoryPurchaseData,
+  useDeleteInventoryPurchaseMutation,
+} from "@/services/apis/inventoryPurchaseService";
 import EditPurchase from "./edit-purchase";
 import { InventoryItemData } from "@/services/apis/inventoryItemService";
 import { log } from "console";
@@ -42,7 +45,10 @@ const PurchaseListTable: React.FC<PurchaseListTableProps> = ({
       purchase?.supplierName
         ?.toLowerCase()
         .includes(searchQuery.toLowerCase()) ||
-        purchase?.invoiceNumber?.toLowerCase().includes(searchQuery.toLowerCase())
+      purchase?.invoiceNumber
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      purchase?.itemName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -117,14 +123,25 @@ const PurchaseListTable: React.FC<PurchaseListTableProps> = ({
               key={item.purchaseId}
               className="hover:bg-default-200"
               // data-state={selectedRows.includes(item.categoryId!) && "selected"}
-            >              
+            >
               <TableCell className="p-2.5">{item.supplierName}</TableCell>
               <TableCell className="p-2.5">{item.itemName}</TableCell>
               <TableCell className="p-2.5"> {item.invoiceNumber}</TableCell>
               <TableCell className="p-2.5"> {item.quantity}</TableCell>
-              <TableCell className="p-2.5"> {item.unitPrice}</TableCell>
-              <TableCell className="p-2.5"> {item.totalCost}</TableCell>
-              <TableCell className="p-2.5"> {item.purchaseDate ? new Date(item.purchaseDate).toLocaleDateString() : ""}</TableCell>
+              <TableCell className="p-2.5">
+                {" "}
+                {item.unitPrice?.toFixed(2)}
+              </TableCell>
+              <TableCell className="p-2.5">
+                {" "}
+                {item.totalCost?.toFixed(2)}
+              </TableCell>
+              <TableCell className="p-2.5">
+                {" "}
+                {item.purchaseDate
+                  ? new Date(item.purchaseDate).toLocaleDateString()
+                  : ""}
+              </TableCell>
               {/* <TableCell className="p-2.5">
                 {item?.createdAt
                   ? formatDate(item.createdAt)
@@ -141,15 +158,14 @@ const PurchaseListTable: React.FC<PurchaseListTableProps> = ({
               </TableCell>
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditPurchase purchaseData={item} items={items}/>
+                  <EditPurchase purchaseData={item} items={items} />
                   <Button
                     size="icon"
                     variant="outline"
                     className="h-7 w-7"
                     color="secondary"
                     onClick={() => handleDeleteConfirmation(item.purchaseId!)}
-                    
-                  >                   
+                  >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
                 </div>

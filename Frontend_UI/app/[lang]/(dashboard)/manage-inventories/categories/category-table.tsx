@@ -32,7 +32,7 @@ const CategoryListTable: React.FC<CategoryListTableProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
-  const itemsPerPage = 20;
+  const itemsPerPage = 8;
 
   const [deleteCategory] = useDeleteInventoryCategoryMutation();
 
@@ -99,8 +99,9 @@ const CategoryListTable: React.FC<CategoryListTableProps> = ({
       <Table className="text-left">
         <TableHeader>
           <TableRow>
+            <TableHead className="h-10 p-2.5">Category Code</TableHead>
             <TableHead className="h-10 p-2.5">Category Name</TableHead>
-            <TableHead className="h-10 p-2.5">Desccription</TableHead>
+            <TableHead className="h-10 p-2.5">Description</TableHead>
             <TableHead className="h-10 p-2.5">Created Date</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
             <TableHead className="h-10 p-2.5 text-center">Action</TableHead>
@@ -114,6 +115,10 @@ const CategoryListTable: React.FC<CategoryListTableProps> = ({
               className="hover:bg-default-200"
               // data-state={selectedRows.includes(item.categoryId!) && "selected"}
             >
+              <TableCell className="p-2.5">
+                {item.categoryName.substring(0, 2).toUpperCase()}
+              </TableCell>
+
               <TableCell className="p-2.5">{item.categoryName}</TableCell>
               <TableCell className="p-2.5"> {item.description}</TableCell>
               <TableCell className="p-2.5">
@@ -130,7 +135,7 @@ const CategoryListTable: React.FC<CategoryListTableProps> = ({
                   {item.isActive ? "Active" : "Inactive"}
                 </Badge>
               </TableCell>
-              <TableCell className="p-2.5 flex justify-end">
+              <TableCell className="p-2.5 flex justify-center">
                 <div className="flex gap-3">
                   <EditCategory categoryData={item} />
                   <Button

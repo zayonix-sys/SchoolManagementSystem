@@ -17,11 +17,8 @@ namespace SchoolManagementSystem.Application.Mappers
                 NewEmployeesThisMonth = dto.NewEmployeesThisMonth,
                 NewSponsorsThisMonth = dto.NewSponsorsThisMonth,
                 NewStudentsThisMonth = dto.NewStudentsThisMonth,
-                SponsorStudent = dto.SponsorStudent,
-                MaleStudents = dto.MaleStudents,
-                FemaleStudents = dto.FemaleStudents,
-
-
+                TotalStudentsSponsor = dto.TotalStudentsSponsor,
+                NewStudentsSponsoredThisMonth = dto.NewStudentsSponsoredThisMonth,
             };
         }
         public DashboardCountViewDTO MapToDto(DashboardCountView entity)
@@ -39,9 +36,8 @@ namespace SchoolManagementSystem.Application.Mappers
                 NewEmployeesThisMonth = entity.NewEmployeesThisMonth,
                 NewStudentsThisMonth = entity.NewStudentsThisMonth,
                 NewSponsorsThisMonth = entity.NewSponsorsThisMonth,
-                SponsorStudent = entity.SponsorStudent,
-                MaleStudents = entity.MaleStudents,
-                FemaleStudents = entity.FemaleStudents,
+                NewStudentsSponsoredThisMonth = entity.NewSponsorsThisMonth,
+                TotalStudentsSponsor = entity.TotalStudentsSponsor,
             };
         }
 

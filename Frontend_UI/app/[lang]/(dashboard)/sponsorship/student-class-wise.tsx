@@ -113,8 +113,8 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
               <TableHead>Profile</TableHead>
               <TableHead>Gr No</TableHead>
               <TableHead>Full Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
+              {/* <TableHead>Email</TableHead> */}
+              {/* <TableHead>Phone</TableHead> */}
               <TableHead>Gender</TableHead>
               <TableHead>Class</TableHead>
               <TableHead>DOB</TableHead>
@@ -135,8 +135,8 @@ const ClassStudentListTable: React.FC<StudentListTableProps> = ({
                 <TableCell>
                   {student.firstName} {student.lastName}
                 </TableCell>
-                <TableCell>{student.email}</TableCell>
-                <TableCell>{student.phoneNumber}</TableCell>
+                {/* <TableCell>{student.email}</TableCell> */}
+                {/* <TableCell>{student.phoneNumber}</TableCell> */}
                 <TableCell>{student.gender}</TableCell>
                 <TableCell>{student.className}</TableCell>
                 <TableCell>

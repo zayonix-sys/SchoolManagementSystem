@@ -11,10 +11,10 @@ namespace SchoolManagementSystem.Domain.Entities
 
         [ForeignKey(nameof(InventoryCategories))]
         public int CategoryId { get; set; }
-        
+
         public string Description { get; set; }
         public decimal UnitPrice { get; set; }
-        //public int TotalQuantity { get; set; }
+        public int TotalQuantity { get; set; }
         public int? ReorderLevel { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }

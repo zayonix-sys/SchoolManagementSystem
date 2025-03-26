@@ -8,8 +8,7 @@
         public int? NewSponsorsThisMonth { get; set; }
         public int? NewEmployeesThisMonth { get; set; }
         public int? NewStudentsThisMonth { get; set; }
-        public int? SponsorStudent { get; set; }
-        public int? MaleStudents { get; set; }
-        public int? FemaleStudents { get; set; }
+        public int? TotalStudentsSponsor { get; set; }
+        public int? NewStudentsSponsoredThisMonth { get; set; }
     }
 }

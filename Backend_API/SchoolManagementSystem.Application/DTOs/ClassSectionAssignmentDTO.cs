@@ -3,7 +3,7 @@ namespace SchoolManagementSystem.Application.DTOs
 {
     public class ClassSectionAssignmentDTO
     {
-        public int ClassSectionAssignmentId { get; set; }
+        public int AssignmentId { get; set; }
         public int? ClassId { get; set; }
         public int? SectionId { get; set; }
         public int? ClassroomId { get; set; }
@@ -17,6 +17,6 @@ namespace SchoolManagementSystem.Application.DTOs
         public int? UpdatedBy { get; set; }
         public bool IsActive { get; set; } = true;
 
-        
+
     }
 }

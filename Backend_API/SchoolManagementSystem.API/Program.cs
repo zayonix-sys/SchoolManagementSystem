@@ -1,3 +1,4 @@
+using LinqKit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,7 +19,12 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>())
+        var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? new[] {""};
+        allowedOrigins.ForEach(allowedOrigin => { 
+            Console.WriteLine($"AllowedOrigin: {allowedOrigin}");
+        });
+        
+        policy.WithOrigins(allowedOrigins)
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();
@@ -107,6 +113,14 @@ builder.Services.AddScoped<StudentAcademicMapper>();
 builder.Services.AddScoped<IAcademicYear, AcademicYearService>();
 builder.Services.AddScoped<AcademicYearMapper>();
 
+builder.Services.AddScoped<IParent, ParentService>();
+builder.Services.AddScoped<ParentMapper>();
+
+builder.Services.AddScoped<IStudentParent, StudentParentService>();
+builder.Services.AddScoped<StudentParentMapper>();
+
+builder.Services.AddScoped<IParentFeedback, ParentFeedbackService>();
+builder.Services.AddScoped<ParentFeedbackMapper>();
 
 builder.Services.AddScoped<IPayment, PaymentService>();
 builder.Services.AddScoped<PaymentMapper>();
@@ -120,6 +134,7 @@ builder.Services.AddScoped<IInventoryCategories, InventoryCategoryService>();
 builder.Services.AddScoped<InventoryCategoryMapper>();
 builder.Services.AddScoped<IInventoryItems, InventoryItemService>();
 builder.Services.AddScoped<InventoryItemMapper>();
+builder.Services.AddScoped<ItemDetailMapper>();
 builder.Services.AddScoped<IInventoryStocks, InventoryStockService>();
 builder.Services.AddScoped<InventoryStockMapper>();
 builder.Services.AddScoped<InventoryStockViewMapper>();
@@ -128,6 +143,8 @@ builder.Services.AddScoped<InventoryStatusMapper>();
 builder.Services.AddScoped<IInventoryPurchase, InventoryPurchaseService>();
 builder.Services.AddScoped<InventoryPurchaseMapper>();
 
+builder.Services.AddScoped<IAssetAllocation, AssetAllocationService>();
+builder.Services.AddScoped<AssetAllocationMapper>();
 
 
 // Add controllers
@@ -187,8 +204,10 @@ app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseCors();
 
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 //app.UseExceptionHandler("/Home/Error"); // For production
 app.UseDeveloperExceptionPage(); // Server Side Exception (For development)
@@ -239,15 +258,65 @@ void SeedDefaultData(SchoolContext context)
 
     if (!context.Users.Any())
     {
+        var password = "password";
         var defaultUser = new User
         {
             UserName = "Super Admin",
-            PasswordHash = "password", // Properly hash the password
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password), // Properly hash the password
             RoleId = adminRoleId,
             CampusId = Convert.ToInt32(campusId),
             CreatedAt = DateTime.Now,
         };
         context.Users.Add(defaultUser);
+        context.SaveChanges();
+    }
+
+    if (!context.UserPermissions.Any())
+    {
+        var userId = context.Users.Select(c => c.UserId).FirstOrDefault();
+        context.UserPermissions.AddRange(new[]
+        {
+            new UserPermission
+            {
+                UserId = userId,
+                RoleId = adminRoleId,
+                Entity = "/",
+                CanCreate = true,
+                CanDelete = true,
+                CanRead = true,
+                CanUpdate = true,
+                CreatedBy = userId,
+                IsActive = true,
+                CreatedAt = DateTime.Now,
+            },
+            new UserPermission
+            {
+                UserId = userId,
+                RoleId = adminRoleId,
+                Entity = "/userManagement",
+                CanCreate = true,
+                CanDelete = true,
+                CanRead = true,
+                CanUpdate = true,
+                CreatedBy = userId,
+                IsActive = true,
+                CreatedAt = DateTime.Now,
+            }
+        });
+        context.SaveChanges();
+    }
+
+    if (!context.InventoryStatus.Any()) 
+    {
+        var userId = context.Users.Select(c => c.UserId).FirstOrDefault();
+        var defaultStatus = new InventoryStatus
+        {
+            StatusName = "In Stock",
+            CreatedAt = DateTime.UtcNow,
+            IsActive = true,
+            CreatedBy = userId,
+        };
+        context.InventoryStatus.Add(defaultStatus);
         context.SaveChanges();
     }
 }

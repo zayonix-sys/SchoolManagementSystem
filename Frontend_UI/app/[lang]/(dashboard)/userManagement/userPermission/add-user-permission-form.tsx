@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { number, z } from "zod";
+import { z } from "zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,7 +22,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Toast } from "@/components/ui/toast";
 import { useFetchUsersQuery, UserData } from "@/services/apis/userService";
 import {
   useFetchUserRolesQuery,
@@ -41,9 +40,11 @@ const userPermissionSchema = z.object({
 });
 
 type UserPermissionFormValues = z.infer<typeof userPermissionSchema>;
+
 interface UserPermission {
   refetch: () => void;
 }
+
 const AddUserPermission: React.FC<UserPermission> = ({ refetch }) => {
   const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
   const [roleId, setRoleId] = useState<number | undefined>();
@@ -90,7 +91,7 @@ const AddUserPermission: React.FC<UserPermission> = ({ refetch }) => {
       });
 
       if (response?.data?.success) {
-        toast.success("User permission successfully!");
+        toast.success("User permission successfully added!");
         reset();
         refetch();
       } else {
@@ -112,6 +113,20 @@ const AddUserPermission: React.FC<UserPermission> = ({ refetch }) => {
 
     setSelectedEntities(updatedEntities);
     setValue("entities", updatedEntities, { shouldValidate: true });
+  };
+
+  const handleSelectAllEntities = () => {
+    const allEntityHrefs = menuItems
+      .flatMap((menu) => menu.child?.map((entity) => entity.href) || [])
+      .filter((href) => href !== undefined) as string[];
+
+    if (selectedEntities.length === allEntityHrefs.length) {
+      setSelectedEntities([]);
+      setValue("entities", [], { shouldValidate: true });
+    } else {
+      setSelectedEntities(allEntityHrefs);
+      setValue("entities", allEntityHrefs, { shouldValidate: true });
+    }
   };
 
   return (
@@ -176,7 +191,17 @@ const AddUserPermission: React.FC<UserPermission> = ({ refetch }) => {
 
               <div className="col-span-2">
                 <Label>Select Entities</Label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex justify-between items-center">
+                  <Button variant="outline" onClick={handleSelectAllEntities}>
+                    {selectedEntities.length ===
+                    menuItems.flatMap(
+                      (menu) => menu.child?.map((entity) => entity.href) || []
+                    ).length
+                      ? "Deselect All"
+                      : "Select All"}
+                  </Button>
+                </div>
+                <div className="grid grid-cols-2 gap-2 mt-2">
                   {menuItems.map((menu) =>
                     menu.child?.map((entity) => (
                       <div
@@ -186,7 +211,7 @@ const AddUserPermission: React.FC<UserPermission> = ({ refetch }) => {
                         <input
                           type="checkbox"
                           checked={
-                            entity?.href
+                            entity.href
                               ? selectedEntities.includes(entity.href)
                               : false
                           }
@@ -205,22 +230,17 @@ const AddUserPermission: React.FC<UserPermission> = ({ refetch }) => {
               </div>
 
               <div className="col-span-2 grid grid-cols-4 gap-2">
-                <div>
-                  <input type="checkbox" {...register("canCreate")} />
-                  <Label>Can Create</Label>
-                </div>
-                <div>
-                  <input type="checkbox" {...register("canRead")} />
-                  <Label>Can Read</Label>
-                </div>
-                <div>
-                  <input type="checkbox" {...register("canUpdate")} />
-                  <Label>Can Update</Label>
-                </div>
-                <div>
-                  <input type="checkbox" {...register("canDelete")} />
-                  <Label>Can Delete</Label>
-                </div>
+                {["canCreate", "canRead", "canUpdate", "canDelete"].map(
+                  (perm) => (
+                    <div key={perm}>
+                      <input
+                        type="checkbox"
+                        {...register(perm as keyof UserPermissionFormValues)}
+                      />
+                      <Label>{perm.replace("can", "Can ")}</Label>
+                    </div>
+                  )
+                )}
               </div>
 
               <div className="col-span-2">

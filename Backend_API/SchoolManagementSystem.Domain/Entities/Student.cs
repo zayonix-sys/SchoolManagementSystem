@@ -26,15 +26,6 @@ namespace SchoolManagementSystem.Domain.Entities
         [MaxLength(10)]
         public string? Gender { get; set; }
 
-        [EmailAddress]
-        [MaxLength(100)]
-        public string? Email { get; set; }
-
-        [Phone]
-        [MaxLength(15)]
-        public string? PhoneNumber { get; set; }
-
-
         public DateTime? EnrollmentDate { get; set; }
 
         [MaxLength(255)]

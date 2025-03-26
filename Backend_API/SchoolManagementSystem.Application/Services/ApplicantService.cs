@@ -13,17 +13,28 @@ namespace SchoolManagementSystem.Application.Services
         private readonly IGenericRepository<AdmissionApplication> _applicationRepository;
         private readonly IStudent _studentRepository;
         private readonly IStudentAcademic _studentAcademicRepository;
+        private readonly IGenericRepository<Parent> _parentRepository;
         private readonly IGenericRepository<ApplicantApplicationView> _applicationApplicationRepository;
         private readonly ApplicantMapper _mapper;
         private readonly ApplicationMapper _mapperApplication;
         private readonly ApplicantApplicationMapper _mapperApplicantApplication;
+        private readonly IGenericRepository<StudentParent> _studentParentRepository;
+
+        //private readonly ParentMapper _parentMapper;
 
         public ApplicantService(IGenericRepository<Applicant> genericRepository,
             IGenericRepository<AdmissionApplication> applicationRepository,
             IGenericRepository<ApplicantApplicationView> applicantApplicationRepository,
             IStudent studentRepository,
             IStudentAcademic studentAcademicRepository,
-            ApplicantMapper applicantMapper, ApplicationMapper mapperApplication, ApplicantApplicationMapper applicantApplicationMapper)
+            IGenericRepository<Parent> parentRepository,
+            ApplicantMapper applicantMapper,
+            ApplicationMapper mapperApplication,
+            ApplicantApplicationMapper applicantApplicationMapper
+,
+            IGenericRepository<StudentParent> studentParentRepository
+            //ParentMapper parentMapper
+            )
         {
             _applicantRepository = genericRepository;
             _applicationRepository = applicationRepository;
@@ -31,17 +42,74 @@ namespace SchoolManagementSystem.Application.Services
             _mapper = applicantMapper;
             _mapperApplication = mapperApplication;
             _mapperApplicantApplication = applicantApplicationMapper;
+            //_parentMapper = parentMapper;
             _studentRepository = studentRepository;
             _studentAcademicRepository = studentAcademicRepository;
+            _parentRepository = parentRepository;
+            _studentParentRepository = studentParentRepository;
         }
 
         public async Task<int> AddApplicantAsync(ApplicantDTO dto)
         {
-            //Adding Applicant
-            var model = _mapper.MapToEntity(dto);
-            var applicantId = await _applicantRepository.AddAsync(model);
+            if (dto == null)
+            {
+                throw new ArgumentNullException(nameof(dto));
+            }
 
-            return (int)applicantId;
+            // Step 1: Add Applicant
+            Applicant newApplicant = new Applicant
+            {
+                ApplicantId = dto.ApplicantId,
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                FormBNumber = dto.FormBNumber,
+                DateOfBirth = dto.DateOfBirth,
+                Gender = dto.Gender,
+                //MotherTounge = dto.MotherTounge,
+                //States = dto.States,
+            };
+
+            var applicant = await _applicantRepository.AddAsync(newApplicant);
+            var applicantId = newApplicant.ApplicantId;
+
+            Parent newParent = new Parent
+            {
+                FirstName = dto.ParentFirstName,
+                MiddleName = dto.ParentMiddleName,
+                LastName = dto.ParentLastName,
+                PhoneNumber = dto.PhoneNumber,
+                Email = dto.Email,
+                MotherTongue = dto.MotherTongue,
+                Nationality = dto.Nationality,
+                SourceOfIncome = dto.SourceOfIncome,
+                Occupation = dto.Occupation,
+                ResidenceStatus = dto.ResidenceStatus,
+                ParentAddress = dto.ParentAddress,
+                Dependent = dto.Dependent,
+                CreatedBy = dto.CreatedBy,
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true,
+            };
+
+            // Step 2: Add Parent (if Parent details are provided)
+            if (!string.IsNullOrEmpty(dto.ParentFirstName) || !string.IsNullOrEmpty(dto.ParentLastName))
+            {
+                await _parentRepository.AddAsync(newParent);
+            }
+
+            var studentParent = new StudentParent
+            {
+                ParentId = newParent.ParentId,
+                ApplicantId = applicantId,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                //CreatedBy = dto.CreatedBy
+            };
+
+            // Step 3: Add Student Parent
+            await _studentParentRepository.AddAsync(studentParent);
+
+            return applicantId;
         }
 
         public async Task AddAdmissionApplicationAsync(ApplicationDTO dto, int applicantId)
@@ -118,8 +186,8 @@ namespace SchoolManagementSystem.Application.Services
                             LastName = applicationData.LastName,
                             DateOfBirth = applicationData.DateOfBirth,
                             Gender = applicationData.Gender,
-                            Email = applicationData.Email,
-                            PhoneNumber = applicationData.PhoneNumber,
+                            //Email = applicationData.Email,
+                            //PhoneNumber = applicationData.PhoneNumber,
                             EnrollmentDate = DateTime.Now,
                             //ClassId = applicationData.AppliedClassId,
                             //SectionId = dto.SectionId,
@@ -144,11 +212,18 @@ namespace SchoolManagementSystem.Application.Services
                             IsActive = true,
                             IsPromoted = false,
                             IsStudied = false,
-                            CreatedBy = 2012,
+                            CreatedBy = newStudent.CreatedBy,
                             CreatedAt = DateTime.UtcNow
                         };
 
                         await _studentAcademicRepository.AddStudentAcademicAsync(studentAcademic);
+
+                        var studentParentRecord = await _studentParentRepository.FindAsync(sp => sp.ApplicantId == dto.ApplicantId);
+
+                        studentParentRecord.StudentId = newStudent.StudentId;
+
+                        await _studentParentRepository.UpdateAsync(studentParentRecord);
+
                     }
                 }
                 else
@@ -164,6 +239,12 @@ namespace SchoolManagementSystem.Application.Services
                         //studentAcademic.SectionId = dto.SectionId;
                         await _studentRepository.UpdateStudentAsync(studentData);
 
+                        var studentParent = await _studentParentRepository.FindAsync(sp => sp.ApplicantId == dto.ApplicantId);
+
+                        studentParent.StudentId = studentData.StudentId;
+
+                        await _studentParentRepository.UpdateAsync(studentParent);
+
                         // Check if student academic record exists
                         var studentAcademicData = await _studentAcademicRepository.GetByStudentIdAsync(studentData.StudentId);
                         if (studentAcademicData == null)
@@ -177,7 +258,7 @@ namespace SchoolManagementSystem.Application.Services
                                 IsActive = true,
                                 IsPromoted = false,
                                 IsStudied = false,
-                                CreatedBy = 2012,
+                                CreatedBy = studentAcademicData.CreatedBy,
                                 CreatedAt = DateTime.UtcNow
                             };
 

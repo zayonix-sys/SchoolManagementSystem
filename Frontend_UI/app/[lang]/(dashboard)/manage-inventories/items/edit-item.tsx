@@ -53,7 +53,6 @@ const EditItem: React.FC<ItemListTableProps> = ({ itemData, categories }) => {
   const {
     itemId,
     itemName,
-    statusId,
     categoryId,
     description,
     unitPrice,

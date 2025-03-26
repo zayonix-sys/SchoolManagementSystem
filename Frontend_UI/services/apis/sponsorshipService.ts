@@ -11,11 +11,12 @@ export interface SponsorshipData {
   frequency?: number;
   startDate?: string | Date;
   isActive?: boolean;
+  createdBy?:number;
   details?: SponsorshipDataDetails[];
 }
 
 export interface SponsorshipDataDetails {
-  sponsorshipDetailId: number;
+  sponsorshipDetailId?: number;
   sponsorshipId?: number;
   sponsorName?: string;
   studentId?: number;
