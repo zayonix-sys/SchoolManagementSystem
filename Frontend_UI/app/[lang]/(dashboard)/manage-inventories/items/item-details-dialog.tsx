@@ -69,7 +69,10 @@ const ItemDetailsDialog: React.FC<ConfirmationDialogProps> = ({
 
   const formatDate = (dateString: string | Date): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString();
+    const day = String(date.getDate()).padStart(2, "0"); // Ensure 2 digits
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Ensure 2 digits
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`; // Return DD/MM/YYYY format
   };
 
   return (
@@ -120,7 +123,9 @@ const ItemDetailsDialog: React.FC<ConfirmationDialogProps> = ({
                   <TableCell className="p-2.5">{item.itemName}</TableCell>
                   <TableCell className="p-2.5">
                     {item.categoryName?.slice(0, 2).toLocaleUpperCase()}
-                    {item.tagNumber}
+                    {item?.createdAt &&
+                      formatDate(item.createdAt).replace(/\//g, "")}
+                    -{item.tagNumber}
                   </TableCell>
                   <TableCell className="p-2.5">
                     {item?.createdAt && formatDate(item.createdAt)}

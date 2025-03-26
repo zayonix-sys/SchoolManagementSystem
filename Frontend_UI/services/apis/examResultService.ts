@@ -34,7 +34,7 @@ export const examResultApi = createApi({
     fetchExamResults: builder.query<ApiResponse<ExamResultData[]>, void>({
       query: () => "GetAllExamsResults",
     }),
-    fetchExamResultsByClass: builder.query<ApiResponse<ExamResultData[]>, void>({
+    fetchExamResultsByClass: builder.query<ApiResponse<ExamResultData[]>, number>({
       query: (classId) => `GetExamResultsByClass?classId=${classId}`,
     }),
     fetchExamResultsByClassYearTerm: builder.query<

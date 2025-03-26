@@ -116,9 +116,9 @@ const AddUserPermission: React.FC<UserPermission> = ({ refetch }) => {
   };
 
   const handleSelectAllEntities = () => {
-    const allEntityHrefs = menuItems.flatMap((menu) =>
-      menu.child?.map((entity) => entity.href) || []
-    );
+    const allEntityHrefs = menuItems
+      .flatMap((menu) => menu.child?.map((entity) => entity.href) || [])
+      .filter((href) => href !== undefined) as string[];
 
     if (selectedEntities.length === allEntityHrefs.length) {
       setSelectedEntities([]);
@@ -151,13 +151,18 @@ const AddUserPermission: React.FC<UserPermission> = ({ refetch }) => {
                   </SelectTrigger>
                   <SelectContent>
                     {roles.map((role) => (
-                      <SelectItem key={role.roleId} value={role.roleId?.toString() ?? ""}>
+                      <SelectItem
+                        key={role.roleId}
+                        value={role.roleId?.toString() ?? ""}
+                      >
                         {role.roleName}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.roleId && <p className="text-destructive">{errors.roleId.message}</p>}
+                {errors.roleId && (
+                  <p className="text-destructive">{errors.roleId.message}</p>
+                )}
               </div>
 
               <div className="col-span-1">
@@ -170,48 +175,72 @@ const AddUserPermission: React.FC<UserPermission> = ({ refetch }) => {
                   </SelectTrigger>
                   <SelectContent>
                     {filteredUsers.map((user) => (
-                      <SelectItem key={user.userId} value={user.userId?.toString() ?? ""}>
+                      <SelectItem
+                        key={user.userId}
+                        value={user.userId?.toString() ?? ""}
+                      >
                         {user.userName}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.userId && <p className="text-destructive">{errors.userId.message}</p>}
+                {errors.userId && (
+                  <p className="text-destructive">{errors.userId.message}</p>
+                )}
               </div>
 
               <div className="col-span-2">
                 <Label>Select Entities</Label>
                 <div className="flex justify-between items-center">
                   <Button variant="outline" onClick={handleSelectAllEntities}>
-                    {selectedEntities.length === menuItems.flatMap(menu => menu.child?.map(entity => entity.href) || []).length 
-                      ? "Deselect All" 
+                    {selectedEntities.length ===
+                    menuItems.flatMap(
+                      (menu) => menu.child?.map((entity) => entity.href) || []
+                    ).length
+                      ? "Deselect All"
                       : "Select All"}
                   </Button>
                 </div>
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   {menuItems.map((menu) =>
                     menu.child?.map((entity) => (
-                      <div key={entity.title} className="flex items-center space-x-2">
+                      <div
+                        key={entity.title}
+                        className="flex items-center space-x-2"
+                      >
                         <input
                           type="checkbox"
-                          checked={entity.href ? selectedEntities.includes(entity.href) : false}
-                          onChange={() => entity.href && handleEntityChange(entity.href)}
+                          checked={
+                            entity.href
+                              ? selectedEntities.includes(entity.href)
+                              : false
+                          }
+                          onChange={() =>
+                            entity.href && handleEntityChange(entity.href)
+                          }
                         />
                         <Label>{entity.title}</Label>
                       </div>
                     ))
                   )}
                 </div>
-                {errors.entities && <p className="text-destructive">{errors.entities.message}</p>}
+                {errors.entities && (
+                  <p className="text-destructive">{errors.entities.message}</p>
+                )}
               </div>
 
               <div className="col-span-2 grid grid-cols-4 gap-2">
-                {["canCreate", "canRead", "canUpdate", "canDelete"].map((perm) => (
-                  <div key={perm}>
-                    <input type="checkbox" {...register(perm as keyof UserPermissionFormValues)} />
-                    <Label>{perm.replace("can", "Can ")}</Label>
-                  </div>
-                ))}
+                {["canCreate", "canRead", "canUpdate", "canDelete"].map(
+                  (perm) => (
+                    <div key={perm}>
+                      <input
+                        type="checkbox"
+                        {...register(perm as keyof UserPermissionFormValues)}
+                      />
+                      <Label>{perm.replace("can", "Can ")}</Label>
+                    </div>
+                  )
+                )}
               </div>
 
               <div className="col-span-2">

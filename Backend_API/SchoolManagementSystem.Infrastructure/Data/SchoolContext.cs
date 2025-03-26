@@ -135,6 +135,12 @@ namespace SchoolManagementSystem.Infrastructure.Data
                 entity.Property(e => e.UnitPrice).HasPrecision(18, 2); // Specify precision and scale
             });
 
+            modelBuilder.Entity<InventoryPurchase>(entity =>
+            {
+                entity.Property(e => e.UnitPrice).HasPrecision(18, 2); // Specify precision and scale
+                entity.Property(e => e.TotalCost).HasPrecision(18, 2); // Specify precision and scale
+            });
+
             modelBuilder.Entity<Sponsorship>(entity =>
             {
                 entity.Property(e => e.Amount).HasPrecision(18, 2); // Specify precision and scale

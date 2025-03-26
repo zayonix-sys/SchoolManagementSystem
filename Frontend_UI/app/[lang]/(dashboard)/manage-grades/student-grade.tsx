@@ -35,7 +35,7 @@ interface StudentAcademicRecord {
 
 interface GradesProps {
   refetch: () => void;
-  classId: number | null;
+  classId: number;
   studentClassName?: string | null;
 }
 

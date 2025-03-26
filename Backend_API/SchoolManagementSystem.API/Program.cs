@@ -1,3 +1,4 @@
+using LinqKit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,7 +19,12 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(builder.Configuration.GetSection("AllowedOrigins").Get<string[]>())
+        var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? new[] {""};
+        allowedOrigins.ForEach(allowedOrigin => { 
+            Console.WriteLine($"AllowedOrigin: {allowedOrigin}");
+        });
+        
+        policy.WithOrigins(allowedOrigins)
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();
@@ -198,8 +204,10 @@ app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseCors();
 
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 //app.UseExceptionHandler("/Home/Error"); // For production
 app.UseDeveloperExceptionPage(); // Server Side Exception (For development)

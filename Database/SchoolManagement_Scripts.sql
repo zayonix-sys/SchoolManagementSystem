@@ -1,11 +1,11 @@
---DROP DATABASE school_management_sqldb
+IF NOT EXISTS (SELECT name FROM master.sys.databases WHERE name = N'school_management_sqldb')
+BEGIN
+    CREATE DATABASE school_management_sqldb;
+END;
+GO
 
---IF NOT EXISTS (SELECT name FROM master.sys.databases WHERE name = N'school_management_sqldb')
---BEGIN
---    CREATE DATABASE school_management_sqldb;
---END;
-
---USE school_management_sqldb
+USE school_management_sqldb;
+GO
 
 CREATE TABLE Campuses (
     CampusId INT PRIMARY KEY IDENTITY,
@@ -16,33 +16,26 @@ CREATE TABLE Campuses (
     Country NVARCHAR(100),
     PostalCode NVARCHAR(20),
     PhoneNumber NVARCHAR(15),
-    Email NVARCHAR(100)
-);
-
-ALTER TABLE Campuses
-ADD	
+    Email NVARCHAR(100),
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
 	UpdatedAt DATETIME NULL,
 	UpdatedBy INT,
 	IsActive BIT DEFAULT 1
+);
 
 CREATE TABLE Departments (
     DepartmentId INT PRIMARY KEY IDENTITY,
     CampusId INT,
     DepartmentName NVARCHAR(100),
     Description NVARCHAR(255),
-    
-    FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId)
-);
-
-ALTER TABLE Departments
-ADD	
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
 	UpdatedAt DATETIME NULL,
 	UpdatedBy INT,
 	IsActive BIT DEFAULT 1
+    FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId)
+);
 ---------- User Access Control ----------
 
 CREATE TABLE UserRoles (
@@ -802,12 +795,12 @@ CREATE TABLE Sponsors (
 );
 
 CREATE TABLE Sponsorships (
-    SponsorshipId INT PRIMARY KEY IDENTITY,
-    SponsorId INT,
-    Amount DECIMAL(10,2),
-	Frequency INT,
-	StartDate Date,
-    --Schedule NVARCHAR(50), -- Monthly, Quarterly, etc.
+  SponsorshipId INT PRIMARY KEY IDENTITY,
+  SponsorId INT,
+  Amount DECIMAL(10,2),
+	Frequency VARCHAR(50),
+	StartDate Date,
+  Schedule NVARCHAR(50), -- Monthly, Quarterly, etc.
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
 	UpdatedAt DATETIME NULL,
@@ -1472,21 +1465,21 @@ BEGIN
 
     DECLARE @Counter INT = 1;
     DECLARE @LastTagNumber INT;
-    DECLARE @NewTagNumber INT;
+    DECLARE @NewTagNumber NVARCHAR(50);
 
     -- Get the last TagNumber for the given ItemID
-    SELECT @LastTagNumber = MAX(CAST(TagNumber AS INT))
+    SELECT @LastTagNumber = MAX(CAST(RIGHT(TagNumber, 4) AS INT))
     FROM ItemDetail
     WHERE ItemID = @ItemID;
 
-    -- If no previous TagNumber exists, start from 10001
+    -- If no previous TagNumber exists, start from 1
     IF @LastTagNumber IS NULL
-        SET @LastTagNumber = 10000;
+        SET @LastTagNumber = 0;
 
     WHILE @Counter <= @Quantity
     BEGIN
-        -- Increment TagNumber
-        SET @NewTagNumber = @LastTagNumber + @Counter;
+        -- Increment TagNumber and format it properly
+        SET @NewTagNumber = CAST(@ItemID AS NVARCHAR(10)) + RIGHT('000' + CAST(@LastTagNumber + @Counter AS NVARCHAR(4)), 4);
 
         -- Insert into ItemDetails table
         INSERT INTO ItemDetail (ItemID, TagNumber, StatusID, CreatedAt, CreatedBy, IsActive)
