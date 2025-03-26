@@ -12,9 +12,9 @@ namespace SchoolManagementSystem.Domain.Entities
         [ForeignKey("EmployeeId")]
         public int? EmployeeId { get; set; }
 
-        [Required]
-        [ForeignKey("CampusId")]
-        public int? CampusId { get; set; }
+
+        //[ForeignKey("CampusId")]
+        //public int? CampusId { get; set; }
 
         [Required]
         public DateOnly? AttendanceDate { get; set; }
@@ -37,7 +37,7 @@ namespace SchoolManagementSystem.Domain.Entities
         // Navigation Properties
 
         public Employee? Employee { get; set; }
-        public Campus? Campus { get; set; }
+        //public Campus? Campus { get; set; }
         public User? CreatedUser { get; set; }
         public User? UpdatedUser { get; set; }
     }

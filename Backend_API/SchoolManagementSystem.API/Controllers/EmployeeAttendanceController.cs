@@ -19,7 +19,6 @@ namespace SchoolManagementSystem.API.Controllers
             _logger = logger;
             _employeeAttendanceService = employeeAttendance;
         }
-
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<EmployeeAttendanceDTO>>> GetEmployeeAttendance()
         {

@@ -23,7 +23,7 @@ export interface StudentAttendanceData{
 export const studentAttendanceApi = createApi({
   reducerPath: "studentAttendanceApi",
   baseQuery: fetchBaseQuery({
-    baseUrl:  'http://localhost:5282/api/StudentAttendance/',
+    baseUrl:  'https://localhost:7242/api/StudentAttendance/',
     prepareHeaders: (headers) => {
       const authToken = localStorage.getItem("authToken");
       if (authToken) {
