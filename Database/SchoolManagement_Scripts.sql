@@ -1,11 +1,11 @@
---DROP DATABASE school_management_sqldb
+IF NOT EXISTS (SELECT name FROM master.sys.databases WHERE name = N'school_management_sqldb')
+BEGIN
+    CREATE DATABASE school_management_sqldb;
+END;
+GO
 
---IF NOT EXISTS (SELECT name FROM master.sys.databases WHERE name = N'school_management_sqldb')
---BEGIN
---    CREATE DATABASE school_management_sqldb;
---END;
-
---USE school_management_sqldb
+USE school_management_sqldb;
+GO
 
 CREATE TABLE Campuses (
     CampusId INT PRIMARY KEY IDENTITY,
@@ -16,33 +16,26 @@ CREATE TABLE Campuses (
     Country NVARCHAR(100),
     PostalCode NVARCHAR(20),
     PhoneNumber NVARCHAR(15),
-    Email NVARCHAR(100)
-);
-
-ALTER TABLE Campuses
-ADD	
+    Email NVARCHAR(100),
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
 	UpdatedAt DATETIME NULL,
 	UpdatedBy INT,
 	IsActive BIT DEFAULT 1
+);
 
 CREATE TABLE Departments (
     DepartmentId INT PRIMARY KEY IDENTITY,
     CampusId INT,
     DepartmentName NVARCHAR(100),
     Description NVARCHAR(255),
-    
-    FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId)
-);
-
-ALTER TABLE Departments
-ADD	
 	CreatedAt DATETIME DEFAULT GETDATE(),
 	CreatedBy INT,
 	UpdatedAt DATETIME NULL,
 	UpdatedBy INT,
 	IsActive BIT DEFAULT 1
+    FOREIGN KEY (CampusId) REFERENCES Campuses(CampusId)
+);
 ---------- User Access Control ----------
 
 CREATE TABLE UserRoles (

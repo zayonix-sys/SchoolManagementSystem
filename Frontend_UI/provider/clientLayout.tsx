@@ -15,17 +15,16 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const userId = useSelector((state: RootState) => state.auth.user?.userId);
 
-  // 🔥 Fix: Prevent hydration errors by ensuring this runs only on client
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true); // ✅ Ensures the component only runs after hydration
+    setIsClient(true);
     if (!userId) {
       router.replace("/auth/login");
     }
   }, [userId, router]);
 
-  if (!isClient) return null; // 🔥 Prevents React from trying to render mismatched HTML
+  if (!isClient) return null;
 
   return <>{children}</>;
 };
@@ -43,7 +42,7 @@ const ClientLayout = ({
     setMounted(true);
   }, []);
 
-  if (!mounted) return null; // ✅ Avoids hydration mismatch
+  if (!mounted) return null;
 
   return (
     <ReduxProvider>
