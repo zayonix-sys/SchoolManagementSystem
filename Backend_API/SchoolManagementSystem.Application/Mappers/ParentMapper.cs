@@ -64,5 +64,10 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             throw new NotImplementedException();
         }
-    }
+
+		public List<Parent> MapToEntities(IEnumerable<ParentDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

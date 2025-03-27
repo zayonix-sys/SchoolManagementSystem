@@ -48,5 +48,10 @@ namespace SchoolManagementSystem.Application.Mappers
                 IsActive = entity.IsActive
             };
         }
-    }
+
+		public List<ClassSubject> MapToEntities(IEnumerable<ClassSubjectAssignmentDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

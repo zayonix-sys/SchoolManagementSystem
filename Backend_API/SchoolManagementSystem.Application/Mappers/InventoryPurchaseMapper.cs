@@ -3,7 +3,7 @@ using SchoolManagementSystem.Domain.Entities;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
-    public class InventoryPurchaseMapper : IMapper<InventoryPurchaseDTO, InventoryPurchase>
+	public class InventoryPurchaseMapper : IMapper<InventoryPurchaseDTO, InventoryPurchase>
     {
         public InventoryPurchaseDTO MapToDto(InventoryPurchase entity)
         {
@@ -53,6 +53,24 @@ namespace SchoolManagementSystem.Application.Mappers
             };
         }
 
+		InventoryPurchaseDTO IMapper<InventoryPurchaseDTO, InventoryPurchase>.MapToDto(InventoryPurchase entity)
+		{
+			throw new NotImplementedException();
+		}
 
-    }
+		List<InventoryPurchase> IMapper<InventoryPurchaseDTO, InventoryPurchase>.MapToEntities(InventoryPurchaseDTO dto)
+		{
+			throw new NotImplementedException();
+		}
+
+		List<InventoryPurchase> IMapper<InventoryPurchaseDTO, InventoryPurchase>.MapToEntities(IEnumerable<InventoryPurchaseDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+
+		InventoryPurchase IMapper<InventoryPurchaseDTO, InventoryPurchase>.MapToEntity(InventoryPurchaseDTO dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
