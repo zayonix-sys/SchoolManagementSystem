@@ -3,14 +3,31 @@
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { SponsorData } from "@/services/apis/sponsorService";
-import { SponsorshipData, SponsorshipDataDetails, useDeleteSponsorshipMutation } from "@/services/apis/sponsorshipService";
+import {
+  SponsorshipData,
+  SponsorshipDataDetails,
+  useDeleteSponsorshipMutation,
+} from "@/services/apis/sponsorshipService";
 
 interface SponsorshipListTableProps {
   sponsorship: SponsorshipData[];
@@ -19,30 +36,50 @@ interface SponsorshipListTableProps {
   refetch: () => void;
 }
 
-const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship, refetch, sponsor, sponsorshipDetail }) => {
+const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({
+  sponsorship,
+  refetch,
+  sponsor,
+  sponsorshipDetail,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sponsorshipToDelete, setSponsorshipToDelete] = useState<number | null>(null);
-  const [detailedSponsorship, setDetailedSponsorship] = useState<SponsorshipDataDetails | null>(null);
+  const [sponsorshipToDelete, setSponsorshipToDelete] = useState<number | null>(
+    null
+  );
+  const [detailedSponsorship, setDetailedSponsorship] =
+    useState<SponsorshipDataDetails | null>(null);
 
   const [deleteSponsorship] = useDeleteSponsorshipMutation();
   const itemsPerPage = 20;
 
-  const filteredSponsorship = sponsorship?.filter(item =>
-    item.sponsorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.amount.toString().includes(searchQuery.toLowerCase())
+  const filteredSponsorship = sponsorship?.filter(
+    (item) =>
+      item?.sponsorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item?.amount?.toString().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
-  const currentItems = filteredSponsorship?.slice(indexOfLastItem - itemsPerPage, indexOfLastItem);
+  const currentItems = filteredSponsorship?.slice(
+    indexOfLastItem - itemsPerPage,
+    indexOfLastItem
+  );
   const totalPages = Math.ceil(filteredSponsorship?.length / itemsPerPage);
 
-  const groupedData = currentItems?.reduce((acc, item) => {
-    acc[item.sponsorId] = acc[item.sponsorId]
-      ? { ...acc[item.sponsorId], amount: acc[item.sponsorId].amount + item.amount }
-      : { ...item };
-    return acc;
-  }, {});
+  const groupedData = currentItems?.reduce(
+    (acc: Record<number, SponsorshipData>, item) => {
+      if (item.sponsorId !== null && item.sponsorId !== undefined) {
+        acc[item.sponsorId] = acc[item.sponsorId]
+          ? {
+              ...acc[item.sponsorId],
+              amount: (acc[item.sponsorId]?.amount || 0) + (item.amount ?? 0),
+            }
+          : { ...item };
+      }
+      return acc;
+    },
+    {}
+  );
 
   const handleDelete = async (id: number) => {
     try {
@@ -78,21 +115,37 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Object.values(groupedData || {}).map(item => (
+          {Object.values(groupedData || {}).map((item) => (
             <TableRow key={item.sponsorId} className="hover:bg-default-200">
               <TableCell>{item.startDate}</TableCell>
               <TableCell>{item.amount}</TableCell>
               <TableCell>{item.sponsorName}</TableCell>
               <TableCell>
-                <Badge variant="outline" color={item.isActive ? "success" : "destructive"} className="capitalize">
+                <Badge
+                  variant="outline"
+                  color={item.isActive ? "success" : "destructive"}
+                  className="capitalize"
+                >
                   {item.isActive ? "Active" : "Inactive"}
                 </Badge>
               </TableCell>
               <TableCell className="flex justify-end gap-3">
-                <Button size="icon" variant="outline" className="h-7 w-7" onClick={() => setDetailedSponsorship(item)}>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-7 w-7"
+                  onClick={() => setDetailedSponsorship(item)}
+                >
                   <Icon icon="heroicons:eye" className="h-4 w-4" />
                 </Button>
-                <Button size="icon" variant="outline" className="h-7 w-7" onClick={() => setSponsorshipToDelete(item.sponsorshipId)}>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-7 w-7"
+                  onClick={() =>
+                    setSponsorshipToDelete(item.sponsorshipId ?? null)
+                  }
+                >
                   <Icon icon="heroicons:trash" className="h-4 w-4" />
                 </Button>
               </TableCell>
@@ -101,11 +154,28 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
         </TableBody>
       </Table>
       <div className="flex justify-between items-center mt-4">
-        <Button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>Previous</Button>
-        <span>Page {currentPage} of {totalPages}</span>
-        <Button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>Next</Button>
+        <Button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
       </div>
-      <Dialog open={!!detailedSponsorship} onOpenChange={() => setDetailedSponsorship(null)}>
+      <Dialog
+        open={!!detailedSponsorship}
+        onOpenChange={() => setDetailedSponsorship(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Sponsorship Details</DialogTitle>
@@ -134,7 +204,10 @@ const SponsorshipListTable: React.FC<SponsorshipListTableProps> = ({ sponsorship
         </DialogContent>
       </Dialog>
       {sponsorshipToDelete !== null && (
-        <ConfirmationDialog onDelete={() => handleDelete(sponsorshipToDelete)} onCancel={() => setSponsorshipToDelete(null)} />
+        <ConfirmationDialog
+          onDelete={() => handleDelete(sponsorshipToDelete)}
+          onCancel={() => setSponsorshipToDelete(null)}
+        />
       )}
     </div>
   );
