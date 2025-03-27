@@ -70,5 +70,10 @@ namespace SchoolManagementSystem.Application.Mappers
                 IsActive = entity.IsActive
             };
         }
-    }
+
+		public List<ExamPaper> MapToEntities(IEnumerable<ExamPaperDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

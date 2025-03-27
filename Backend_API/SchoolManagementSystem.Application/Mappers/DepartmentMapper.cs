@@ -28,7 +28,12 @@ namespace SchoolManagementSystem.Application.Mappers
             throw new NotImplementedException();
         }
 
-        public Department MapToEntity(DepartmentDTO dto)
+		public List<Department> MapToEntities(IEnumerable<DepartmentDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Department MapToEntity(DepartmentDTO dto)
         {
             return new Department
             {

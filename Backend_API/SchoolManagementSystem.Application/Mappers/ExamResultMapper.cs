@@ -58,5 +58,10 @@ namespace SchoolManagementSystem.Application.Mappers
         }
             };
         }
-    }
+
+		public List<ExamResult> MapToEntities(IEnumerable<ExamResultDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

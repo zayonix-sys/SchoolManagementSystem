@@ -50,5 +50,10 @@ namespace SchoolManagementSystem.Application.Mappers
 
             return entities;
         }
-    }
+
+		public List<SubjectTeacherAssignment> MapToEntities(IEnumerable<SubjectTeacherAssignmentDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
