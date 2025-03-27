@@ -16,8 +16,11 @@ namespace SchoolManagementSystem.Domain.Entities
         public int? CampusId { get; set; }
         [ForeignKey(nameof(CampusId))]
         
-        public int? ClassId { get; set; }
-        [ForeignKey(nameof(ClassId))]
+        public int? LastClassId { get; set; }
+        [ForeignKey(nameof(LastClassId))]
+
+        public int? AppliedClassId { get; set; }
+        [ForeignKey(nameof(AppliedClassId))]
 
         [MaxLength(50)]
         public string? ApplicationStatus { get; set; }

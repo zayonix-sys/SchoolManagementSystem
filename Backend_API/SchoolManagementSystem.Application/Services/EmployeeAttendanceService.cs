@@ -46,27 +46,25 @@ namespace SchoolManagementSystem.Application.Services
 
         public async Task<List<EmployeeAttendanceDTO>> GetAllEmployeeAttendanceAsync()
         {
-            throw new NotImplementedException();
-            //try
-            //{
-            //    var studentAttendance = await _studentAttendanceRepository.GetAllAsync(
-            //        include: query => query
-            //        .Include(s => s.Student)
-            //        .Include(c => c.Class)
-            //        .Include(sc => sc.Section)
-            //        .Include(cp => cp.Campus)
+
+            try
+            {
+                var employeeAttendance = await _employeeAttendanceRepository.GetAllAsync(
+                    include: query => query
+                    .Include(s => s.Employee)
+                    //.Include(c => c.Campus)
 
 
-            //        );
-            //    var activeStudentAttendance = studentAttendance.Where(c => c.IsActive);
-            //    var studentAttendanceDtos = activeStudentAttendance.Select(c => _mapper.MapToDto(c)).ToList();
-            //    return studentAttendanceDtos;
-            //}
-            //catch (Exception)
-            //{
+                    );
+                var activeEmployeeAttendance = employeeAttendance.Where(c => c.IsActive);
+                var employeeAttendanceDtos = activeEmployeeAttendance.Select(c => _mapper.MapToDto(c)).ToList();
+                return employeeAttendanceDtos;
+            }
+            catch (Exception)
+            {
 
-            //    throw;
-            //}
+                throw;
+            }
         }
 
         public async Task<List<EmployeeAttendanceDTO>> GetEmployeeAttendanceByDate(DateOnly attendanceDate)
@@ -80,7 +78,7 @@ namespace SchoolManagementSystem.Application.Services
                         ,
                     include: query => query
                         .Include(s => s.Employee)
-                        .Include(c => c.Campus)
+                //.Include(c => c.Campus)
                 );
 
                 var employeeAttendanceDtos = employeeAttendance

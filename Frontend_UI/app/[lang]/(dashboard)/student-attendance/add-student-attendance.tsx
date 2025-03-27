@@ -21,6 +21,8 @@ import {
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Icon } from "@iconify/react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reduxStore";
 
 interface StudentAttendanceProps {
   classId?: number | null;
@@ -59,6 +61,7 @@ const AddStudentAttendance: React.FC<StudentAttendanceProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [addAttendance] = useAddStudentAttendanceMutation();
   const { data: fetchedAttendance } = useFetchStudentAttendanceQuery();
+  const loggedUser = useSelector((state: RootState) => state.auth.user);
 
   // Populate existing attendance on load
   useEffect(() => {
@@ -98,6 +101,7 @@ const AddStudentAttendance: React.FC<StudentAttendanceProps> = ({
         attendanceDate: formattedDate,
         classId: classId || 0,
         sectionId: sectionId || 0,
+        createdBy: loggedUser?.userId,
       }));
 
     if (attendanceEntries.length === 0) {

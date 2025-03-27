@@ -24,14 +24,29 @@ export interface ApplicantApplicationDetail {
     lastName: string;
     formBNumber: string;
     dateOfBirth: string | Date; // Use string or Date based on your needs
-    email: string;
+    // email: string;
     gender: string;
-    motherTounge: string;
-    applicantAddress: string;
+    // motherTongue: string;
+    // applicantAddress: string;
+    
+    // Parent Details
+    parentId?: number;
+    parentFirstName?: string;
+    parentMiddleName?: string;
+    parentLastName?: string;
+    email? : string;
+    motherTongue?: string;
+    dependent?: string;
+    occupation?: string;
+    nationality?: string;
+    sourceOfIncome?: string;
+    parentAddress?: string;
+    parentName?: string;
     phoneNumber: string;
     residenceStatus: string;
-    city: string;
-    states: string;
+    createdBy?: number ;
+    
+    
   }
 // Define DTO mapping function (reused from service)
 const mapFormDataToDto = (data: any) => {
@@ -42,24 +57,36 @@ const mapFormDataToDto = (data: any) => {
     dateOfBirth: data.dateOfBirth,
     gender: data.gender,
     email: data.email,
-    applicantAddress: data.applicantAddress,
+    parentFirstName: data.parentFirstName,
+    parentMiddleName: data.parentMiddleName,
+    parentLastName: data.parentLastName,
+    parentAddress: data.parentAddress,
     residenceStatus: data.residenceStatus,
-    city: data.city,
-    motherTounge: data.motherTounge,
+    dependent: data.dependent,
+    occupation: data.occupation,
+    nationality: data.nationality,
+    sourceOfIncome: data.sourceOfIncome,
+    createdBy: data.createdBy,
+
+    // city: data.city,
+    motherTongue: data.motherTongue,
     states: data.states,
     lastClassId: data.lastClassId,
     phoneNumber: data.phoneNumber,
   };
 
+  
   const applicationData = {
     campusId: data.campusId,
-    admissionClassId: data.admissionClassId,
     applicationId: data.applicationId,
     applicationStatus: data.applicationStatus,
+    appliedClassId: data.appliedClassId,
+    lastClassId: data.lastClassId,
     admissionDecisionDate: data.admissionDecisionDate,
     remarks: data.remarks,
     isActive: data.isActive,
   };
+  
 
   return {
     Applicant: applicantData,
@@ -103,11 +130,11 @@ export const applicantApi = createApi({
         method: "DELETE",
       }),
     }),
-    applicationStatus: builder.mutation<ApiResponse<void>, { id: number; status: string, sectionId: number }>({
-        query: ({ id, status, sectionId }) => ({
+    applicationStatus: builder.mutation<ApiResponse<void>, { id: number; status: string,applicantId: number, sectionId: number }>({
+        query: ({ id, status, sectionId, applicantId }) => ({
           url: "ApplicationStatus",
           method: "PUT",
-          body: { applicationId: id, applicationStatus: status, sectionId: sectionId},
+          body: { applicationId: id, applicationStatus: status, sectionId: sectionId, applicantId: applicantId},
         }),
       })
   }),

@@ -20,33 +20,29 @@ namespace SchoolManagementSystem.Domain.Entities
 
         public DateOnly? DateOfBirth { get; set; }
 
-        [ForeignKey("ClassId")]
-        public int? ClassId { get; set; }
-        public virtual Class Class { get; set; }
-
         [MaxLength(10)]
-        public string Gender { get; set; }
+        public string? Gender { get; set; }
 
-        [MaxLength(100)]
-        public string Email { get; set; }
+        //[MaxLength(100)]
+        //public string Email { get; set; }
 
-        [MaxLength(15)]
-        public string PhoneNumber { get; set; }
+        //[MaxLength(15)]
+        //public string? PhoneNumber { get; set; }
 
-        [MaxLength(255)]
-        public string ApplicantAddress { get; set; }
+        //[MaxLength(255)]
+        //public string ApplicantAddress { get; set; }
 
-        [MaxLength(30)]
-        public string ResidenceStatus { get; set; }
+        //[MaxLength(30)]
+        //public string ResidenceStatus { get; set; }
 
-        [MaxLength(50)]
-        public string City { get; set; }
+        //[MaxLength(50)]
+        //public string City { get; set; }
 
-        [MaxLength(50)]
-        public string MotherTounge { get; set; }
+        //[MaxLength(50)]
+        //public string MotherTounge { get; set; }
 
-        [MaxLength(30)]
-        public string States { get; set; }
+        //[MaxLength(30)]
+        //public string States { get; set; }
 
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
         public int? CreatedBy { get; set; }

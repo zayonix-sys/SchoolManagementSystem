@@ -2,14 +2,9 @@ import "../assets/scss/globals.scss";
 import "../assets/scss/theme.scss";
 import { Inter } from "next/font/google";
 import { siteConfig } from "@/config/site";
-import Providers from "@/provider/providers";
-import "simplebar-react/dist/simplebar.min.css";
-import TanstackProvider from "@/provider/providers.client";
-import "flatpickr/dist/themes/light.css";
-import DirectionProvider from "@/provider/direction.provider";
-import AuthProvider from "@/provider/auth.provider";
 import React from "react";
-import ReduxProvider from "@/provider/redux.provider";
+import ClientLayout from "@/provider/clientLayout"; // ✅ Move client-side logic here
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -20,6 +15,7 @@ export const metadata = {
   description: siteConfig.description,
 };
 
+// ✅ Only server-side logic here
 export default function RootLayout({
   children,
   params: { lang },
@@ -29,15 +25,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang={lang}>
-      <AuthProvider>
-        <TanstackProvider>
-          <ReduxProvider>
-            <Providers>
-              <DirectionProvider lang={lang}>{children}</DirectionProvider>
-            </Providers>
-          </ReduxProvider>
-        </TanstackProvider>
-      </AuthProvider>
+      <body>
+        {/* ✅ Client-side logic now runs inside ClientLayout */}
+        <ClientLayout lang={lang}>{children}</ClientLayout>
+      </body>
     </html>
   );
 }

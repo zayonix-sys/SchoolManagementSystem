@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SchoolManagementSystem.Infrastructure.Data
 {
@@ -46,8 +47,21 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
         public DbSet<StudentAcademic> StudentAcademic { get; set; }
         public DbSet<AcademicYear> AcademicYears { get; set; }
+        public DbSet<Parent> Parents { get; set; }
+        public DbSet<StudentParent> StudentParent { get; set; }
+        public DbSet<ParentFeedback> ParentFeedback { get; set; }
 
 
+
+
+        public DbSet<InventoryCategory> InventoryCategories { get; set; }
+        public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<InventoryStock> InventoryStocks { get; set; }
+        public DbSet<InventoryStatus> InventoryStatus { get; set; }
+        public DbSet<ItemDetail> ItemDetail { get; set; }
+        public DbSet<InventoryPurchase> InventoryPurchases { get; set; }
+        public DbSet<AssetAllocation> AssetAllocation { get; set; }
+        //public DbSet<ExamResult> ExamResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,6 +74,18 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
             modelBuilder.Entity<Admission>()
                 .HasOne(a => a.Student);
+
+            modelBuilder.Entity<AdmissionApplication>()
+            .HasOne(a => a.Class)
+            .WithMany()
+            .HasForeignKey(a => a.AppliedClassId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<AdmissionApplication>()
+                .HasOne(a => a.Class)
+                .WithMany()
+                .HasForeignKey(a => a.LastClassId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<AdmissionApplication>()
                 .HasIndex(a => a.ApplicationId);
@@ -89,6 +115,9 @@ namespace SchoolManagementSystem.Infrastructure.Data
             modelBuilder.Entity<TimeTableView>()
                 .HasNoKey();
 
+            modelBuilder.Entity<InventoryStockView>()
+                .HasNoKey();
+
             modelBuilder.Entity<DashboardCountView>()
                           .HasNoKey();
             modelBuilder.Entity<User>()
@@ -99,6 +128,17 @@ namespace SchoolManagementSystem.Infrastructure.Data
             modelBuilder.Entity<Payment>(entity =>
             {
                 entity.Property(e => e.AmountPaid).HasPrecision(18, 2); // Specify precision and scale
+            });
+
+            modelBuilder.Entity<InventoryItem>(entity =>
+            {
+                entity.Property(e => e.UnitPrice).HasPrecision(18, 2); // Specify precision and scale
+            });
+
+            modelBuilder.Entity<InventoryPurchase>(entity =>
+            {
+                entity.Property(e => e.UnitPrice).HasPrecision(18, 2); // Specify precision and scale
+                entity.Property(e => e.TotalCost).HasPrecision(18, 2); // Specify precision and scale
             });
 
             modelBuilder.Entity<Sponsorship>(entity =>
@@ -114,7 +154,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
             // Map the entity to the SQL Server view
             modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
             modelBuilder.Entity<TimeTableView>().ToView("TimeTableView");
-            modelBuilder.Entity<DashboardCountView>().ToView("DashboardCountViews");
+            modelBuilder.Entity<DashboardCountView>().ToView("DashboardCountView");
+            modelBuilder.Entity<InventoryStockView>().ToView("vw_InventoryStockSummary");
 
             base.OnModelCreating(modelBuilder);
         }

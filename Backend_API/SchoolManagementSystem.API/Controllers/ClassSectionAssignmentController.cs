@@ -85,16 +85,16 @@ namespace SchoolManagementSystem.API.Controllers
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateClassSectionAssignment(ClassSectionAssignmentDTO classroom)
         {
-            _logger.LogInformation("Updating Class Assignment with ID {AssignmentId}.", classroom.ClassSectionAssignmentId);
+            _logger.LogInformation("Updating Class Assignment with ID {AssignmentId}.", classroom.AssignmentId);
             try
             {
                 await _classSectionAssignmentService.UpdateClassSectionAssignmentAsync(classroom);
-                _logger.LogInformation("Successfully updated Class Assigning with ID {AssignmentId}.", classroom.ClassSectionAssignmentId);
+                _logger.LogInformation("Successfully updated Class Assigning with ID {AssignmentId}.", classroom.AssignmentId);
                 return Ok(ApiResponse<ClassSectionAssignmentDTO>.SuccessResponse(classroom, "Classroom Assignment updated successfully"));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while updating Class Assignment with ID {AssignmentId}.", classroom.ClassSectionAssignmentId);
+                _logger.LogError(ex, "An error occurred while updating Class Assignment with ID {AssignmentId}.", classroom.AssignmentId);
                 return StatusCode(500, ApiResponse<object>.ErrorResponse("Internal server error."));
             }
         }

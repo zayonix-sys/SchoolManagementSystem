@@ -17,12 +17,12 @@ import {
   DialogClose,
   DialogContent,
   DialogTitle,
-  DialogTrigger,
   DialogHeader,
 } from "@/components/ui/dialog";
 
 interface ApplicantProps {
   applicationId: number;
+  applicantId: number;
   refetch: () => void;
   sectionData: SectionData[];
   classId: number;
@@ -30,6 +30,7 @@ interface ApplicantProps {
 
 const ApplicationDropdown: React.FC<ApplicantProps> = ({
   applicationId,
+  applicantId,
   refetch,
   sectionData,
   classId,
@@ -45,7 +46,8 @@ const ApplicationDropdown: React.FC<ApplicantProps> = ({
   const handleStatusUpdate = async (
     id: number,
     status: string,
-    sectionId?: number
+    sectionId?: number,
+    applicantId?: number
   ) => {
     try {
       setLoading(true);
@@ -53,6 +55,7 @@ const ApplicationDropdown: React.FC<ApplicantProps> = ({
         id: applicationId,
         status,
         sectionId: sectionId ?? 0,
+        applicantId: applicantId ?? 0,
       });
       toast.success(response?.data?.message);
       refetch();
@@ -128,7 +131,8 @@ const ApplicationDropdown: React.FC<ApplicantProps> = ({
                       handleStatusUpdate(
                         applicationId,
                         "Approved",
-                        parseInt(selectedSectionId)
+                        parseInt(selectedSectionId),
+                        applicantId
                       );
                     }
                   }}

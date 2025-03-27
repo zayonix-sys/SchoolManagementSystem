@@ -46,6 +46,6 @@ namespace SchoolManagementSystem.Application.Mappers
             };
         }
 
-        
+
     }
 }

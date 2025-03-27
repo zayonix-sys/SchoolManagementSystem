@@ -1,16 +1,12 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Domain.Entities
 {
     public class ClassSectionAssignment
     {
         [Key]
-        public int ClassSectionAssignmentId { get; set; }
+        public int AssignmentId { get; set; }
 
         [ForeignKey("Class")]
         public int? ClassId { get; set; }

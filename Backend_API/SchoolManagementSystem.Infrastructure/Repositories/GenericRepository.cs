@@ -51,17 +51,41 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             {
                 keyProperty = entityType.GetProperty("RoleId");
             }
-            //else if (entityType.Name == "UserRole")
-            //{
-            //    keyProperty = entityType.GetProperty("RoleId");
-            //}
+            else if (entityType.Name == "ClassSectionAssignment")
+            {
+                keyProperty = entityType.GetProperty("AssignmentId");
+            }
             else if (entityType.Name == "StudentAttendance")
             {
                 keyProperty = entityType.GetProperty("AttendanceId");
             }
+            else if (entityType.Name == "InventoryCategory")
+            {
+                keyProperty = entityType.GetProperty("CategoryId");
+            }
+            else if (entityType.Name == "InventoryItem")
+            {
+                keyProperty = entityType.GetProperty("ItemId");
+            }
+            else if (entityType.Name == "InventoryStock")
+            {
+                keyProperty = entityType.GetProperty("StockId");
+            }
+            else if (entityType.Name == "InventoryStatus")
+            {
+                keyProperty = entityType.GetProperty("StatusId");
+            }
+            else if (entityType.Name == "InventoryPurchase")
+            {
+                keyProperty = entityType.GetProperty("PurchaseId");
+            }
             else if (entityType.Name == "UserPermission")
             {
                 keyProperty = entityType.GetProperty("PermissionId");
+            }
+            else if (entityType.Name == "AssetAllocation")
+            {
+                keyProperty = entityType.GetProperty("AllocationId");
             }
             else
             {
@@ -125,6 +149,30 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             else if (entityType.Name == "UserPermission")
             {
                 keyProperty = entityType.GetProperty("PermissionId");
+            }
+            else if (entityType.Name == "InventoryCategory")
+            {
+                keyProperty = entityType.GetProperty("CategoryId");
+            }
+            else if (entityType.Name == "InventoryItem")
+            {
+                keyProperty = entityType.GetProperty("ItemId");
+            }
+            else if (entityType.Name == "InventoryStock")
+            {
+                keyProperty = entityType.GetProperty("StockId");
+            }
+            else if (entityType.Name == "InventoryPurchase")
+            {
+                keyProperty = entityType.GetProperty("PurchaseId");
+            }
+            else if (entityType.Name == "InventoryStatus")
+            {
+                keyProperty = entityType.GetProperty("StatusId");
+            }
+            else if (entityType.Name == "AssetAllocation")
+            {
+                keyProperty = entityType.GetProperty("AllocationId");
             }
             else
             {

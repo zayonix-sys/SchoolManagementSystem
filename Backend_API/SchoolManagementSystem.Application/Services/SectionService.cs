@@ -61,16 +61,16 @@ namespace SchoolManagementSystem.Application.Services
             }
         }
 
-        public async Task<SectionDTO> GetSectionByIdAsync(int sectionId)
+        public async Task<SectionDTO> GetSectionByIdAsync(int? sectionId)
         {
-            var response = await _sectionRepository.GetByIdAsync(sectionId);
+            var response = await _sectionRepository.GetByIdAsync((int)sectionId);
             return _mapper.MapToDto(response);
         }
 
         public async Task UpdateSectionAsync(SectionDTO sec)
         {
             var model = _mapper.MapToEntity(sec);
-            await _sectionRepository.UpdateAsync(model);
+            await _sectionRepository.UpdateAsync(model, true);
         }
 
         

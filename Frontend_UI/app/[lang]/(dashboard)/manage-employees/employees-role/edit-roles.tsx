@@ -17,8 +17,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { RoleData, useUpdateRoleMutation } from "@/services/apis/employeeRoleService";
-
+import {
+  RoleData,
+  useUpdateRoleMutation,
+} from "@/services/apis/employeeRoleService";
 
 // Define Zod schema for class form validation
 const roleSchema = z.object({
@@ -28,18 +30,21 @@ const roleSchema = z.object({
 
 type RoleFormValues = z.infer<typeof roleSchema>;
 
-interface RoleDataProps{
+interface RoleDataProps {
   refetch: () => void;
   rolesData: RoleData;
-
-
 }
 
 const EditRole: React.FC<RoleDataProps> = ({ rolesData, refetch }) => {
   const { roleId, roleName, roleDescription } = rolesData;
   const [updateRole] = useUpdateRoleMutation();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<RoleFormValues>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<RoleFormValues>({
     resolver: zodResolver(roleSchema),
     defaultValues: {
       roleName,
@@ -51,11 +56,9 @@ const EditRole: React.FC<RoleDataProps> = ({ rolesData, refetch }) => {
     try {
       const updatedRole = { ...data, roleId };
       const response = await updateRole(updatedRole).unwrap();
-  
+
       if (response.success) {
-        toast.success(
-          `${updatedRole.roleName}was updated successfully!`
-        );
+        toast.success(`${updatedRole.roleName} updated successfully!`);
         reset();
         refetch();
       } else {
@@ -76,11 +79,7 @@ const EditRole: React.FC<RoleDataProps> = ({ rolesData, refetch }) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          className="h-7 w-7"
-        >
+        <Button size="icon" variant="outline" className="h-7 w-7">
           <Icon icon="heroicons:pencil" className="h-4 w-4" />
         </Button>
       </SheetTrigger>
@@ -88,7 +87,10 @@ const EditRole: React.FC<RoleDataProps> = ({ rolesData, refetch }) => {
         <SheetHeader>
           <SheetTitle>Edit Role</SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col justify-between" style={{ height: "calc(100vh - 80px)" }}>
+        <div
+          className="flex flex-col justify-between"
+          style={{ height: "calc(100vh - 80px)" }}
+        >
           <div className="py-5">
             <hr />
             <form onSubmit={handleSubmit(onSubmit, handleError)}>
@@ -99,7 +101,11 @@ const EditRole: React.FC<RoleDataProps> = ({ rolesData, refetch }) => {
                     placeholder="Role Name"
                     {...register("roleName")}
                   />
-                  {errors.roleName && <p className="text-destructive">{errors.roleName.message}</p>}
+                  {errors.roleName && (
+                    <p className="text-destructive">
+                      {errors.roleName.message}
+                    </p>
+                  )}
                 </div>
                 <div className="col-span-2">
                   <Input
@@ -107,7 +113,11 @@ const EditRole: React.FC<RoleDataProps> = ({ rolesData, refetch }) => {
                     placeholder="Role Description"
                     {...register("roleDescription")}
                   />
-                  {errors.roleDescription && <p className="text-destructive">{errors.roleDescription?.message}</p>}
+                  {errors.roleDescription && (
+                    <p className="text-destructive">
+                      {errors.roleDescription?.message}
+                    </p>
+                  )}
                 </div>
                 <div className="col-span-2">
                   <Button type="submit">Update</Button>
@@ -124,6 +134,6 @@ const EditRole: React.FC<RoleDataProps> = ({ rolesData, refetch }) => {
       </SheetContent>
     </Sheet>
   );
-}
+};
 
-export default EditRole
+export default EditRole;

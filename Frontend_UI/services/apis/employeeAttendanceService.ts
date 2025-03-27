@@ -16,7 +16,7 @@ export interface EmployeeAttendanceData {
 export const employeeAttendanceApi = createApi({
   reducerPath: "employeeAttendanceApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5282/api/EmployeeAttendance/",
+    baseUrl: "https://localhost:7242/api/EmployeeAttendance/",
     prepareHeaders: (headers) => {
       const authToken = localStorage.getItem("authToken");
       if (authToken) {

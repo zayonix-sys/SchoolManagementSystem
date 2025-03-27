@@ -14,7 +14,7 @@ namespace SchoolManagementSystem.Application.Mappers
 
                 EmployeeAttendanceId = dto.EmployeeAttendanceId,
                 EmployeeId = dto.EmployeeId,
-                CampusId = dto.CampusId,
+                //CampusId = dto.CampusId,
                 AttendanceDate = dto.AttendanceDate,
                 AttendanceStatus = dto.AttendanceStatus,
                 CreatedBy = dto.CreatedBy,
@@ -31,14 +31,14 @@ namespace SchoolManagementSystem.Application.Mappers
             return new EmployeeAttendanceDTO
             {
                 EmployeeAttendanceId = entity.EmployeeAttendanceId,
-                CampusId = entity.CampusId,
+                //CampusId = entity.CampusId,
                 EmployeeId = entity.EmployeeId,
                 AttendanceDate = entity.AttendanceDate,
                 AttendanceStatus = entity.AttendanceStatus,
                 CreatedBy = entity.CreatedBy,
                 IsActive = entity.IsActive,
                 EmployeeName = entity.Employee.FirstName + " " + entity.Employee.LastName,
-                CampusName = entity.Campus.CampusName,
+                //CampusName = entity.Campus.CampusName,
 
 
 

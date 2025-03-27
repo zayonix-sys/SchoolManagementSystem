@@ -18,6 +18,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Icon } from "@iconify/react";
 import { EmployeesData } from "@/services/apis/employeeService";
 import { EmployeeAttendanceData, useAddEmployeeAttendanceMutation, useFetchEmployeeAttendanceQuery } from "@/services/apis/employeeAttendanceService";
+import { useSelector } from "react-redux";
+import { RootState } from "@/services/reduxStore";
 
 interface EmployeeAttendanceProps {
   campusId?: number | null;
@@ -50,6 +52,7 @@ const AddEmployeeAttendance: React.FC<EmployeeAttendanceProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [addAttendance] = useAddEmployeeAttendanceMutation();
   const { data: fetchedAttendance } = useFetchEmployeeAttendanceQuery();
+  const loggedUser = useSelector((state: RootState) => state.auth.user);
 
   // Populate existing attendance on load
   useEffect(() => {
@@ -80,6 +83,8 @@ const AddEmployeeAttendance: React.FC<EmployeeAttendanceProps> = ({
 
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().slice(0, 10);
+    
+
 
     const attendanceEntries = employees
       .filter((employee) => !existingAttendance[employee?.employeeId || 0])
@@ -87,6 +92,7 @@ const AddEmployeeAttendance: React.FC<EmployeeAttendanceProps> = ({
         employeeId: employee.employeeId,
         attendanceStatus: attendance[employee?.employeeId || 0] || "Absent",
         attendanceDate: formattedDate,
+        createdBy: loggedUser?.userId,
       }));
 
     if (attendanceEntries.length === 0) {

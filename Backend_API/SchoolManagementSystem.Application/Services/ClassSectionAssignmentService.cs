@@ -13,7 +13,8 @@ namespace SchoolManagementSystem.Application.Services
         private readonly ISection _sectionRepository;
         private readonly ClassSectionAssignmentMapper _mapper;
 
-        public ClassSectionAssignmentService(IGenericRepository<ClassSectionAssignment> genericRepository, 
+        public ClassSectionAssignmentService(
+            IGenericRepository<ClassSectionAssignment> genericRepository,  
             ISection sectionRepository,
             ClassSectionAssignmentMapper classSectionAssignmentMapper)
 
@@ -21,13 +22,23 @@ namespace SchoolManagementSystem.Application.Services
             _classSectionAssignmentRepository = genericRepository;
             _mapper = classSectionAssignmentMapper;
             _sectionRepository = sectionRepository;
-     
+
         }
 
         public async Task AddClassSectionAssignmentAsync(ClassSectionAssignmentDTO classroom)
         {
             try
             {
+                var existingSection = await _sectionRepository.GetSectionByIdAsync(classroom.SectionId);
+
+                if (existingSection == null)
+                {
+                    throw new KeyNotFoundException("Section not found.");
+                }
+
+                existingSection.ClassId = classroom.ClassId;
+                await _sectionRepository.UpdateSectionAsync(existingSection);
+
                 var assignments = await _classSectionAssignmentRepository.GetAllAsync(
                     include: query => query
                     .Include(a => a.Classroom)
@@ -35,7 +46,7 @@ namespace SchoolManagementSystem.Application.Services
                     .Include(a => a.Section)
                     .Include(a => a.Campus)
                 );
-                
+
                 // Check if the same section is already assigned to the same classroom in the same campus
                 var existingAssignment = assignments
                     .FirstOrDefault(a => a.Classroom.ClassroomId == classroom.ClassroomId &&
@@ -125,7 +136,7 @@ namespace SchoolManagementSystem.Application.Services
                     .Include(a => a.Class)
                     .Include(a => a.Section)
                     .Include(a => a.Campus)
-                ); 
+                );
 
                 // Check if the same section is already assigned to the same classroom in the same campus
                 var existingAssignment = assignments
@@ -133,7 +144,7 @@ namespace SchoolManagementSystem.Application.Services
                                          a.Section.SectionId == dto.SectionId &&
                                          a.Campus.CampusId == dto.CampusId &&
                                          a.IsActive &&
-                                         a.ClassSectionAssignmentId != dto.ClassSectionAssignmentId); // Exclude the current assignment
+                                         a.AssignmentId != dto.AssignmentId); // Exclude the current assignment
 
                 if (existingAssignment != null)
                 {
