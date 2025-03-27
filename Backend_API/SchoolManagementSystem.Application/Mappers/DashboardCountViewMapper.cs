@@ -45,5 +45,10 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             throw new NotImplementedException();
         }
-    }
+
+		public List<DashboardCountView> MapToEntities(IEnumerable<DashboardCountViewDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

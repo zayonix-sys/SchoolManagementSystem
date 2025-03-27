@@ -41,7 +41,12 @@ namespace SchoolManagementSystem.Application.Mappers
             throw new NotImplementedException();
         }
 
-        public User MapToEntity(UserDTO dto)
+		public List<User> MapToEntities(IEnumerable<UserDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+
+		public User MapToEntity(UserDTO dto)
         {
             if (dto == null)
             {

@@ -45,5 +45,10 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             throw new NotImplementedException();
         }
-    }
+
+		public List<QuestionBank> MapToEntities(IEnumerable<QuestionBankDto> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

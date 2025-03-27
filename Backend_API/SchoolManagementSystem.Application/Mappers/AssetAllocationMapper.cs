@@ -39,7 +39,12 @@ namespace SchoolManagementSystem.Application.Mappers
             throw new NotImplementedException();
         }
 
-        public AssetAllocation MapToEntity(AssetAllocationDTO dto)
+		public List<AssetAllocation> MapToEntities(IEnumerable<AssetAllocationDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+
+		public AssetAllocation MapToEntity(AssetAllocationDTO dto)
         {
             if (dto == null)
             {
