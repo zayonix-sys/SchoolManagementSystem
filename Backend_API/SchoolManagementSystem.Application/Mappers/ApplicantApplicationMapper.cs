@@ -1,10 +1,5 @@
 ﻿using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
@@ -19,7 +14,7 @@ namespace SchoolManagementSystem.Application.Mappers
 
             return new ApplicantApplicationViewDTO
             {
-                
+
                 ApplicationId = entity.ApplicationId,
                 ApplicationStatus = entity.ApplicationStatus,
                 CampusId = entity.CampusId,
@@ -29,20 +24,25 @@ namespace SchoolManagementSystem.Application.Mappers
                 ApplicantId = entity.ApplicantId,
                 FirstName = entity.FirstName,
                 LastName = entity.LastName,
-                LastAttendedClassName = entity.LastAttendedClassName,
+                LastAttendedClassName = entity.LastClassName,
                 LastClassId = entity.LastClassId,
                 DateOfBirth = entity.DateOfBirth,
                 FormBNumber = entity.FormBNumber,
                 Gender = entity.Gender,
+                AdmissionDecisionDate = entity.AdmissionDecisionDate,
+                Remarks = entity.Remarks,
                 PhoneNumber = entity.PhoneNumber,
                 Email = entity.Email,
-                AdmissionDecisionDate = entity.AdmissionDecisionDate,
-                ApplicantAddress = entity.ApplicantAddress,
-                States = entity.States,
-                City = entity.City,
-                MotherTounge = entity.MotherTounge,
-                Remarks = entity.Remarks,
-                ResidenceStatus = entity.ResidenceStatus
+                ParentAddress = entity.ParentAddress,
+                MotherTongue = entity.MotherTongue,
+                ResidenceStatus = entity.ResidenceStatus,
+                Occupation = entity.Occupation,
+                SourceOfIncome = entity.SourceOfIncome,
+                Dependent = entity.Dependent,
+                ParentFirstName = entity.ParentFirstName,
+                ParentMiddleName = entity.ParentMiddleName,
+                ParentLastName = entity.ParentLastName,
+                Nationality = entity.Nationality
             };
         }
 
@@ -69,20 +69,26 @@ namespace SchoolManagementSystem.Application.Mappers
                 ApplicantId = dto.ApplicantId,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
-                LastAttendedClassName = dto.LastAttendedClassName,
+                LastClassName = dto.LastAttendedClassName,
                 LastClassId = dto.LastClassId,
                 DateOfBirth = dto.DateOfBirth,
                 FormBNumber = dto.FormBNumber,
                 Gender = dto.Gender,
+                AdmissionDecisionDate = dto.AdmissionDecisionDate,
+                Remarks = dto.Remarks,
+                ParentFirstName = dto.ParentFirstName,
+                ParentMiddleName = dto.ParentMiddleName,
+                ParentLastName = dto.ParentLastName,
                 PhoneNumber = dto.PhoneNumber,
                 Email = dto.Email,
-                AdmissionDecisionDate = dto.AdmissionDecisionDate,
-                ApplicantAddress = dto.ApplicantAddress,
-                States = dto.States,
-                City = dto.City,
-                MotherTounge = dto.MotherTounge,
-                Remarks = dto.Remarks,
-                ResidenceStatus = dto.ResidenceStatus
+                ParentAddress = dto.ParentAddress,
+                MotherTongue = dto.MotherTongue,
+                ResidenceStatus = dto.ResidenceStatus,
+                Occupation = dto.Occupation,
+                SourceOfIncome = dto.SourceOfIncome,
+                Dependent = dto.Dependent,
+                Nationality = dto.Nationality
+
             };
         }
     }

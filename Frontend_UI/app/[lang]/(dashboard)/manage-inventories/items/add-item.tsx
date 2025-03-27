@@ -30,7 +30,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 
 // Define Zod schema
 const inventoryItemSchema = z.object({
@@ -45,8 +44,9 @@ const inventoryItemSchema = z.object({
 type InventoryItemFormValues = z.infer<typeof inventoryItemSchema>;
 interface ItemsProps {
   categories: InventoryCategoryData[];
+  refetchStocks: () => void;
 }
-const AddItem: React.FC<ItemsProps> = ({ categories }) => {
+const AddItem: React.FC<ItemsProps> = ({ categories, refetchStocks }) => {
   const [addItem] = useAddInventoryItemMutation();
   const loggedUser = useSelector((state: RootState) => state.auth.user);
   const {
@@ -69,6 +69,7 @@ const AddItem: React.FC<ItemsProps> = ({ categories }) => {
       if (response.success) {
         toast.success(`Item ${data.itemName} added successfully!`);
         reset();
+        refetchStocks();
       } else {
         console.error("Error:", response);
         toast.error(`Error: ${response.message || "Something went wrong"}`);

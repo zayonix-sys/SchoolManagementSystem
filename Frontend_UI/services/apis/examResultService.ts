@@ -34,9 +34,17 @@ export const examResultApi = createApi({
     fetchExamResults: builder.query<ApiResponse<ExamResultData[]>, void>({
       query: () => "GetAllExamsResults",
     }),
-    fetchExamResultsByClass: builder.query<ApiResponse<ExamResultData[]>, void>({
+    fetchExamResultsByClass: builder.query<ApiResponse<ExamResultData[]>, number>({
       query: (classId) => `GetExamResultsByClass?classId=${classId}`,
     }),
+    fetchExamResultsByClassYearTerm: builder.query<
+    ApiResponse<ExamResultData[]>,
+    { classId?: number; year?: string; examPaperId?: number; termName?: string }
+  >({
+    query: ({ classId, year, examPaperId, termName }) =>
+      `/GetExamResultsByClassTermYear?classId=${classId}&year=${year}&examPaperId=${examPaperId}&termName=${termName}`,
+  }),
+  
     addExamResult: builder.mutation<ApiResponse<ExamResultData>, ExamResultData>({
       query: (examResultData) => ({
         url: "AddExamResults",
@@ -65,7 +73,8 @@ useFetchExamResultsQuery,
 useAddExamResultMutation,
 useUpdateExamResultMutation,
 useDeleteResultExamMutation,
-useFetchExamResultsByClassQuery
+useFetchExamResultsByClassQuery,
+useFetchExamResultsByClassYearTermQuery
 } = examResultApi;
 
 

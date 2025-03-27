@@ -51,10 +51,10 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             {
                 keyProperty = entityType.GetProperty("RoleId");
             }
-            //else if (entityType.Name == "UserRole")
-            //{
-            //    keyProperty = entityType.GetProperty("RoleId");
-            //}
+            else if (entityType.Name == "ClassSectionAssignment")
+            {
+                keyProperty = entityType.GetProperty("AssignmentId");
+            }
             else if (entityType.Name == "StudentAttendance")
             {
                 keyProperty = entityType.GetProperty("AttendanceId");
@@ -75,9 +75,17 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             {
                 keyProperty = entityType.GetProperty("StatusId");
             }
+            else if (entityType.Name == "InventoryPurchase")
+            {
+                keyProperty = entityType.GetProperty("PurchaseId");
+            }
             else if (entityType.Name == "UserPermission")
             {
                 keyProperty = entityType.GetProperty("PermissionId");
+            }
+            else if (entityType.Name == "AssetAllocation")
+            {
+                keyProperty = entityType.GetProperty("AllocationId");
             }
             else
             {
@@ -154,9 +162,17 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             {
                 keyProperty = entityType.GetProperty("StockId");
             }
+            else if (entityType.Name == "InventoryPurchase")
+            {
+                keyProperty = entityType.GetProperty("PurchaseId");
+            }
             else if (entityType.Name == "InventoryStatus")
             {
                 keyProperty = entityType.GetProperty("StatusId");
+            }
+            else if (entityType.Name == "AssetAllocation")
+            {
+                keyProperty = entityType.GetProperty("AllocationId");
             }
             else
             {

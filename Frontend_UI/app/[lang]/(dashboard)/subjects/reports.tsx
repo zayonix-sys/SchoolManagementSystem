@@ -23,7 +23,8 @@ const SubjectReportCard = ({
   subjects,
   subjectTeacherData,
 }: SubjectProp) => {
-  const [employee, setEmployees] = useState<EmployeesData[]>([]);
+  const { data: employeeData } = useFetchEmployeesQuery();
+  const employee = employeeData?.data as EmployeesData[];
 
   const subjectCount = subjects?.length.toString();
   const subjectTeacherCount = subjectTeacherData?.length.toString();

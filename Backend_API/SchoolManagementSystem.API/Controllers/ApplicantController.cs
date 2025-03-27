@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SchoolManagementSystem.API.Models;
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
@@ -68,6 +67,7 @@ namespace SchoolManagementSystem.API.Controllers
             _logger.LogInformation("Adding a new Applicant with name {FirstName}.", dto.Applicant.FirstName);
             try
             {
+
                 var applicantId = await _applicantService.AddApplicantAsync(dto.Applicant);
                 await _applicantService.AddAdmissionApplicationAsync(dto.Application, applicantId);
                 _logger.LogInformation("Successfully added applicant with ID {ApplicantId}.", dto.Applicant.ApplicantId);

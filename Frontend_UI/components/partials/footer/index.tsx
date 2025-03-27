@@ -92,7 +92,7 @@ const FooterContent = () => {
           target="__blank"
           href="https://wavestechnology.net"
         >
-          Waves Technology
+          Wavestechnology
         </a>
       </p>
     </div>

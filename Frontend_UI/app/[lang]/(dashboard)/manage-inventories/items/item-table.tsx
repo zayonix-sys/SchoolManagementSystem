@@ -20,20 +20,36 @@ import ConfirmationDialog from "../../common/confirmation-dialog";
 import {
   InventoryItemData,
   useDeleteInventoryItemMutation,
+  useFetchInventoryItemDetailsByItemIdQuery,
 } from "@/services/apis/inventoryItemService";
 import { InventoryCategoryData } from "@/services/apis/inventoryCategoryService";
+import ItemDetailsDialog from "./item-details-dialog";
 import { InventoryStatusData } from "@/services/apis/inventoryStatusService";
 
 interface ItemListTableProps {
   items: InventoryItemData[];
   categories: InventoryCategoryData[];
+  status: InventoryStatusData[];
 }
 
-const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
+const ItemListTable: React.FC<ItemListTableProps> = ({
+  items,
+  categories,
+  status,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [openViewModal, setOpenViewModal] = useState<Boolean>(false);
+  const [itemId, setItemId] = useState<number | null>(null);
   const [itemToDelete, setItemToDelete] = useState<number | null>(null);
-  const itemsPerPage = 20;
+  const itemsPerPage = 8;
+  const { data: itemDetails } = useFetchInventoryItemDetailsByItemIdQuery(
+    itemId as number,
+    {
+      skip: itemId === null,
+    }
+  );
+  const itemDetailsData = itemDetails?.data as InventoryItemData[];
 
   const [deleteItem] = useDeleteInventoryItemMutation();
 
@@ -50,6 +66,14 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
   const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
 
   const totalPages = Math.ceil(filteredItems?.length / itemsPerPage);
+
+  const handleCloseModal = () => {
+    setOpenViewModal(false);
+  };
+  const handleOpenModal = (itemId: number) => {
+    setOpenViewModal(true);
+    setItemId(itemId);
+  };
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -96,11 +120,13 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
       <Table className="text-left">
         <TableHeader>
           <TableRow>
-            <TableHead className="h-10 p-2.5">Item Name</TableHead>
+            <TableHead className="h-10 p-2.5">Category Code</TableHead>
             <TableHead className="h-10 p-2.5">Category</TableHead>
+            <TableHead className="h-10 p-2.5">Item Name</TableHead>
             <TableHead className="h-10 p-2.5">Desccription</TableHead>
             <TableHead className="h-10 p-2.5">Price</TableHead>
             <TableHead className="h-10 p-2.5">Quantity</TableHead>
+            <TableHead className="h-10 p-2.5">Total Cost</TableHead>
             <TableHead className="h-10 p-2.5">Created Date</TableHead>
             <TableHead className="h-10 p-2.5">Status</TableHead>
             <TableHead className="h-10 p-2.5 text-center">Action</TableHead>
@@ -114,14 +140,21 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
               className="hover:bg-default-200"
               // data-state={selectedRows.includes(item.itemId!) && "selected"}
             >
-              <TableCell className="p-2.5">{item.itemName}</TableCell>
+              <TableCell className="p-2.5">
+                {item.categoryName?.slice(0, 2).toUpperCase()}
+              </TableCell>
               <TableCell className="p-2.5">{item.categoryName}</TableCell>
+              <TableCell className="p-2.5">{item.itemName}</TableCell>
               <TableCell className="p-2.5"> {item.description}</TableCell>
               <TableCell className="p-2.5">
                 {" "}
                 {item.unitPrice.toFixed(2)}
               </TableCell>
               <TableCell className="p-2.5"> {item.totalQuantity}</TableCell>
+              <TableCell className="p-2.5">
+                {" "}
+                {(item.unitPrice * item.totalQuantity).toFixed(2)}
+              </TableCell>
               <TableCell className="p-2.5">
                 {item?.createdAt
                   ? formatDate(item.createdAt)
@@ -136,8 +169,17 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
                   {item.isActive ? "Active" : "Inactive"}
                 </Badge>
               </TableCell>
-              <TableCell className="p-2.5 flex justify-end">
+              <TableCell className="p-2.5 flex justify-center">
                 <div className="flex gap-3">
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="h-7 w-7"
+                    color="warning"
+                    onClick={() => handleOpenModal(item.itemId!)}
+                  >
+                    <Icon icon="heroicons:eye" className="h-4 w-4" />
+                  </Button>
                   <EditItem itemData={item} categories={categories} />
                   <Button
                     size="icon"
@@ -169,6 +211,13 @@ const ItemListTable: React.FC<ItemListTableProps> = ({ items, categories }) => {
         <ConfirmationDialog
           onDelete={() => handleDelete(itemToDelete)}
           onCancel={handleCancelDelete}
+        />
+      )}
+      {openViewModal && (
+        <ItemDetailsDialog
+          itemDetails={itemDetailsData}
+          status={status}
+          onClose={handleCloseModal}
         />
       )}
     </>

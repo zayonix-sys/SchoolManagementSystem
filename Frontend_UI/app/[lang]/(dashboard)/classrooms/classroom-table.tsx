@@ -39,18 +39,18 @@ const ClassroomListTable = () => {
     refetch();
   };
 
-  const filteredClassrooms = classroomsData.filter((classroom) =>
+  const filteredClassrooms = classroomsData?.filter((classroom) =>
     classroom.roomNumber.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredClassrooms.slice(
+  const currentItems = filteredClassrooms?.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
 
-  const totalPages = Math.ceil(filteredClassrooms.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredClassrooms?.length / itemsPerPage);
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));

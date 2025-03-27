@@ -37,10 +37,11 @@ const StudentAttendance: React.FC<StudentAttendanceProps> = ({
     useFetchStudentAttendanceByClassSectionIdQuery({
       classId: classId || 0,
       sectionId: sectionId || 0,
-      attendanceDate: attendanceDate || new Date,
+      attendanceDate: attendanceDate || new Date().toDateString(),
     });
 
-  const attendanceData = attendanceDataByClassSection?.data as StudentAttendanceData[];
+  const attendanceData =
+    attendanceDataByClassSection?.data as StudentAttendanceData[];
 
   // Pagination logic
   const paginateData = () => {
@@ -61,7 +62,10 @@ const StudentAttendance: React.FC<StudentAttendanceProps> = ({
     <div>
       <Button onClick={() => setShowAttendance((prev) => !prev)}>
         <span className="text-xl mr-1">
-          <Icon icon="heroicons:building-library-solid" className="w-6 h-6 mr-2" />
+          <Icon
+            icon="heroicons:building-library-solid"
+            className="w-6 h-6 mr-2"
+          />
         </span>
         View Attendance
       </Button>
@@ -90,13 +94,13 @@ const StudentAttendance: React.FC<StudentAttendanceProps> = ({
                     <Badge
                       variant="outline"
                       color={
-                        item.attendanceStatus === "present"
+                        item.attendanceStatus === "Present"
                           ? "success"
                           : "destructive"
                       }
                       className="capitalize"
                     >
-                      {item.attendanceStatus === "present" ? "Present" : "Absent"}
+                      {item.attendanceStatus === "Present" ? "Present" : "Absent"}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -116,7 +120,10 @@ const StudentAttendance: React.FC<StudentAttendanceProps> = ({
             <span>
               Page {currentPage} of {totalPages}
             </span>
-            <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+            <Button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
               Next
             </Button>
           </div>

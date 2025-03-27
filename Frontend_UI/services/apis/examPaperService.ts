@@ -15,6 +15,7 @@ export interface ExamPaperData {
   oralMarks?: number;
   copyMarks?: number;
   termName: string;
+  createdAt?: Date;
   isActive?: boolean;
 }
 
