@@ -9,6 +9,7 @@ using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Application.Services;
 using SchoolManagementSystem.Domain.Entities;
 using SchoolManagementSystem.Domain.Interfaces;
+using SchoolManagementSystem.Infrastructure;
 using SchoolManagementSystem.Infrastructure.Data;
 using SchoolManagementSystem.Infrastructure.Repositories;
 using System.Text;
@@ -146,6 +147,7 @@ builder.Services.AddScoped<InventoryPurchaseMapper>();
 builder.Services.AddScoped<IAssetAllocation, AssetAllocationService>();
 builder.Services.AddScoped<AssetAllocationMapper>();
 
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Add controllers
 builder.Services.AddControllers();
