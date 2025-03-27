@@ -35,7 +35,12 @@ namespace SchoolManagementSystem.Application.Mappers
             throw new NotImplementedException();
         }
 
-        public InventoryItem MapToEntity(InventoryItemDTO dto)
+		public List<InventoryItem> MapToEntities(IEnumerable<InventoryItemDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+
+		public InventoryItem MapToEntity(InventoryItemDTO dto)
         {
             return new InventoryItem
             {

@@ -29,7 +29,12 @@ namespace SchoolManagementSystem.Application.Mappers
             throw new NotImplementedException();
         }
 
-        public InventoryStatus MapToEntity(InventoryStatusDTO dto)
+		public List<InventoryStatus> MapToEntities(IEnumerable<InventoryStatusDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+
+		public InventoryStatus MapToEntity(InventoryStatusDTO dto)
         {
             return new InventoryStatus
             {

@@ -44,5 +44,10 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             throw new NotImplementedException();
         }
-    }
+
+		public List<ParentFeedback> MapToEntities(IEnumerable<ParentFeedbackDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

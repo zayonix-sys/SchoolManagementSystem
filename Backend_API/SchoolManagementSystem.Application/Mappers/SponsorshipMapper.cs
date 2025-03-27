@@ -55,5 +55,9 @@ namespace SchoolManagementSystem.Application.Mappers
             throw new NotImplementedException();
         }
 
-    }
+		public List<Sponsorship> MapToEntities(IEnumerable<SponsorshipDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

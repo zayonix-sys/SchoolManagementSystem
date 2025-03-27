@@ -34,7 +34,12 @@ namespace SchoolManagementSystem.Application.Mappers
             throw new NotImplementedException();
         }
 
-        public ItemDetail MapToEntity(ItemDetailDTO dto)
+		public List<ItemDetail> MapToEntities(IEnumerable<ItemDetailDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+
+		public ItemDetail MapToEntity(ItemDetailDTO dto)
         {
             return new ItemDetail
             {

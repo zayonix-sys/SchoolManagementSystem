@@ -68,6 +68,11 @@ namespace SchoolManagementSystem.Application.Mappers
 
             return entities;
         }
-    }
+
+		public List<UserPermission> MapToEntities(IEnumerable<UserPermissionDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
 
