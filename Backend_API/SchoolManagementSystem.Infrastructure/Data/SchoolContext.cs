@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
-using static System.Net.Mime.MediaTypeNames;
+using SchoolManagementSystem.Domain.Enums.Notice;
 
 namespace SchoolManagementSystem.Infrastructure.Data
 {
@@ -50,10 +50,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Parent> Parents { get; set; }
         public DbSet<StudentParent> StudentParent { get; set; }
         public DbSet<ParentFeedback> ParentFeedback { get; set; }
-
-
-
-
+        public DbSet<Notice> Notices { get; set; }
         public DbSet<InventoryCategory> InventoryCategories { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<InventoryStock> InventoryStocks { get; set; }
@@ -63,7 +60,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<AssetAllocation> AssetAllocation { get; set; }
         //public DbSet<ExamResult> ExamResults { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and keys here
             modelBuilder.Entity<Student>()
@@ -151,8 +148,16 @@ namespace SchoolManagementSystem.Infrastructure.Data
                 entity.Property(e => e.Amount).HasPrecision(18, 2); // Specify precision and scale
             });
 
-            // Map the entity to the SQL Server view
-            modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
+            modelBuilder.Entity<Notice>(entity =>
+            {
+                entity.Property(e => e.NoticeType).HasConversion(v => v.ToString(), v => (NoticeType)Enum.Parse(typeof(NoticeType), v));
+				entity.Property(e => e.RecipientType).HasConversion(v => v.ToString(), v => (RecipientType)Enum.Parse(typeof(RecipientType), v));
+				entity.Property(e => e.Method).HasConversion(v => v.ToString(), v => (Method)Enum.Parse(typeof(Method), v));
+				entity.Property(e => e.Status).HasConversion(v => v.ToString(), v => (Status)Enum.Parse(typeof(Status), v));
+            });
+
+			// Map the entity to the SQL Server view
+			modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
             modelBuilder.Entity<TimeTableView>().ToView("TimeTableView");
             modelBuilder.Entity<DashboardCountView>().ToView("DashboardCountView");
             modelBuilder.Entity<InventoryStockView>().ToView("vw_InventoryStockSummary");

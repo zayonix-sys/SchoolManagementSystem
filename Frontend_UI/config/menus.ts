@@ -1,4 +1,4 @@
-import { DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation, List, ListFill, Cart, ClipBoard, Note } from "@/components/svg";
+import { DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation, List, ListFill, Cart, Bell, ClipBoard, Note } from "@/components/svg";
 import useAuth from "@/hooks/use-auth";
 import { CalendarCheck2Icon, Clapperboard, Coins, CoinsIcon } from "lucide-react";
 
@@ -136,6 +136,17 @@ export const menuItems: MenuItemProps[] = [
         icon: Coins,
       },
 
+    ]
+  },
+  {
+    title: "Notices",
+    icon: Bell,
+    child: [
+        {
+          title: "Notices",
+          href: "/notices",
+          icon: Bell,
+      },
     ]
   }
 ];

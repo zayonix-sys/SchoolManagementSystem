@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SchoolManagementSystem.API.Middleware;
+using SchoolManagementSystem.Application;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Application.Services;
@@ -148,6 +149,7 @@ builder.Services.AddScoped<IAssetAllocation, AssetAllocationService>();
 builder.Services.AddScoped<AssetAllocationMapper>();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddApplicationServices();
 
 // Add controllers
 builder.Services.AddControllers();
