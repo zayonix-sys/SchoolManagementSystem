@@ -48,5 +48,10 @@ namespace SchoolManagementSystem.Application.Mappers
         {
             throw new NotImplementedException();
         }
-    }
+
+		public List<TimeTableView> MapToEntities(IEnumerable<TimeTableViewDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

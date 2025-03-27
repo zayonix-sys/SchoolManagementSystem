@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
-    public class InventoryCategoryMapper : IMapper<InventoryCategoryDTO, InventoryCategory>
+	public class InventoryCategoryMapper : IMapper<InventoryCategoryDTO, InventoryCategory>
     {
         public InventoryCategoryDTO MapToDto(InventoryCategory entity)
         {
@@ -30,7 +30,12 @@ namespace SchoolManagementSystem.Application.Mappers
             throw new NotImplementedException();
         }
 
-        public InventoryCategory MapToEntity(InventoryCategoryDTO dto)
+		public List<InventoryCategory> MapToEntities(IEnumerable<InventoryCategoryDTO> dto)
+		{
+			throw new NotImplementedException();
+		}
+
+		public InventoryCategory MapToEntity(InventoryCategoryDTO dto)
         {
             return new InventoryCategory
             {
