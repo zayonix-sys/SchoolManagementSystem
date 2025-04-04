@@ -64,8 +64,12 @@ export const menuItems: MenuItemProps[] = [
         title: "Manage Inventories",
         href: "/manage-inventories",
         icon: ListFill,
-      }
-     
+      },
+      {
+        title: "Manage Student Fees",
+        href: "/student-fees",
+        icon: Donation,
+      },
     ],
   },
   {
@@ -133,6 +137,18 @@ export const menuItems: MenuItemProps[] = [
       {
         title: "Manage Payments",
         href: "/payments",
+        icon: Coins,
+      },
+
+    ]
+  },
+  {
+    title: "Fee Management",
+    icon: Donation,
+    child: [
+      {
+        title: "Fee Category",
+        href: "/fee-category",
         icon: Coins,
       },
 

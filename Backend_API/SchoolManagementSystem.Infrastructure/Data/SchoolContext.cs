@@ -51,9 +51,6 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<StudentParent> StudentParent { get; set; }
         public DbSet<ParentFeedback> ParentFeedback { get; set; }
 
-
-
-
         public DbSet<InventoryCategory> InventoryCategories { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<InventoryStock> InventoryStocks { get; set; }
@@ -62,6 +59,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<InventoryPurchase> InventoryPurchases { get; set; }
         public DbSet<AssetAllocation> AssetAllocation { get; set; }
         //public DbSet<ExamResult> ExamResults { get; set; }
+        public DbSet<FeeCategory> FeeCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
