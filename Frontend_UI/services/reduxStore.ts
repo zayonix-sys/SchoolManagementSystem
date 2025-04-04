@@ -43,6 +43,7 @@ import inventoryPurchaseApi from "./apis/inventoryPurchaseService";
 import assetsAllocationApi from "./apis/assetsAllocationService";
 import parentFeedbackApi from "./apis/parentFeedbackService";
 import studentParentApi from "./apis/studentParentService";
+import feeCategoryApi from "./apis/feeCategoryService";
 
 // Import or define your auth reducer
 // import authReducer from "./authSlice"; // Assuming your auth reducer is in authSlice.js
@@ -101,6 +102,7 @@ const rootReducer = combineReducers({
   [inventoryStatusApi.reducerPath]: inventoryStatusApi.reducer,
   [inventoryPurchaseApi.reducerPath]: inventoryPurchaseApi.reducer,
   [assetsAllocationApi.reducerPath]: assetsAllocationApi.reducer,
+  [feeCategoryApi.reducerPath]: feeCategoryApi.reducer,
 
 });
 
@@ -150,7 +152,8 @@ const store = configureStore({
       .concat(inventoryStatusApi.middleware)
       .concat(assetsAllocationApi.middleware)
       .concat(studentParentApi.middleware)
-      .concat(parentFeedbackApi.middleware),
+      .concat(parentFeedbackApi.middleware)
+      .concat(feeCategoryApi.middleware),
 });
 
 export const persistor = persistStore(store);
