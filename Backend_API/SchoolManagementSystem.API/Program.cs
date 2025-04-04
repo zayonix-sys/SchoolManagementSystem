@@ -146,6 +146,9 @@ builder.Services.AddScoped<InventoryPurchaseMapper>();
 builder.Services.AddScoped<IAssetAllocation, AssetAllocationService>();
 builder.Services.AddScoped<AssetAllocationMapper>();
 
+builder.Services.AddScoped<IFeeCategory, FeeCategoryService>();
+builder.Services.AddScoped<FeeCategoryMapper>();
+
 
 // Add controllers
 builder.Services.AddControllers();
