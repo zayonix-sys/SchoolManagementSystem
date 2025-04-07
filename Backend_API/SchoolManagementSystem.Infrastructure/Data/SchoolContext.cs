@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
+using SchoolManagementSystem.Domain.Entities.Fee;
 using SchoolManagementSystem.Domain.Enums.Notice;
 
 namespace SchoolManagementSystem.Infrastructure.Data
@@ -58,7 +59,12 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<ItemDetail> ItemDetail { get; set; }
         public DbSet<InventoryPurchase> InventoryPurchases { get; set; }
         public DbSet<AssetAllocation> AssetAllocation { get; set; }
-        //public DbSet<ExamResult> ExamResults { get; set; }
+		//public DbSet<ExamResult> ExamResults { get; set; }
+		public DbSet<ClassFee> ClassFees { get; set; }
+		public DbSet<FeeCategory> FeeCategories { get; set; }
+		public DbSet<FeeVoucher> FeeVouchers { get; set; }
+		public DbSet<FeeAdjustment> FeeAdjustments { get; set; }
+		public DbSet<FeeVoucherPayment> FeeVoucherPayments { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
