@@ -149,6 +149,8 @@ builder.Services.AddScoped<AssetAllocationMapper>();
 builder.Services.AddScoped<IFeeCategory, FeeCategoryService>();
 builder.Services.AddScoped<FeeCategoryMapper>();
 
+builder.Services.AddScoped<IClassFee, ClassFeeService>();
+builder.Services.AddScoped<ClassFeeMapper>();
 
 // Add controllers
 builder.Services.AddControllers();
@@ -309,7 +311,7 @@ void SeedDefaultData(SchoolContext context)
         context.SaveChanges();
     }
 
-    if (!context.InventoryStatus.Any()) 
+    if (!context.InventoryStatus.Any())
     {
         var userId = context.Users.Select(c => c.UserId).FirstOrDefault();
         var defaultStatus = new InventoryStatus

@@ -139,7 +139,7 @@ export const menuItems: MenuItemProps[] = [
         href: "/payments",
         icon: Coins,
       },
-
+     
     ]
   },
   {
@@ -151,6 +151,12 @@ export const menuItems: MenuItemProps[] = [
         href: "/fee-category",
         icon: Coins,
       },
+      {
+        title: "Manage Class Fees",
+        href: "/manage-class-fee",
+        icon: Coins,
+      },
+
 
     ]
   }

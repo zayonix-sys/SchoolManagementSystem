@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SchoolManagementSystem.Infrastructure.Data
 {
@@ -50,6 +49,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Parent> Parents { get; set; }
         public DbSet<StudentParent> StudentParent { get; set; }
         public DbSet<ParentFeedback> ParentFeedback { get; set; }
+        public DbSet<ClassFee> ClassFees { get; set; }
+
 
         public DbSet<InventoryCategory> InventoryCategories { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
