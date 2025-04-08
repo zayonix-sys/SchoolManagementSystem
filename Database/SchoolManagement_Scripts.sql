@@ -1543,3 +1543,8 @@ INNER JOIN
 WHERE 
     tt.IsActive = 1
 GO
+
+--- ALTER QUERIES April 2025
+------- Suffian -------------
+
+EXEC sp_rename 'FeeVouchers.VoucherId', 'FeeVoucherId', 'COLUMN';

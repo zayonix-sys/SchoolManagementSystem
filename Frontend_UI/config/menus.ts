@@ -1,6 +1,6 @@
 import { DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation, List, ListFill, Cart, ClipBoard, Note } from "@/components/svg";
 import useAuth from "@/hooks/use-auth";
-import { CalendarCheck2Icon, Clapperboard, Coins, CoinsIcon } from "lucide-react";
+import { Award, Boxes, CalendarCheck2Icon, CheckCircle, CheckSquare, Clapperboard, Coins, CoinsIcon, DollarSign, FileBarChart, FileCheck, Gift, Grid, HeartHandshake, HeartHandshakeIcon, School, ThumbsUp, UserCheck, Wallet } from "lucide-react";
 
 export interface MenuItemProps {
   title: string;
@@ -38,7 +38,7 @@ export const menuItems: MenuItemProps[] = [
       {
         title: "Manage Classes",
         href: "/classrooms",
-        icon: ClipBoard2,
+        icon: School,
       },
       {
         title: "Manage Employees",
@@ -53,7 +53,7 @@ export const menuItems: MenuItemProps[] = [
       {
         title: "Manage Sponsors",
         href: "/sponsors",
-        icon: User,
+        icon: HeartHandshake,
       },
       {
         title: "Manage Sponsorships",
@@ -63,12 +63,7 @@ export const menuItems: MenuItemProps[] = [
       {
         title: "Manage Inventories",
         href: "/manage-inventories",
-        icon: ListFill,
-      },
-      {
-        title: "Manage Student Fees",
-        href: "/student-fees",
-        icon: Donation,
+        icon: Boxes,
       },
     ],
   },
@@ -79,7 +74,7 @@ export const menuItems: MenuItemProps[] = [
       {
         title: "Applicants",
         href: "/applicantManagement",
-        icon: Graph,
+        icon: UserCheck,
       },
       {
         title: "Students",
@@ -89,7 +84,7 @@ export const menuItems: MenuItemProps[] = [
       {
         title: "Attendance",
         href: "/student-attendance",
-        icon: CalenderCheck,
+        icon: CheckSquare,
       },
       {
         title: "Time Tables",
@@ -104,12 +99,12 @@ export const menuItems: MenuItemProps[] = [
       {
         title: "Manage Exams",
         href: "/examPaper",
-        icon: Book,
+        icon: CheckCircle,
       },
       {
         title: "Manage Results",
         href: "/examResults",
-        icon: DocsCheck,
+        icon: Award,
       },
       {
         title: "Grades",
@@ -124,7 +119,7 @@ export const menuItems: MenuItemProps[] = [
       {
         title: "Parents Feedback",
         href: "/parent-feedback",
-        icon: Note,
+        icon: ThumbsUp,
       },
 
       
@@ -144,12 +139,12 @@ export const menuItems: MenuItemProps[] = [
   },
   {
     title: "Fee Management",
-    icon: Donation,
+    icon: DollarSign,
     child: [
       {
         title: "Fee Category",
         href: "/fee-category",
-        icon: Coins,
+        icon: Grid,
       },
 
     ]
