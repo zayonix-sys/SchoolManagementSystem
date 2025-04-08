@@ -89,6 +89,12 @@ export const menuItems: MenuItemProps[] = [
         href: "/manage-inventories",
         icon: ListFill,
       },
+      {
+        title: "Manage Student Fees",
+        href: "/student-fees",
+        icon: Donation,
+      },
+
     ],
   },
   {
@@ -167,6 +173,7 @@ export const menuItems: MenuItemProps[] = [
         href: "/payments",
         icon: Coins,
       },
+
     ],
   },
   {
@@ -180,6 +187,29 @@ export const menuItems: MenuItemProps[] = [
       },
     ],
   },
+
+     
+    ]
+  },
+  {
+    title: "Fee Management",
+    icon: Donation,
+    child: [
+      {
+        title: "Fee Category",
+        href: "/fee-category",
+        icon: Coins,
+      },
+      {
+        title: "Manage Class Fees",
+        href: "/manage-class-fee",
+        icon: Coins,
+      },
+
+
+    ]
+  }
+
 ];
 
 // Utility function to generate specific menu styles

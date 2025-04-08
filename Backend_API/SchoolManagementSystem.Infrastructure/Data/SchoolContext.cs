@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
+
 using SchoolManagementSystem.Domain.Entities.Fee;
 using SchoolManagementSystem.Domain.Enums.Notice;
 
@@ -51,7 +52,13 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Parent> Parents { get; set; }
         public DbSet<StudentParent> StudentParent { get; set; }
         public DbSet<ParentFeedback> ParentFeedback { get; set; }
+
         public DbSet<Notice> Notices { get; set; }
+
+        public DbSet<ClassFee> ClassFees { get; set; }
+
+
+
         public DbSet<InventoryCategory> InventoryCategories { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<InventoryStock> InventoryStocks { get; set; }
@@ -59,14 +66,15 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<ItemDetail> ItemDetail { get; set; }
         public DbSet<InventoryPurchase> InventoryPurchases { get; set; }
         public DbSet<AssetAllocation> AssetAllocation { get; set; }
-		//public DbSet<ExamResult> ExamResults { get; set; }
-		public DbSet<ClassFee> ClassFees { get; set; }
-		public DbSet<FeeCategory> FeeCategories { get; set; }
-		public DbSet<FeeVoucher> FeeVouchers { get; set; }
-		public DbSet<FeeAdjustment> FeeAdjustments { get; set; }
-		public DbSet<FeeVoucherPayment> FeeVoucherPayments { get; set; }
+    		public DbSet<FeeCategory> FeeCategories { get; set; }
+		    public DbSet<FeeVoucher> FeeVouchers { get; set; }
+		    public DbSet<FeeAdjustment> FeeAdjustments { get; set; }
+	    	public DbSet<FeeVoucherPayment> FeeVoucherPayments { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+
         {
             // Configure relationships and keys here
             modelBuilder.Entity<Student>()
