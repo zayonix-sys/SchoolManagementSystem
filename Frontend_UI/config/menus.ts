@@ -1,6 +1,30 @@
-import { DashBoard, Graph, Users, DocsCheck, Building, Campus, ClipBoard2, Book, CalenderCheck, User, Donation, List, ListFill, Cart, ClipBoard, Note } from "@/components/svg";
+import {
+  DashBoard,
+  Graph,
+  Users,
+  DocsCheck,
+  Building,
+  Campus,
+  ClipBoard2,
+  Book,
+  CalenderCheck,
+  User,
+  Donation,
+  List,
+  ListFill,
+  Cart,
+  Bell,
+  ClipBoard,
+  Note,
+} from "@/components/svg";
 import useAuth from "@/hooks/use-auth";
-import { CalendarCheck2Icon, Clapperboard, Coins, CoinsIcon } from "lucide-react";
+import {
+  CalendarCheck2Icon,
+  Clapperboard,
+  Coins,
+  CoinsIcon,
+  Receipt,
+} from "lucide-react";
 
 export interface MenuItemProps {
   title: string;
@@ -70,6 +94,7 @@ export const menuItems: MenuItemProps[] = [
         href: "/student-fees",
         icon: Donation,
       },
+
     ],
   },
   {
@@ -126,8 +151,17 @@ export const menuItems: MenuItemProps[] = [
         href: "/parent-feedback",
         icon: Note,
       },
-
-      
+    ],
+  },
+  {
+    title: "Fee Management",
+    icon: Receipt,
+    child: [
+      {
+        title: "Fee List",
+        href: "/fee-management",
+        icon: List,
+      },
     ],
   },
   {
@@ -139,6 +173,21 @@ export const menuItems: MenuItemProps[] = [
         href: "/payments",
         icon: Coins,
       },
+
+    ],
+  },
+  {
+    title: "Notices",
+    icon: Bell,
+    child: [
+      {
+        title: "Notices",
+        href: "/notices",
+        icon: Bell,
+      },
+    ],
+  },
+
      
     ]
   },
@@ -160,24 +209,25 @@ export const menuItems: MenuItemProps[] = [
 
     ]
   }
+
 ];
 
 // Utility function to generate specific menu styles
 const generateMenus = (menuItems: MenuItemProps[]) => {
   return {
-    mainNav: menuItems.map(item => ({
+    mainNav: menuItems.map((item) => ({
       ...item,
     })),
-    
+
     sidebarNav: {
-      modern: menuItems.map(item => ({
+      modern: menuItems.map((item) => ({
         ...item,
       })),
-      classic: menuItems.map(item => ({
+      classic: menuItems.map((item) => ({
         ...item,
       })),
     },
-    mobileMenu: menuItems.map(item => ({
+    mobileMenu: menuItems.map((item) => ({
       ...item,
     })),
   };

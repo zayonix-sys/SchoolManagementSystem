@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SchoolManagementSystem.API.Middleware;
+using SchoolManagementSystem.Application;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Application.Services;
 using SchoolManagementSystem.Domain.Entities;
 using SchoolManagementSystem.Domain.Interfaces;
+using SchoolManagementSystem.Infrastructure;
 using SchoolManagementSystem.Infrastructure.Data;
 using SchoolManagementSystem.Infrastructure.Repositories;
 using System.Text;
@@ -146,11 +148,16 @@ builder.Services.AddScoped<InventoryPurchaseMapper>();
 builder.Services.AddScoped<IAssetAllocation, AssetAllocationService>();
 builder.Services.AddScoped<AssetAllocationMapper>();
 
+
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddApplicationServices();
+
 builder.Services.AddScoped<IFeeCategory, FeeCategoryService>();
 builder.Services.AddScoped<FeeCategoryMapper>();
 
 builder.Services.AddScoped<IClassFee, ClassFeeService>();
 builder.Services.AddScoped<ClassFeeMapper>();
+
 
 // Add controllers
 builder.Services.AddControllers();
