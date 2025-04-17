@@ -8,7 +8,13 @@ import { toast } from "sonner";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Sheet,
   SheetClose,
@@ -52,7 +58,13 @@ interface EditClassFeeProps {
   refetch: () => void;
 }
 
-export default function EditClassFee({ classFeeData, refetch, classes, campuses,feeCategory }: EditClassFeeProps) {
+export default function EditClassFee({
+  classFeeData,
+  refetch,
+  classes,
+  campuses,
+  feeCategory,
+}: EditClassFeeProps) {
   const { classFeeId, classId, feeCategoryId, campusId, amount } = classFeeData;
   const [updateClassFee] = useUpdateClassFeeMutation();
   // const loggedUser = useSelector((state: RootState) => state.auth.user);
@@ -64,7 +76,7 @@ export default function EditClassFee({ classFeeData, refetch, classes, campuses,
     formState: { errors },
   } = useForm<ClassFeeFormValues>({
     resolver: zodResolver(classFeeSchema),
-    defaultValues: { classId, feeCategoryId, campusId, amount }
+    defaultValues: { classId, feeCategoryId, campusId, amount },
   });
 
   const onSubmit: SubmitHandler<ClassFeeFormValues> = async (data) => {
@@ -101,13 +113,21 @@ export default function EditClassFee({ classFeeData, refetch, classes, campuses,
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
                 <Label className="mb-1 text-gray-700">Select Campus</Label>
-                <Select onValueChange={(value) => setValue("campusId", parseInt(value))} defaultValue={campusId?.toString()}>
+                <Select
+                  onValueChange={(value) =>
+                    setValue("campusId", parseInt(value))
+                  }
+                  defaultValue={campusId?.toString()}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a campus" />
                   </SelectTrigger>
                   <SelectContent>
                     {campuses?.map((campus) => (
-                      <SelectItem key={campus.campusId} value={campus.campusId?.toString() ?? ""}>
+                      <SelectItem
+                        key={campus.campusId}
+                        value={campus.campusId?.toString() ?? ""}
+                      >
                         {campus.campusName}
                       </SelectItem>
                     ))}
@@ -117,13 +137,21 @@ export default function EditClassFee({ classFeeData, refetch, classes, campuses,
 
               <div className="col-span-1">
                 <Label>Select Class</Label>
-                <Select onValueChange={(value) => setValue("classId", parseInt(value))} defaultValue={classId?.toString()}>
+                <Select
+                  onValueChange={(value) =>
+                    setValue("classId", parseInt(value))
+                  }
+                  defaultValue={classId?.toString()}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Class" />
                   </SelectTrigger>
                   <SelectContent>
                     {classes?.map((cd) => (
-                      <SelectItem key={cd.classId} value={cd.classId?.toString() || ""}>
+                      <SelectItem
+                        key={cd.classId}
+                        value={cd.classId?.toString() || ""}
+                      >
                         {cd.className}
                       </SelectItem>
                     ))}
@@ -132,13 +160,21 @@ export default function EditClassFee({ classFeeData, refetch, classes, campuses,
               </div>
               <div className="col-span-1">
                 <Label>Select Fee Category</Label>
-                <Select onValueChange={(value) => setValue("feeCategoryId", parseInt(value))} defaultValue={feeCategoryId?.toString()}>
+                <Select
+                  onValueChange={(value) =>
+                    setValue("feeCategoryId", parseInt(value))
+                  }
+                  defaultValue={feeCategoryId?.toString()}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Fee Category" />
                   </SelectTrigger>
                   <SelectContent>
                     {feeCategory?.map((cd) => (
-                      <SelectItem key={cd.feeCategoryId} value={cd.feeCategoryId?.toString() || ""}>
+                      <SelectItem
+                        key={cd.feeCategoryId}
+                        value={cd.feeCategoryId?.toString() || ""}
+                      >
                         {cd.feeName}
                       </SelectItem>
                     ))}
@@ -147,8 +183,14 @@ export default function EditClassFee({ classFeeData, refetch, classes, campuses,
               </div>
               <div className="col-span-2">
                 <Label>Amount</Label>
-                <Input type="number" placeholder="Amount" {...register("amount", { valueAsNumber: true })} />
-                {errors.amount && <p className="text-destructive">{errors.amount.message}</p>}
+                <Input
+                  type="number"
+                  placeholder="Amount"
+                  {...register("amount", { valueAsNumber: true })}
+                />
+                {errors.amount && (
+                  <p className="text-destructive">{errors.amount.message}</p>
+                )}
               </div>
 
               <div className="col-span-2">

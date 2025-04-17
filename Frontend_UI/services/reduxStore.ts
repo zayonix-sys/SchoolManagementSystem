@@ -46,6 +46,8 @@ import studentParentApi from "./apis/studentParentService";
 import noticeApi from "./apis/noticeService";
 import feeCategoryApi from "./apis/feeCategoryService";
 import classFeeApi from "./apis/manageClassFeeService";
+import feeApi from "./apis/feeService";
+import employeeLeaveApi from "./apis/employeeLeaveService";
 
 
 // Import or define your auth reducer
@@ -108,6 +110,8 @@ const rootReducer = combineReducers({
   [assetsAllocationApi.reducerPath]: assetsAllocationApi.reducer,
   [noticeApi.reducerPath]: noticeApi.reducer,
   [feeCategoryApi.reducerPath]: feeCategoryApi.reducer,
+  [feeApi.reducerPath]: feeApi.reducer,
+  [employeeLeaveApi.reducerPath]: employeeLeaveApi.reducer,
 });
 
 const store = configureStore({
@@ -157,10 +161,13 @@ const store = configureStore({
       .concat(assetsAllocationApi.middleware)
       .concat(studentParentApi.middleware)
       .concat(studentAcademicApi.middleware)
-      .concat(noticeApi.middleware),
+      .concat(noticeApi.middleware)
       .concat(feeCategoryApi.middleware)
       .concat(parentFeedbackApi.middleware)
-      .concat(classFeeApi.middleware),
+      .concat(classFeeApi.middleware)
+      .concat(feeApi.middleware)
+      .concat(employeeLeaveApi.middleware),
+      
 
 });
 

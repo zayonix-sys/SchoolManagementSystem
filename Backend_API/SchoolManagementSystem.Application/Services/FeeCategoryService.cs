@@ -2,7 +2,7 @@
 using SchoolManagementSystem.Application.DTOs;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
-using SchoolManagementSystem.Domain.Entities;
+using SchoolManagementSystem.Domain.Entities.Fee;
 using SchoolManagementSystem.Domain.Interfaces;
 
 namespace SchoolManagementSystem.Application.Services

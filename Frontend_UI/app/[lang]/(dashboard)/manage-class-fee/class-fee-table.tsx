@@ -16,7 +16,11 @@ import { Input } from "@/components/ui/input";
 import ConfirmationDialog from "../common/confirmation-dialog";
 
 import { toast } from "sonner";
-import { ClassFeeData, useDeleteClassFeeMutation, useFetchClassFeeQuery } from "@/services/apis/manageClassFeeService";
+import {
+  ClassFeeData,
+  useDeleteClassFeeMutation,
+  useFetchClassFeeQuery,
+} from "@/services/apis/manageClassFeeService";
 import EditClassFee from "./edit-class-fee";
 import { CampusData } from "@/services/apis/campusService";
 import { ClassData } from "@/services/apis/classService";
@@ -28,19 +32,24 @@ interface ClassFeeListTableProps {
   classes?: ClassData[];
   feeCategory?: FeeCategoryData[];
 }
-const ClassFeeListTable: React.FC<ClassFeeListTableProps>  = ({refetch,classes,campuses,feeCategory}) => {
+const ClassFeeListTable: React.FC<ClassFeeListTableProps> = ({
+  refetch,
+  classes,
+  campuses,
+  feeCategory,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [classFeeToDelete, setClassFeeToDelete] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 10;
 
-  const { data, isLoading, refetch:classFeeRefetch  } = useFetchClassFeeQuery();
+  const { data, isLoading, refetch: classFeeRefetch } = useFetchClassFeeQuery();
   const classFeesData = data?.data as ClassFeeData[];
   const [deleteClassFee] = useDeleteClassFeeMutation();
 
   const handleRefetch = () => {
     refetch();
-    classFeeRefetch()
+    classFeeRefetch();
   };
 
   const filteredClassFees = classFeesData?.filter(
@@ -52,7 +61,10 @@ const ClassFeeListTable: React.FC<ClassFeeListTableProps>  = ({refetch,classes,c
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredClassFees?.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredClassFees?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const totalPages = Math.ceil(filteredClassFees?.length / itemsPerPage);
 
@@ -109,10 +121,7 @@ const ClassFeeListTable: React.FC<ClassFeeListTableProps>  = ({refetch,classes,c
 
         <TableBody>
           {currentItems?.map((item) => (
-            <TableRow
-              key={item.classFeeId}
-              className="hover:bg-default-200"
-            >
+            <TableRow key={item.classFeeId} className="hover:bg-default-200">
               <TableCell className="p-2.5">{item.campusName}</TableCell>
               <TableCell className="p-2.5">{item.className}</TableCell>
               <TableCell className="p-2.5">
@@ -121,15 +130,22 @@ const ClassFeeListTable: React.FC<ClassFeeListTableProps>  = ({refetch,classes,c
                 </Badge>
               </TableCell>
               <TableCell className="p-2.5">${item.amount}</TableCell>
-              <TableCell className="p-2.5">{item?.createdAt ? new Date(item.createdAt).toLocaleDateString() : "N/A"}</TableCell>
+              <TableCell className="p-2.5">
+                {item?.createdAt
+                  ? new Date(item.createdAt).toLocaleDateString()
+                  : "N/A"}
+              </TableCell>
 
               <TableCell className="p-2.5 flex justify-end">
                 <div className="flex gap-3">
-                  <EditClassFee classFeeData={item} campuses={campuses}
+                  <EditClassFee
+                    classFeeData={item}
+                    campuses={campuses}
                     classes={classes}
                     feeCategory={feeCategory}
-                  refetch={handleRefetch} />             
-                
+                    refetch={handleRefetch}
+                  />
+
                   <Button
                     size="icon"
                     variant="outline"
@@ -140,7 +156,6 @@ const ClassFeeListTable: React.FC<ClassFeeListTableProps>  = ({refetch,classes,c
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>
                 </div>
-              
               </TableCell>
             </TableRow>
           ))}

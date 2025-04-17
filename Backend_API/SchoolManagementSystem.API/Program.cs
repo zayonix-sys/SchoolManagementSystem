@@ -21,11 +21,12 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? new[] {""};
-        allowedOrigins.ForEach(allowedOrigin => { 
+        var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? new[] { "" };
+        allowedOrigins.ForEach(allowedOrigin =>
+        {
             Console.WriteLine($"AllowedOrigin: {allowedOrigin}");
         });
-        
+
         policy.WithOrigins(allowedOrigins)
         .AllowAnyHeader()
         .AllowAnyMethod()
@@ -65,6 +66,7 @@ builder.Services.AddScoped<ApplicantMapper>();
 builder.Services.AddScoped<ApplicationMapper>();
 builder.Services.AddScoped<ApplicantApplicationMapper>();
 builder.Services.AddScoped<TimeTableViewMapper>();
+builder.Services.AddScoped<FeeViewMapper>();
 builder.Services.AddScoped<IQuestionBank, QuestionBankService>();
 builder.Services.AddScoped<QuestionBankMapper>();
 builder.Services.AddScoped<IEmployee, EmployeeService>();
@@ -157,6 +159,8 @@ builder.Services.AddScoped<FeeCategoryMapper>();
 
 builder.Services.AddScoped<IClassFee, ClassFeeService>();
 builder.Services.AddScoped<ClassFeeMapper>();
+
+builder.Services.AddScoped<IFeeService, FeeService>();
 
 
 // Add controllers

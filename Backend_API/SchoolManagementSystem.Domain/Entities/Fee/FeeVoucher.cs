@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+
+using System.ComponentModel.DataAnnotations;
 
 namespace SchoolManagementSystem.Domain.Entities.Fee
 {
     public class FeeVoucher
     {
-        public int FeeVoucherId { get; set; }
+        [Key]
+        public int VoucherId { get; set; }
         public int StudentId { get; set; }
         public int CampusId { get; set; }
         public string FeeMonth { get; set; }
@@ -15,8 +18,7 @@ namespace SchoolManagementSystem.Domain.Entities.Fee
         public DateTime? PaymentDate { get; set; }
         public DateTime CreatedAt { get; set; }
         public int CreatedBy { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public int UpdatedBy { get; set; }
-        public bool IsActive { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public int? UpdatedBy { get; set; }
     }
 }

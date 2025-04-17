@@ -1,8 +1,11 @@
-﻿namespace SchoolManagementSystem.Domain.Entities.Fee
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SchoolManagementSystem.Domain.Entities.Fee
 {
     public class FeeAdjustment
     {
-        public int FeeAdjustmentId { get; set; }
+        [Key]
+        public int AdjustmentId { get; set; }
         public int StudentId { get; set; }
         public int VoucherId { get; set; }
         public decimal AdjustmentAmount { get; set; }

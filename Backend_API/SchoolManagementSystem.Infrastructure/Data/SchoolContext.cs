@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using SchoolManagementSystem.Domain.Entities;
-
 using SchoolManagementSystem.Domain.Entities.Fee;
 using SchoolManagementSystem.Domain.Enums.Notice;
 
@@ -56,9 +55,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<Notice> Notices { get; set; }
 
         public DbSet<ClassFee> ClassFees { get; set; }
-
-
-
+        public DbSet<FeeCategory> FeeCategories { get; set; }
         public DbSet<InventoryCategory> InventoryCategories { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<InventoryStock> InventoryStocks { get; set; }
@@ -66,12 +63,9 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<ItemDetail> ItemDetail { get; set; }
         public DbSet<InventoryPurchase> InventoryPurchases { get; set; }
         public DbSet<AssetAllocation> AssetAllocation { get; set; }
-    		public DbSet<FeeCategory> FeeCategories { get; set; }
-		    public DbSet<FeeVoucher> FeeVouchers { get; set; }
-		    public DbSet<FeeAdjustment> FeeAdjustments { get; set; }
-	    	public DbSet<FeeVoucherPayment> FeeVoucherPayments { get; set; }
-
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public DbSet<FeeVoucher> FeeVouchers { get; set; }
+        public DbSet<FeeAdjustment> FeeAdjustments { get; set; }
+        public DbSet<FeeVoucherPayment> FeeVoucherPayments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 
@@ -125,7 +119,8 @@ namespace SchoolManagementSystem.Infrastructure.Data
 
             modelBuilder.Entity<TimeTableView>()
                 .HasNoKey();
-
+            modelBuilder.Entity<FeeView>()
+                .HasNoKey();
             modelBuilder.Entity<InventoryStockView>()
                 .HasNoKey();
 
@@ -165,14 +160,15 @@ namespace SchoolManagementSystem.Infrastructure.Data
             modelBuilder.Entity<Notice>(entity =>
             {
                 entity.Property(e => e.NoticeType).HasConversion(v => v.ToString(), v => (NoticeType)Enum.Parse(typeof(NoticeType), v));
-				entity.Property(e => e.RecipientType).HasConversion(v => v.ToString(), v => (RecipientType)Enum.Parse(typeof(RecipientType), v));
-				entity.Property(e => e.Method).HasConversion(v => v.ToString(), v => (Method)Enum.Parse(typeof(Method), v));
-				entity.Property(e => e.Status).HasConversion(v => v.ToString(), v => (Status)Enum.Parse(typeof(Status), v));
+                entity.Property(e => e.RecipientType).HasConversion(v => v.ToString(), v => (RecipientType)Enum.Parse(typeof(RecipientType), v));
+                entity.Property(e => e.Method).HasConversion(v => v.ToString(), v => (Method)Enum.Parse(typeof(Method), v));
+                entity.Property(e => e.Status).HasConversion(v => v.ToString(), v => (Status)Enum.Parse(typeof(Status), v));
             });
 
-			// Map the entity to the SQL Server view
-			modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
+            // Map the entity to the SQL Server view
+            modelBuilder.Entity<ApplicantApplicationView>().ToView("vw_ApplicantDetails");
             modelBuilder.Entity<TimeTableView>().ToView("TimeTableView");
+            modelBuilder.Entity<FeeView>().ToView("vw_StudentFeeSummary");
             modelBuilder.Entity<DashboardCountView>().ToView("DashboardCountView");
             modelBuilder.Entity<InventoryStockView>().ToView("vw_InventoryStockSummary");
 

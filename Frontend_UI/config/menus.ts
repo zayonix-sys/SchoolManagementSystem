@@ -23,6 +23,7 @@ import {
   Clapperboard,
   Coins,
   CoinsIcon,
+  ListMinus,
   Receipt,
 } from "lucide-react";
 
@@ -73,6 +74,11 @@ export const menuItems: MenuItemProps[] = [
         title: "Employees Attendance",
         href: "/employee-attendance",
         icon: CalendarCheck2Icon,
+      },
+      {
+        title: "Employees Leave",
+        href: "/employee-leave",
+        icon: ListMinus,
       },
       {
         title: "Manage Sponsors",
@@ -162,6 +168,16 @@ export const menuItems: MenuItemProps[] = [
         href: "/fee-management",
         icon: List,
       },
+      {
+        title: "Fee Category",
+        href: "/fee-category",
+        icon: Coins,
+      },
+      {
+        title: "Manage Class Fees",
+        href: "/manage-class-fee",
+        icon: Coins,
+      },
     ],
   },
   {
@@ -190,27 +206,7 @@ export const menuItems: MenuItemProps[] = [
 
      
     ]
-  },
-  {
-    title: "Fee Management",
-    icon: Donation,
-    child: [
-      {
-        title: "Fee Category",
-        href: "/fee-category",
-        icon: Coins,
-      },
-      {
-        title: "Manage Class Fees",
-        href: "/manage-class-fee",
-        icon: Coins,
-      },
-
-
-    ]
-  }
-
-];
+  
 
 // Utility function to generate specific menu styles
 const generateMenus = (menuItems: MenuItemProps[]) => {
