@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SchoolManagementSystem.API.Middleware;
+using SchoolManagementSystem.Application;
 using SchoolManagementSystem.Application.Interfaces;
 using SchoolManagementSystem.Application.Mappers;
 using SchoolManagementSystem.Application.Services;
 using SchoolManagementSystem.Domain.Entities;
 using SchoolManagementSystem.Domain.Interfaces;
+using SchoolManagementSystem.Infrastructure;
 using SchoolManagementSystem.Infrastructure.Data;
 using SchoolManagementSystem.Infrastructure.Repositories;
 using System.Text;
@@ -19,11 +21,12 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? new[] {""};
-        allowedOrigins.ForEach(allowedOrigin => { 
+        var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? new[] { "" };
+        allowedOrigins.ForEach(allowedOrigin =>
+        {
             Console.WriteLine($"AllowedOrigin: {allowedOrigin}");
         });
-        
+
         policy.WithOrigins(allowedOrigins)
         .AllowAnyHeader()
         .AllowAnyMethod()
@@ -63,6 +66,7 @@ builder.Services.AddScoped<ApplicantMapper>();
 builder.Services.AddScoped<ApplicationMapper>();
 builder.Services.AddScoped<ApplicantApplicationMapper>();
 builder.Services.AddScoped<TimeTableViewMapper>();
+builder.Services.AddScoped<FeeViewMapper>();
 builder.Services.AddScoped<IQuestionBank, QuestionBankService>();
 builder.Services.AddScoped<QuestionBankMapper>();
 builder.Services.AddScoped<IEmployee, EmployeeService>();
@@ -146,8 +150,17 @@ builder.Services.AddScoped<InventoryPurchaseMapper>();
 builder.Services.AddScoped<IAssetAllocation, AssetAllocationService>();
 builder.Services.AddScoped<AssetAllocationMapper>();
 
+
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddApplicationServices();
+
 builder.Services.AddScoped<IFeeCategory, FeeCategoryService>();
 builder.Services.AddScoped<FeeCategoryMapper>();
+
+builder.Services.AddScoped<IClassFee, ClassFeeService>();
+builder.Services.AddScoped<ClassFeeMapper>();
+
+builder.Services.AddScoped<IFeeService, FeeService>();
 
 
 // Add controllers
@@ -309,7 +322,7 @@ void SeedDefaultData(SchoolContext context)
         context.SaveChanges();
     }
 
-    if (!context.InventoryStatus.Any()) 
+    if (!context.InventoryStatus.Any())
     {
         var userId = context.Users.Select(c => c.UserId).FirstOrDefault();
         var defaultStatus = new InventoryStatus

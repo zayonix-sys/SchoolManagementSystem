@@ -124,7 +124,7 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             return await query.Where(predicate).ToListAsync();
         }
 
-        public async Task<T> FindAsync(Expression<Func<T, bool>> predicate)
+        public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate)
         {
             return await _dbSet.AsQueryable().FirstOrDefaultAsync(predicate);
         }
@@ -173,6 +173,14 @@ namespace SchoolManagementSystem.Infrastructure.Repositories
             else if (entityType.Name == "AssetAllocation")
             {
                 keyProperty = entityType.GetProperty("AllocationId");
+            }
+            else if (entityType.Name == "FeeVoucher")
+            {
+                keyProperty = entityType.GetProperty("VoucherId");
+            }
+            else if (entityType.Name == "FeeAdjustment")
+            {
+                keyProperty = entityType.GetProperty("AdjustmentId");
             }
             else
             {

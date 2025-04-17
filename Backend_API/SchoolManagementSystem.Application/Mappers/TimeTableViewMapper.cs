@@ -30,7 +30,8 @@ namespace SchoolManagementSystem.Application.Mappers
             return new TimeTableViewDTO
             {
                 TimetableId = entity.TimetableId,
-                DayOfWeek = entity.DayOfWeek,
+                DayOfWeek = entity.
+                DayOfWeek,
                 CampusId = entity.CampusId,
                 CampusName = entity.CampusName,
                 ClassId = entity.ClassId,
@@ -49,9 +50,9 @@ namespace SchoolManagementSystem.Application.Mappers
             throw new NotImplementedException();
         }
 
-		public List<TimeTableView> MapToEntities(IEnumerable<TimeTableViewDTO> dto)
-		{
-			throw new NotImplementedException();
-		}
-	}
+        public List<TimeTableView> MapToEntities(IEnumerable<TimeTableViewDTO> dto)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

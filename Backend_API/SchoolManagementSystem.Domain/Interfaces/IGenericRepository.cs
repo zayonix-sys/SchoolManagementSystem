@@ -14,7 +14,7 @@ namespace SchoolManagementSystem.Domain.Interfaces
             params Expression<Func<T, object>>[] includes);
 
         // Find entity based on a predicate
-        Task<T> FindAsync(Expression<Func<T, bool>> predicate);
+        Task<T?> FindAsync(Expression<Func<T, bool>> predicate);
         Task<object> AddAsync(T entity);
         Task<object> UpdateAsync(T entity);
         Task<object> UpdateAsync(T entity, bool trackingOff);

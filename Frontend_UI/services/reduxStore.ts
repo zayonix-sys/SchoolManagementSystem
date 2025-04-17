@@ -43,7 +43,12 @@ import inventoryPurchaseApi from "./apis/inventoryPurchaseService";
 import assetsAllocationApi from "./apis/assetsAllocationService";
 import parentFeedbackApi from "./apis/parentFeedbackService";
 import studentParentApi from "./apis/studentParentService";
+import noticeApi from "./apis/noticeService";
 import feeCategoryApi from "./apis/feeCategoryService";
+import classFeeApi from "./apis/manageClassFeeService";
+import feeApi from "./apis/feeService";
+import employeeLeaveApi from "./apis/employeeLeaveService";
+
 
 // Import or define your auth reducer
 // import authReducer from "./authSlice"; // Assuming your auth reducer is in authSlice.js
@@ -80,6 +85,7 @@ const rootReducer = combineReducers({
   [userPermissionApi.reducerPath]: userPermissionApi.reducer,
   [applicantApi.reducerPath]: applicantApi.reducer,
   [classApi.reducerPath]: classApi.reducer,
+  [classFeeApi.reducerPath]: classFeeApi.reducer,
   [classAssignApi.reducerPath]: classAssignApi.reducer,
   [departmentApi.reducerPath]: departmentApi.reducer,
   [campusApi.reducerPath]: campusApi.reducer,
@@ -102,8 +108,10 @@ const rootReducer = combineReducers({
   [inventoryStatusApi.reducerPath]: inventoryStatusApi.reducer,
   [inventoryPurchaseApi.reducerPath]: inventoryPurchaseApi.reducer,
   [assetsAllocationApi.reducerPath]: assetsAllocationApi.reducer,
+  [noticeApi.reducerPath]: noticeApi.reducer,
   [feeCategoryApi.reducerPath]: feeCategoryApi.reducer,
-
+  [feeApi.reducerPath]: feeApi.reducer,
+  [employeeLeaveApi.reducerPath]: employeeLeaveApi.reducer,
 });
 
 const store = configureStore({
@@ -152,8 +160,15 @@ const store = configureStore({
       .concat(inventoryStatusApi.middleware)
       .concat(assetsAllocationApi.middleware)
       .concat(studentParentApi.middleware)
+      .concat(studentAcademicApi.middleware)
+      .concat(noticeApi.middleware)
+      .concat(feeCategoryApi.middleware)
       .concat(parentFeedbackApi.middleware)
-      .concat(feeCategoryApi.middleware),
+      .concat(classFeeApi.middleware)
+      .concat(feeApi.middleware)
+      .concat(employeeLeaveApi.middleware),
+      
+
 });
 
 export const persistor = persistStore(store);

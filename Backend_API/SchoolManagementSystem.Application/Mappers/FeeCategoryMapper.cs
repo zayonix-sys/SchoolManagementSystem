@@ -1,5 +1,5 @@
 ﻿using SchoolManagementSystem.Application.DTOs;
-using SchoolManagementSystem.Domain.Entities;
+using SchoolManagementSystem.Domain.Entities.Fee;
 
 namespace SchoolManagementSystem.Application.Mappers
 {
