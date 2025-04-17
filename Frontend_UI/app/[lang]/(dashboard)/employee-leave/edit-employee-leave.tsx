@@ -20,6 +20,7 @@ import {
   EmployeeLeaveData,
   useUpdateEmployeeLeaveMutation,
 } from "@/services/apis/employeeLeaveService";
+import { Label } from "@/components/ui/label";
 
 interface EditEmployeeLeaveProps {
   leaveData: EmployeeLeaveData;
@@ -39,12 +40,15 @@ const EditEmployeeLeave: React.FC<EditEmployeeLeaveProps> = ({
     formState: { errors },
   } = useForm<EmployeeLeaveData>({
     defaultValues: {
+      employeeLeaveId: leaveData.employeeLeaveId,
       employeeId: leaveData.employeeId,
       leaveType: leaveData.leaveType,
       startDate: leaveData.startDate,
       endDate: leaveData.endDate,
       reason: leaveData.reason,
       approvalStatus: leaveData.approvalStatus,
+      createdBy: leaveData.createdBy,
+      isActive: leaveData.isActive,
     },
   });
 
@@ -52,7 +56,7 @@ const EditEmployeeLeave: React.FC<EditEmployeeLeaveProps> = ({
     try {
       const payload = {
         ...formData,
-        leaveId: leaveData.leaveId,
+        leaveId: leaveData.employeeLeaveId,
       };
 
       const response = await updateLeave(payload).unwrap();
@@ -96,6 +100,8 @@ const EditEmployeeLeave: React.FC<EditEmployeeLeaveProps> = ({
                 />
               </div>
               <div className="col-span-2">
+              <Label>start Date</Label>
+
                 <Input
                   type="date"
                   {...register("startDate")}
@@ -103,6 +109,7 @@ const EditEmployeeLeave: React.FC<EditEmployeeLeaveProps> = ({
                 />
               </div>
               <div className="col-span-2">
+                <Label>End Date</Label>
                 <Input
                   type="date"
                   {...register("endDate")}
@@ -110,18 +117,31 @@ const EditEmployeeLeave: React.FC<EditEmployeeLeaveProps> = ({
                 />
               </div>
               <div className="col-span-2">
-                <Textarea
-                  placeholder="Reason"
-                  {...register("reason")}
-                />
+                <Textarea placeholder="Reason" {...register("reason")} />
               </div>
               <div className="col-span-2">
-                <Input
-                  type="text"
-                  placeholder="Approval Status"
-                  {...register("approvalStatus")}
-                />
+                <Label>Approval Status</Label>
+                <select
+                  {...register("approvalStatus", {
+                    required: "Approval status is required",
+                  })}
+                  className="w-full border rounded px-3 py-2 text-sm"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select approval status
+                  </option>
+                  <option value="Approved">Approved</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+                {errors.approvalStatus && (
+                  <p className="text-destructive text-sm mt-1">
+                    {errors.approvalStatus.message}
+                  </p>
+                )}
               </div>
+
               <div className="col-span-2">
                 <Button type="submit">Update</Button>
               </div>
