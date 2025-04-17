@@ -15,7 +15,9 @@ const {data: employeeLeaveData, refetch} = useFetchEmployeeLeaveQuery()
 const employeeLeaves = employeeLeaveData?.data as EmployeeLeaveData[] || []
 
 const handleRefetch = () => {
-  empRefetch()
+  empRefetch();
+  refetch();
+
 }
 
   return (

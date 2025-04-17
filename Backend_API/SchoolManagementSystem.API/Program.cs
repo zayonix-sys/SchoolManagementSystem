@@ -162,6 +162,9 @@ builder.Services.AddScoped<ClassFeeMapper>();
 
 builder.Services.AddScoped<IFeeService, FeeService>();
 
+builder.Services.AddScoped<IEmployeeLeave, EmployeeLeaveService>();
+builder.Services.AddScoped<EmployeeLeaveMapper>();
+
 
 // Add controllers
 builder.Services.AddControllers();

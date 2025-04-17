@@ -33,8 +33,10 @@ const EmployeeLeaveListTable: React.FC<Props> = ({ leaves, refetch }) => {
   const [deleteLeave] = useDeleteEmployeeLeaveMutation();
 
   const filtered = leaves?.filter((leave) =>
-    leave.leaveType?.toLowerCase().includes(searchQuery.toLowerCase())
+    leave.leaveType?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    leave.employeeName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -74,6 +76,7 @@ const EmployeeLeaveListTable: React.FC<Props> = ({ leaves, refetch }) => {
       <Table className="text-left">
         <TableHeader>
           <TableRow>
+          <TableHead>Employee Name</TableHead>
             <TableHead>Leave Type</TableHead>
             <TableHead>Start Date</TableHead>
             <TableHead>End Date</TableHead>
@@ -85,7 +88,8 @@ const EmployeeLeaveListTable: React.FC<Props> = ({ leaves, refetch }) => {
 
         <TableBody>
           {currentItems?.map((item) => (
-            <TableRow key={item.leaveId} className="hover:bg-default-200">
+            <TableRow key={item.employeeLeaveId} className="hover:bg-default-200">
+              <TableCell>{item.employeeName}</TableCell>
               <TableCell>{item.leaveType}</TableCell>
               <TableCell>{item.startDate}</TableCell>
               <TableCell>{item.endDate}</TableCell>
@@ -93,7 +97,14 @@ const EmployeeLeaveListTable: React.FC<Props> = ({ leaves, refetch }) => {
               <TableCell>
                 <Badge
                   variant="outline"
-                  color={item.approvalStatus === "Approved" ? "success" : "destructive"}
+                  color={
+                    item.approvalStatus === "Approved"
+                      ? "success"
+                      : item.approvalStatus === "Pending"
+                      ? "warning"
+                      : "destructive"
+                  }
+                  
                   className="capitalize"
                 >
                   {item.approvalStatus}
@@ -105,8 +116,9 @@ const EmployeeLeaveListTable: React.FC<Props> = ({ leaves, refetch }) => {
                   <Button
                     size="icon"
                     variant="outline"
+                    color="destructive"
                     className="h-7 w-7"
-                    onClick={() => handleDeleteConfirmation(item.leaveId!)}
+                    onClick={() => handleDeleteConfirmation(item.employeeLeaveId!)}
                   >
                     <Icon icon="heroicons:trash" className="h-4 w-4" />
                   </Button>

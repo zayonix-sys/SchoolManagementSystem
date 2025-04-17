@@ -6,6 +6,7 @@ import { ApiResponse } from "./apiResponse";
 export interface EmployeeLeaveData {
   employeeLeaveId?: number;
   employeeId?: number;
+  employeeName?: string;
   leaveType?: string;
   startDate?: string;
   endDate?: string;
@@ -47,7 +48,7 @@ export const employeeLeaveApi = createApi({
     }),
     deleteEmployeeLeave: builder.mutation<ApiResponse, number>({
       query: (id) => ({
-        url: `DeleteEmployeeLeave=${id}`,
+        url: `DeleteEmployeeLeave?employeeleaveId=${id}`,
         method: "DELETE",
       }),
     }),

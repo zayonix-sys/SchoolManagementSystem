@@ -63,6 +63,7 @@ namespace SchoolManagementSystem.Infrastructure.Data
         public DbSet<ItemDetail> ItemDetail { get; set; }
         public DbSet<InventoryPurchase> InventoryPurchases { get; set; }
         public DbSet<AssetAllocation> AssetAllocation { get; set; }
+        public DbSet<EmployeeLeave> EmployeeLeaves { get; set; }
         public DbSet<FeeVoucher> FeeVouchers { get; set; }
         public DbSet<FeeAdjustment> FeeAdjustments { get; set; }
         public DbSet<FeeVoucherPayment> FeeVoucherPayments { get; set; }
