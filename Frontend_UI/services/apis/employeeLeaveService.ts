@@ -4,7 +4,7 @@ import { ApiResponse } from "./apiResponse";
 
 
 export interface EmployeeLeaveData {
-  leaveId?: number;
+  employeeLeaveId?: number;
   employeeId?: number;
   leaveType?: string;
   startDate?: string;
